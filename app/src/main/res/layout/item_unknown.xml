@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:text="Error: Unknown '%s'"
+    android:textSize="19sp"
+    android:textColor="?attr/entry_text_color"
+    android:background="@drawable/shape"
+    android:backgroundTint="?attr/entry_background_color"
+    android:paddingLeft="5sp" />

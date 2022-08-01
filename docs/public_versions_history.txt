@@ -1,0 +1,4 @@
+2022.07.26: build 5 - yulia first version (debug | not dev)
+2022.07.26: build 6 (0.1.4) yulia add settings (theme)
+2022.07.31: build 8 (0.1.6) rewritten dialogs (mini global update updates all, added 'version' file)
+2022.08.01: build 10 first public!!

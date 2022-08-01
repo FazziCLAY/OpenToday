@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minWidth="999sp"
+    android:padding="3sp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/aboutapp_title"
+        android:textColor="?attr/aboutapp_title_color"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/about_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:drawableTopCompat="@mipmap/ic_launcher" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="?attr/aboutapp_text_color_title"
+            android:text="@string/aboutapp_text_version" />
+
+        <Space
+            android:layout_width="5sp"
+            android:layout_height="0sp" />
+
+        <TextView
+            android:id="@+id/text_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="0.0.0 (build 0)"
+            android:textSize="17sp"
+            android:textColor="?attr/aboutapp_text_color_value" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="?attr/aboutapp_text_color_title"
+            android:text="@string/aboutapp_text_package" />
+
+        <Space
+            android:layout_width="5sp"
+            android:layout_height="0sp" />
+
+        <TextView
+            android:id="@+id/text_package"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="ru.fazziclay.opentoday.dev"
+            android:textSize="17sp"
+            android:textColor="?attr/aboutapp_text_color_value" />
+    </LinearLayout>
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="15sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="?attr/aboutapp_text_color_title"
+            android:text="@string/aboutapp_text_license" />
+
+        <Space
+            android:layout_width="5sp"
+            android:layout_height="0sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GNU GPLv3"
+            android:textSize="17sp"
+            android:textColor="?attr/aboutapp_text_color_value"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="1sp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="?attr/aboutapp_text_color_title"
+            android:text="@string/aboutapp_text_developer" />
+
+        <Space
+            android:layout_width="5sp"
+            android:layout_height="0sp" />
+
+        <TextView
+            android:id="@+id/text_developer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10sp"
+            android:autoLink="all"
+            android:text="FazziCLAY\nhttps://fazziclay.github.io"
+            android:textSize="17sp"
+            android:textColor="?attr/aboutapp_text_color_value"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/licence"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/licence"
+        android:layout_gravity="start"/>
+
+    <Button
+        android:id="@+id/ok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/aboutapp_ok"
+        android:layout_gravity="end"/>
+</LinearLayout>

@@ -1,0 +1,3 @@
+todo: 2022.07.27 add to MainActivity notification to battery optimization disable
+
+add INTERNET permission to manifest!!

@@ -1,0 +1,3 @@
+Create Item
+
+ru/fazziclay/opentoday/ui/other/item/ItemViewGenerator.java # generate

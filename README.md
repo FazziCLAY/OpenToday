@@ -1,7 +1,8 @@
 # LifeSchedule
 Android application for the organization of life
 
-// TODO: Rewritte readme
-(next in __russian__ language)
+# Coming soon...
+Application is development.
 
-Планы и мысли
+# Other Development Docs
+"/docs" folder

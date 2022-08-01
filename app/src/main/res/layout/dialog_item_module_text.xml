@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_item_module_text_text_title"/>
+
+    <EditText
+        android:id="@+id/text"
+        android:hint="@string/dialog_item_module_text_text_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:importantForAutofill="no"
+        android:inputType="textMultiLine" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/uidialog_edit_textentry_textColor_title" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/textColor_indicator"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="45sp"
+            android:background="@drawable/shape_color_indicator"
+            android:backgroundTint="#ff000f"
+            android:orientation="horizontal">
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/textColor_edit"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_preferences"
+            android:contentDescription="@string/uidialog_edit_textentry_textColor_edit" />
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/default_text_color"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="0sp"
+        android:text="@string/uidialog_edit_textentry_defaultTextColor" />
+
+</LinearLayout>

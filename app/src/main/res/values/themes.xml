@@ -1,0 +1,39 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.OpenToday" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">#07B301</item>
+        <item name="colorPrimaryVariant">#008B13</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">#33B500</item>
+        <item name="colorSecondaryVariant">#247001</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+
+
+        <!-- About -->
+        <item name="aboutapp_title_color">#1C7B8E</item>
+        <item name="aboutapp_text_color_title">#000000</item>
+        <item name="aboutapp_text_color_value">#676767</item>
+
+        <!-- Main Activity -->
+        <item name="main_currentDate_color">#008466</item>
+        <item name="disableBatteryOptimization_backgroundColor">#FF5F6A</item>
+        <item name="disableBatteryOptimization_textColor">#000000</item>
+        <item name="updateAvailable_backgroundColor">#FF5F6A</item>
+        <item name="updateAvailable_textColor">#000000</item>
+
+        <!-- Entries -->
+        <item name="entry_background_color">#800B265E</item>
+        <item name="entry_text_color">#DD0000</item>
+
+        <item name="textEntry_background_color">#803D3D3D</item>
+        <item name="textEntry_text_color">#2B2B2B</item>
+
+        <item name="checkboxEntry_background_color">#803D3D3D</item>
+        <item name="checkboxEntry_text_color">#2B2B2B</item>
+    </style>
+</resources>
