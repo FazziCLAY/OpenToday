@@ -63,4 +63,10 @@
     <string name="empty"><![CDATA[<Пусто>]]></string>
     <string name="counter_value">Значение счётчика</string>
     <string name="counter_step">Шаг счётчика</string>
+    <string name="dialog_item_module_item_minimize">Уменьшить</string>
+    <string name="uidialog_edit_textentry_clickableUrls">Выделять ссылки</string>
+    <string name="menuItem_minimize">Уменьшить</string>
+    <string name="dayRepeatable_latestRegenerate">Галочка последний раз обновилась сама: %s</string>
+    <string name="cycleListItem_tick_all">Все</string>
+    <string name="cycleListItem_tick_current">Текущий выбранный</string>
 </resources>

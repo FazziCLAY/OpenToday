@@ -3,7 +3,44 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    style="@style/Theme.OpenToday.ItemEditModule">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_item_module_item_backgroundColor_hint" />
+
+    <LinearLayout
+        android:id="@+id/viewBackgroundColor_edit"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:id="@+id/viewBackgroundColor_indicator"
+            android:layout_gravity="center"
+            android:layout_width="0dp"
+            android:layout_height="45sp"
+            android:background="@drawable/shape_color_indicator"
+            android:backgroundTint="#ff000f"
+            android:orientation="horizontal">
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@android:drawable/ic_menu_preferences"
+            android:contentDescription="@string/dialog_item_module_item_backgroundColor_edit" />
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/default_background_color"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="0sp"
+        android:text="@string/dialog_item_module_item_defaultBackgroundColor" />
 
     <TextView
         android:layout_width="match_parent"
@@ -20,40 +57,11 @@
         android:importantForAutofill="no"
         tools:ignore="HardcodedText" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/dialog_item_module_item_backgroundColor_hint" />
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_weight="1"
-            android:id="@+id/viewBackgroundColor_indicator"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="45sp"
-            android:background="@drawable/shape_color_indicator"
-            android:backgroundTint="#ff000f"
-            android:orientation="horizontal">
-        </LinearLayout>
-
-        <ImageButton
-            android:id="@+id/viewBackgroundColor_edit"
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_preferences"
-            android:contentDescription="@string/dialog_item_module_item_backgroundColor_edit" />
-    </LinearLayout>
-
     <CheckBox
-        android:id="@+id/default_background_color"
+        android:id="@+id/minimize"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="0sp"
-        android:text="@string/dialog_item_module_item_defaultBackgroundColor" />
+        android:text="@string/dialog_item_module_item_minimize" />
+
 </LinearLayout>

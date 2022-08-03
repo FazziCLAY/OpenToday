@@ -10,6 +10,8 @@ import android.content.res.ColorStateList;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -40,6 +42,7 @@ import ru.fazziclay.opentoday.databinding.DialogItemModuleTextBinding;
 import ru.fazziclay.opentoday.ui.activity.MainActivity;
 import ru.fazziclay.opentoday.ui.other.item.ItemUIDrawer;
 import ru.fazziclay.opentoday.util.MinTextWatcher;
+import ru.fazziclay.opentoday.util.SpinnerHelper;
 
 public class DialogItem {
     private final Activity activity;
@@ -134,7 +137,13 @@ public class DialogItem {
         });
         if (create) editUiModule.notifyCreateMode();
         editModules.add(editUiModule);
-        return editUiModule.getView();
+
+        View view = editUiModule.getView();
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(0, 5, 0, 5);
+        view.setLayoutParams(layoutParams);
+
+        return view;
     }
 
     private void applyRequest() {
@@ -273,6 +282,7 @@ public class DialogItem {
                         }))
                         .show();
             });
+            binding.minimize.setChecked(item.isMinimize());
 
             // On edit start
             binding.viewMinHeight.addTextChangedListener(new MinTextWatcher() {
@@ -282,6 +292,7 @@ public class DialogItem {
                 }
             });
             binding.defaultBackgroundColor.setOnClickListener(v -> onEditStart.run());
+            binding.minimize.setOnClickListener(v -> onEditStart.run());
             //
         }
 
@@ -294,6 +305,7 @@ public class DialogItem {
             item.setViewMinHeight(Integer.parseInt(binding.viewMinHeight.getText().toString()));
             item.setViewBackgroundColor(temp_backgroundColor);
             item.setViewCustomBackgroundColor(!binding.defaultBackgroundColor.isChecked());
+            item.setMinimize(binding.minimize.isChecked());
         }
 
         @Override
@@ -341,6 +353,8 @@ public class DialogItem {
                         .show();
             });
 
+            binding.clickableUrls.setChecked(textItem.isClickableUrls());
+
             // On edit start
             binding.text.addTextChangedListener(new MinTextWatcher() {
                 @Override
@@ -349,6 +363,7 @@ public class DialogItem {
                 }
             });
             binding.defaultTextColor.setOnClickListener(v -> onEditStart.run());
+            binding.clickableUrls.setOnClickListener(v -> onEditStart.run());
             //
         }
 
@@ -359,6 +374,7 @@ public class DialogItem {
             textItem.setText(binding.text.getText().toString());
             textItem.setTextColor(temp_textColor);
             textItem.setCustomTextColor(!binding.defaultTextColor.isChecked());
+            textItem.setClickableUrls(binding.clickableUrls.isChecked());
         }
 
         @Override
@@ -411,20 +427,17 @@ public class DialogItem {
         public void setup(Item item, Activity activity, View view) {
             DayRepeatableCheckboxItem dayRepeatableCheckboxItem = (DayRepeatableCheckboxItem) item;
             binding = DialogItemModuleDayrepeatablecheckboxBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
-            binding.startValue.setChecked(dayRepeatableCheckboxItem.isChecked());
+            binding.startValue.setChecked(dayRepeatableCheckboxItem.getStartValue());
             binding.startValue.setOnClickListener(v -> onEditStart.run());
 
-
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd EEEE", Locale.getDefault());
-            GregorianCalendar g = new GregorianCalendar();
-            g.set(Calendar.DAY_OF_YEAR, dayRepeatableCheckboxItem.getLatestDayOfYear());
-            // TODO: 01.08.2022 make translatable
+            String date = "-";
             if (!create) {
-                binding.latestReset.setText("Галочка последний раз обновилась сама: " + dateFormat.format(g.getTime()));
-            } else {
-                binding.latestReset.setText("Галочка последний раз обновилась сама: " + "-");
-
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd EEEE", Locale.getDefault());
+                GregorianCalendar g = new GregorianCalendar();
+                g.set(Calendar.DAY_OF_YEAR, dayRepeatableCheckboxItem.getLatestDayOfYear());
+                date = dateFormat.format(g.getTime());
             }
+            binding.latestReset.setText(activity.getString(R.string.dayRepeatable_latestRegenerate, date));
         }
 
         @Override
@@ -448,6 +461,8 @@ public class DialogItem {
     public static class CycleListItemEditModule extends BaseEditUiModule {
         private DialogItemModuleCyclelistBinding binding;
         private ItemUIDrawer itemUIDrawer;
+        private SpinnerHelper<CycleListItem.CycleItemsBackgroundWork> itemsCycleBackgroundWorkSpinnerHelp;
+        private Runnable onEditStart;
 
         @Override
         public View getView() {
@@ -464,14 +479,33 @@ public class DialogItem {
             binding.canvas.addView(itemUIDrawer.getView());
             itemUIDrawer.create();
 
+            itemsCycleBackgroundWorkSpinnerHelp = new SpinnerHelper<>(
+                    new String[] {
+                            activity.getString(R.string.cycleListItem_tick_all),
+                            activity.getString(R.string.cycleListItem_tick_current)
+                    },
+                    new CycleListItem.CycleItemsBackgroundWork[] {
+                            CycleListItem.CycleItemsBackgroundWork.ALL,
+                            CycleListItem.CycleItemsBackgroundWork.CURRENT
+                    }
+            );
+
+            binding.itemsCycleBackgroundWork.setOnClickListener(v -> onEditStart.run());
+            binding.itemsCycleBackgroundWork.setAdapter(new ArrayAdapter<>(activity, android.R.layout.simple_expandable_list_item_1, itemsCycleBackgroundWorkSpinnerHelp.getNames()));
+            binding.itemsCycleBackgroundWork.setSelection(itemsCycleBackgroundWorkSpinnerHelp.getPosition(cycleListItem.getItemsCycleBackgroundWork()));
             binding.addNew.setOnClickListener(v -> MainActivity.showAddNewDialog(activity, cycleListItem.getItemsCycleStorage()));
         }
 
         @Override
-        public void commit(Item item) {}
+        public void commit(Item item) {
+            CycleListItem cycleListItem = (CycleListItem) item;
+            cycleListItem.setItemsCycleBackgroundWork(itemsCycleBackgroundWorkSpinnerHelp.getValue(binding.itemsCycleBackgroundWork.getSelectedItemPosition()));
+        }
 
         @Override
-        public void setOnStartEditListener(Runnable o) {}
+        public void setOnStartEditListener(Runnable o) {
+            onEditStart = o;
+        }
     }
 
     private static class CounterItemEditModule extends BaseEditUiModule {

@@ -16,7 +16,8 @@ public class CycleListItem extends TextItem {
             CycleListItem cycleListItem = (CycleListItem) item;
             return super.exportItem(item)
                     .put("currentItemPosition", cycleListItem.currentItemPosition)
-                    .put("itemsCycle", ItemIEManager.exportItemList(cycleListItem.itemsCycleStorage.exportData().items));
+                    .put("itemsCycle", ItemIEManager.exportItemList(cycleListItem.itemsCycleStorage.exportData().items))
+                    .put("itemsCycleBackgroundWork", cycleListItem.itemsCycleBackgroundWork.name());
         }
 
         private final CycleListItem defaultValues = new CycleListItem("<import_error>");
@@ -29,6 +30,11 @@ public class CycleListItem extends TextItem {
             dataTransferPacket.items = ItemIEManager.importItemList(jsonItemsCycle);
             o.itemsCycleStorage.importData(dataTransferPacket);
             o.currentItemPosition = json.optInt("currentItemPosition", defaultValues.currentItemPosition);
+            try {
+                o.itemsCycleBackgroundWork = CycleItemsBackgroundWork.valueOf(json.optString("itemsCycleBackgroundWork", defaultValues.itemsCycleBackgroundWork.name()).toUpperCase());
+            } catch (Exception e) {
+                o.itemsCycleBackgroundWork = defaultValues.itemsCycleBackgroundWork;
+            }
             return o;
         }
     }
@@ -41,6 +47,7 @@ public class CycleListItem extends TextItem {
 
     @JSONName(name = "itemsCycle") @RequireSave protected SimpleItemStorage itemsCycleStorage;
     @JSONName(name = "currentItemPosition") @RequireSave protected int currentItemPosition = 0;
+    @JSONName(name = "itemsCycleBackgroundWork") @RequireSave protected CycleItemsBackgroundWork itemsCycleBackgroundWork = CycleItemsBackgroundWork.CURRENT;
 
     public CycleListItem(String text) {
         super(text);
@@ -89,11 +96,23 @@ public class CycleListItem extends TextItem {
         return itemsCycleStorage;
     }
 
+    public CycleItemsBackgroundWork getItemsCycleBackgroundWork() {
+        return itemsCycleBackgroundWork;
+    }
+
+    public void setItemsCycleBackgroundWork(CycleItemsBackgroundWork itemsCycleBackgroundWork) {
+        this.itemsCycleBackgroundWork = itemsCycleBackgroundWork;
+    }
+
     @Override
     public void tick() {
         super.tick();
-        Item c = getCurrentItem();
-        if (c != null) c.tick();
+        if (itemsCycleBackgroundWork == CycleItemsBackgroundWork.ALL) {
+            itemsCycleStorage.tick();
+        } else if (itemsCycleBackgroundWork == CycleItemsBackgroundWork.CURRENT) {
+            Item c = getCurrentItem();
+            if (c != null) c.tick();
+        }
     }
 
     private class CycleItemStorage extends SimpleItemStorage {
@@ -113,5 +132,10 @@ public class CycleListItem extends TextItem {
         public void save() {
             CycleListItem.this.save();
         }
+    }
+
+    public enum CycleItemsBackgroundWork {
+        ALL,
+        CURRENT
     }
 }

@@ -6,12 +6,15 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.items.Item;
 import ru.fazziclay.opentoday.app.items.ItemStorage;
+import ru.fazziclay.opentoday.app.items.TextItem;
 import ru.fazziclay.opentoday.app.items.callback.OnItemAdded;
 import ru.fazziclay.opentoday.app.items.callback.OnItemDeleted;
 import ru.fazziclay.opentoday.app.items.callback.OnItemMoved;
@@ -107,7 +110,9 @@ public class ItemUIDrawer {
             Item item = itemStorage.getItems()[position];
             LinearLayout layout = holder.layout;
             layout.removeAllViews();
-            layout.addView(getViewForItem(item));
+
+            View view = getViewForItem(item);
+            layout.addView(view);
         }
 
         @Override
@@ -130,7 +135,7 @@ public class ItemUIDrawer {
 
     private class DragReorderCallback extends ItemTouchHelper.SimpleCallback {
         public DragReorderCallback() {
-            super(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0);
+            super(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
         }
 
         @Override
@@ -145,6 +150,42 @@ public class ItemUIDrawer {
         }
 
         @Override
-        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {}
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            if (direction == ItemTouchHelper.LEFT) {
+                int positionFrom = viewHolder.getAdapterPosition();
+                Item item = ItemUIDrawer.this.itemStorage.getItems()[positionFrom];
+                item.setMinimize(!item.isMinimize());
+                item.save();
+                item.updateUi();
+            } else if (direction == ItemTouchHelper.RIGHT) {
+                int positionFrom = viewHolder.getAdapterPosition();
+                Item item = ItemUIDrawer.this.itemStorage.getItems()[positionFrom];
+                item.updateUi();
+
+                PopupMenu menu = new PopupMenu(activity, viewHolder.itemView);
+                menu.setForceShowIcon(true);
+                menu.inflate(R.menu.menu_item);
+                menu.getMenu().findItem(R.id.minimize).setChecked(item.isMinimize());
+                menu.getMenu().setGroupEnabled(R.id.textItem, item instanceof TextItem);
+                if (item instanceof TextItem) {
+                    TextItem textItem = (TextItem) item;
+                    menu.getMenu().findItem(R.id.textItem_clickableUrls).setChecked(textItem.isClickableUrls());
+                }
+                menu.setOnMenuItemClickListener(menuItem -> {
+                    if (menuItem.getItemId() == R.id.minimize) {
+                        item.setMinimize(!item.isMinimize());
+                    } else if (menuItem.getItemId() == R.id.textItem_clickableUrls) {
+                        if (item instanceof TextItem) {
+                            TextItem textItem = (TextItem) item;
+                            textItem.setClickableUrls(!textItem.isClickableUrls());
+                        }
+                    }
+                    item.save();
+                    item.updateUi();
+                    return true;
+                });
+                menu.show();
+            }
+        }
     }
 }

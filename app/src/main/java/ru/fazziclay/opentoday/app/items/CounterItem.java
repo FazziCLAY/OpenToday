@@ -2,7 +2,7 @@ package ru.fazziclay.opentoday.app.items;
 
 import org.json.JSONObject;
 
-import ru.fazziclay.opentoday.annotation.GGGetter;
+import ru.fazziclay.opentoday.annotation.Getter;
 import ru.fazziclay.opentoday.annotation.JSONName;
 import ru.fazziclay.opentoday.annotation.RequireSave;
 import ru.fazziclay.opentoday.annotation.Setter;
@@ -51,8 +51,10 @@ public class CounterItem extends TextItem {
         updateUi();
     }
 
-    @GGGetter public double getCounter() { return counter; }
-    @GGGetter public double getStep() { return step; }
+    @Getter
+    public double getCounter() { return counter; }
+    @Getter
+    public double getStep() { return step; }
     @Setter public void setCounter(double counter) { this.counter = counter; }
     @Setter public void setStep(double step) { this.step = step; }
 }

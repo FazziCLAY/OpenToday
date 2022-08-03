@@ -2,7 +2,44 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    style="@style/Theme.OpenToday.ItemEditModule">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/uidialog_edit_textentry_textColor_title" />
+
+    <LinearLayout
+        android:id="@+id/textColor_edit"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/textColor_indicator"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="45sp"
+            android:background="@drawable/shape_color_indicator"
+            android:backgroundTint="#ff000f"
+            android:orientation="horizontal">
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@android:drawable/ic_menu_preferences"
+            android:contentDescription="@string/uidialog_edit_textentry_textColor_edit" />
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/default_text_color"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="0sp"
+        android:text="@string/uidialog_edit_textentry_defaultTextColor" />
 
     <TextView
         android:layout_width="match_parent"
@@ -17,41 +54,11 @@
         android:importantForAutofill="no"
         android:inputType="textMultiLine" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/uidialog_edit_textentry_textColor_title" />
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:id="@+id/textColor_indicator"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="45sp"
-            android:background="@drawable/shape_color_indicator"
-            android:backgroundTint="#ff000f"
-            android:orientation="horizontal">
-        </LinearLayout>
-
-        <ImageButton
-            android:id="@+id/textColor_edit"
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_preferences"
-            android:contentDescription="@string/uidialog_edit_textentry_textColor_edit" />
-    </LinearLayout>
-
     <CheckBox
-        android:id="@+id/default_text_color"
+        android:id="@+id/clickableUrls"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="0sp"
-        android:text="@string/uidialog_edit_textentry_defaultTextColor" />
+        android:text="@string/uidialog_edit_textentry_clickableUrls" />
 
 </LinearLayout>

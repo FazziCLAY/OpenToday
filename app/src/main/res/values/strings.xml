@@ -64,4 +64,10 @@
     <string name="empty"><![CDATA[<Empty>]]></string>
     <string name="counter_value">Counter value</string>
     <string name="counter_step">Counter step</string>
+    <string name="dialog_item_module_item_minimize">Minimize</string>
+    <string name="menuItem_minimize">Minimize</string>
+    <string name="uidialog_edit_textentry_clickableUrls">Clickable URLs</string>
+    <string name="cycleListItem_tick_all">All</string>
+    <string name="cycleListItem_tick_current">Current</string>
+    <string name="dayRepeatable_latestRegenerate">Latest renegerate: %s</string>
 </resources>

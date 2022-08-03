@@ -5,7 +5,7 @@ import org.json.JSONObject;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import ru.fazziclay.opentoday.annotation.GGGetter;
+import ru.fazziclay.opentoday.annotation.Getter;
 import ru.fazziclay.opentoday.annotation.JSONName;
 import ru.fazziclay.opentoday.annotation.RequireSave;
 import ru.fazziclay.opentoday.annotation.Setter;
@@ -51,9 +51,11 @@ public class DayRepeatableCheckboxItem extends CheckboxItem {
         this.latestDayOfYear = copy.latestDayOfYear;
     }
 
-    @GGGetter public boolean getStartValue() { return startValue; }
+    @Getter
+    public boolean getStartValue() { return startValue; }
     @Setter public void setStartValue(boolean v) { this.startValue = v; }
-    @GGGetter public int getLatestDayOfYear() { return latestDayOfYear; }
+    @Getter
+    public int getLatestDayOfYear() { return latestDayOfYear; }
     @Setter public void setLatestDayOfYear(int v) { this.latestDayOfYear = v; }
 
     @Override

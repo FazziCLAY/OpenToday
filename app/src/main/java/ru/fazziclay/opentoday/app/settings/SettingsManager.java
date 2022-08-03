@@ -1,5 +1,7 @@
 package ru.fazziclay.opentoday.app.settings;
 
+import android.util.Log;
+
 import androidx.appcompat.app.AppCompatDelegate;
 
 import org.json.JSONException;
@@ -57,8 +59,8 @@ public class SettingsManager {
                 this.theme = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
             }
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            Log.e("SettingsManager", "load", e);
         }
     }
 
@@ -95,7 +97,7 @@ public class SettingsManager {
 
             FileUtil.setText(saveFile, jsonObject.toString(2));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e("SettingsManager", "save", e);
         }
     }
 }

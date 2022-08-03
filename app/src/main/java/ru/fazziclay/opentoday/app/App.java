@@ -23,16 +23,6 @@ import ru.fazziclay.opentoday.util.DebugUtil;
 
 @SuppressWarnings("PointlessBooleanExpression") // for debug variables
 public class App extends Application {
-    // TODO === NOTES ===
-    // todo: check memory leak
-    // todo: remove not works tests
-    // todo: remove debug views and texts
-    // todo: manage notifications channels
-    // todo: idea: add PlaceholderTextEntry
-    // todo: review about
-    //
-    //
-
     // Application
     public final static boolean APPLICATION_IS_RELEASE = true;
     public final static int APPLICATION_DATA_VERSION = 2;
@@ -90,7 +80,7 @@ public class App extends Application {
         updateChecker = new UpdateChecker();
 
         AppCompatDelegate.setDefaultNightMode(settingsManager.getTheme());
-        notificationManager.createNotificationChannel(new NotificationChannel("foreground", getString(R.string.notification_foreground_text), NotificationManager.IMPORTANCE_HIGH));
+        notificationManager.createNotificationChannel(new NotificationChannel("foreground", getString(R.string.notification_foreground_title), NotificationManager.IMPORTANCE_HIGH));
         startService(new Intent(this, MainService.class));
     }
 

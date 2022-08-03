@@ -4,7 +4,7 @@ import android.graphics.Color;
 
 import org.json.JSONObject;
 
-import ru.fazziclay.opentoday.annotation.GGGetter;
+import ru.fazziclay.opentoday.annotation.Getter;
 import ru.fazziclay.opentoday.annotation.JSONName;
 import ru.fazziclay.opentoday.annotation.RequireSave;
 import ru.fazziclay.opentoday.annotation.Setter;
@@ -18,7 +18,8 @@ public class Item {
             return new JSONObject()
                     .put("viewMinHeight", item.viewMinHeight)
                     .put("viewBackgroundColor", item.viewBackgroundColor)
-                    .put("viewCustomBackgroundColor", item.viewCustomBackgroundColor);
+                    .put("viewCustomBackgroundColor", item.viewCustomBackgroundColor)
+                    .put("minimize", item.minimize);
         }
 
         private final Item defaultValues = new Item();
@@ -27,6 +28,7 @@ public class Item {
             o.viewMinHeight = json.optInt("viewMinHeight", defaultValues.viewMinHeight);
             o.viewBackgroundColor = json.optInt("viewBackgroundColor", defaultValues.viewBackgroundColor);
             o.viewCustomBackgroundColor = json.optBoolean("viewCustomBackgroundColor", defaultValues.viewCustomBackgroundColor);
+            o.minimize = json.optBoolean("minimize", defaultValues.minimize);
             return o;
         }
     }
@@ -35,8 +37,8 @@ public class Item {
     @JSONName(name = "viewMinHeight") @RequireSave protected int viewMinHeight = 0; // минимальная высота
     @JSONName(name = "viewBackgroundColor") @RequireSave protected int viewBackgroundColor = Color.parseColor(DEFAULT_BACKGROUND_COLOR); // фоновый цвет
     @JSONName(name = "viewCustomBackgroundColor") @RequireSave protected boolean viewCustomBackgroundColor = false; // юзаем ли фоновый цвет
+    @JSONName(name = "minimize") @RequireSave protected boolean minimize = false;
     protected ItemController controller = null;
-
 
     // Copy
     public Item(Item copy) {
@@ -44,6 +46,7 @@ public class Item {
             this.viewMinHeight = copy.viewMinHeight;
             this.viewBackgroundColor = copy.viewBackgroundColor;
             this.viewCustomBackgroundColor = copy.viewCustomBackgroundColor;
+            this.minimize = copy.minimize;
             this.controller = copy.controller;
         }
     }
@@ -64,12 +67,14 @@ public class Item {
         if (controller != null) controller.updateUi(this);
     }
 
-    @GGGetter public int getViewMinHeight() { return viewMinHeight; }
+    @Getter public int getViewMinHeight() { return viewMinHeight; }
     @Setter public void setViewMinHeight(int v) { this.viewMinHeight = v; }
-    @GGGetter public int getViewBackgroundColor() { return viewBackgroundColor; }
+    @Getter public int getViewBackgroundColor() { return viewBackgroundColor; }
     @Setter public void setViewBackgroundColor(int v) { this.viewBackgroundColor = v; }
-    @GGGetter public boolean isViewCustomBackgroundColor() { return viewCustomBackgroundColor; }
+    @Getter public boolean isViewCustomBackgroundColor() { return viewCustomBackgroundColor; }
     @Setter public void setViewCustomBackgroundColor(boolean v) { this.viewCustomBackgroundColor = v; }
+    @Getter public boolean isMinimize() { return minimize; }
+    @Setter public void setMinimize(boolean minimize) { this.minimize = minimize; }
 
     public void tick() {}
 }

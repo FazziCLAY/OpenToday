@@ -4,7 +4,7 @@ import android.graphics.Color;
 
 import org.json.JSONObject;
 
-import ru.fazziclay.opentoday.annotation.GGGetter;
+import ru.fazziclay.opentoday.annotation.Getter;
 import ru.fazziclay.opentoday.annotation.JSONName;
 import ru.fazziclay.opentoday.annotation.RequireSave;
 import ru.fazziclay.opentoday.annotation.Setter;
@@ -20,7 +20,8 @@ public class TextItem extends Item {
             return super.exportItem(textItem)
                     .put("text", textItem.text)
                     .put("textColor", textItem.textColor)
-                    .put("customTextColor", textItem.customTextColor);
+                    .put("customTextColor", textItem.customTextColor)
+                    .put("clickableUrls", textItem.clickableUrls);
         }
 
         private final TextItem defaultValues = new TextItem("<import_error>");
@@ -29,6 +30,7 @@ public class TextItem extends Item {
             TextItem o = new TextItem(super.importItem(json), json.optString("text", defaultValues.text));
             o.textColor = json.optInt("textColor", defaultValues.textColor);
             o.customTextColor = json.optBoolean("customTextColor", defaultValues.customTextColor);
+            o.clickableUrls = json.optBoolean("clickableUrls", defaultValues.clickableUrls);
             return o;
         }
     }
@@ -37,6 +39,7 @@ public class TextItem extends Item {
     @JSONName(name = "text") @RequireSave protected String text;
     @JSONName(name = "textColor") @RequireSave protected int textColor = Color.parseColor(DEFAULT_TEXT_COLOR);
     @JSONName(name = "customTextColor") @RequireSave protected boolean customTextColor = false;
+    @JSONName(name = "clickableUrls") @RequireSave protected boolean clickableUrls = false;
 
     public TextItem(String text) {
         this(null, text);
@@ -54,14 +57,17 @@ public class TextItem extends Item {
         this.text = copy.text;
         this.textColor = copy.textColor;
         this.customTextColor = copy.customTextColor;
+        this.clickableUrls = copy.clickableUrls;
     }
 
-    @GGGetter public String getText() { return text; }
+    @Getter public String getText() { return text; }
     @Setter public void setText(String v) { this.text = v; }
-    @GGGetter public int getTextColor() { return textColor; }
+    @Getter public int getTextColor() { return textColor; }
     @Setter public void setTextColor(int v) { this.textColor = v; }
-    @GGGetter public boolean isCustomTextColor() { return customTextColor; }
+    @Getter public boolean isCustomTextColor() { return customTextColor; }
     @Setter public void setCustomTextColor(boolean v) { this.customTextColor = v; }
+    @Getter public boolean isClickableUrls() { return clickableUrls; }
+    @Setter public void setClickableUrls(boolean clickableUrls) { this.clickableUrls = clickableUrls; }
 
     @Override
     public void tick() {

@@ -36,4 +36,10 @@
         <item name="checkboxEntry_background_color">#803D3D3D</item>
         <item name="checkboxEntry_text_color">#2B2B2B</item>
     </style>
+
+    <style name="Theme.OpenToday.ItemEditModule" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="android:background">@drawable/shape</item>
+        <item name="android:backgroundTint">#4C858585</item>
+        <item name="android:padding">3sp</item>
+    </style>
 </resources>

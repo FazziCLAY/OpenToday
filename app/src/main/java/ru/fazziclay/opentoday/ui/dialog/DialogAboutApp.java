@@ -5,7 +5,6 @@ import static ru.fazziclay.opentoday.util.InlineUtil.fcu_viewOnClick;
 import android.app.Activity;
 import android.app.Dialog;
 
-import ru.fazziclay.opentoday.BuildConfig;
 import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.databinding.UidialogAboutAppBinding;
 import ru.fazziclay.opentoday.ui.activity.OpenSourceLicensesActivity;

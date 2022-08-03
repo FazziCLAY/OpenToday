@@ -13,6 +13,7 @@ import ru.fazziclay.opentoday.app.items.ItemManager;
 public class MainService extends Service {
     private Handler handler;
     private Runnable runnable;
+    private long latestTick;
 
     private ItemManager itemManager;
 
@@ -35,9 +36,15 @@ public class MainService extends Service {
         handler = new Handler(getMainLooper());
         runnable = () -> {
             itemManager.tick();
+            handler.removeCallbacks(runnable);
             handler.postDelayed(runnable, 1000);
         };
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
         handler.post(runnable);
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override

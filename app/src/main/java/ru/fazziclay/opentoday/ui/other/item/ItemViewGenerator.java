@@ -4,9 +4,12 @@ import static ru.fazziclay.opentoday.util.InlineUtil.fcu_viewOnClick;
 
 import android.app.Activity;
 import android.content.res.ColorStateList;
+import android.text.style.URLSpan;
+import android.text.util.Linkify;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import ru.fazziclay.opentoday.R;
@@ -64,6 +67,7 @@ public class ItemViewGenerator {
             ret.setBackgroundTintList(ColorStateList.valueOf(item.getViewBackgroundColor()));
         }
         fcu_viewOnClick(ret, () -> dialogItem.edit(item));
+        if (item.isMinimize()) ret.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 60));
         return ret;
     }
 
@@ -97,7 +101,7 @@ public class ItemViewGenerator {
             binding.content.addView(generate(current, binding.getRoot()));
         } else {
             TextView textView = new TextView(activity);
-            textView.setText(R.string.empty); // TODO: 01.08.2022 make translatable
+            textView.setText(R.string.empty);
             binding.content.addView(textView);
         }
         return binding.getRoot();
@@ -148,6 +152,7 @@ public class ItemViewGenerator {
         if (item.isCustomTextColor()) {
             view.setTextColor(ColorStateList.valueOf(item.getTextColor()));
         }
+        if (item.isClickableUrls()) Linkify.addLinks(view, Linkify.ALL);
     }
 
     private void applyCheckItemToCheckBoxView(CheckboxItem item, CheckBox view) {

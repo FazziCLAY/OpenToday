@@ -2,9 +2,7 @@ package ru.fazziclay.opentoday.app.items;
 
 import org.json.JSONObject;
 
-import java.lang.reflect.Field;
-
-import ru.fazziclay.opentoday.annotation.GGGetter;
+import ru.fazziclay.opentoday.annotation.Getter;
 import ru.fazziclay.opentoday.annotation.JSONName;
 import ru.fazziclay.opentoday.annotation.RequireSave;
 import ru.fazziclay.opentoday.annotation.Setter;
@@ -45,6 +43,7 @@ public class CheckboxItem extends TextItem {
         this.checked = copy.checked;
     }
 
-    @GGGetter public boolean isChecked() { return checked; }
+    @Getter
+    public boolean isChecked() { return checked; }
     @Setter public void setChecked(boolean s) { this.checked = s; }
 }
