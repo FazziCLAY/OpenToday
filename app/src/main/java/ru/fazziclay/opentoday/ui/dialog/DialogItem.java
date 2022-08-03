@@ -490,7 +490,7 @@ public class DialogItem {
                     }
             );
 
-            binding.itemsCycleBackgroundWork.setOnClickListener(v -> onEditStart.run());
+            // TODO: 03.08.2022 make onEditStart for spinner
             binding.itemsCycleBackgroundWork.setAdapter(new ArrayAdapter<>(activity, android.R.layout.simple_expandable_list_item_1, itemsCycleBackgroundWorkSpinnerHelp.getNames()));
             binding.itemsCycleBackgroundWork.setSelection(itemsCycleBackgroundWorkSpinnerHelp.getPosition(cycleListItem.getItemsCycleBackgroundWork()));
             binding.addNew.setOnClickListener(v -> MainActivity.showAddNewDialog(activity, cycleListItem.getItemsCycleStorage()));
