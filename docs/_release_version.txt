@@ -6,7 +6,6 @@
 
 # 1. Commit
      - Commit all changes to git
-     - git push
 
 # 2. Cleanup
      - gradlew clean  // Delete build dir
@@ -14,12 +13,18 @@
 # 3. Make presentable
     # Prerepare application to release
      - app/build.gradle:
-           - android.defaultConfig.applicationId = "ru.fazziclay.opentoday" // Delete ".dev" suffix
-           - android.defaultConfig.versionCode  += 1                        // Add one to version code
-           - android.defaultConfig.versionName   = "0.1.0 (build 2)"        // Set first: version name set build to versionCode
+set build to versionCode
       
      - set "app/src/main/java/ru.fazziclay.opentoday.app.App" "APPLICATION_IS_RELEASE" to TRUE
  	
 # 4. Commit all!
 # 5. Add to "docs/public_versions_history.txt"
 # 6. Compile RELEASE apk
+
+
+
+==== RELEASE VERSION ====
+app/build.gradle:
+- android.defaultConfig.applicationId = "ru.fazziclay.opentoday" // Delete ".dev" suffix
+- android.defaultConfig.versionCode  += 1                        // Add one to version code
+- android.defaultConfig.versionName   = "0.1.0 (build 2)"        // 
