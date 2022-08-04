@@ -1,4 +1,4 @@
-# LifeSchedule
+# OpenToday
 Android application for the organization of life
 
 # Coming soon...
