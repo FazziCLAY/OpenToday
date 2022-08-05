@@ -70,4 +70,5 @@
     <string name="cycleListItem_tick_all">All</string>
     <string name="cycleListItem_tick_current">Current</string>
     <string name="dayRepeatable_latestRegenerate">Latest renegerate: %s</string>
+    <string name="item_text_editText">Edit text</string>
 </resources>

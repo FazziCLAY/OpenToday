@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.res.ColorStateList;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -264,7 +265,7 @@ public class DialogItem {
             binding.viewMinHeight.setText(String.valueOf(item.getViewMinHeight()));
             binding.defaultBackgroundColor.setChecked(!item.isViewCustomBackgroundColor());
             temp_backgroundColor = item.getViewBackgroundColor();
-            binding.viewBackgroundColorIndicator.setBackgroundTintList(ColorStateList.valueOf(temp_backgroundColor));
+            updateTextColorIndicator(activity);
             binding.viewBackgroundColorEdit.setOnClickListener(v -> {
                 ColorPickerView cp = new ColorPickerView(activity);
                 cp.setCurrentColor(temp_backgroundColor);
@@ -277,7 +278,9 @@ public class DialogItem {
                         .setNegativeButton(R.string.dialogItem_module_item_backgroundColor_dialog_cancel, null)
                         .setPositiveButton(R.string.dialogItem_module_item_backgroundColor_dialog_apply, ((dialog1, which) -> {
                             temp_backgroundColor = cp.getColor();
-                            binding.viewBackgroundColorIndicator.setBackgroundTintList(ColorStateList.valueOf(temp_backgroundColor));
+                            binding.defaultBackgroundColor.setChecked(false);
+                            updateTextColorIndicator(activity);
+
                             onEditStart.run();
                         }))
                         .show();
@@ -291,9 +294,24 @@ public class DialogItem {
                     onEditStart.run();
                 }
             });
-            binding.defaultBackgroundColor.setOnClickListener(v -> onEditStart.run());
+            binding.defaultBackgroundColor.setOnClickListener(v -> {
+                updateTextColorIndicator(activity);
+                onEditStart.run();
+            });
             binding.minimize.setOnClickListener(v -> onEditStart.run());
             //
+        }
+
+        private void updateTextColorIndicator(Activity activity) {
+            if (binding.defaultBackgroundColor.isChecked()) {
+                TypedValue typedValue = new TypedValue();
+                activity.getTheme().resolveAttribute(R.attr.entry_background_color, typedValue, true);
+                int defaultColor = typedValue.data;
+
+                binding.viewBackgroundColorIndicator.setBackgroundTintList(ColorStateList.valueOf(defaultColor));
+            } else {
+                binding.viewBackgroundColorIndicator.setBackgroundTintList(ColorStateList.valueOf(temp_backgroundColor));
+            }
         }
 
         @Override
@@ -334,7 +352,7 @@ public class DialogItem {
             binding.text.setText(textItem.getText());
             binding.defaultTextColor.setChecked(!textItem.isCustomTextColor());
             temp_textColor = textItem.getTextColor();
-            binding.textColorIndicator.setBackgroundTintList(ColorStateList.valueOf(temp_textColor));
+            updateTextColorIndicator(activity);
             binding.textColorEdit.setOnClickListener(v -> {
                 ColorPickerView cp = new ColorPickerView(activity);
                 cp.setCurrentColor(temp_textColor);
@@ -347,7 +365,8 @@ public class DialogItem {
                         .setNegativeButton(R.string.dialogItem_module_text_textColor_dialog_cancel, null)
                         .setPositiveButton(R.string.dialogItem_module_text_textColor_dialog_apply, ((dialog1, which) -> {
                             temp_textColor = cp.getColor();
-                            binding.textColorIndicator.setBackgroundTintList(ColorStateList.valueOf(temp_textColor));
+                            binding.defaultTextColor.setChecked(false);
+                            updateTextColorIndicator(activity);
                             onEditStart.run();
                         }))
                         .show();
@@ -362,9 +381,24 @@ public class DialogItem {
                     onEditStart.run();
                 }
             });
-            binding.defaultTextColor.setOnClickListener(v -> onEditStart.run());
+            binding.defaultTextColor.setOnClickListener(v -> {
+                updateTextColorIndicator(activity);
+                onEditStart.run();
+            });
             binding.clickableUrls.setOnClickListener(v -> onEditStart.run());
             //
+        }
+
+        private void updateTextColorIndicator(Activity activity) {
+            if (binding.defaultTextColor.isChecked()) {
+                TypedValue typedValue = new TypedValue();
+                activity.getTheme().resolveAttribute(R.attr.textEntry_text_color, typedValue, true);
+                int defaultColor = typedValue.data;
+
+                binding.textColorIndicator.setBackgroundTintList(ColorStateList.valueOf(defaultColor));
+            } else {
+                binding.textColorIndicator.setBackgroundTintList(ColorStateList.valueOf(temp_textColor));
+            }
         }
 
         @Override

@@ -6,11 +6,11 @@ android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "ru.fazziclay.opentoday"
+        applicationId "ru.fazziclay.opentoday.dev"
         minSdk 26
         targetSdk 32
-        versionCode 16
-        versionName "0.2.2 (build 16)"
+        versionCode 17
+        versionName "0.3.0 (build 17 dev)"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

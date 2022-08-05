@@ -69,4 +69,5 @@
     <string name="dayRepeatable_latestRegenerate">Галочка последний раз обновилась сама: %s</string>
     <string name="cycleListItem_tick_all">Все</string>
     <string name="cycleListItem_tick_current">Текущий выбранный</string>
+    <string name="item_text_editText">Редактировать текст</string>
 </resources>

@@ -4,7 +4,6 @@ import static ru.fazziclay.opentoday.util.InlineUtil.fcu_viewOnClick;
 
 import android.app.Activity;
 import android.content.res.ColorStateList;
-import android.text.style.URLSpan;
 import android.text.util.Linkify;
 import android.view.View;
 import android.view.ViewGroup;
@@ -148,7 +147,11 @@ public class ItemViewGenerator {
 
     //
     private void applyTextItemToTextView(TextItem item, TextView view) {
-        view.setText(item.getText());
+        if (item.isMinimize()) {
+            view.setText(item.getText().split("\n")[0]);
+        } else {
+            view.setText(item.getText());
+        }
         if (item.isCustomTextColor()) {
             view.setTextColor(ColorStateList.valueOf(item.getTextColor()));
         }

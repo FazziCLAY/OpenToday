@@ -21,6 +21,7 @@ import ru.fazziclay.opentoday.app.items.callback.OnItemMoved;
 import ru.fazziclay.opentoday.app.items.callback.OnItemUpdated;
 import ru.fazziclay.opentoday.callback.CallbackImportance;
 import ru.fazziclay.opentoday.callback.Status;
+import ru.fazziclay.opentoday.ui.dialog.DialogTextItemEditText;
 
 public class ItemUIDrawer {
     private final Activity activity;
@@ -178,6 +179,12 @@ public class ItemUIDrawer {
                         if (item instanceof TextItem) {
                             TextItem textItem = (TextItem) item;
                             textItem.setClickableUrls(!textItem.isClickableUrls());
+                        }
+                    } else if (menuItem.getItemId() == R.id.textItem_editText) {
+                        if (item instanceof TextItem) {
+                            TextItem textItem = (TextItem) item;
+                            DialogTextItemEditText d = new DialogTextItemEditText(activity, textItem);
+                            d.show();
                         }
                     }
                     item.save();
