@@ -6,7 +6,7 @@ import android.app.Activity;
 import android.app.Dialog;
 
 import ru.fazziclay.opentoday.app.App;
-import ru.fazziclay.opentoday.databinding.UidialogAboutAppBinding;
+import ru.fazziclay.opentoday.databinding.DialogAboutAppBinding;
 import ru.fazziclay.opentoday.ui.activity.OpenSourceLicensesActivity;
 
 public class DialogAboutApp {
@@ -14,7 +14,7 @@ public class DialogAboutApp {
 
     public DialogAboutApp(Activity activity) {
         // View
-        UidialogAboutAppBinding binding = UidialogAboutAppBinding.inflate(activity.getLayoutInflater());
+        DialogAboutAppBinding binding = DialogAboutAppBinding.inflate(activity.getLayoutInflater());
         binding.textVersion.setText(App.VERSION_NAME);
         binding.textPackage.setText(App.APPLICATION_ID);
 
