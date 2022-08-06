@@ -39,6 +39,12 @@ public class CounterItem extends TextItem {
         super(textItem);
     }
 
+    public CounterItem(CounterItem copy) {
+        super(copy);
+        this.counter = copy.counter;
+        this.step = copy.step;
+    }
+
     public void up() {
         counter = counter + step;
         save();

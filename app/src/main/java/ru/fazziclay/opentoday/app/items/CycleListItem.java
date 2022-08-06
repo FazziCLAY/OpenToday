@@ -59,6 +59,22 @@ public class CycleListItem extends TextItem {
         itemsCycleStorage = new CycleItemStorage();
     }
 
+    public CycleListItem(CycleListItem copy) {
+        super(copy);
+        this.itemsCycleStorage = new CycleItemStorage();
+        DataTransferPacket copyData = copy.itemsCycleStorage.exportData();
+        DataTransferPacket newData = new DataTransferPacket();
+        try {
+            newData.items = ItemIEManager.importItemList(ItemIEManager.exportItemList(copyData.items));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        this.itemsCycleStorage.importData(newData);
+
+        this.currentItemPosition = copy.currentItemPosition;
+        this.itemsCycleBackgroundWork = copy.itemsCycleBackgroundWork;
+    }
+
     public Item getCurrentItem() {
         if (currentItemPosition > itemsCycleStorage.size()-1) {
             currentItemPosition = 0;

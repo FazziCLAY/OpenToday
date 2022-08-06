@@ -37,8 +37,8 @@
     <string name="item_checkbox">Checkbox</string>
     <string name="item_checkboxDayRepeatable">Checkbox (Day repeatable)</string>
     <string name="item_cycleList">Cycle list</string>
-    <string name="itemAddDialog_cancel">Cancel</string>
-    <string name="itemAddDialog_create">Create</string>
+    <string name="selectItemTypeDialog_cancel">Cancel</string>
+    <string name="selectItemTypeDialog_select">Select</string>
     <string name="itemAddDialog_helpForItem">Docs for selected item</string>
     <string name="dialogItem_apply">Save</string>
     <string name="dialogItem_cancel">Cancel</string>
@@ -71,4 +71,10 @@
     <string name="cycleListItem_tick_current">Current</string>
     <string name="dayRepeatable_latestRegenerate">Latest renegerate: %s</string>
     <string name="item_text_editText">Edit text</string>
+    <string name="selectItemTypeDialog_create">Create</string>
+    <string name="item_group">Group</string>
+    <string name="dialog_item_module_cyclelist_tickMode">Tick mode</string>
+    <string name="menuItem_copy">Copy</string>
+    <string name="menuItem_selected">Selected</string>
+    <string name="nothing_selected">Nothing selected</string>
 </resources>

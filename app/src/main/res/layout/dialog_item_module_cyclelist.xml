@@ -37,11 +37,10 @@
         android:src="@android:drawable/ic_input_add"
         tools:ignore="HardcodedText" />
 
-    <!-- Todo: make translatable -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Поведение тика" />
+        android:text="@string/dialog_item_module_cyclelist_tickMode" />
 
     <Spinner
         android:id="@+id/itemsCycleBackgroundWork"

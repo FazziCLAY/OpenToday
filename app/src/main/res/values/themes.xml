@@ -27,14 +27,28 @@
         <item name="updateAvailable_textColor">#000000</item>
 
         <!-- Entries -->
-        <item name="entry_background_color">#800B265E</item>
-        <item name="entry_text_color">#DD0000</item>
+        <item name="item_backgroundColor">#803D3D3D</item>
+        <item name="item_textColor">#2B2B2B</item>
 
-        <item name="textEntry_background_color">#803D3D3D</item>
-        <item name="textEntry_text_color">#2B2B2B</item>
+        <item name="item_text_background_color">#803D3D3D</item>
+        <item name="item_text_textColor">#2B2B2B</item>
 
-        <item name="checkboxEntry_background_color">#803D3D3D</item>
-        <item name="checkboxEntry_text_color">#2B2B2B</item>
+        <item name="item_checkbox_backgroundColor">#803D3D3D</item>
+        <item name="item_checkbox_textColor">#2B2B2B</item>
+
+        <item name="item_checkbox_day_repeatable_backgroundColor">#803D3D3D</item>
+        <item name="item_checkbox_day_repeatable_textColor">#2B2B2B</item>
+
+        <item name="item_cycleList_backgroundColor">#803D3D3D</item>
+        <item name="item_cycleList_textColor">#2B2B2B</item>
+
+        <item name="item_counter_backgroundColor">#803D3D3D</item>
+        <item name="item_counter_textColor">#2B2B2B</item>
+
+        <item name="item_group_backgroundColor">#803D3D3D</item>
+        <item name="item_group_textColor">#2B2B2B</item>
+
+        <item name="item_selectionForegroundColor">#66ff7722</item>
     </style>
 
     <style name="Theme.OpenToday.ItemEditModule" parent="Theme.MaterialComponents.DayNight.DarkActionBar">

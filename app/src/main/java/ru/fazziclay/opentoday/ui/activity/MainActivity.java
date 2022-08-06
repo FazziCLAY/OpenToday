@@ -3,8 +3,6 @@ package ru.fazziclay.opentoday.ui.activity;
 import static ru.fazziclay.opentoday.util.InlineUtil.fcu_viewOnClick;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
@@ -15,8 +13,6 @@ import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,22 +25,17 @@ import java.util.Locale;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
-import ru.fazziclay.opentoday.app.items.CheckboxItem;
-import ru.fazziclay.opentoday.app.items.CounterItem;
-import ru.fazziclay.opentoday.app.items.CycleListItem;
-import ru.fazziclay.opentoday.app.items.DayRepeatableCheckboxItem;
-import ru.fazziclay.opentoday.app.items.Item;
 import ru.fazziclay.opentoday.app.items.ItemStorage;
-import ru.fazziclay.opentoday.app.items.TextItem;
 import ru.fazziclay.opentoday.databinding.ActivityMainBinding;
 import ru.fazziclay.opentoday.ui.dialog.DialogAboutApp;
 import ru.fazziclay.opentoday.ui.dialog.DialogItem;
+import ru.fazziclay.opentoday.ui.dialog.DialogSelectItemType;
 import ru.fazziclay.opentoday.ui.other.item.ItemUIDrawer;
 import ru.fazziclay.opentoday.util.DebugUtil;
-import ru.fazziclay.opentoday.util.SpinnerHelper;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding; // binding
+    private App app;
     private int lastDayOfYear = 0;
 
     private ItemUIDrawer itemUIDrawer;
@@ -58,8 +49,9 @@ public class MainActivity extends AppCompatActivity {
         // logic
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        app = App.get(this);
 
-        itemUIDrawer = new ItemUIDrawer(this, App.get(this).getItemManager());
+        itemUIDrawer = new ItemUIDrawer(this, app.getItemManager(), app.getItemManager());
         itemUIDrawer.create();
         binding.items.addView(itemUIDrawer.getView());
 
@@ -82,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         handler.post(runnable);
 
         // Add new
-        fcu_viewOnClick(binding.addNew, () -> showAddNewDialog(this, App.get(this).getItemManager()));
+        fcu_viewOnClick(binding.addNew, () -> showAddNewDialog(App.get(this).getItemManager()));
 
         // Battery optimization
         setupBatteryOptimizationDialog();
@@ -150,32 +142,10 @@ public class MainActivity extends AppCompatActivity {
         itemUIDrawer.destroy();
     }
 
-    public static void showAddNewDialog(Activity ac, ItemStorage itemStorage) {
-        Spinner spinner = new Spinner(ac);
-        SpinnerHelper<Class<? extends Item>> spinnerHelper = new SpinnerHelper<Class<? extends Item>>(
-                new String[]{
-                        ac.getString(R.string.item_text),
-                        ac.getString(R.string.item_checkbox),
-                        ac.getString(R.string.item_checkboxDayRepeatable),
-                        ac.getString(R.string.item_cycleList),
-                        ac.getString(R.string.item_counter)
-                },
-                new Class[]{
-                        TextItem.class,
-                        CheckboxItem.class,
-                        DayRepeatableCheckboxItem.class,
-                        CycleListItem.class,
-                        CounterItem.class
-                }
-        );
-        spinner.setAdapter(new ArrayAdapter<>(ac, android.R.layout.simple_expandable_list_item_1, spinnerHelper.getNames()));
-
-        new AlertDialog.Builder(ac)
-                .setView(spinner)
-                .setNegativeButton(ac.getString(R.string.itemAddDialog_cancel), null)
-                .setPositiveButton(ac.getString(R.string.itemAddDialog_create), (i2, i1) -> {
-                    Class<? extends Item> itemType = spinnerHelper.getValues()[spinner.getSelectedItemPosition()];
-                    DialogItem dialogItem = new DialogItem(ac);
+    private void showAddNewDialog(ItemStorage itemStorage) {
+        new DialogSelectItemType(this, R.string.selectItemTypeDialog_create)
+                .setOnSelected((itemType) -> {
+                    DialogItem dialogItem = new DialogItem(this, app.getItemManager());
                     dialogItem.create(itemType, itemStorage::addItem);
                 })
                 .show();

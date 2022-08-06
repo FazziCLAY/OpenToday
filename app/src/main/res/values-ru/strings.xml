@@ -36,8 +36,8 @@
     <string name="item_checkbox">Галочка</string>
     <string name="item_checkboxDayRepeatable">Галочка (Ежедневная)</string>
     <string name="item_cycleList">Зацикленный лист</string>
-    <string name="itemAddDialog_cancel">Отмена</string>
-    <string name="itemAddDialog_create">Создать</string>
+    <string name="selectItemTypeDialog_cancel">Отмена</string>
+    <string name="selectItemTypeDialog_select">Выбрать</string>
     <string name="itemAddDialog_helpForItem">Документация</string>
     <string name="dialogItem_apply">Сохранить</string>
     <string name="dialogItem_cancel">Отмена</string>
@@ -70,4 +70,10 @@
     <string name="cycleListItem_tick_all">Все</string>
     <string name="cycleListItem_tick_current">Текущий выбранный</string>
     <string name="item_text_editText">Редактировать текст</string>
+    <string name="selectItemTypeDialog_create">Создать</string>
+    <string name="item_group">Группа</string>
+    <string name="dialog_item_module_cyclelist_tickMode">Поведение тика</string>
+    <string name="menuItem_copy">Копировать</string>
+    <string name="menuItem_selected">Выделенный</string>
+    <string name="nothing_selected">Ничего не выделенно</string>
 </resources>

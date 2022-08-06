@@ -12,8 +12,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import ru.fazziclay.opentoday.R;
+import ru.fazziclay.opentoday.app.App;
+import ru.fazziclay.opentoday.app.items.AbsoluteItemContainer;
 import ru.fazziclay.opentoday.app.items.Item;
+import ru.fazziclay.opentoday.app.items.ItemManager;
 import ru.fazziclay.opentoday.app.items.ItemStorage;
+import ru.fazziclay.opentoday.app.items.ItemsAssociations;
 import ru.fazziclay.opentoday.app.items.TextItem;
 import ru.fazziclay.opentoday.app.items.callback.OnItemAdded;
 import ru.fazziclay.opentoday.app.items.callback.OnItemDeleted;
@@ -21,10 +25,12 @@ import ru.fazziclay.opentoday.app.items.callback.OnItemMoved;
 import ru.fazziclay.opentoday.app.items.callback.OnItemUpdated;
 import ru.fazziclay.opentoday.callback.CallbackImportance;
 import ru.fazziclay.opentoday.callback.Status;
+import ru.fazziclay.opentoday.ui.dialog.DialogItem;
 import ru.fazziclay.opentoday.ui.dialog.DialogTextItemEditText;
 
 public class ItemUIDrawer {
     private final Activity activity;
+    private final ItemManager itemManager;
     private final ItemStorage itemStorage;
     private final RecyclerView view;
     private RecyclerView.Adapter<ViewHolder> adapter;
@@ -50,9 +56,10 @@ public class ItemUIDrawer {
         return new Status.Builder().build();
     };
 
-    public ItemUIDrawer(Activity activity, ItemStorage itemStorage) {
+    public ItemUIDrawer(Activity activity, ItemStorage itemStorage, ItemManager itemManager) {
         this.activity = activity;
         this.itemStorage = itemStorage;
+        this.itemManager = itemManager;
         this.view = new RecyclerView(activity);
         this.view.setLayoutManager(new LinearLayoutManager(activity));
     }
@@ -63,7 +70,7 @@ public class ItemUIDrawer {
         }
         created = true;
         this.adapter = new Adapter();
-        this.itemViewGenerator = new ItemViewGenerator(activity);
+        this.itemViewGenerator = new ItemViewGenerator(activity, itemManager);
         this.view.setAdapter(adapter);
         this.itemStorage.getOnItemDeletedCallbackStorage().addCallback(CallbackImportance.DEFAULT, onItemDeleted);
         this.itemStorage.getOnItemUpdatedCallbackStorage().addCallback(CallbackImportance.DEFAULT, onItemUpdated);
@@ -159,40 +166,64 @@ public class ItemUIDrawer {
                 item.save();
                 item.updateUi();
             } else if (direction == ItemTouchHelper.RIGHT) {
-                int positionFrom = viewHolder.getAdapterPosition();
-                Item item = ItemUIDrawer.this.itemStorage.getItems()[positionFrom];
+                int position = viewHolder.getAdapterPosition();
+                Item item = ItemUIDrawer.this.itemStorage.getItems()[position];
                 item.updateUi();
 
-                PopupMenu menu = new PopupMenu(activity, viewHolder.itemView);
-                menu.setForceShowIcon(true);
-                menu.inflate(R.menu.menu_item);
-                menu.getMenu().findItem(R.id.minimize).setChecked(item.isMinimize());
-                menu.getMenu().setGroupEnabled(R.id.textItem, item instanceof TextItem);
-                if (item instanceof TextItem) {
-                    TextItem textItem = (TextItem) item;
-                    menu.getMenu().findItem(R.id.textItem_clickableUrls).setChecked(textItem.isClickableUrls());
-                }
-                menu.setOnMenuItemClickListener(menuItem -> {
-                    if (menuItem.getItemId() == R.id.minimize) {
-                        item.setMinimize(!item.isMinimize());
-                    } else if (menuItem.getItemId() == R.id.textItem_clickableUrls) {
-                        if (item instanceof TextItem) {
-                            TextItem textItem = (TextItem) item;
-                            textItem.setClickableUrls(!textItem.isClickableUrls());
-                        }
-                    } else if (menuItem.getItemId() == R.id.textItem_editText) {
-                        if (item instanceof TextItem) {
-                            TextItem textItem = (TextItem) item;
-                            DialogTextItemEditText d = new DialogTextItemEditText(activity, textItem);
-                            d.show();
-                        }
-                    }
-                    item.save();
-                    item.updateUi();
-                    return true;
-                });
-                menu.show();
+                showRightMenu(item, viewHolder.itemView);
             }
         }
+    }
+
+    public void showRightMenu(Item item, View itemView) {
+        ItemManager itemManager = App.get(activity).getItemManager();
+        PopupMenu menu = new PopupMenu(activity, itemView);
+        menu.setForceShowIcon(true);
+        menu.inflate(R.menu.menu_item);
+        menu.getMenu().findItem(R.id.minimize).setChecked(item.isMinimize());
+        menu.getMenu().findItem(R.id.selected).setChecked(itemManager.isSelected(item));
+        menu.getMenu().setGroupEnabled(R.id.textItem, item instanceof TextItem);
+        if (item instanceof TextItem) {
+            TextItem textItem = (TextItem) item;
+            menu.getMenu().findItem(R.id.textItem_clickableUrls).setChecked(textItem.isClickableUrls());
+        }
+        menu.setOnMenuItemClickListener(menuItem -> {
+            if (menuItem.getItemId() == R.id.minimize) {
+                item.setMinimize(!item.isMinimize());
+            } else if (menuItem.getItemId() == R.id.selected) {
+                if (menu.getMenu().findItem(R.id.selected).isChecked()) {
+                    itemManager.deselect();
+                } else {
+                    itemManager.selectItem(new AbsoluteItemContainer(itemStorage, item));
+                }
+
+            } else if (menuItem.getItemId() == R.id.copy) {
+                int currPos = itemStorage.getItemPosition(item);
+                Item copyItem = ItemsAssociations.copy(item);
+
+                DialogItem dialogItem = new DialogItem(activity, itemManager);
+                dialogItem.edit(copyItem);
+
+                itemStorage.addItem(copyItem);
+                int createPos = itemStorage.getItemPosition(copyItem);
+                itemStorage.move(createPos, currPos + 1);
+
+            } else if (menuItem.getItemId() == R.id.textItem_clickableUrls) {
+                if (item instanceof TextItem) {
+                    TextItem textItem = (TextItem) item;
+                    textItem.setClickableUrls(!textItem.isClickableUrls());
+                }
+            } else if (menuItem.getItemId() == R.id.textItem_editText) {
+                if (item instanceof TextItem) {
+                    TextItem textItem = (TextItem) item;
+                    DialogTextItemEditText d = new DialogTextItemEditText(activity, textItem);
+                    d.show();
+                }
+            }
+            item.save();
+            item.updateUi();
+            return true;
+        });
+        menu.show();
     }
 }

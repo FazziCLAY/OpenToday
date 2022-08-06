@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5sp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="5sp">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -16,9 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
-
     </ScrollView>
-
 
     <LinearLayout
         android:orientation="horizontal"
@@ -62,5 +60,4 @@
             android:text="@string/dialogItem_apply"
             style="@style/Widget.AppCompat.Button" />
     </LinearLayout>
-
 </LinearLayout>

@@ -21,14 +21,21 @@
     <attr format="color" type="color" name="updateAvailable_backgroundColor" />
     <attr format="color" type="color" name="updateAvailable_textColor" />
 
-    <!-- Entries -->
-    <attr format="color" type="color" name="entry_background_color" />
-    <attr format="color" type="color" name="entry_text_color" />
+    <!-- Items -->
+    <attr format="color" type="color" name="item_backgroundColor" />
+    <attr format="color" type="color" name="item_textColor" />
+    <attr format="color" type="color" name="item_text_background_color" />
+    <attr format="color" type="color" name="item_text_textColor" />
+    <attr format="color" type="color" name="item_checkbox_backgroundColor" />
+    <attr format="color" type="color" name="item_checkbox_textColor" />
+    <attr format="color" type="color" name="item_checkbox_day_repeatable_backgroundColor" />
+    <attr format="color" type="color" name="item_checkbox_day_repeatable_textColor" />
+    <attr format="color" type="color" name="item_cycleList_backgroundColor" />
+    <attr format="color" type="color" name="item_cycleList_textColor" />
+    <attr format="color" type="color" name="item_counter_backgroundColor" />
+    <attr format="color" type="color" name="item_counter_textColor" />
+    <attr format="color" type="color" name="item_group_backgroundColor" />
+    <attr format="color" type="color" name="item_group_textColor" />
 
-    <attr format="color" type="color" name="textEntry_background_color" />
-    <attr format="color" type="color" name="textEntry_text_color" />
-
-    <attr format="color" type="color" name="checkboxEntry_background_color" />
-    <attr format="color" type="color" name="checkboxEntry_text_color" />
-
+    <attr format="color" type="color" name="item_selectionForegroundColor" />
 </resources>

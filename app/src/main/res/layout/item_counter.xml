@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:backgroundTint="?attr/textEntry_background_color"
+    android:orientation="vertical"
+    android:backgroundTint="?attr/item_counter_backgroundColor"
     android:background="@drawable/shape"
-    android:padding="3sp"
-    android:orientation="vertical">
+    android:padding="3sp">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -18,14 +18,14 @@
             android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="TextEntry"
+            tools:text="Simple Counter"
             android:textSize="18sp"
-            android:textColor="?attr/textEntry_text_color" />
+            android:textColor="?attr/item_counter_textColor" />
 
         <Button
             android:id="@+id/down"
             android:layout_width="40sp"
-            android:layout_height="40sp"
+            android:layout_height="36sp"
             android:layout_weight="0"
             android:gravity="center"
             android:text="-"
@@ -36,7 +36,7 @@
             android:layout_marginStart="2sp"
             android:id="@+id/up"
             android:layout_width="40sp"
-            android:layout_height="40sp"
+            android:layout_height="36sp"
             android:layout_weight="0"
             android:gravity="center"
             android:text="+"
@@ -48,5 +48,7 @@
     <TextView
         android:id="@+id/counter"
         android:layout_width="match_parent"
+        android:textSize="20sp"
+        android:paddingLeft="5sp"
         android:layout_height="wrap_content" />
 </LinearLayout>

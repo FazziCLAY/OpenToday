@@ -7,8 +7,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.content.res.AppCompatResources;
 
 import com.rarepebble.colorpicker.ColorPickerView;
 
@@ -27,27 +28,33 @@ import java.util.List;
 import java.util.Locale;
 
 import ru.fazziclay.opentoday.R;
+import ru.fazziclay.opentoday.app.App;
+import ru.fazziclay.opentoday.app.items.AbsoluteItemContainer;
 import ru.fazziclay.opentoday.app.items.CheckboxItem;
 import ru.fazziclay.opentoday.app.items.CounterItem;
 import ru.fazziclay.opentoday.app.items.CycleListItem;
 import ru.fazziclay.opentoday.app.items.DayRepeatableCheckboxItem;
+import ru.fazziclay.opentoday.app.items.GroupItem;
 import ru.fazziclay.opentoday.app.items.Item;
+import ru.fazziclay.opentoday.app.items.ItemManager;
+import ru.fazziclay.opentoday.app.items.ItemsAssociations;
 import ru.fazziclay.opentoday.app.items.TextItem;
 import ru.fazziclay.opentoday.databinding.DialogItemFrameBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleCheckboxBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleCounterBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleCyclelistBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleDayrepeatablecheckboxBinding;
+import ru.fazziclay.opentoday.databinding.DialogItemModuleGroupBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleItemBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleTextBinding;
-import ru.fazziclay.opentoday.ui.activity.MainActivity;
 import ru.fazziclay.opentoday.ui.other.item.ItemUIDrawer;
 import ru.fazziclay.opentoday.util.MinTextWatcher;
+import ru.fazziclay.opentoday.util.ResUtil;
 import ru.fazziclay.opentoday.util.SpinnerHelper;
 
 public class DialogItem {
     private final Activity activity;
-
+    private final ItemManager itemManager;
     // By session
     private Dialog dialog;
     private View view;
@@ -60,25 +67,13 @@ public class DialogItem {
     // Edit
     private final List<BaseEditUiModule> editModules = new ArrayList<>();
 
-    public DialogItem(Activity activity) {
+    public DialogItem(Activity activity, ItemManager itemManager) {
         this.activity = activity;
+        this.itemManager = itemManager;
     }
 
     public void create(Class<? extends Item> type, OnEditDone onEditDone) {
-        Item item;
-        if (type == TextItem.class) {
-            item = new TextItem("");
-        } else if (type == CheckboxItem.class) {
-            item = new CheckboxItem("", false);
-        } else if (type == DayRepeatableCheckboxItem.class) {
-            item = new DayRepeatableCheckboxItem("", false, false, 0);
-        } else if (type == CycleListItem.class) {
-            item = new CycleListItem("");
-        } else if (type == CounterItem.class) {
-            item = new CounterItem("");
-        } else {
-            throw new RuntimeException("Illegal item type! (check DialogItem)");
-        }
+        Item item = ItemsAssociations.createItem(type);
         show(item, true, onEditDone);
     }
 
@@ -120,6 +115,9 @@ public class DialogItem {
         }
         if (item instanceof CounterItem) {
             binding.canvas.addView(addEditModule(new CounterItemEditModule()));
+        }
+        if (item instanceof GroupItem) {
+            binding.canvas.addView(addEditModule(new GroupItemEditModule()));
         }
 
         fcu_viewOnClick(binding.applyButton, this::applyRequest);
@@ -215,18 +213,6 @@ public class DialogItem {
         }
     }
 
-    /*
-
-    ItemUIDrawer itemUIDrawer = new ItemUIDrawer(activity, ((CycleListItem)item).getItemsCycleStorage());
-        itemUIDrawer.create();
-        Dialog dialog = new Dialog(activity, android.R.style.ThemeOverlay_Material);
-        dialog.setContentView(itemUIDrawer.getView());
-        dialog.show();
-        dialog.setOnCancelListener(dialog1 -> {
-            itemUIDrawer.destroy();
-        });
-    */
-
     @FunctionalInterface
     public interface OnEditDone {
         void run(Item item);
@@ -304,11 +290,7 @@ public class DialogItem {
 
         private void updateTextColorIndicator(Activity activity) {
             if (binding.defaultBackgroundColor.isChecked()) {
-                TypedValue typedValue = new TypedValue();
-                activity.getTheme().resolveAttribute(R.attr.entry_background_color, typedValue, true);
-                int defaultColor = typedValue.data;
-
-                binding.viewBackgroundColorIndicator.setBackgroundTintList(ColorStateList.valueOf(defaultColor));
+                binding.viewBackgroundColorIndicator.setBackgroundTintList(ColorStateList.valueOf(ResUtil.getAttrColor(activity, R.attr.item_backgroundColor)));
             } else {
                 binding.viewBackgroundColorIndicator.setBackgroundTintList(ColorStateList.valueOf(temp_backgroundColor));
             }
@@ -391,11 +373,7 @@ public class DialogItem {
 
         private void updateTextColorIndicator(Activity activity) {
             if (binding.defaultTextColor.isChecked()) {
-                TypedValue typedValue = new TypedValue();
-                activity.getTheme().resolveAttribute(R.attr.textEntry_text_color, typedValue, true);
-                int defaultColor = typedValue.data;
-
-                binding.textColorIndicator.setBackgroundTintList(ColorStateList.valueOf(defaultColor));
+                binding.textColorIndicator.setBackgroundTintList(ColorStateList.valueOf(ResUtil.getAttrColor(activity, R.attr.item_textColor)));
             } else {
                 binding.textColorIndicator.setBackgroundTintList(ColorStateList.valueOf(temp_textColor));
             }
@@ -505,10 +483,11 @@ public class DialogItem {
 
         @Override
         public void setup(Item item, Activity activity, View view) {
+            ItemManager itemManager = App.get().getItemManager();
             CycleListItem cycleListItem = (CycleListItem) item;
 
             binding = DialogItemModuleCyclelistBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
-            itemUIDrawer = new ItemUIDrawer(activity, cycleListItem.getItemsCycleStorage());
+            itemUIDrawer = new ItemUIDrawer(activity, cycleListItem.getItemsCycleStorage(), itemManager);
 
             binding.canvas.addView(itemUIDrawer.getView());
             itemUIDrawer.create();
@@ -527,7 +506,12 @@ public class DialogItem {
             // TODO: 03.08.2022 make onEditStart for spinner
             binding.itemsCycleBackgroundWork.setAdapter(new ArrayAdapter<>(activity, android.R.layout.simple_expandable_list_item_1, itemsCycleBackgroundWorkSpinnerHelp.getNames()));
             binding.itemsCycleBackgroundWork.setSelection(itemsCycleBackgroundWorkSpinnerHelp.getPosition(cycleListItem.getItemsCycleBackgroundWork()));
-            binding.addNew.setOnClickListener(v -> MainActivity.showAddNewDialog(activity, cycleListItem.getItemsCycleStorage()));
+            binding.addNew.setOnClickListener(v -> new DialogSelectItemType(activity, R.string.selectItemTypeDialog_create)
+                    .setOnSelected((itemType) -> {
+                        DialogItem dialogItem = new DialogItem(activity, itemManager);
+                        dialogItem.create(itemType, cycleListItem.getItemsCycleStorage()::addItem);
+                    })
+                    .show());
         }
 
         @Override
@@ -578,6 +562,59 @@ public class DialogItem {
             CounterItem counterItem = (CounterItem) item;
             counterItem.setCounter(Double.parseDouble(binding.counterValue.getText().toString()));
             counterItem.setStep(Double.parseDouble(binding.counterStep.getText().toString()));
+        }
+
+        @Override
+        public void setOnStartEditListener(Runnable o) {
+            onEditStart = o;
+        }
+    }
+
+    private static class GroupItemEditModule extends BaseEditUiModule {
+        private DialogItemModuleGroupBinding binding;
+        private Runnable onEditStart;
+        private ItemUIDrawer itemUIDrawer;
+
+        @Override
+        public View getView() {
+            return binding.getRoot();
+        }
+
+        @Override
+        public void setup(Item item, Activity activity, View view) {
+            ItemManager itemManager = App.get().getItemManager();
+            GroupItem groupItem = (GroupItem) item;
+            binding = DialogItemModuleGroupBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
+            binding.addNew.setOnClickListener(v -> new DialogSelectItemType(activity, R.string.selectItemTypeDialog_create)
+                    .setOnSelected(type -> groupItem.getItemStorage().addItem(ItemsAssociations.createItem(type)))
+                    .show());
+
+
+            itemUIDrawer = new ItemUIDrawer(activity, groupItem.getItemStorage(), itemManager);
+
+            binding.canvas.addView(itemUIDrawer.getView());
+            itemUIDrawer.create();
+
+            if (itemManager.getSelection() == null) {
+                binding.moveSelected.setForeground(AppCompatResources.getDrawable(activity, R.drawable.shape));
+                binding.moveSelected.setForegroundTintList(ColorStateList.valueOf(Color.parseColor("#bb444444")));
+            }
+            binding.moveSelected.setOnClickListener(v -> {
+                if (itemManager.getSelection() == null) {
+                    Toast.makeText(activity, R.string.nothing_selected, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                AbsoluteItemContainer selection = itemManager.getSelection();
+                selection.getItemStorage().deleteItem(selection.getItem());
+                groupItem.getItemStorage().addItem(selection.getItem());
+                itemManager.deselect();
+            });
+        }
+
+        @Override
+        public void commit(Item item) {
+            GroupItem groupItem = (GroupItem) item;
+
         }
 
         @Override
