@@ -5,6 +5,7 @@
       <map>
         <entry key="../../../../../../../layout/custom_preview.xml" value="0.3855975485188968" />
         <entry key="../../../../../../layout/custom_preview.xml" value="0.36302083333333335" />
+        <entry key="../../../../../.android/sdk/platforms/android-32/data/res/layout/simple_expandable_list_item_1.xml" value="0.13286130778842148" />
         <entry key="../../../../../.gradle/caches/transforms-3/de7673c08d522f4ba61923055bdaa3f7/transformed/appcompat-1.4.2/res/drawable/abc_btn_default_mtrl_shape.xml" value="0.3085" />
         <entry key="../../../../../.gradle/caches/transforms-3/de7673c08d522f4ba61923055bdaa3f7/transformed/appcompat-1.4.2/res/drawable/abc_ic_menu_cut_mtrl_alpha.xml" value="0.228" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.212" />
