@@ -8,7 +8,11 @@ import java.io.File;
 import java.util.Random;
 
 import ru.fazziclay.opentoday.app.App;
-import ru.fazziclay.opentoday.app.items.callback.OnSelectedChanged;
+import ru.fazziclay.opentoday.app.items.callback.OnSelectionChanged;
+import ru.fazziclay.opentoday.app.items.item.CheckboxItem;
+import ru.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem;
+import ru.fazziclay.opentoday.app.items.item.Item;
+import ru.fazziclay.opentoday.app.items.item.TextItem;
 import ru.fazziclay.opentoday.callback.CallbackStorage;
 import ru.fazziclay.opentoday.callback.Status;
 
@@ -18,7 +22,7 @@ public class ItemManager extends SimpleItemStorage {
     private final ItemIEManager itemIEManager;
 
     private AbsoluteItemContainer selection;
-    private final CallbackStorage<OnSelectedChanged> onSelectionUpdated = new CallbackStorage<>();
+    private final CallbackStorage<OnSelectionChanged> onSelectionUpdated = new CallbackStorage<>();
 
     public ItemManager(File saveFile) {
         this.itemIEManager = new ItemIEManager(saveFile);
@@ -57,7 +61,7 @@ public class ItemManager extends SimpleItemStorage {
         return item == selection.getItem();
     }
 
-    public CallbackStorage<OnSelectedChanged> getOnSelectionUpdated() {
+    public CallbackStorage<OnSelectionChanged> getOnSelectionUpdated() {
         return onSelectionUpdated;
     }
 

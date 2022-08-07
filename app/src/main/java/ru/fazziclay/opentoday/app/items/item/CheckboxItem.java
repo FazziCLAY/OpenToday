@@ -1,4 +1,4 @@
-package ru.fazziclay.opentoday.app.items;
+package ru.fazziclay.opentoday.app.items.item;
 
 import org.json.JSONObject;
 
@@ -8,10 +8,11 @@ import ru.fazziclay.opentoday.annotation.RequireSave;
 import ru.fazziclay.opentoday.annotation.Setter;
 
 public class CheckboxItem extends TextItem {
-    protected final static CheckboxItemIETool IE_TOOL = new CheckboxItemIETool();
-    protected static class CheckboxItemIETool extends TextItem.TextItemIETool {
+    // START - Save
+    public final static CheckboxItemIETool IE_TOOL = new CheckboxItemIETool();
+    public static class CheckboxItemIETool extends TextItem.TextItemIETool {
         @Override
-        protected JSONObject exportItem(Item item) throws Exception {
+        public JSONObject exportItem(Item item) throws Exception {
             CheckboxItem checkboxItem = (CheckboxItem) item;
             return super.exportItem(checkboxItem)
                     .put("checked", checkboxItem.checked);
@@ -19,12 +20,17 @@ public class CheckboxItem extends TextItem {
 
         private final CheckboxItem defaultValues = new CheckboxItem("<import_error>", false);
         @Override
-        protected Item importItem(JSONObject json) throws Exception {
+        public Item importItem(JSONObject json) throws Exception {
             return new CheckboxItem((TextItem) super.importItem(json), json.optBoolean("checked", defaultValues.checked));
         }
     }
+    // END - Save
 
-    @JSONName(name = "checked") @RequireSave protected boolean checked;
+    public static CheckboxItem createEmpty() {
+        return new CheckboxItem("", false);
+    }
+
+    @JSONName(name = "checked") @RequireSave private boolean checked;
 
     public CheckboxItem(String text, boolean checked) {
         super(text);
@@ -43,7 +49,6 @@ public class CheckboxItem extends TextItem {
         this.checked = copy.checked;
     }
 
-    @Getter
-    public boolean isChecked() { return checked; }
+    @Getter public boolean isChecked() { return checked; }
     @Setter public void setChecked(boolean s) { this.checked = s; }
 }

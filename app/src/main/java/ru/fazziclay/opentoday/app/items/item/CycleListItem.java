@@ -1,27 +1,35 @@
-package ru.fazziclay.opentoday.app.items;
+package ru.fazziclay.opentoday.app.items.item;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import ru.fazziclay.opentoday.annotation.Getter;
 import ru.fazziclay.opentoday.annotation.JSONName;
 import ru.fazziclay.opentoday.annotation.RequireSave;
+import ru.fazziclay.opentoday.annotation.Setter;
+import ru.fazziclay.opentoday.app.items.DataTransferPacket;
+import ru.fazziclay.opentoday.app.items.ItemIEManager;
+import ru.fazziclay.opentoday.app.items.ItemStorage;
+import ru.fazziclay.opentoday.app.items.SimpleItemStorage;
+import ru.fazziclay.opentoday.app.items.callback.OnItemStorageUpdateRunnable;
 import ru.fazziclay.opentoday.callback.CallbackImportance;
-import ru.fazziclay.opentoday.callback.Status;
 
 public class CycleListItem extends TextItem {
     // START - Save
-    protected final static CycleListItemIETool IE_TOOL = new CycleListItemIETool();
-    protected static class CycleListItemIETool extends TextItem.TextItemIETool {
-        protected JSONObject exportItem(Item item) throws Exception {
+    public final static CycleListItemIETool IE_TOOL = new CycleListItemIETool();
+    public static class CycleListItemIETool extends TextItem.TextItemIETool {
+        @Override
+        public JSONObject exportItem(Item item) throws Exception {
             CycleListItem cycleListItem = (CycleListItem) item;
             return super.exportItem(item)
                     .put("currentItemPosition", cycleListItem.currentItemPosition)
                     .put("itemsCycle", ItemIEManager.exportItemList(cycleListItem.itemsCycleStorage.exportData().items))
-                    .put("itemsCycleBackgroundWork", cycleListItem.itemsCycleBackgroundWork.name());
+                    .put("itemsCycleBackgroundWork", cycleListItem.tickBehavior.name());
         }
 
         private final CycleListItem defaultValues = new CycleListItem("<import_error>");
-        protected Item importItem(JSONObject json) throws Exception {
+        @Override
+        public Item importItem(JSONObject json) throws Exception {
             CycleListItem o = new CycleListItem((TextItem) super.importItem(json));
 
             JSONArray jsonItemsCycle = json.getJSONArray("itemsCycle");
@@ -31,23 +39,22 @@ public class CycleListItem extends TextItem {
             o.itemsCycleStorage.importData(dataTransferPacket);
             o.currentItemPosition = json.optInt("currentItemPosition", defaultValues.currentItemPosition);
             try {
-                o.itemsCycleBackgroundWork = CycleItemsBackgroundWork.valueOf(json.optString("itemsCycleBackgroundWork", defaultValues.itemsCycleBackgroundWork.name()).toUpperCase());
+                o.tickBehavior = TickBehavior.valueOf(json.optString("itemsCycleBackgroundWork", defaultValues.tickBehavior.name()).toUpperCase());
             } catch (Exception e) {
-                o.itemsCycleBackgroundWork = defaultValues.itemsCycleBackgroundWork;
+                o.tickBehavior = defaultValues.tickBehavior;
             }
             return o;
         }
     }
-
-    private Status _storageUpdates() {
-        updateUi();
-        return new Status.Builder().build();
-    }
     // END - Save
 
-    @JSONName(name = "itemsCycle") @RequireSave protected SimpleItemStorage itemsCycleStorage;
-    @JSONName(name = "currentItemPosition") @RequireSave protected int currentItemPosition = 0;
-    @JSONName(name = "itemsCycleBackgroundWork") @RequireSave protected CycleItemsBackgroundWork itemsCycleBackgroundWork = CycleItemsBackgroundWork.CURRENT;
+    public static CycleListItem createEmpty() {
+        return new CycleListItem("");
+    }
+
+    @JSONName(name = "itemsCycle") @RequireSave private final SimpleItemStorage itemsCycleStorage;
+    @JSONName(name = "currentItemPosition") @RequireSave private int currentItemPosition = 0;
+    @JSONName(name = "itemsCycleBackgroundWork") @RequireSave private TickBehavior tickBehavior = TickBehavior.CURRENT;
 
     public CycleListItem(String text) {
         super(text);
@@ -72,7 +79,7 @@ public class CycleListItem extends TextItem {
         this.itemsCycleStorage.importData(newData);
 
         this.currentItemPosition = copy.currentItemPosition;
-        this.itemsCycleBackgroundWork = copy.itemsCycleBackgroundWork;
+        this.tickBehavior = copy.tickBehavior;
     }
 
     public Item getCurrentItem() {
@@ -108,40 +115,25 @@ public class CycleListItem extends TextItem {
         updateUi();
     }
 
-    public ItemStorage getItemsCycleStorage() {
-        return itemsCycleStorage;
-    }
-
-    public CycleItemsBackgroundWork getItemsCycleBackgroundWork() {
-        return itemsCycleBackgroundWork;
-    }
-
-    public void setItemsCycleBackgroundWork(CycleItemsBackgroundWork itemsCycleBackgroundWork) {
-        this.itemsCycleBackgroundWork = itemsCycleBackgroundWork;
-    }
-
     @Override
     public void tick() {
         super.tick();
-        if (itemsCycleBackgroundWork == CycleItemsBackgroundWork.ALL) {
+        if (tickBehavior == TickBehavior.ALL) {
             itemsCycleStorage.tick();
-        } else if (itemsCycleBackgroundWork == CycleItemsBackgroundWork.CURRENT) {
+        } else if (tickBehavior == TickBehavior.CURRENT) {
             Item c = getCurrentItem();
             if (c != null) c.tick();
         }
     }
 
+    @Getter public ItemStorage getItemsCycleStorage() { return itemsCycleStorage; }
+    @Getter public TickBehavior getTickBehavior() { return tickBehavior; }
+    @Setter public void setTickBehavior(TickBehavior tickBehavior) { this.tickBehavior = tickBehavior; }
+
     private class CycleItemStorage extends SimpleItemStorage {
         public CycleItemStorage() {
             super();
-            registerCallbacks();
-        }
-
-        private void registerCallbacks() {
-            getOnItemAddedCallbackStorage().addCallback(CallbackImportance.DEFAULT, (item, position) -> CycleListItem.this._storageUpdates());
-            getOnItemDeletedCallbackStorage().addCallback(CallbackImportance.DEFAULT, (item, position) -> CycleListItem.this._storageUpdates());
-            getOnItemMovedCallbackStorage().addCallback(CallbackImportance.DEFAULT, (from, to) -> CycleListItem.this._storageUpdates());
-            getOnItemUpdatedCallbackStorage().addCallback(CallbackImportance.DEFAULT, (item, position) -> CycleListItem.this._storageUpdates());
+            getOnUpdateCallbacks().addCallback(CallbackImportance.DEFAULT, new OnItemStorageUpdateRunnable(CycleListItem.this::updateUi));
         }
 
         @Override
@@ -150,7 +142,7 @@ public class CycleListItem extends TextItem {
         }
     }
 
-    public enum CycleItemsBackgroundWork {
+    public enum TickBehavior {
         ALL,
         CURRENT
     }

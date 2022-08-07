@@ -5,6 +5,8 @@ package ru.fazziclay.opentoday.callback;
  * @see CallbackStorage
  * **/
 public class Status {
+    public static final Status NONE = new Status.Builder().build();
+
     private final boolean isDeleteCallback;
     private final boolean isChangeImportance;
     private final CallbackImportance newImportance;

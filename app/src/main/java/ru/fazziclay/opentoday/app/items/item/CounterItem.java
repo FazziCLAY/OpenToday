@@ -1,4 +1,4 @@
-package ru.fazziclay.opentoday.app.items;
+package ru.fazziclay.opentoday.app.items.item;
 
 import org.json.JSONObject;
 
@@ -8,10 +8,11 @@ import ru.fazziclay.opentoday.annotation.RequireSave;
 import ru.fazziclay.opentoday.annotation.Setter;
 
 public class CounterItem extends TextItem {
-    protected final static CounterItemIETool IE_TOOL = new CounterItemIETool();
-    protected static class CounterItemIETool extends TextItem.TextItemIETool {
+    // START - Save
+    public final static CounterItemIETool IE_TOOL = new CounterItemIETool();
+    public static class CounterItemIETool extends TextItem.TextItemIETool {
         @Override
-        protected JSONObject exportItem(Item item) throws Exception {
+        public JSONObject exportItem(Item item) throws Exception {
             CounterItem counterItem = (CounterItem) item;
             return super.exportItem(item)
                     .put("counter", counterItem.counter)
@@ -20,16 +21,21 @@ public class CounterItem extends TextItem {
 
         private final CounterItem defaultValues = new CounterItem("<import_error>");
         @Override
-        protected Item importItem(JSONObject json) throws Exception {
+        public Item importItem(JSONObject json) throws Exception {
             CounterItem counterItem = new CounterItem((TextItem) super.importItem(json));
             counterItem.counter = json.optDouble("counter", defaultValues.counter);
             counterItem.step = json.optDouble("step", defaultValues.step);
             return counterItem;
         }
     }
+    // END - Save
 
-    @JSONName(name = "counter") @RequireSave protected double counter = 0;
-    @JSONName(name = "step") @RequireSave protected double step = 1;
+    public static CounterItem createEmpty() {
+        return new CounterItem("");
+    }
+
+    @JSONName(name = "counter") @RequireSave private double counter = 0;
+    @JSONName(name = "step") @RequireSave private double step = 1;
 
     public CounterItem(String text) {
         super(text);

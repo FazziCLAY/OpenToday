@@ -1,4 +1,4 @@
-package ru.fazziclay.opentoday.app.items;
+package ru.fazziclay.opentoday.app.items.item;
 
 import android.graphics.Color;
 
@@ -11,11 +11,12 @@ import ru.fazziclay.opentoday.annotation.Setter;
 
 public class TextItem extends Item {
     private static final String DEFAULT_TEXT_COLOR = "#ff0000ff";
+
     // START - Save
-    protected final static TextItemIETool IE_TOOL = new TextItemIETool();
-    protected static class TextItemIETool extends Item.ItemIETool {
+    public final static TextItemIETool IE_TOOL = new TextItemIETool();
+    public static class TextItemIETool extends Item.ItemIETool {
         @Override
-        protected JSONObject exportItem(Item item) throws Exception {
+        public JSONObject exportItem(Item item) throws Exception {
             TextItem textItem = (TextItem) item;
             return super.exportItem(textItem)
                     .put("text", textItem.text)
@@ -26,7 +27,7 @@ public class TextItem extends Item {
 
         private final TextItem defaultValues = new TextItem("<import_error>");
         @Override
-        protected Item importItem(JSONObject json) throws Exception {
+        public Item importItem(JSONObject json) throws Exception {
             TextItem o = new TextItem(super.importItem(json), json.optString("text", defaultValues.text));
             o.textColor = json.optInt("textColor", defaultValues.textColor);
             o.customTextColor = json.optBoolean("customTextColor", defaultValues.customTextColor);
@@ -36,10 +37,14 @@ public class TextItem extends Item {
     }
     // END - Save
 
-    @JSONName(name = "text") @RequireSave protected String text;
-    @JSONName(name = "textColor") @RequireSave protected int textColor = Color.parseColor(DEFAULT_TEXT_COLOR);
-    @JSONName(name = "customTextColor") @RequireSave protected boolean customTextColor = false;
-    @JSONName(name = "clickableUrls") @RequireSave protected boolean clickableUrls = false;
+    public static TextItem createEmpty() {
+        return new TextItem("");
+    }
+
+    @JSONName(name = "text") @RequireSave private String text;
+    @JSONName(name = "textColor") @RequireSave private int textColor = Color.parseColor(DEFAULT_TEXT_COLOR);
+    @JSONName(name = "customTextColor") @RequireSave private boolean customTextColor = false;
+    @JSONName(name = "clickableUrls") @RequireSave private boolean clickableUrls = false;
 
     public TextItem(String text) {
         this(null, text);
@@ -60,6 +65,11 @@ public class TextItem extends Item {
         this.clickableUrls = copy.clickableUrls;
     }
 
+    @Override
+    public void tick() {
+        super.tick();
+    }
+
     @Getter public String getText() { return text; }
     @Setter public void setText(String v) { this.text = v; }
     @Getter public int getTextColor() { return textColor; }
@@ -68,9 +78,4 @@ public class TextItem extends Item {
     @Setter public void setCustomTextColor(boolean v) { this.customTextColor = v; }
     @Getter public boolean isClickableUrls() { return clickableUrls; }
     @Setter public void setClickableUrls(boolean clickableUrls) { this.clickableUrls = clickableUrls; }
-
-    @Override
-    public void tick() {
-        super.tick();
-    }
 }

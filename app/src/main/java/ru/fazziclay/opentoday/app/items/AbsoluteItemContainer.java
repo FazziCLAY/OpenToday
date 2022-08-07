@@ -1,5 +1,7 @@
 package ru.fazziclay.opentoday.app.items;
 
+import ru.fazziclay.opentoday.app.items.item.Item;
+
 public class AbsoluteItemContainer {
     private final ItemStorage itemStorage;
     private final Item item;

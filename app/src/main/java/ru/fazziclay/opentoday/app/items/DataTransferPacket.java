@@ -3,6 +3,8 @@ package ru.fazziclay.opentoday.app.items;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.fazziclay.opentoday.app.items.item.Item;
+
 public class DataTransferPacket {
-    protected List<Item> items = new ArrayList<>();
+    public List<Item> items = new ArrayList<>();
 }

@@ -7,7 +7,7 @@ import android.view.View;
 import androidx.appcompat.app.AlertDialog;
 
 import ru.fazziclay.opentoday.R;
-import ru.fazziclay.opentoday.app.items.TextItem;
+import ru.fazziclay.opentoday.app.items.item.TextItem;
 import ru.fazziclay.opentoday.databinding.DialogTextItemEditTextBinding;
 import ru.fazziclay.opentoday.util.MinTextWatcher;
 

@@ -7,13 +7,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import ru.fazziclay.opentoday.R;
-import ru.fazziclay.opentoday.app.items.CheckboxItem;
-import ru.fazziclay.opentoday.app.items.CounterItem;
-import ru.fazziclay.opentoday.app.items.CycleListItem;
-import ru.fazziclay.opentoday.app.items.DayRepeatableCheckboxItem;
-import ru.fazziclay.opentoday.app.items.GroupItem;
-import ru.fazziclay.opentoday.app.items.Item;
-import ru.fazziclay.opentoday.app.items.TextItem;
+import ru.fazziclay.opentoday.app.items.item.CheckboxItem;
+import ru.fazziclay.opentoday.app.items.item.CounterItem;
+import ru.fazziclay.opentoday.app.items.item.CycleListItem;
+import ru.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem;
+import ru.fazziclay.opentoday.app.items.item.GroupItem;
+import ru.fazziclay.opentoday.app.items.item.Item;
+import ru.fazziclay.opentoday.app.items.item.TextItem;
 import ru.fazziclay.opentoday.util.SpinnerHelper;
 
 public class DialogSelectItemType {

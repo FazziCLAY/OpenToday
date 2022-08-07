@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.fazziclay.javaneoutil.FileUtil;
+import ru.fazziclay.opentoday.app.items.item.Item;
 
 public class ItemIEManager {
     private static final String KEY_ITEMTYPE = "itemType";
@@ -71,16 +72,16 @@ public class ItemIEManager {
     // import item (JSON -> Item)
     public static Item importItem(JSONObject jsonItem) throws Exception {
         /*get itemType form json*/String itemType = jsonItem.optString(KEY_ITEMTYPE);
-        /*get class by itemType*/Class<? extends Item> itemClass = ItemsAssociations.stringItemTypeToClass(itemType);
-        /*get IETool by class*/Item.ItemIETool ieTool = ItemsAssociations.getIETool(itemClass);
+        /*get class by itemType*/Class<? extends Item> itemClass = ItemsRegistry.REGISTRY.getItemInfoByStringName(itemType).getClassType();
+        /*get IETool by class*/ItemImportExportTool ieTool = ItemsRegistry.REGISTRY.getItemInfoByClass(itemClass).getItemIETool();
         return ieTool.importItem(jsonItem);
     }
 
     // export item (Item -> JSON)
     public static JSONObject exportItem(Item item) throws Exception {
-        /*IETool from itemClass*/Item.ItemIETool itemIETool = ItemsAssociations.getIETool(item.getClass());
+        /*IETool from itemClass*/ItemImportExportTool itemIETool = ItemsRegistry.REGISTRY.getItemInfoByClass(item.getClass()).getItemIETool();
         /*Export from IETool*/JSONObject jsonItem = itemIETool.exportItem(item);
-        /*Put itemType to json*/jsonItem.put(KEY_ITEMTYPE, ItemsAssociations.stringItemTypeFromItem(item));
+        /*Put itemType to json*/jsonItem.put(KEY_ITEMTYPE, ItemsRegistry.REGISTRY.getItemInfoByClass(item.getClass()).getStringType());
         return jsonItem;
     }
 }

@@ -1,9 +1,7 @@
 package ru.fazziclay.opentoday.app.items;
 
-import ru.fazziclay.opentoday.app.items.callback.OnItemAdded;
-import ru.fazziclay.opentoday.app.items.callback.OnItemDeleted;
-import ru.fazziclay.opentoday.app.items.callback.OnItemMoved;
-import ru.fazziclay.opentoday.app.items.callback.OnItemUpdated;
+import ru.fazziclay.opentoday.app.items.callback.OnItemStorageUpdate;
+import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.callback.CallbackStorage;
 
 public interface ItemStorage {
@@ -15,8 +13,5 @@ public interface ItemStorage {
     void tick();
     void save();
     int getItemPosition(Item item);
-    CallbackStorage<OnItemDeleted> getOnItemDeletedCallbackStorage();
-    CallbackStorage<OnItemUpdated> getOnItemUpdatedCallbackStorage();
-    CallbackStorage<OnItemAdded> getOnItemAddedCallbackStorage();
-    CallbackStorage<OnItemMoved> getOnItemMovedCallbackStorage();
+    CallbackStorage<OnItemStorageUpdate> getOnUpdateCallbacks();
 }

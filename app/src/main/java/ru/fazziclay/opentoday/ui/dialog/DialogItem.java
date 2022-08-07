@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -30,15 +31,15 @@ import java.util.Locale;
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.items.AbsoluteItemContainer;
-import ru.fazziclay.opentoday.app.items.CheckboxItem;
-import ru.fazziclay.opentoday.app.items.CounterItem;
-import ru.fazziclay.opentoday.app.items.CycleListItem;
-import ru.fazziclay.opentoday.app.items.DayRepeatableCheckboxItem;
-import ru.fazziclay.opentoday.app.items.GroupItem;
-import ru.fazziclay.opentoday.app.items.Item;
 import ru.fazziclay.opentoday.app.items.ItemManager;
-import ru.fazziclay.opentoday.app.items.ItemsAssociations;
-import ru.fazziclay.opentoday.app.items.TextItem;
+import ru.fazziclay.opentoday.app.items.ItemsRegistry;
+import ru.fazziclay.opentoday.app.items.item.CheckboxItem;
+import ru.fazziclay.opentoday.app.items.item.CounterItem;
+import ru.fazziclay.opentoday.app.items.item.CycleListItem;
+import ru.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem;
+import ru.fazziclay.opentoday.app.items.item.GroupItem;
+import ru.fazziclay.opentoday.app.items.item.Item;
+import ru.fazziclay.opentoday.app.items.item.TextItem;
 import ru.fazziclay.opentoday.databinding.DialogItemFrameBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleCheckboxBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleCounterBinding;
@@ -47,7 +48,7 @@ import ru.fazziclay.opentoday.databinding.DialogItemModuleDayrepeatablecheckboxB
 import ru.fazziclay.opentoday.databinding.DialogItemModuleGroupBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleItemBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleTextBinding;
-import ru.fazziclay.opentoday.ui.other.item.ItemUIDrawer;
+import ru.fazziclay.opentoday.ui.other.item.ItemStorageDrawer;
 import ru.fazziclay.opentoday.util.MinTextWatcher;
 import ru.fazziclay.opentoday.util.ResUtil;
 import ru.fazziclay.opentoday.util.SpinnerHelper;
@@ -73,7 +74,7 @@ public class DialogItem {
     }
 
     public void create(Class<? extends Item> type, OnEditDone onEditDone) {
-        Item item = ItemsAssociations.createItem(type);
+        Item item = ItemsRegistry.REGISTRY.getItemInfoByClass(type).create();
         show(item, true, onEditDone);
     }
 
@@ -472,8 +473,8 @@ public class DialogItem {
 
     public static class CycleListItemEditModule extends BaseEditUiModule {
         private DialogItemModuleCyclelistBinding binding;
-        private ItemUIDrawer itemUIDrawer;
-        private SpinnerHelper<CycleListItem.CycleItemsBackgroundWork> itemsCycleBackgroundWorkSpinnerHelp;
+        private ItemStorageDrawer itemStorageDrawer;
+        private SpinnerHelper<CycleListItem.TickBehavior> itemsCycleBackgroundWorkSpinnerHelp;
         private Runnable onEditStart;
 
         @Override
@@ -487,37 +488,51 @@ public class DialogItem {
             CycleListItem cycleListItem = (CycleListItem) item;
 
             binding = DialogItemModuleCyclelistBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
-            itemUIDrawer = new ItemUIDrawer(activity, cycleListItem.getItemsCycleStorage(), itemManager);
+            itemStorageDrawer = new ItemStorageDrawer(activity, itemManager, cycleListItem.getItemsCycleStorage());
 
-            binding.canvas.addView(itemUIDrawer.getView());
-            itemUIDrawer.create();
+            binding.canvas.addView(itemStorageDrawer.getView());
+            itemStorageDrawer.create();
 
             itemsCycleBackgroundWorkSpinnerHelp = new SpinnerHelper<>(
                     new String[] {
                             activity.getString(R.string.cycleListItem_tick_all),
                             activity.getString(R.string.cycleListItem_tick_current)
                     },
-                    new CycleListItem.CycleItemsBackgroundWork[] {
-                            CycleListItem.CycleItemsBackgroundWork.ALL,
-                            CycleListItem.CycleItemsBackgroundWork.CURRENT
+                    new CycleListItem.TickBehavior[] {
+                            CycleListItem.TickBehavior.ALL,
+                            CycleListItem.TickBehavior.CURRENT
                     }
             );
 
-            // TODO: 03.08.2022 make onEditStart for spinner
             binding.itemsCycleBackgroundWork.setAdapter(new ArrayAdapter<>(activity, android.R.layout.simple_expandable_list_item_1, itemsCycleBackgroundWorkSpinnerHelp.getNames()));
-            binding.itemsCycleBackgroundWork.setSelection(itemsCycleBackgroundWorkSpinnerHelp.getPosition(cycleListItem.getItemsCycleBackgroundWork()));
+            binding.itemsCycleBackgroundWork.setSelection(itemsCycleBackgroundWorkSpinnerHelp.getPosition(cycleListItem.getTickBehavior()));
             binding.addNew.setOnClickListener(v -> new DialogSelectItemType(activity, R.string.selectItemTypeDialog_create)
                     .setOnSelected((itemType) -> {
                         DialogItem dialogItem = new DialogItem(activity, itemManager);
                         dialogItem.create(itemType, cycleListItem.getItemsCycleStorage()::addItem);
                     })
                     .show());
+            final boolean[] first = {true};
+            binding.itemsCycleBackgroundWork.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if (!first[0]) {
+                        onEditStart.run();
+                    }
+                    first[0] = false;
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
         }
 
         @Override
         public void commit(Item item) {
             CycleListItem cycleListItem = (CycleListItem) item;
-            cycleListItem.setItemsCycleBackgroundWork(itemsCycleBackgroundWorkSpinnerHelp.getValue(binding.itemsCycleBackgroundWork.getSelectedItemPosition()));
+            cycleListItem.setTickBehavior(itemsCycleBackgroundWorkSpinnerHelp.getValue(binding.itemsCycleBackgroundWork.getSelectedItemPosition()));
         }
 
         @Override
@@ -573,7 +588,7 @@ public class DialogItem {
     private static class GroupItemEditModule extends BaseEditUiModule {
         private DialogItemModuleGroupBinding binding;
         private Runnable onEditStart;
-        private ItemUIDrawer itemUIDrawer;
+        private ItemStorageDrawer itemStorageDrawer;
 
         @Override
         public View getView() {
@@ -586,14 +601,14 @@ public class DialogItem {
             GroupItem groupItem = (GroupItem) item;
             binding = DialogItemModuleGroupBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
             binding.addNew.setOnClickListener(v -> new DialogSelectItemType(activity, R.string.selectItemTypeDialog_create)
-                    .setOnSelected(type -> groupItem.getItemStorage().addItem(ItemsAssociations.createItem(type)))
+                    .setOnSelected(type -> groupItem.getItemStorage().addItem(ItemsRegistry.REGISTRY.getItemInfoByClass(type).create()))
                     .show());
 
 
-            itemUIDrawer = new ItemUIDrawer(activity, groupItem.getItemStorage(), itemManager);
+            itemStorageDrawer = new ItemStorageDrawer(activity, itemManager, groupItem.getItemStorage());
 
-            binding.canvas.addView(itemUIDrawer.getView());
-            itemUIDrawer.create();
+            binding.canvas.addView(itemStorageDrawer.getView());
+            itemStorageDrawer.create();
 
             if (itemManager.getSelection() == null) {
                 binding.moveSelected.setForeground(AppCompatResources.getDrawable(activity, R.drawable.shape));

@@ -14,14 +14,14 @@ import android.widget.TextView;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
-import ru.fazziclay.opentoday.app.items.CheckboxItem;
-import ru.fazziclay.opentoday.app.items.CounterItem;
-import ru.fazziclay.opentoday.app.items.CycleListItem;
-import ru.fazziclay.opentoday.app.items.DayRepeatableCheckboxItem;
-import ru.fazziclay.opentoday.app.items.GroupItem;
-import ru.fazziclay.opentoday.app.items.Item;
+import ru.fazziclay.opentoday.app.items.item.CheckboxItem;
+import ru.fazziclay.opentoday.app.items.item.CounterItem;
+import ru.fazziclay.opentoday.app.items.item.CycleListItem;
+import ru.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem;
+import ru.fazziclay.opentoday.app.items.item.GroupItem;
+import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.app.items.ItemManager;
-import ru.fazziclay.opentoday.app.items.TextItem;
+import ru.fazziclay.opentoday.app.items.item.TextItem;
 import ru.fazziclay.opentoday.databinding.ItemCheckboxBinding;
 import ru.fazziclay.opentoday.databinding.ItemCounterBinding;
 import ru.fazziclay.opentoday.databinding.ItemCycleListBinding;
@@ -77,10 +77,6 @@ public class ItemViewGenerator {
         }
         fcu_viewOnClick(ret, () -> dialogItem.edit(item));
         if (item.isMinimize()) ret.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 60));
-
-        if (itemManager.isSelected(item)) {
-            ret.setForeground(new ColorDrawable(ResUtil.getAttrColor(activity, R.attr.item_selectionForegroundColor)));
-        }
         return ret;
     }
 
@@ -91,9 +87,9 @@ public class ItemViewGenerator {
         applyTextItemToTextView(item, binding.title);
 
         // group
-        ItemUIDrawer itemUIDrawer = new ItemUIDrawer(activity, item.getItemStorage(), App.get().getItemManager());
-        itemUIDrawer.create();
-        binding.content.addView(itemUIDrawer.getView());
+        ItemStorageDrawer itemStorageDrawer = new ItemStorageDrawer(activity, App.get().getItemManager(), item.getItemStorage());
+        itemStorageDrawer.create();
+        binding.content.addView(itemStorageDrawer.getView());
 
         return binding.getRoot();
     }

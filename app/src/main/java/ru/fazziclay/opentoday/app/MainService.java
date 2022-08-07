@@ -13,7 +13,6 @@ import ru.fazziclay.opentoday.app.items.ItemManager;
 public class MainService extends Service {
     private Handler handler;
     private Runnable runnable;
-    private long latestTick;
 
     private ItemManager itemManager;
 
