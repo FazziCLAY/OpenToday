@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -14,7 +13,7 @@ import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.settings.SettingsManager;
 import ru.fazziclay.opentoday.databinding.ActivitySettingsBinding;
-import ru.fazziclay.opentoday.util.SpinnerHelper;
+import ru.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 
 public class SettingsActivity extends AppCompatActivity {
     private ActivitySettingsBinding binding;
@@ -32,25 +31,21 @@ public class SettingsActivity extends AppCompatActivity {
         setTitle(getString(R.string.settings_title));
 
         settingsManager = App.get(this).getSettingsManager();
+        setupThemeSpinner();
+    }
 
-        SpinnerHelper<Integer> themeSpinnerHelp = new SpinnerHelper<>(
-                new String[]{
-                        getString(R.string.settings_theme_system),
-                        getString(R.string.settings_theme_light),
-                        getString(R.string.settings_theme_night)
-                },
-                new Integer[]{
-                        AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
-                        AppCompatDelegate.MODE_NIGHT_NO,
-                        AppCompatDelegate.MODE_NIGHT_YES
-                }
-        );
-        binding.themeSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_expandable_list_item_1, themeSpinnerHelp.getNames()));
-        binding.themeSpinner.setSelection(themeSpinnerHelp.getPosition(settingsManager.getTheme()));
+    private void setupThemeSpinner() {
+        SimpleSpinnerAdapter<Integer> themeSpinnerAdapter = new SimpleSpinnerAdapter<Integer>(this)
+                .add(getString(R.string.settings_theme_system), AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                .add(getString(R.string.settings_theme_light), AppCompatDelegate.MODE_NIGHT_NO)
+                .add(getString(R.string.settings_theme_night), AppCompatDelegate.MODE_NIGHT_YES);
+
+        binding.themeSpinner.setAdapter(themeSpinnerAdapter);
+        binding.themeSpinner.setSelection(themeSpinnerAdapter.getValuePosition(settingsManager.getTheme()));
         binding.themeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                int t = themeSpinnerHelp.getValue(position);
+                int t = themeSpinnerAdapter.getItem(position);
                 AppCompatDelegate.setDefaultNightMode(t);
                 settingsManager.setTheme(t);
                 settingsManager.save();
