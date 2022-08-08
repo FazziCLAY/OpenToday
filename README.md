@@ -2,7 +2,7 @@
 Android application for the organization of life
 
 # Coming soon...
-Application is development.
+soon... :) (test discord webhook111)
 
 # Other Development Docs
 "/docs" folder
