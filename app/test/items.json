@@ -1,0 +1,24 @@
+{"items": [
+  {
+    "minimize": false,
+    "itemType": "TextItem",
+    "clickableUrls": false,
+    "text": "owo",
+    "customTextColor": false,
+    "viewBackgroundColor": 0,
+    "viewCustomBackgroundColor": false,
+    "textColor": 0,
+    "viewMinHeight": 0
+  },
+  {
+    "minimize": false,
+    "itemType": "TextItem",
+    "clickableUrls": false,
+    "text": "owo",
+    "customTextColor": false,
+    "viewBackgroundColor": 0,
+    "viewCustomBackgroundColor": false,
+    "textColor": 0,
+    "viewMinHeight": 0
+  }
+]}

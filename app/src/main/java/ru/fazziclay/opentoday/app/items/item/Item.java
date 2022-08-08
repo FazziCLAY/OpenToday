@@ -17,7 +17,6 @@ public class Item implements Cloneable {
     private static final String DEFAULT_BACKGROUND_COLOR = "#99999999";
 
     // START - Save
-    public final static ItemIETool IE_TOOL = new ItemIETool();
     public static class ItemIETool extends ItemImportExportTool {
         @Override
         public JSONObject exportItem(Item item) throws Exception {
@@ -94,6 +93,5 @@ public class Item implements Cloneable {
     @Setter public void setViewCustomBackgroundColor(boolean v) { this.viewCustomBackgroundColor = v; }
     @Getter public boolean isMinimize() { return minimize; }
     @Setter public void setMinimize(boolean minimize) { this.minimize = minimize; }
-    @Getter public ItemController getController() { return controller; }
     @Setter public void setController(ItemController controller) { this.controller = controller; }
 }

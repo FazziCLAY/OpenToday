@@ -4,7 +4,6 @@ import static ru.fazziclay.opentoday.util.InlineUtil.fcu_viewOnClick;
 
 import android.app.Activity;
 import android.content.res.ColorStateList;
-import android.graphics.drawable.ColorDrawable;
 import android.text.util.Linkify;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +13,14 @@ import android.widget.TextView;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
+import ru.fazziclay.opentoday.app.items.ItemManager;
+import ru.fazziclay.opentoday.app.items.ItemStorage;
 import ru.fazziclay.opentoday.app.items.item.CheckboxItem;
 import ru.fazziclay.opentoday.app.items.item.CounterItem;
 import ru.fazziclay.opentoday.app.items.item.CycleListItem;
 import ru.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem;
 import ru.fazziclay.opentoday.app.items.item.GroupItem;
 import ru.fazziclay.opentoday.app.items.item.Item;
-import ru.fazziclay.opentoday.app.items.ItemManager;
 import ru.fazziclay.opentoday.app.items.item.TextItem;
 import ru.fazziclay.opentoday.databinding.ItemCheckboxBinding;
 import ru.fazziclay.opentoday.databinding.ItemCounterBinding;
@@ -29,7 +29,7 @@ import ru.fazziclay.opentoday.databinding.ItemDayRepeatableCheckboxBinding;
 import ru.fazziclay.opentoday.databinding.ItemGroupBinding;
 import ru.fazziclay.opentoday.databinding.ItemTextBinding;
 import ru.fazziclay.opentoday.ui.dialog.DialogItem;
-import ru.fazziclay.opentoday.util.ResUtil;
+import ru.fazziclay.opentoday.ui.dialog.DialogItemStorageEditor;
 
 public class ItemViewGenerator {
     private final Activity activity;
@@ -91,6 +91,8 @@ public class ItemViewGenerator {
         itemStorageDrawer.create();
         binding.content.addView(itemStorageDrawer.getView());
 
+        applyExternalEditorButton(item.getItemStorage(), binding.externalEditor);
+
         return binding.getRoot();
     }
 
@@ -118,6 +120,7 @@ public class ItemViewGenerator {
         // Cycle list
         binding.next.setOnClickListener(v -> item.next());
         binding.previous.setOnClickListener(v -> item.previous());
+        applyExternalEditorButton(item.getItemsCycleStorage(), binding.externalEditor);
 
         Item current = item.getCurrentItem();
         if (current != null) {
@@ -180,5 +183,9 @@ public class ItemViewGenerator {
             item.setChecked(view.isChecked());
             item.save();
         });
+    }
+
+    private void applyExternalEditorButton(ItemStorage itemStorage, View view) {
+        view.setOnClickListener(v -> new DialogItemStorageEditor(activity, itemManager, itemStorage).show());
     }
 }

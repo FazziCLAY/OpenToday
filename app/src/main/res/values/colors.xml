@@ -38,4 +38,5 @@
     <attr format="color" type="color" name="item_group_textColor" />
 
     <attr format="color" type="color" name="item_selectionForegroundColor" />
+    <attr format="color" type="color" name="toolbar_background" />
 </resources>

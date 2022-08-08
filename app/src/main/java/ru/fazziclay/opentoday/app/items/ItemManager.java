@@ -5,6 +5,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import ru.fazziclay.opentoday.app.App;
@@ -21,12 +23,15 @@ public class ItemManager extends SimpleItemStorage {
 
     private final ItemIEManager itemIEManager;
 
-    private AbsoluteItemContainer selection;
+    private final List<Selection> selections = new ArrayList<>();
     private final CallbackStorage<OnSelectionChanged> onSelectionUpdated = new CallbackStorage<>();
+
+    private final SaveThread saveThread = new SaveThread();
 
     public ItemManager(File saveFile) {
         this.itemIEManager = new ItemIEManager(saveFile);
         load();
+        saveThread.start();
     }
 
     private void load() {
@@ -36,29 +41,59 @@ public class ItemManager extends SimpleItemStorage {
         }
     }
 
-    public AbsoluteItemContainer getSelection() {
-        return selection;
+    public Selection[] getSelections() {
+        return selections.toArray(new Selection[0]);
     }
 
-    public void selectItem(AbsoluteItemContainer selection) {
-        this.selection = selection;
+    public void selectItem(Selection selection) {
+        this.selections.add(selection);
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
-            callback.run(this.selection);
+            callback.run(this.selections);
             return new Status.Builder().build();
         });
     }
 
-    public void deselect() {
-        this.selection = null;
+    public void deselectItem(Item item) {
+        Selection toDelete = null;
+        for (Selection selection : this.selections) {
+            if (selection.getItem() == item) toDelete = selection;
+        }
+        selections.remove(toDelete);
+
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
-            callback.run(null);
+            callback.run(this.selections);
+            return new Status.Builder().build();
+        });
+    }
+
+    public void deselectItem(Selection se) {
+        Selection toDelete = null;
+        for (Selection selection : this.selections) {
+            if (selection == se) toDelete = selection;
+        }
+        selections.remove(toDelete);
+
+        this.onSelectionUpdated.run((callbackStorage, callback) -> {
+            callback.run(this.selections);
+            return new Status.Builder().build();
+        });
+    }
+
+    public void deselectAll() {
+        selections.clear();
+
+        this.onSelectionUpdated.run((callbackStorage, callback) -> {
+            callback.run(this.selections);
             return new Status.Builder().build();
         });
     }
 
     public boolean isSelected(Item item) {
-        if (selection == null) return false;
-        return item == selection.getItem();
+        if (selections == null) return false;
+        for (Selection selection : selections) {
+            if (selection.getItem() == item) return true;
+        }
+        return false;
     }
 
     public CallbackStorage<OnSelectionChanged> getOnSelectionUpdated() {
@@ -67,16 +102,47 @@ public class ItemManager extends SimpleItemStorage {
 
     @Override
     public void save() {
-        new SaveThread().start();
+        saveThread.request();
+    }
+
+    public void saveAllDirect() {
+        try {
+            ItemManager.this.itemIEManager.saveToFile(exportData());
+        } catch (Exception e) {
+            Log.e("ItemManager", "SaveThread exception", e);
+            try {
+                new Handler(App.get().getMainLooper()).post(() -> Toast.makeText(App.get(), "Error: Save exception: " + e + "; cause: " + e.getCause(), Toast.LENGTH_LONG).show());
+            } catch (Exception ignored) {}
+        }
     }
 
     private class SaveThread extends Thread {
+        public boolean request = false;
+        public int requestsCount = 0;
+        public long firstRequestTime = 0;
+        public long latestRequestTime = 0;
+
         public SaveThread() {
             super.setName("ItemManager-SaveThread");
         }
 
         @Override
         public void run() {
+            while (!isInterrupted()) {
+                if (request) {
+                    internalSave();
+                    Log.i("SaveThread", String.format("requestCount=%s\nfirstTime=%s\nlatestTime=%s", requestsCount, firstRequestTime, latestRequestTime));
+
+                    request = false;
+                    requestsCount = 0;
+                    firstRequestTime = 0;
+                    latestRequestTime = 0;
+                }
+
+            }
+        }
+
+        private void internalSave() {
             try {
                 ItemManager.this.itemIEManager.saveToFile(exportData());
             } catch (Exception e) {
@@ -85,6 +151,15 @@ public class ItemManager extends SimpleItemStorage {
                     new Handler(App.get().getMainLooper()).post(() -> Toast.makeText(App.get(), "Error: Save exception: " + e + "; cause: " + e.getCause(), Toast.LENGTH_LONG).show());
                 } catch (Exception ignored) {}
             }
+        }
+
+        public void request() {
+            if (!request) {
+                firstRequestTime = System.currentTimeMillis();
+            }
+            request = true;
+            latestRequestTime = System.currentTimeMillis();
+            requestsCount = requestsCount + 1;
         }
     }
 

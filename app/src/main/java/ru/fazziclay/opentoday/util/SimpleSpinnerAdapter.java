@@ -11,16 +11,16 @@ import java.util.List;
 
 public class SimpleSpinnerAdapter<T> extends MinBaseAdapter {
     private final Context context;
-    private final ViewStyle viewStyle;
+    private final ViewStyle<T> viewStyle;
     private final List<Set> setList = new ArrayList<>();
 
-    public SimpleSpinnerAdapter(Context context, ViewStyle viewStyle) {
+    public SimpleSpinnerAdapter(Context context, ViewStyle<T> viewStyle) {
         this.context = context;
         this.viewStyle = viewStyle;
     }
 
     public SimpleSpinnerAdapter(Context context) {
-        this(context, (string, convertedView, parent) -> createViewFromResource(string, LayoutInflater.from(context), convertedView, parent, android.R.layout.simple_dropdown_item_1line));
+        this(context, (string, value, convertedView, parent) -> createViewFromResource(string, LayoutInflater.from(context), convertedView, parent, android.R.layout.simple_dropdown_item_1line));
     }
 
     public SimpleSpinnerAdapter<T> add(String text, T value) {
@@ -37,7 +37,7 @@ public class SimpleSpinnerAdapter<T> extends MinBaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Set set = setList.get(position);
-        return viewStyle.create(set.text, convertView, parent);
+        return viewStyle.create(set.text, set.value, convertView, parent);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class SimpleSpinnerAdapter<T> extends MinBaseAdapter {
         return view;
     }
 
-    private interface ViewStyle {
-        View create(String string, View convertView, ViewGroup parent);
+    public interface ViewStyle<T> {
+        View create(String string, T value, View convertView, ViewGroup parent);
     }
 }

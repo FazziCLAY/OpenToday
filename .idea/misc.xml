@@ -23,6 +23,7 @@
         <entry key="app/src/main/res/layout/activity_launcher_test.xml" value="0.1515625" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.26449787835926447" />
         <entry key="app/src/main/res/layout/activity_settings.xml" value="0.322463768115942" />
+        <entry key="app/src/main/res/layout/app_header.xml" value="0.27276613937580163" />
         <entry key="app/src/main/res/layout/content_main.xml" value="0.32916666666666666" />
         <entry key="app/src/main/res/layout/control_center.xml" value="0.2971014492753623" />
         <entry key="app/src/main/res/layout/debug_entries.xml" value="0.33229166666666665" />
@@ -35,6 +36,7 @@
         <entry key="app/src/main/res/layout/dialog_item_module_group.xml" value="0.27276613937580163" />
         <entry key="app/src/main/res/layout/dialog_item_module_item.xml" value="0.2910244786944696" />
         <entry key="app/src/main/res/layout/dialog_item_module_text.xml" value="0.2910244786944696" />
+        <entry key="app/src/main/res/layout/dialog_itemstorage_editor.xml" value="0.13286130778842148" />
         <entry key="app/src/main/res/layout/dialog_text_item_edit_text.xml" value="0.2" />
         <entry key="app/src/main/res/layout/entry_checkbox.xml" value="0.3233695652173913" />
         <entry key="app/src/main/res/layout/entry_day_repeatable_checkbox.xml" value="0.33" />
@@ -58,6 +60,12 @@
         <entry key="app/src/main/res/layout/listitem_calendar.xml" value="0.28804347826086957" />
         <entry key="app/src/main/res/layout/task.xml" value="0.32916666666666666" />
         <entry key="app/src/main/res/layout/tasks.xml" value="0.32916666666666666" />
+        <entry key="app/src/main/res/layout/toolbar.xml" value="0.27276613937580163" />
+        <entry key="app/src/main/res/layout/toolbar_more_file.xml" value="0.27276613937580163" />
+        <entry key="app/src/main/res/layout/toolbar_more_items.xml" value="0.27276613937580163" />
+        <entry key="app/src/main/res/layout/toolbar_more_items_item.xml" value="0.27276613937580163" />
+        <entry key="app/src/main/res/layout/toolbar_more_opentoday.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/toolbar_more_selection.xml" value="0.27276613937580163" />
         <entry key="app/src/main/res/layout/uidialog_about_app.xml" value="0.33" />
         <entry key="app/src/main/res/layout/uidialog_edit_checkboxentry.xml" value="0.3233695652173913" />
         <entry key="app/src/main/res/layout/uidialog_edit_entry.xml" value="0.5" />

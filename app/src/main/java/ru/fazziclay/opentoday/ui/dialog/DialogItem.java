@@ -7,17 +7,14 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.content.res.AppCompatResources;
 
 import com.rarepebble.colorpicker.ColorPickerView;
 
@@ -29,8 +26,6 @@ import java.util.List;
 import java.util.Locale;
 
 import ru.fazziclay.opentoday.R;
-import ru.fazziclay.opentoday.app.App;
-import ru.fazziclay.opentoday.app.items.AbsoluteItemContainer;
 import ru.fazziclay.opentoday.app.items.ItemManager;
 import ru.fazziclay.opentoday.app.items.ItemsRegistry;
 import ru.fazziclay.opentoday.app.items.item.CheckboxItem;
@@ -48,10 +43,9 @@ import ru.fazziclay.opentoday.databinding.DialogItemModuleDayrepeatablecheckboxB
 import ru.fazziclay.opentoday.databinding.DialogItemModuleGroupBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleItemBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleTextBinding;
-import ru.fazziclay.opentoday.ui.other.item.ItemStorageDrawer;
 import ru.fazziclay.opentoday.util.MinTextWatcher;
 import ru.fazziclay.opentoday.util.ResUtil;
-import ru.fazziclay.opentoday.util.SpinnerHelper;
+import ru.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 
 public class DialogItem {
     private final Activity activity;
@@ -473,9 +467,9 @@ public class DialogItem {
 
     public static class CycleListItemEditModule extends BaseEditUiModule {
         private DialogItemModuleCyclelistBinding binding;
-        private ItemStorageDrawer itemStorageDrawer;
-        private SpinnerHelper<CycleListItem.TickBehavior> itemsCycleBackgroundWorkSpinnerHelp;
+        private SimpleSpinnerAdapter<CycleListItem.TickBehavior> simpleSpinnerAdapter;
         private Runnable onEditStart;
+        private boolean firstFlag = true;
 
         @Override
         public View getView() {
@@ -484,55 +478,33 @@ public class DialogItem {
 
         @Override
         public void setup(Item item, Activity activity, View view) {
-            ItemManager itemManager = App.get().getItemManager();
             CycleListItem cycleListItem = (CycleListItem) item;
 
             binding = DialogItemModuleCyclelistBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
-            itemStorageDrawer = new ItemStorageDrawer(activity, itemManager, cycleListItem.getItemsCycleStorage());
+            simpleSpinnerAdapter = new SimpleSpinnerAdapter<CycleListItem.TickBehavior>(activity)
+                    .add(activity.getString(R.string.cycleListItem_tick_all), CycleListItem.TickBehavior.ALL)
+                    .add(activity.getString(R.string.cycleListItem_tick_current), CycleListItem.TickBehavior.CURRENT);
 
-            binding.canvas.addView(itemStorageDrawer.getView());
-            itemStorageDrawer.create();
-
-            itemsCycleBackgroundWorkSpinnerHelp = new SpinnerHelper<>(
-                    new String[] {
-                            activity.getString(R.string.cycleListItem_tick_all),
-                            activity.getString(R.string.cycleListItem_tick_current)
-                    },
-                    new CycleListItem.TickBehavior[] {
-                            CycleListItem.TickBehavior.ALL,
-                            CycleListItem.TickBehavior.CURRENT
-                    }
-            );
-
-            binding.itemsCycleBackgroundWork.setAdapter(new ArrayAdapter<>(activity, android.R.layout.simple_expandable_list_item_1, itemsCycleBackgroundWorkSpinnerHelp.getNames()));
-            binding.itemsCycleBackgroundWork.setSelection(itemsCycleBackgroundWorkSpinnerHelp.getPosition(cycleListItem.getTickBehavior()));
-            binding.addNew.setOnClickListener(v -> new DialogSelectItemType(activity, R.string.selectItemTypeDialog_create)
-                    .setOnSelected((itemType) -> {
-                        DialogItem dialogItem = new DialogItem(activity, itemManager);
-                        dialogItem.create(itemType, cycleListItem.getItemsCycleStorage()::addItem);
-                    })
-                    .show());
-            final boolean[] first = {true};
+            binding.itemsCycleBackgroundWork.setAdapter(simpleSpinnerAdapter);
+            binding.itemsCycleBackgroundWork.setSelection(simpleSpinnerAdapter.getValuePosition(cycleListItem.getTickBehavior()));
             binding.itemsCycleBackgroundWork.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if (!first[0]) {
+                    if (!firstFlag) {
                         onEditStart.run();
                     }
-                    first[0] = false;
+                    firstFlag = false;
                 }
 
                 @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
-                }
+                public void onNothingSelected(AdapterView<?> parent) {}
             });
         }
 
         @Override
         public void commit(Item item) {
             CycleListItem cycleListItem = (CycleListItem) item;
-            cycleListItem.setTickBehavior(itemsCycleBackgroundWorkSpinnerHelp.getValue(binding.itemsCycleBackgroundWork.getSelectedItemPosition()));
+            cycleListItem.setTickBehavior(simpleSpinnerAdapter.getItem(binding.itemsCycleBackgroundWork.getSelectedItemPosition()));
         }
 
         @Override
@@ -587,8 +559,6 @@ public class DialogItem {
 
     private static class GroupItemEditModule extends BaseEditUiModule {
         private DialogItemModuleGroupBinding binding;
-        private Runnable onEditStart;
-        private ItemStorageDrawer itemStorageDrawer;
 
         @Override
         public View getView() {
@@ -597,44 +567,13 @@ public class DialogItem {
 
         @Override
         public void setup(Item item, Activity activity, View view) {
-            ItemManager itemManager = App.get().getItemManager();
-            GroupItem groupItem = (GroupItem) item;
             binding = DialogItemModuleGroupBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
-            binding.addNew.setOnClickListener(v -> new DialogSelectItemType(activity, R.string.selectItemTypeDialog_create)
-                    .setOnSelected(type -> groupItem.getItemStorage().addItem(ItemsRegistry.REGISTRY.getItemInfoByClass(type).create()))
-                    .show());
-
-
-            itemStorageDrawer = new ItemStorageDrawer(activity, itemManager, groupItem.getItemStorage());
-
-            binding.canvas.addView(itemStorageDrawer.getView());
-            itemStorageDrawer.create();
-
-            if (itemManager.getSelection() == null) {
-                binding.moveSelected.setForeground(AppCompatResources.getDrawable(activity, R.drawable.shape));
-                binding.moveSelected.setForegroundTintList(ColorStateList.valueOf(Color.parseColor("#bb444444")));
-            }
-            binding.moveSelected.setOnClickListener(v -> {
-                if (itemManager.getSelection() == null) {
-                    Toast.makeText(activity, R.string.nothing_selected, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                AbsoluteItemContainer selection = itemManager.getSelection();
-                selection.getItemStorage().deleteItem(selection.getItem());
-                groupItem.getItemStorage().addItem(selection.getItem());
-                itemManager.deselect();
-            });
         }
 
         @Override
-        public void commit(Item item) {
-            GroupItem groupItem = (GroupItem) item;
-
-        }
+        public void commit(Item item) {}
 
         @Override
-        public void setOnStartEditListener(Runnable o) {
-            onEditStart = o;
-        }
+        public void setOnStartEditListener(Runnable o) { }
     }
 }

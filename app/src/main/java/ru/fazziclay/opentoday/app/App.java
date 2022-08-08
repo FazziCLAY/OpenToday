@@ -24,7 +24,6 @@ import ru.fazziclay.opentoday.util.DebugUtil;
 @SuppressWarnings("PointlessBooleanExpression") // for debug variables
 public class App extends Application {
     // Application
-    public final static boolean APPLICATION_IS_RELEASE = true;
     public final static int APPLICATION_DATA_VERSION = 2;
     public static final String VERSION_NAME = BuildConfig.VERSION_NAME;
     public static final int VERSION_CODE = BuildConfig.VERSION_CODE;

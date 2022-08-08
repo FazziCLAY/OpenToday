@@ -48,5 +48,10 @@
         <item name="item_group_textColor">#FFFFFF</item>
 
         <item name="item_selectionForegroundColor">#66ff7722</item>
+        <item name="toolbar_background">#54FFFFFF</item>
+    </style>
+
+    <style name="Theme.OpenToday.Toolbar.Button" parent="Widget.AppCompat.ButtonBar">
+        <item name="android:backgroundTint">#65BBFE</item>
     </style>
 </resources>

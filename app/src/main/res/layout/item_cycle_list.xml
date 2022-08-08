@@ -43,6 +43,17 @@
             android:textSize="14sp"
             tools:ignore="HardcodedText" />
 
+        <Button
+            android:layout_marginStart="2sp"
+            android:id="@+id/externalEditor"
+            android:layout_width="53sp"
+            android:layout_height="40sp"
+            android:layout_weight="0"
+            android:gravity="center"
+            android:text="Ed"
+            android:textSize="14sp"
+            tools:ignore="HardcodedText" />
+
     </LinearLayout>
 
     <LinearLayout

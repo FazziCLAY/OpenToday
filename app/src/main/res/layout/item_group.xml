@@ -8,13 +8,32 @@
     android:backgroundTint="?attr/item_group_backgroundColor"
     android:padding="3sp">
 
-    <TextView
-        android:id="@+id/title"
-        tools:text="Simple Group"
-        android:textSize="18sp"
-        android:textColor="?attr/item_group_textColor"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_weight="1"
+            tools:text="Simple Group"
+            android:textSize="18sp"
+            android:textColor="?attr/item_group_textColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:layout_marginStart="2sp"
+            android:id="@+id/externalEditor"
+            android:layout_width="53sp"
+            android:layout_height="40sp"
+            android:layout_weight="0"
+            android:gravity="center"
+            android:text="Ed"
+            android:textSize="14sp"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/content"
@@ -22,4 +41,5 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingLeft="3sp" />
+
 </LinearLayout>

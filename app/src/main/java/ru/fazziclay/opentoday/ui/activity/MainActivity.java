@@ -10,12 +10,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.provider.Settings;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.SimpleDateFormat;
@@ -25,17 +22,17 @@ import java.util.Locale;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
-import ru.fazziclay.opentoday.app.items.ItemManager;
 import ru.fazziclay.opentoday.databinding.ActivityMainBinding;
-import ru.fazziclay.opentoday.ui.dialog.DialogAboutApp;
 import ru.fazziclay.opentoday.ui.dialog.DialogItem;
 import ru.fazziclay.opentoday.ui.dialog.DialogSelectItemType;
+import ru.fazziclay.opentoday.ui.other.AppToolbar;
 import ru.fazziclay.opentoday.ui.other.item.ItemStorageDrawer;
 import ru.fazziclay.opentoday.util.DebugUtil;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding; // binding
     private App app;
+    private AppToolbar appToolbar;
     private ItemStorageDrawer itemStorageDrawer;
 
     private int lastDayOfYear = 0;
@@ -45,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DebugUtil.sleep(App.MAIN_ACTIVITY_START_SLEEP);
+        try {
+            getSupportActionBar().hide();
+        } catch (Exception ignored) {}
+        appToolbar = new AppToolbar(this);
 
         // logic
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -53,16 +54,21 @@ public class MainActivity extends AppCompatActivity {
 
         itemStorageDrawer = new ItemStorageDrawer(this, app.getItemManager(), app.getItemManager());
         itemStorageDrawer.create();
-        binding.items.addView(itemStorageDrawer.getView());
-
-        // Add new
-        fcu_viewOnClick(binding.addNew, this::showAddNewDialog);
+        binding.mainItems.addView(itemStorageDrawer.getView());
 
         setupCurrentDate();
 
         // Notifications
         setupBatteryOptimizationNotify();
         setupUpdateAvailableNotify();
+
+        // header
+        setupHeader();
+    }
+
+    private void setupHeader() {
+        binding.toolbar.addView(appToolbar.getToolbarView());
+        binding.toolbarAllViews.addView(appToolbar.getToolbarMoreView());
     }
 
     @Override
@@ -125,52 +131,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         setupBatteryOptimizationNotify();
-    }
-
-    // ======== START - MENU ========
-    @Override
-    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @SuppressLint("NonConstantResourceId") // android: what?????
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.about:
-                new DialogAboutApp(this).show();
-                break;
-
-            case R.id.settings:
-                startActivity(SettingsActivity.createLaunchIntent(this));
-                break;
-
-            case R.id.moveSelectedHere:
-                ItemManager itemManager = app.getItemManager();
-                if (itemManager.getSelection() == null) {
-                    Toast.makeText(app, "Nothing", Toast.LENGTH_SHORT).show();
-                } else {
-                    itemManager.getSelection().getItemStorage().deleteItem(itemManager.getSelection().getItem());
-                    itemManager.addItem(itemManager.getSelection().getItem());
-                    itemManager.deselect();
-                }
-                break;
-
-            default:
-                Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-    // ======== END - MENU ========
-
-    private void showAddNewDialog() {
-        new DialogSelectItemType(this, R.string.selectItemTypeDialog_create)
-                .setOnSelected((itemType) -> {
-                    DialogItem dialogItem = new DialogItem(this, app.getItemManager());
-                    dialogItem.create(itemType, app.getItemManager()::addItem);
-                })
-                .show();
     }
 
     public void setCurrentDate() {

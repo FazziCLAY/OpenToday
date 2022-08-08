@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+            <Button
+                android:id="@+id/file"
+                android:text="@string/toolbar_file"
+                android:textAllCaps="false"
+                android:layout_marginLeft="1sp"
+                android:layout_marginRight="1sp"
+                android:minHeight="0sp"
+                android:minWidth="0sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Theme.OpenToday.Toolbar.Button" />
+
+            <Button
+                android:id="@+id/items"
+                android:text="@string/toolbar_items"
+                android:textAllCaps="false"
+                android:layout_marginLeft="1sp"
+                android:layout_marginRight="1sp"
+                android:minHeight="0sp"
+                android:minWidth="0sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Theme.OpenToday.Toolbar.Button" />
+
+            <Button
+                android:id="@+id/selection"
+                android:text="@string/toolbar_selection"
+                android:textAllCaps="false"
+                android:layout_marginLeft="1sp"
+                android:layout_marginRight="1sp"
+                android:minHeight="0sp"
+                android:minWidth="0sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Theme.OpenToday.Toolbar.Button" />
+
+            <Button
+                android:id="@+id/opentoday"
+                android:text="@string/toolbar_opentoday"
+                android:textAllCaps="false"
+                android:layout_marginLeft="1sp"
+                android:layout_marginRight="1sp"
+                android:minHeight="0sp"
+                android:minWidth="0sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Theme.OpenToday.Toolbar.Button" />
+        </LinearLayout>
+    </HorizontalScrollView>
+</LinearLayout>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/deselect_all"
+        android:backgroundTint="#E8514D"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="1sp"
+        android:layout_marginRight="1sp"
+        android:minHeight="0sp"
+        android:minWidth="0sp"
+        android:textAllCaps="false"
+        android:text="@string/toolbar_more_selection_deselectAll" />
+
+    <Button
+        android:id="@+id/move_selected_to_root"
+        android:backgroundTint="#E8514D"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="1sp"
+        android:layout_marginRight="1sp"
+        android:minHeight="0sp"
+        android:minWidth="0sp"
+        android:textAllCaps="false"
+        android:text="@string/toolbar_more_selection_moveSelectedToRoot" />
+
+</LinearLayout>

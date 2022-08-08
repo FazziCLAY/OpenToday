@@ -8,34 +8,6 @@
     android:orientation="vertical"
     style="@style/Theme.OpenToday.ItemEditModule">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="17sp"
-            android:text="@string/dialog_item_module_cyclelist_warninigApply"
-            app:drawableStartCompat="@android:drawable/ic_menu_revert" />
-
-        <LinearLayout
-            android:id="@+id/canvas"
-            android:padding="5sp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" />
-    </LinearLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_new"
-        android:layout_gravity="end"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/item_add"
-        android:src="@android:drawable/ic_input_add"
-        tools:ignore="HardcodedText" />
 
     <TextView
         android:layout_width="match_parent"

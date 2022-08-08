@@ -1,7 +1,6 @@
 package ru.fazziclay.opentoday.ui.other.item;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +12,15 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
-import ru.fazziclay.opentoday.app.items.AbsoluteItemContainer;
 import ru.fazziclay.opentoday.app.items.ItemManager;
 import ru.fazziclay.opentoday.app.items.ItemStorage;
 import ru.fazziclay.opentoday.app.items.ItemsRegistry;
+import ru.fazziclay.opentoday.app.items.Selection;
 import ru.fazziclay.opentoday.app.items.callback.OnItemStorageUpdate;
 import ru.fazziclay.opentoday.app.items.callback.OnSelectionChanged;
 import ru.fazziclay.opentoday.app.items.item.Item;
@@ -36,8 +38,25 @@ public class ItemStorageDrawer {
     private final RecyclerView view;
     private RecyclerView.Adapter<DrawerViewHolder> adapter;
     private ItemViewGenerator itemViewGenerator;
+
+    private final List<Selection> visibleSelections = new ArrayList<>();
     private final OnItemStorageUpdate onItemStorageUpdate = new DrawerOnItemStorageUpdated();
-    private View selectedView = null;
+    private final OnSelectionChanged onSelectionChanged = new OnSelectionChanged() {
+        @Override
+        public void run(List<Selection> selections) {
+            for (Selection visibleSelection : visibleSelections) {
+                int pos = itemStorage.getItemPosition(visibleSelection.getItem());
+                adapter.notifyItemChanged(pos);
+            }
+
+            for (Selection selection : selections) {
+                int pos = itemStorage.getItemPosition(selection.getItem());
+                adapter.notifyItemChanged(pos);
+            }
+            visibleSelections.clear();
+            visibleSelections.addAll(selections);
+        }
+    };
 
     private boolean destroyed = false;
     private boolean created = false;
@@ -49,9 +68,7 @@ public class ItemStorageDrawer {
         this.itemStorage = itemStorage;
         this.view = new RecyclerView(activity);
         this.view.setLayoutManager(new LinearLayoutManager(activity));
-        this.itemManager.getOnSelectionUpdated().addCallback(CallbackImportance.DEFAULT, selection -> {
-            if (selectedView != null) selectedView.setForeground(null);
-        });
+        this.itemManager.getOnSelectionUpdated().addCallback(CallbackImportance.DEFAULT, onSelectionChanged);
     }
 
     public void create() {
@@ -79,6 +96,7 @@ public class ItemStorageDrawer {
         }
         destroyed = true;
         this.itemStorage.getOnUpdateCallbacks().deleteCallback(onItemStorageUpdate);
+        this.itemManager.getOnSelectionUpdated().deleteCallback(onSelectionChanged);
         this.view.setAdapter(null);
         this.itemViewGenerator = null;
         this.adapter = null;
@@ -139,8 +157,7 @@ public class ItemStorageDrawer {
             holder.layout.addView(holder.view = view);
 
             if (itemManager.isSelected(item)) {
-                selectedView = holder.view;
-                selectedView.setForeground(new ColorDrawable(ResUtil.getAttrColor(activity, R.attr.item_selectionForegroundColor)));
+                holder.view.setForeground(new ColorDrawable(ResUtil.getAttrColor(activity, R.attr.item_selectionForegroundColor)));
             }
         }
 
@@ -213,15 +230,16 @@ public class ItemStorageDrawer {
             menu.getMenu().findItem(R.id.textItem_clickableUrls).setChecked(textItem.isClickableUrls());
         }
         menu.setOnMenuItemClickListener(menuItem -> {
+            boolean save = false;
             if (menuItem.getItemId() == R.id.minimize) {
                 item.setMinimize(!item.isMinimize());
+                save = true;
+
             } else if (menuItem.getItemId() == R.id.selected) {
                 if (menu.getMenu().findItem(R.id.selected).isChecked()) {
-                    itemManager.deselect();
-                    selectedView = null;
+                    itemManager.deselectItem(item);
                 } else {
-                    if (selectedView != null) selectedView.setForeground(null);
-                    itemManager.selectItem(new AbsoluteItemContainer(itemStorage, item));
+                    itemManager.selectItem(new Selection(itemStorage, item));
                 }
 
             } else if (menuItem.getItemId() == R.id.copy) {
@@ -239,6 +257,7 @@ public class ItemStorageDrawer {
                 if (item instanceof TextItem) {
                     TextItem textItem = (TextItem) item;
                     textItem.setClickableUrls(!textItem.isClickableUrls());
+                    save = true;
                 }
             } else if (menuItem.getItemId() == R.id.textItem_editText) {
                 if (item instanceof TextItem) {
@@ -247,7 +266,7 @@ public class ItemStorageDrawer {
                     d.show();
                 }
             }
-            item.save();
+            if (save) item.save();
             item.updateUi();
             return true;
         });

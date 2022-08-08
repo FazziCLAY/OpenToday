@@ -49,11 +49,21 @@
         <item name="item_group_textColor">#2B2B2B</item>
 
         <item name="item_selectionForegroundColor">#66ff7722</item>
+        <item name="toolbar_background">#8C000000</item>
     </style>
 
     <style name="Theme.OpenToday.ItemEditModule" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="android:background">@drawable/shape</item>
         <item name="android:backgroundTint">#4C858585</item>
         <item name="android:padding">3sp</item>
+    </style>
+
+
+    <style name="Theme.OpenToday.Toolbar">
+
+    </style>
+
+    <style name="Theme.OpenToday.Toolbar.Button" parent="Widget.AppCompat.ButtonBar">
+        <item name="android:backgroundTint">#0188EF</item>
     </style>
 </resources>
