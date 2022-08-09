@@ -7,16 +7,16 @@ import android.app.Dialog;
 import android.view.View;
 
 import ru.fazziclay.opentoday.app.App;
-import ru.fazziclay.opentoday.databinding.DialogAboutAppBinding;
+import ru.fazziclay.opentoday.databinding.DialogAppAboutBinding;
 import ru.fazziclay.opentoday.ui.activity.OpenSourceLicensesActivity;
 
 public class DialogAboutApp {
-    private final DialogAboutAppBinding binding;
+    private final DialogAppAboutBinding binding;
     private final Dialog dialog;
 
     public DialogAboutApp(Activity activity) {
         // View
-        binding = DialogAboutAppBinding.inflate(activity.getLayoutInflater());
+        binding = DialogAppAboutBinding.inflate(activity.getLayoutInflater());
         binding.textVersion.setText(App.VERSION_NAME);
         binding.textPackage.setText(App.APPLICATION_ID);
 
