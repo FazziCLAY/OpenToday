@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -12,7 +13,8 @@
         android:minWidth="0sp"
         android:layout_marginLeft="1sp"
         android:layout_marginRight="1sp"
-        android:text="+" />
+        android:text="+"
+        tools:ignore="HardcodedText" />
 
     <Button
         android:id="@+id/add"
@@ -22,7 +24,8 @@
         android:minWidth="0sp"
         android:layout_marginLeft="1sp"
         android:layout_marginRight="1sp"
-        android:text="!" />
+        android:text="!"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/name"
