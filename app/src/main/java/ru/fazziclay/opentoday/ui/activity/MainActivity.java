@@ -62,13 +62,13 @@ public class MainActivity extends AppCompatActivity {
         setupBatteryOptimizationNotify();
         setupUpdateAvailableNotify();
 
-        // header
-        setupHeader();
+        // toolbar
+        setupToolbar();
     }
 
-    private void setupHeader() {
+    private void setupToolbar() {
         binding.toolbar.addView(appToolbar.getToolbarView());
-        binding.toolbarAllViews.addView(appToolbar.getToolbarMoreView());
+        binding.toolbarMore.addView(appToolbar.getToolbarMoreView());
     }
 
     @Override

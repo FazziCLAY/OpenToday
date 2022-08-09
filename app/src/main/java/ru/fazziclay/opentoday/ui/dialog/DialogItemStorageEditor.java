@@ -25,7 +25,7 @@ public class DialogItemStorageEditor {
         DialogItemstorageEditorBinding binding = DialogItemstorageEditorBinding.inflate(activity.getLayoutInflater());
         binding.canvas.addView(itemStorageDrawer.getView());
         binding.toolbar.addView(appToolbar.getToolbarView());
-        binding.toolbarAllViews.addView(appToolbar.getToolbarMoreView());
+        binding.toolbarMore.addView(appToolbar.getToolbarMoreView());
 
         dialog.setContentView(binding.getRoot());
         dialog.setOnCancelListener(dialog -> {
