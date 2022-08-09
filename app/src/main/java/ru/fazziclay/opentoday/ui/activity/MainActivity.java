@@ -23,8 +23,6 @@ import java.util.Locale;
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.databinding.ActivityMainBinding;
-import ru.fazziclay.opentoday.ui.dialog.DialogItem;
-import ru.fazziclay.opentoday.ui.dialog.DialogSelectItemType;
 import ru.fazziclay.opentoday.ui.other.AppToolbar;
 import ru.fazziclay.opentoday.ui.other.item.ItemStorageDrawer;
 import ru.fazziclay.opentoday.util.DebugUtil;
