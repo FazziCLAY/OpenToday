@@ -49,6 +49,7 @@
 
         <item name="item_selectionForegroundColor">#66ff7722</item>
         <item name="toolbar_background">#54FFFFFF</item>
+        <item name="toolbar_more_items_item_textColor">#FFFFFF</item>
     </style>
 
     <style name="Theme.OpenToday.Toolbar.Button" parent="Widget.AppCompat.ButtonBar">

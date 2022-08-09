@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.Toast;
 
 import ru.fazziclay.opentoday.R;
@@ -46,6 +47,9 @@ public class AppToolbar {
     private View currentToolbarButton = null;
     private boolean destroyed = false;
 
+    private View itemsSectionCacheView = null;
+    private ListAdapter spinner;
+
     public AppToolbar(Activity activity) {
         this(activity, App.get(activity).getItemManager());
     }
@@ -59,6 +63,31 @@ public class AppToolbar {
         this.toolbarMoreView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         this.toolbarMoreView.setOrientation(LinearLayout.VERTICAL);
         this.toolbarView = binding.getRoot();
+
+        SimpleSpinnerAdapter.ViewStyle<Class<? extends Item>> viewStyle = (string, value, convertView, parent) -> {
+            ToolbarMoreItemsItemBinding b = ToolbarMoreItemsItemBinding.inflate(activity.getLayoutInflater(), parent, false);
+            if (convertView != null) return convertView;
+
+            b.name.setText(string);
+            b.create.setOnClickListener(v -> {
+                DialogItem dialogItem = new DialogItem(activity, app.getItemManager());
+                dialogItem.create(value, itemStorage::addItem);
+            });
+            b.add.setOnClickListener(v -> {
+                Item item = ItemsRegistry.REGISTRY.getItemInfoByClass(value).create();
+                itemStorage.addItem(item);
+            });
+
+            return b.getRoot();
+        };
+
+        spinner = new SimpleSpinnerAdapter<>(activity, viewStyle)
+                .add(activity.getString(R.string.item_text), TextItem.class)
+                .add(activity.getString(R.string.item_checkbox), CheckboxItem.class)
+                .add(activity.getString(R.string.item_checkboxDayRepeatable), DayRepeatableCheckboxItem.class)
+                .add(activity.getString(R.string.item_cycleList), CycleListItem.class)
+                .add(activity.getString(R.string.item_counter), CounterItem.class)
+                .add(activity.getString(R.string.item_group), GroupItem.class);
 
         setup();
     }
@@ -110,34 +139,15 @@ public class AppToolbar {
     }
 
     private void onItemsClick() {
+        if (itemsSectionCacheView != null) {
+            if (itemsSectionCacheView.getParent() != null) {
+                ((ViewGroup)itemsSectionCacheView.getParent()).removeView(itemsSectionCacheView);
+                toolbarMoreView.addView(itemsSectionCacheView);
+                return;
+            }
+        }
         ToolbarMoreItemsBinding lBinding = ToolbarMoreItemsBinding.inflate(activity.getLayoutInflater());
-
-        SimpleSpinnerAdapter.ViewStyle<Class<? extends Item>> viewStyle = (string, value, convertView, parent) -> {
-            ToolbarMoreItemsItemBinding b = ToolbarMoreItemsItemBinding.inflate(activity.getLayoutInflater(), parent, false);
-            if (convertView != null) return convertView;
-
-            b.name.setText(string);
-            b.create.setOnClickListener(v -> {
-                DialogItem dialogItem = new DialogItem(activity, app.getItemManager());
-                dialogItem.create(value, itemStorage::addItem);
-            });
-            b.add.setOnClickListener(v -> {
-                Item item = ItemsRegistry.REGISTRY.getItemInfoByClass(value).create();
-                itemStorage.addItem(item);
-            });
-
-            return b.getRoot();
-        };
-
-        lBinding.itemsList.setAdapter(new SimpleSpinnerAdapter<>(activity, viewStyle)
-                .add(activity.getString(R.string.item_text), TextItem.class)
-                .add(activity.getString(R.string.item_checkbox), CheckboxItem.class)
-                .add(activity.getString(R.string.item_checkboxDayRepeatable), DayRepeatableCheckboxItem.class)
-                .add(activity.getString(R.string.item_cycleList), CycleListItem.class)
-                .add(activity.getString(R.string.item_counter), CounterItem.class)
-                .add(activity.getString(R.string.item_group), GroupItem.class)
-        );
-
+        lBinding.itemsList.setAdapter(spinner);
         lBinding.addNew.setOnClickListener(v -> new DialogSelectItemType(activity, R.string.selectItemTypeDialog_create)
                 .setOnSelected((itemType) -> {
                     DialogItem dialogItem = new DialogItem(activity, app.getItemManager());
@@ -146,7 +156,7 @@ public class AppToolbar {
                 .show());
 
         lBinding.getRoot().setBackground(new ColorDrawable(Color.parseColor("#99000000")));
-        toolbarMoreView.addView(lBinding.getRoot());
+        toolbarMoreView.addView(itemsSectionCacheView = lBinding.getRoot());
     }
 
     private void onOpenTodayClick() {
