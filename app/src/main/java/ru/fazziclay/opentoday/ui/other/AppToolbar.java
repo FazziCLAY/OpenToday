@@ -29,10 +29,10 @@ import ru.fazziclay.opentoday.databinding.ToolbarMoreItemsBinding;
 import ru.fazziclay.opentoday.databinding.ToolbarMoreItemsItemBinding;
 import ru.fazziclay.opentoday.databinding.ToolbarMoreOpentodayBinding;
 import ru.fazziclay.opentoday.databinding.ToolbarMoreSelectionBinding;
-import ru.fazziclay.opentoday.ui.dialog.DialogAboutApp;
+import ru.fazziclay.opentoday.ui.dialog.DialogAppAbout;
 import ru.fazziclay.opentoday.ui.dialog.DialogItem;
 import ru.fazziclay.opentoday.ui.dialog.DialogSelectItemType;
-import ru.fazziclay.opentoday.ui.dialog.DialogSettings;
+import ru.fazziclay.opentoday.ui.dialog.DialogAppSettings;
 import ru.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 
 public class AppToolbar {
@@ -152,8 +152,8 @@ public class AppToolbar {
     private void onOpenTodayClick() {
         ToolbarMoreOpentodayBinding lBinding = ToolbarMoreOpentodayBinding.inflate(activity.getLayoutInflater());
 
-        fcu_viewOnClick(lBinding.about, () -> new DialogAboutApp(activity).show());
-        fcu_viewOnClick(lBinding.settings, () -> new DialogSettings(activity).show());
+        fcu_viewOnClick(lBinding.about, () -> new DialogAppAbout(activity).show());
+        fcu_viewOnClick(lBinding.settings, () -> new DialogAppSettings(activity).show());
 
         toolbarMoreView.addView(lBinding.getRoot());
     }

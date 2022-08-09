@@ -10,19 +10,19 @@ import androidx.appcompat.app.AppCompatDelegate;
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.settings.SettingsManager;
-import ru.fazziclay.opentoday.databinding.ActivitySettingsBinding;
+import ru.fazziclay.opentoday.databinding.DialogAppSettingsBinding;
 import ru.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 
-public class DialogSettings {
+public class DialogAppSettings {
     private final Activity activity;
     private final Dialog dialog;
-    private final ActivitySettingsBinding binding;
+    private final DialogAppSettingsBinding binding;
     private final SettingsManager settingsManager;
 
-    public DialogSettings(Activity activity) {
+    public DialogAppSettings(Activity activity) {
         this.activity = activity;
         this.dialog = new Dialog(activity, android.R.style.ThemeOverlay_Material);
-        this.binding = ActivitySettingsBinding.inflate(activity.getLayoutInflater());
+        this.binding = DialogAppSettingsBinding.inflate(activity.getLayoutInflater());
         this.settingsManager = App.get(activity).getSettingsManager();
         setupThemeSpinner();
     }

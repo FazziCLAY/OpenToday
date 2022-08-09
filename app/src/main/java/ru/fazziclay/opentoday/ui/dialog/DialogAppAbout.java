@@ -10,11 +10,11 @@ import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.databinding.DialogAppAboutBinding;
 import ru.fazziclay.opentoday.ui.activity.OpenSourceLicensesActivity;
 
-public class DialogAboutApp {
+public class DialogAppAbout {
     private final DialogAppAboutBinding binding;
     private final Dialog dialog;
 
-    public DialogAboutApp(Activity activity) {
+    public DialogAppAbout(Activity activity) {
         // View
         binding = DialogAppAboutBinding.inflate(activity.getLayoutInflater());
         binding.textVersion.setText(App.VERSION_NAME);
