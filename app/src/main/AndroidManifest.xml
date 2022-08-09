@@ -15,9 +15,6 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.OpenToday">
         <activity
-            android:name=".ui.activity.SettingsActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.activity.OpenSourceLicenseActivity"
             android:exported="false" />
         <activity
