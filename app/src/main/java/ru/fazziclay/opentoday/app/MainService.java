@@ -4,17 +4,16 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 
 import androidx.core.app.NotificationCompat;
 
 import ru.fazziclay.opentoday.R;
-import ru.fazziclay.opentoday.app.items.ItemManager;
 
 public class MainService extends Service {
+    private App app;
     private Handler handler;
     private Runnable runnable;
-
-    private ItemManager itemManager;
 
     @Override
     public void onCreate() {
@@ -30,20 +29,25 @@ public class MainService extends Service {
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .build());
 
-        App app = App.get(this);
-        itemManager = app.getItemManager();
-        handler = new Handler(getMainLooper());
-        runnable = () -> {
-            itemManager.tick();
-            handler.removeCallbacks(runnable);
-            handler.postDelayed(runnable, 1000);
+        this.app = App.get(this);
+        this.handler = new Handler(Looper.myLooper());
+        this.runnable = () -> {
+            startService(new Intent(this, TickService.class));
+            this.handler.removeCallbacks(runnable);
+            this.handler.postDelayed(runnable, app.isAppInForeground() ? 1000 : 60000);
         };
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        handler.post(runnable);
+        this.handler.post(this.runnable);
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        this.handler.removeCallbacks(runnable);
     }
 
     @Override

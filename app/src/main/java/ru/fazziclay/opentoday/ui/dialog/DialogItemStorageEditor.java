@@ -15,10 +15,10 @@ public class DialogItemStorageEditor {
     private final ItemStorageDrawer itemStorageDrawer;
     private final AppToolbar appToolbar;
 
-    public DialogItemStorageEditor(Activity activity, ItemManager itemManager, ItemStorage itemStorage) {
+    public DialogItemStorageEditor(Activity activity, ItemManager itemManager, ItemStorage itemStorage, ItemStorageDrawer.OnItemClick onItemClick) {
         this.activity = activity;
         this.dialog = new Dialog(activity, android.R.style.ThemeOverlay_Material);
-        this.itemStorageDrawer = new ItemStorageDrawer(activity, itemManager, itemStorage);
+        this.itemStorageDrawer = new ItemStorageDrawer(activity, itemManager, itemStorage, onItemClick, false);
         this.itemStorageDrawer.create();
         this.appToolbar = new AppToolbar(activity, itemStorage);
 

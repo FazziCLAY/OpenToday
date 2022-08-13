@@ -4,12 +4,15 @@ import static ru.fazziclay.opentoday.util.InlineUtil.fcu_viewOnClick;
 
 import android.app.Activity;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.text.util.Linkify;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.content.res.AppCompatResources;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
@@ -28,18 +31,19 @@ import ru.fazziclay.opentoday.databinding.ItemCycleListBinding;
 import ru.fazziclay.opentoday.databinding.ItemDayRepeatableCheckboxBinding;
 import ru.fazziclay.opentoday.databinding.ItemGroupBinding;
 import ru.fazziclay.opentoday.databinding.ItemTextBinding;
-import ru.fazziclay.opentoday.ui.dialog.DialogItem;
 import ru.fazziclay.opentoday.ui.dialog.DialogItemStorageEditor;
 
 public class ItemViewGenerator {
     private final Activity activity;
     private final ItemManager itemManager;
-    private final DialogItem dialogItem;
+    private final ItemStorageDrawer.OnItemClick onItemClick;
+    private final boolean previewMode;
 
-    public ItemViewGenerator(Activity activity, ItemManager itemManager) {
+    public ItemViewGenerator(Activity activity, ItemManager itemManager, ItemStorageDrawer.OnItemClick onItemClick, boolean previewMode) {
         this.activity = activity;
         this.itemManager = itemManager;
-        this.dialogItem = new DialogItem(activity, itemManager);
+        this.onItemClick = onItemClick;
+        this.previewMode = previewMode;
     }
 
     public View generate(Item item, ViewGroup view) {
@@ -75,8 +79,14 @@ public class ItemViewGenerator {
         if (item.isViewCustomBackgroundColor()) {
             ret.setBackgroundTintList(ColorStateList.valueOf(item.getViewBackgroundColor()));
         }
-        fcu_viewOnClick(ret, () -> dialogItem.edit(item));
-        if (item.isMinimize()) ret.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 60));
+        if (!previewMode && item.isMinimize()) {
+            ret.setForeground(AppCompatResources.getDrawable(activity, R.drawable.shape));
+            ret.setForegroundTintList(ColorStateList.valueOf(Color.parseColor("#44f0fff0")));
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins(15, 0, 0, 0);
+            ret.setLayoutParams(layoutParams);
+        }
+        fcu_viewOnClick(ret, () -> onItemClick.run(itemManager, item));
         return ret;
     }
 
@@ -87,10 +97,11 @@ public class ItemViewGenerator {
         applyTextItemToTextView(item, binding.title);
 
         // group
-        ItemStorageDrawer itemStorageDrawer = new ItemStorageDrawer(activity, App.get().getItemManager(), item.getItemStorage());
-        itemStorageDrawer.create();
-        binding.content.addView(itemStorageDrawer.getView());
-
+        if (!item.isMinimize()) {
+            ItemStorageDrawer itemStorageDrawer = new ItemStorageDrawer(activity, App.get().getItemManager(), item.getItemStorage(), onItemClick, previewMode);
+            itemStorageDrawer.create();
+            binding.content.addView(itemStorageDrawer.getView());
+        }
         applyExternalEditorButton(item.getItemStorage(), binding.externalEditor);
 
         return binding.getRoot();
@@ -103,8 +114,13 @@ public class ItemViewGenerator {
         applyTextItemToTextView(item, binding.title);
 
         // counter
+        if (previewMode) {
+            binding.up.setEnabled(false);
+            binding.down.setEnabled(false);
+        }
         fcu_viewOnClick(binding.up, item::up);
         fcu_viewOnClick(binding.down, item::down);
+
 
         binding.counter.setText(String.valueOf(item.getCounter()));
 
@@ -120,15 +136,24 @@ public class ItemViewGenerator {
         // Cycle list
         binding.next.setOnClickListener(v -> item.next());
         binding.previous.setOnClickListener(v -> item.previous());
+
+
+        if (previewMode) {
+            binding.next.setEnabled(false);
+            binding.previous.setEnabled(false);
+        }
+
         applyExternalEditorButton(item.getItemsCycleStorage(), binding.externalEditor);
 
         Item current = item.getCurrentItem();
-        if (current != null) {
-            binding.content.addView(generate(current, binding.getRoot()));
-        } else {
-            TextView textView = new TextView(activity);
-            textView.setText(R.string.empty);
-            binding.content.addView(textView);
+        if (!item.isMinimize()) {
+            if (current != null) {
+                binding.content.addView(generate(current, binding.getRoot()));
+            } else {
+                TextView textView = new TextView(activity);
+                textView.setText(R.string.empty);
+                binding.content.addView(textView);
+            }
         }
         return binding.getRoot();
     }
@@ -166,7 +191,7 @@ public class ItemViewGenerator {
 
     //
     private void applyTextItemToTextView(TextItem item, TextView view) {
-        if (item.isMinimize()) {
+        if (!previewMode && item.isMinimize()) {
             view.setText(item.getText().split("\n")[0]);
         } else {
             view.setText(item.getText());
@@ -179,13 +204,16 @@ public class ItemViewGenerator {
 
     private void applyCheckItemToCheckBoxView(CheckboxItem item, CheckBox view) {
         view.setChecked(item.isChecked());
+        if (previewMode) view.setEnabled(false);
         fcu_viewOnClick(view, () -> {
             item.setChecked(view.isChecked());
+            item.updateUi();
             item.save();
         });
     }
 
     private void applyExternalEditorButton(ItemStorage itemStorage, View view) {
-        view.setOnClickListener(v -> new DialogItemStorageEditor(activity, itemManager, itemStorage).show());
+        if (previewMode) view.setEnabled(false);
+        view.setOnClickListener(v -> new DialogItemStorageEditor(activity, itemManager, itemStorage, onItemClick).show());
     }
 }

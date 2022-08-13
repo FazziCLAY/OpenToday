@@ -1,12 +1,14 @@
 package ru.fazziclay.opentoday.ui.other.item;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,20 +38,46 @@ public class ItemStorageDrawer {
     private final ItemManager itemManager;
     private final ItemStorage itemStorage;
     private final RecyclerView view;
-    private RecyclerView.Adapter<DrawerViewHolder> adapter;
+    private RecyclerView.Adapter<ItemViewHolder> adapter;
     private ItemViewGenerator itemViewGenerator;
+
+    private boolean destroyed = false;
+    private boolean created = false;
 
     private final List<Selection> visibleSelections = new ArrayList<>();
     private final OnItemStorageUpdate onItemStorageUpdate = new DrawerOnItemStorageUpdated();
     private final OnSelectionChanged onSelectionChanged = new OnSelectionChanged() {
         @Override
         public void run(List<Selection> selections) {
+            List<Selection> toUpdate = new ArrayList<>();
+
             for (Selection visibleSelection : visibleSelections) {
-                int pos = itemStorage.getItemPosition(visibleSelection.getItem());
-                adapter.notifyItemChanged(pos);
+                boolean contain = false;
+                for (Selection selection : selections) {
+                    if (visibleSelection.getItem() == selection.getItem()) {
+                        contain = true;
+                        break;
+                    }
+                }
+                if (!contain) {
+                    toUpdate.add(visibleSelection);
+                }
             }
 
             for (Selection selection : selections) {
+                boolean contain = false;
+                for (Selection visibleSelection : visibleSelections) {
+                    if (visibleSelection.getItem() == selection.getItem()) {
+                        contain = true;
+                        break;
+                    }
+                }
+                if (!contain) {
+                    toUpdate.add(selection);
+                }
+            }
+
+            for (Selection selection : toUpdate) {
                 int pos = itemStorage.getItemPosition(selection.getItem());
                 adapter.notifyItemChanged(pos);
             }
@@ -58,17 +86,33 @@ public class ItemStorageDrawer {
         }
     };
 
-    private boolean destroyed = false;
-    private boolean created = false;
+    private final OnItemClick onItemClick;
+    private final DialogItem dialogItem;
+    private final boolean previewMode;
 
     // Public
     public ItemStorageDrawer(Activity activity, ItemManager itemManager, ItemStorage itemStorage) {
+        this(activity, itemManager, itemStorage, null, false);
+    }
+
+    public ItemStorageDrawer(Activity activity, ItemManager itemManager, ItemStorage itemStorage, OnItemClick onItemClick, boolean previewMode) {
         this.activity = activity;
         this.itemManager = itemManager;
         this.itemStorage = itemStorage;
         this.view = new RecyclerView(activity);
+        this.onItemClick = onItemClick;
+        this.previewMode = previewMode;
         this.view.setLayoutManager(new LinearLayoutManager(activity));
         this.itemManager.getOnSelectionUpdated().addCallback(CallbackImportance.DEFAULT, onSelectionChanged);
+
+        this.dialogItem = new DialogItem(this.activity, this.itemManager);
+        this.itemViewGenerator = new ItemViewGenerator(this.activity, this.itemManager, (itemManager1, item) -> {
+            if (this.onItemClick == null) {
+                if (!previewMode) actionItem(item, itemManager.getItemOnClickAction());
+            } else {
+                this.onItemClick.run(itemManager1, item);
+            }
+        }, previewMode);
     }
 
     public void create() {
@@ -79,12 +123,11 @@ public class ItemStorageDrawer {
             throw new RuntimeException("ItemStorageDrawer created!");
         }
         this.created = true;
-        this.itemViewGenerator = new ItemViewGenerator(this.activity, this.itemManager);
         this.adapter = new DrawerAdapter();
         this.view.setAdapter(adapter);
         this.itemStorage.getOnUpdateCallbacks().addCallback(CallbackImportance.DEFAULT, onItemStorageUpdate);
 
-        new ItemTouchHelper(new DrawerTouchCallback()).attachToRecyclerView(view);
+        if (!previewMode) new ItemTouchHelper(new DrawerTouchCallback()).attachToRecyclerView(view);
     }
 
     public void destroy() {
@@ -141,23 +184,25 @@ public class ItemStorageDrawer {
         return itemViewGenerator.generate(item, view);
     }
 
-    private class DrawerAdapter extends RecyclerView.Adapter<DrawerViewHolder> {
+    private class DrawerAdapter extends RecyclerView.Adapter<ItemViewHolder> {
         @NonNull
         @Override
-        public DrawerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new DrawerViewHolder();
+        public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new ItemViewHolder(activity);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull DrawerViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
             Item item = itemStorage.getItems()[position];
             View view = generateViewForItem(item);
 
             holder.layout.removeAllViews();
-            holder.layout.addView(holder.view = view);
+            holder.layout.addView(view);
 
             if (itemManager.isSelected(item)) {
-                holder.view.setForeground(new ColorDrawable(ResUtil.getAttrColor(activity, R.attr.item_selectionForegroundColor)));
+                holder.layout.setForeground(new ColorDrawable(ResUtil.getAttrColor(activity, R.attr.item_selectionForegroundColor)));
+            } else {
+                holder.layout.setForeground(null);
             }
         }
 
@@ -167,12 +212,11 @@ public class ItemStorageDrawer {
         }
     }
 
-    private class DrawerViewHolder extends RecyclerView.ViewHolder {
-        private final LinearLayout layout;
-        private View view = null;
+    public static class ItemViewHolder extends RecyclerView.ViewHolder {
+        public final LinearLayout layout;
 
-        public DrawerViewHolder() {
-            super(new LinearLayout(activity));
+        public ItemViewHolder(Context context) {
+            super(new LinearLayout(context));
             layout = (LinearLayout) itemView;
             layout.setOrientation(LinearLayout.VERTICAL);
             layout.setPadding(0, 5, 0, 5);
@@ -204,16 +248,67 @@ public class ItemStorageDrawer {
             if (direction == ItemTouchHelper.LEFT) {
                 int positionFrom = viewHolder.getAdapterPosition();
                 Item item = ItemStorageDrawer.this.itemStorage.getItems()[positionFrom];
-                item.setMinimize(!item.isMinimize());
-                item.save();
-                item.updateUi();
+                actionItem(item, itemManager.getItemOnLeftAction());
+
             } else if (direction == ItemTouchHelper.RIGHT) {
                 int position = viewHolder.getAdapterPosition();
                 Item item = ItemStorageDrawer.this.itemStorage.getItems()[position];
                 item.updateUi();
-                DrawerViewHolder drawerViewHolder = (DrawerViewHolder) viewHolder;
-                showRightMenu(item, drawerViewHolder.view);
+                ItemViewHolder itemViewHolder = (ItemViewHolder) viewHolder;
+                showRightMenu(item, itemViewHolder.itemView);
             }
+        }
+    }
+
+    private void actionItem(Item item, ItemManager.ItemAction action) {
+        switch (action) {
+            case OPEN_EDIT_DIALOG:
+                dialogItem.edit(item);
+                break;
+
+            case SELECT_ON:
+                itemManager.selectItem(new Selection(itemStorage, item));
+                break;
+
+            case SELECT_OFF:
+                itemManager.deselectItem(item);
+                break;
+
+            case MINIMIZE_REVERT:
+                item.setMinimize(!item.isMinimize());
+                item.updateUi();
+                item.save();
+                break;
+
+
+            case MINIMIZE_OFF:
+                item.setMinimize(false);
+                item.updateUi();
+                item.save();
+                break;
+
+
+            case MINIMIZE_ON:
+                item.setMinimize(true);
+                item.updateUi();
+                item.save();
+                break;
+
+            case SELECT_REVERT:
+                if (itemManager.isSelected(item)) {
+                    itemManager.deselectItem(item);
+                } else {
+                    itemManager.selectItem(new Selection(itemStorage, item));
+                }
+                break;
+
+            case DELETE_REQUEST:
+                new AlertDialog.Builder(activity)
+                        .setTitle(R.string.dialogItem_delete_title)
+                        .setNegativeButton(R.string.dialogItem_delete_cancel, null)
+                        .setPositiveButton(R.string.dialogItem_delete_apply, ((dialog1, which) -> item.delete()))
+                        .show();
+
         }
     }
 
@@ -231,45 +326,58 @@ public class ItemStorageDrawer {
         }
         menu.setOnMenuItemClickListener(menuItem -> {
             boolean save = false;
-            if (menuItem.getItemId() == R.id.minimize) {
-                item.setMinimize(!item.isMinimize());
-                save = true;
+            ItemManager.ItemAction itemAction = null;
+            switch (menuItem.getItemId()) {
+                case R.id.edit:
+                    itemAction = ItemManager.ItemAction.OPEN_EDIT_DIALOG;
+                    break;
 
-            } else if (menuItem.getItemId() == R.id.selected) {
-                if (menu.getMenu().findItem(R.id.selected).isChecked()) {
-                    itemManager.deselectItem(item);
-                } else {
-                    itemManager.selectItem(new Selection(itemStorage, item));
-                }
+                case R.id.minimize:
+                    itemAction = ItemManager.ItemAction.MINIMIZE_REVERT;
+                    break;
 
-            } else if (menuItem.getItemId() == R.id.copy) {
-                int currPos = itemStorage.getItemPosition(item);
-                Item copyItem = ItemsRegistry.REGISTRY.getItemInfoByClass(item.getClass()).copy(item);
+                case R.id.selected:
+                    itemAction = ItemManager.ItemAction.SELECT_REVERT;
+                    break;
 
-                DialogItem dialogItem = new DialogItem(activity, itemManager);
-                dialogItem.edit(copyItem);
+                case R.id.copy:
+                    int currPos = itemStorage.getItemPosition(item);
+                    Item copyItem = ItemsRegistry.REGISTRY.getItemInfoByClass(item.getClass()).copy(item);
 
-                itemStorage.addItem(copyItem);
-                int createPos = itemStorage.getItemPosition(copyItem);
-                itemStorage.move(createPos, currPos + 1);
+                    DialogItem dialogItem = new DialogItem(activity, itemManager);
+                    dialogItem.edit(copyItem);
 
-            } else if (menuItem.getItemId() == R.id.textItem_clickableUrls) {
-                if (item instanceof TextItem) {
-                    TextItem textItem = (TextItem) item;
-                    textItem.setClickableUrls(!textItem.isClickableUrls());
-                    save = true;
-                }
-            } else if (menuItem.getItemId() == R.id.textItem_editText) {
-                if (item instanceof TextItem) {
-                    TextItem textItem = (TextItem) item;
-                    DialogTextItemEditText d = new DialogTextItemEditText(activity, textItem);
-                    d.show();
-                }
+                    itemStorage.addItem(copyItem);
+                    int createPos = itemStorage.getItemPosition(copyItem);
+                    itemStorage.move(createPos, currPos + 1);
+                    break;
+
+                case R.id.textItem_clickableUrls:
+                    if (item instanceof TextItem) {
+                        TextItem textItem = (TextItem) item;
+                        textItem.setClickableUrls(!textItem.isClickableUrls());
+                        save = true;
+                    }
+                    break;
+
+                case R.id.textItem_editText:
+                    if (item instanceof TextItem) {
+                        TextItem textItem = (TextItem) item;
+                        DialogTextItemEditText d = new DialogTextItemEditText(activity, textItem);
+                        d.show();
+                    }
+                    break;
             }
+
+            if (itemAction != null) actionItem(item, itemAction);
             if (save) item.save();
             item.updateUi();
             return true;
         });
         menu.show();
+    }
+
+    public interface OnItemClick {
+        void run(ItemManager itemManager, Item item);
     }
 }

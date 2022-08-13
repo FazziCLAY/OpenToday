@@ -16,12 +16,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
+import ru.fazziclay.opentoday.app.FastTickService;
+import ru.fazziclay.opentoday.app.updatechecker.UpdateChecker;
 import ru.fazziclay.opentoday.databinding.ActivityMainBinding;
 import ru.fazziclay.opentoday.ui.other.AppToolbar;
 import ru.fazziclay.opentoday.ui.other.item.ItemStorageDrawer;
@@ -32,9 +33,8 @@ public class MainActivity extends AppCompatActivity {
     private App app;
     private AppToolbar appToolbar;
     private ItemStorageDrawer itemStorageDrawer;
-
-    private int lastDayOfYear = 0;
-
+    private Handler currentDateHandler;
+    private Runnable currentDateRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,16 +43,21 @@ public class MainActivity extends AppCompatActivity {
         try {
             getSupportActionBar().hide();
         } catch (Exception ignored) {}
-        appToolbar = new AppToolbar(this);
 
         // logic
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         app = App.get(this);
+        app.setAppInForeground(true);
 
         itemStorageDrawer = new ItemStorageDrawer(this, app.getItemManager(), app.getItemManager());
         itemStorageDrawer.create();
         binding.mainItems.addView(itemStorageDrawer.getView());
+
+        // toolbar
+        appToolbar = new AppToolbar(this);
+        setupToolbar();
 
         setupCurrentDate();
 
@@ -60,8 +65,30 @@ public class MainActivity extends AppCompatActivity {
         setupBatteryOptimizationNotify();
         setupUpdateAvailableNotify();
 
-        // toolbar
-        setupToolbar();
+        startService(new Intent(this, FastTickService.class));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        itemStorageDrawer.destroy();
+        currentDateHandler.removeCallbacks(currentDateRunnable);
+        appToolbar.destroy();
+        app.setAppInForeground(false);
+        stopService(new Intent(this, FastTickService.class));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        currentDateHandler.removeCallbacks(currentDateRunnable);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        currentDateHandler.post(currentDateRunnable);
+        setupBatteryOptimizationNotify();
     }
 
     private void setupToolbar() {
@@ -69,29 +96,19 @@ public class MainActivity extends AppCompatActivity {
         binding.toolbarMore.addView(appToolbar.getToolbarMoreView());
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        itemStorageDrawer.destroy();
-    }
-
     private void setupCurrentDate() {
         setCurrentDate();
-        lastDayOfYear = new GregorianCalendar().get(Calendar.DAY_OF_YEAR);
-        Handler handler = new Handler(getMainLooper());
-        Runnable runnable = new Runnable() {
+        currentDateHandler = new Handler(getMainLooper());
+        currentDateRunnable = new Runnable() {
             @Override
             public void run() {
                 if (isDestroyed()) return;
-                final int current = new GregorianCalendar().get(Calendar.DAY_OF_YEAR);
-                if (current != lastDayOfYear) {
-                    lastDayOfYear = current;
-                    setCurrentDate();
-                }
-                handler.postDelayed(this, 1000);
+                setCurrentDate();
+                long millis = System.currentTimeMillis() % 1000;
+                currentDateHandler.postDelayed(this, 1000 - millis);
             }
         };
-        handler.post(runnable);
+        currentDateHandler.post(currentDateRunnable);
     }
 
     private void setupBatteryOptimizationNotify() {
@@ -110,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupUpdateAvailableNotify() {
-        App.get(this).getUpdateChecker().check((available, url) -> runOnUiThread(() -> {
+        UpdateChecker.check(app, (available, url) -> runOnUiThread(() -> {
             binding.updateAvailable.setVisibility(available ? View.VISIBLE : View.GONE);
             if (url != null) {
                 binding.updateAvailable.setOnClickListener(v -> {
@@ -125,14 +142,8 @@ public class MainActivity extends AppCompatActivity {
         }));
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        setupBatteryOptimizationNotify();
-    }
-
-    public void setCurrentDate() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd EEEE", Locale.getDefault());
+    private void setCurrentDate() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd EEEE HH:mm:ss", Locale.getDefault());
         binding.currentDate.setText(dateFormat.format(new GregorianCalendar().getTime()));
     }
 }

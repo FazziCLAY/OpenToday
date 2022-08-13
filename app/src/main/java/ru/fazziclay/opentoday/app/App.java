@@ -1,8 +1,10 @@
 package ru.fazziclay.opentoday.app;
 
+import android.app.AlarmManager;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
@@ -50,8 +52,7 @@ public class App extends Application {
     // Application
     private ItemManager itemManager;
     private SettingsManager settingsManager;
-    private NotificationManager notificationManager;
-    private UpdateChecker updateChecker;
+    private boolean appInForeground = false;
 
     @Override
     public void onCreate() {
@@ -73,20 +74,22 @@ public class App extends Application {
             throw new RuntimeException("Exception!", e);
         }
 
-        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         itemManager = new ItemManager(new File(getExternalFilesDir(""), "item_data.json"));
         settingsManager = new SettingsManager(new File(getExternalFilesDir(""), "settings.json"));
-        updateChecker = new UpdateChecker();
 
         AppCompatDelegate.setDefaultNightMode(settingsManager.getTheme());
         notificationManager.createNotificationChannel(new NotificationChannel("foreground", getString(R.string.notification_foreground_title), NotificationManager.IMPORTANCE_HIGH));
-        startService(new Intent(this, MainService.class));
+        //startService(new Intent(this, MainService.class));
+
+        AlarmManager m = getSystemService(AlarmManager.class);
+        m.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 60000, PendingIntent.getService(this, 0, new Intent(this, TickService.class),0));
     }
 
-    // getters
+    // getters & setters
     public ItemManager getItemManager() { return itemManager; }
     public SettingsManager getSettingsManager() { return this.settingsManager; }
-    public NotificationManager getNotificationManager() { return notificationManager; }
-    public UpdateChecker getUpdateChecker() { return updateChecker; }
-    // not getters :)
+    public boolean isAppInForeground() { return appInForeground; }
+    public void setAppInForeground(boolean appInForeground) { this.appInForeground = appInForeground; }
+    // not getters & setters :)
 }

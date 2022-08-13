@@ -4,11 +4,14 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.StringRes;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.items.callback.OnSelectionChanged;
 import ru.fazziclay.opentoday.app.items.item.CheckboxItem;
@@ -28,6 +31,9 @@ public class ItemManager extends SimpleItemStorage {
 
     private final SaveThread saveThread = new SaveThread();
 
+    private ItemAction itemOnClickAction = ItemAction.OPEN_EDIT_DIALOG;
+    private ItemAction itemOnLeftAction = ItemAction.MINIMIZE_REVERT;
+
     public ItemManager(File saveFile) {
         this.itemIEManager = new ItemIEManager(saveFile);
         load();
@@ -46,6 +52,7 @@ public class ItemManager extends SimpleItemStorage {
     }
 
     public void selectItem(Selection selection) {
+        if (isSelected(selection.getItem())) return;
         this.selections.add(selection);
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
             callback.run(this.selections);
@@ -54,6 +61,7 @@ public class ItemManager extends SimpleItemStorage {
     }
 
     public void deselectItem(Item item) {
+        if (!isSelected(item)) return;
         Selection toDelete = null;
         for (Selection selection : this.selections) {
             if (selection.getItem() == item) toDelete = selection;
@@ -67,6 +75,7 @@ public class ItemManager extends SimpleItemStorage {
     }
 
     public void deselectItem(Selection se) {
+        if (!isSelected(se.getItem())) return;
         Selection toDelete = null;
         for (Selection selection : this.selections) {
             if (selection == se) toDelete = selection;
@@ -89,7 +98,6 @@ public class ItemManager extends SimpleItemStorage {
     }
 
     public boolean isSelected(Item item) {
-        if (selections == null) return false;
         for (Selection selection : selections) {
             if (selection.getItem() == item) return true;
         }
@@ -98,6 +106,34 @@ public class ItemManager extends SimpleItemStorage {
 
     public CallbackStorage<OnSelectionChanged> getOnSelectionUpdated() {
         return onSelectionUpdated;
+    }
+
+    public ItemAction getItemOnClickAction() {
+        return itemOnClickAction;
+    }
+
+    public ItemAction getItemOnLeftAction() {
+        return itemOnLeftAction;
+    }
+
+    public void setItemOnClickAction(ItemAction itemOnClickAction) {
+        this.itemOnClickAction = itemOnClickAction;
+    }
+
+    public void setItemOnLeftAction(ItemAction itemOnLeftAction) {
+        this.itemOnLeftAction = itemOnLeftAction;
+    }
+
+    @Override
+    public void deleteItem(Item item) {
+        deselectItem(item);
+        super.deleteItem(item);
+    }
+
+    @Override
+    public void tick() {
+        Log.d("ItemManager", "tick");
+        super.tick();
     }
 
     @Override
@@ -178,5 +214,27 @@ public class ItemManager extends SimpleItemStorage {
             i++;
         }
         return debug;
+    }
+
+    public enum ItemAction {
+        OPEN_EDIT_DIALOG(R.string.itemAction_OPEN_EDIT_DIALOG),
+        SELECT_REVERT(R.string.itemAction_SELECT_REVERT),
+        SELECT_ON(R.string.itemAction_SELECT_ON),
+        SELECT_OFF(R.string.itemAction_SELECT_OFF),
+        DELETE_REQUEST(R.string.itemAction_DELETE_REQUEST),
+        MINIMIZE_REVERT(R.string.itemAction_MINIMIZE_REVERT),
+        MINIMIZE_ON(R.string.itemAction_MINIMIZE_ON),
+        MINIMIZE_OFF(R.string.itemAction_MINIMIZE_OFF);
+
+        @StringRes
+        private final int n;
+
+        ItemAction(@StringRes int n) {
+            this.n = n;
+        }
+
+        public int nameResId() {
+            return n;
+        }
     }
 }

@@ -1,23 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ListView
-        android:id="@+id/itemsList"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_new"
-        android:layout_margin="@dimen/fab_margin"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/items"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:contentDescription="@string/item_add"
-        android:src="@android:drawable/ic_input_add"
-        tools:ignore="HardcodedText" />
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/changeOnLeftSwipe"
+            android:text="@string/toolbar_more_items_changeOnLeftSwipe"
+            android:backgroundTint="#14DECD"
+            android:layout_marginLeft="1sp"
+            android:layout_marginRight="1sp"
+            android:minHeight="45sp"
+            android:minWidth="0sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+        <Button
+            android:id="@+id/changeOnClick"
+            android:text="@string/toolbar_more_items_changeOnClick"
+            android:backgroundTint="#14DECD"
+            android:layout_marginLeft="1sp"
+            android:layout_marginRight="1sp"
+            android:minHeight="45sp"
+            android:minWidth="0sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -3,7 +3,6 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <Button
         android:id="@+id/deselect_all"
         android:backgroundTint="#E8514D"
@@ -11,10 +10,23 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="1sp"
         android:layout_marginRight="1sp"
-        android:minHeight="0sp"
+        android:minHeight="45sp"
         android:minWidth="0sp"
         android:textAllCaps="false"
         android:text="@string/toolbar_more_selection_deselectAll" />
+
+    <Button
+        android:id="@+id/delete"
+        android:backgroundTint="#E8514D"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="1sp"
+        android:layout_marginRight="1sp"
+        android:minHeight="45sp"
+        android:minWidth="0sp"
+        android:textAllCaps="false"
+        android:text="@string/toolbar_more_selection_delete" />
+
 
     <Button
         android:id="@+id/move_selected_to_root"
@@ -23,9 +35,18 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="1sp"
         android:layout_marginRight="1sp"
-        android:minHeight="0sp"
+        android:minHeight="45sp"
         android:minWidth="0sp"
         android:textAllCaps="false"
         android:text="@string/toolbar_more_selection_moveSelectedToRoot" />
+
+    <TextView
+        android:id="@+id/selectedInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:textSize="22sp"
+        android:background="#000000"
+        android:text="@string/toolbar_more_selection_info" />
 
 </LinearLayout>

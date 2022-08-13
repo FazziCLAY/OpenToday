@@ -49,23 +49,23 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_marginTop="10sp"
                 android:id="@+id/update_available"
-                android:visibility="gone"
-                tools:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10sp"
                 android:background="@drawable/shape"
-                android:padding="5sp"
                 android:backgroundTint="?attr/updateAvailable_backgroundColor"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="5sp"
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/update_available"
-                    android:textSize="20sp"
                     android:textColor="?attr/updateAvailable_textColor"
+                    android:textSize="20sp"
                     app:drawableLeftCompat="@drawable/update_available" />
 
             </LinearLayout>

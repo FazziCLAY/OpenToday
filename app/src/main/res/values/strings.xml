@@ -90,4 +90,21 @@
     <string name="toolbar_more_file_saveAll">Save all</string>
     <string name="success">Successfully</string>
     <string name="menuItem_delete">Delete</string>
+    <string name="toolbar_more_items_changeOnLeftSwipe">On left swipe</string>
+    <string name="toolbar_more_items_changeOnClick">On item click</string>
+    <string name="itemAction_OPEN_EDIT_DIALOG">Open edit dialog</string>
+    <string name="itemAction_SELECT_REVERT">Selection: revert</string>
+    <string name="itemAction_SELECT_ON">Selection: ON</string>
+    <string name="itemAction_SELECT_OFF">Selection: OFF</string>
+    <string name="itemAction_DELETE_REQUEST">Delete</string>
+    <string name="itemAction_MINIMIZE_REVERT">Minimize: revert</string>
+    <string name="itemAction_MINIMIZE_ON">Minimize: ON</string>
+    <string name="itemAction_MINIMIZE_OFF">Minimize: OFF</string>
+    <string name="menuItem_openEditDialog">Edit</string>
+    <string name="toolbar_more_selection_delete">Delete selected</string>
+    <string name="dialog_previewDeleteItems_delete_cancel">Cancel</string>
+    <string name="dialog_previewDeleteItems_delete_apply">DELETE</string>
+    <string name="dialog_previewDeleteItems_delete_title">Delete %s items?</string>
+    <string name="toolbar_more_selection_info">Count: %s</string>
+    <string name="dialog_item_module_item_export">Export</string>
 </resources>

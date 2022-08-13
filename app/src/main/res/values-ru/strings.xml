@@ -55,7 +55,7 @@
     <string name="dialogItem_module_text_textColor_dialog_cancel">Отмена</string>
     <string name="dialogItem_module_text_textColor_dialog_apply">Применить</string>
     <string name="disable_battery_optimization_warning">Добавьте приложение в исключения оптимизации батареи\nЭто необходимо для корректной работы уведомледний и приложения</string>
-    <string name="update_available">Update available! Click to download</string>
+    <string name="update_available">Доступно обновление! Нажмите для скачивания</string>
     <string name="update_available_error_browserNotFound">Пожалуйста установите web-браузер</string>
     <string name="dayRepeatable_startValue">Начальное значение</string>
     <string name="dialog_item_module_cyclelist_warninigApply">Важно: Изменения тут применяются сразу! И их невозможно будет отменить</string>
@@ -85,4 +85,24 @@
     <string name="move_selected_here">Переместить выбранный сюда</string>
     <string name="open_in_external_editor">Открыть в внешнем редакторе</string>
     <string name="toolbar_file">Файл</string>
+    <string name="toolbar_more_file_saveAll">Сохранить всё</string>
+    <string name="success">Успешно</string>
+    <string name="menuItem_delete">Удалить</string>
+    <string name="toolbar_more_items_changeOnLeftSwipe">Свайп влево</string>
+    <string name="toolbar_more_items_changeOnClick">Нажатие на айтем</string>
+    <string name="itemAction_OPEN_EDIT_DIALOG">Открыть редактор</string>
+    <string name="itemAction_SELECT_REVERT">Выделение: Инвертировать</string>
+    <string name="itemAction_SELECT_ON">Выделение: ВКЛ</string>
+    <string name="itemAction_SELECT_OFF">Выделение: ВЫКЛ</string>
+    <string name="itemAction_DELETE_REQUEST">Удалить</string>
+    <string name="itemAction_MINIMIZE_REVERT">Уменьшить: Инвертировать</string>
+    <string name="itemAction_MINIMIZE_ON">Уменьшить: ВКЛ</string>
+    <string name="itemAction_MINIMIZE_OFF">Уменьшить: ВЫКЛ</string>
+    <string name="menuItem_openEditDialog">Редактировать</string>
+    <string name="toolbar_more_selection_delete">Удалить выбранные</string>
+    <string name="dialog_previewDeleteItems_delete_cancel">Отмена</string>
+    <string name="dialog_previewDeleteItems_delete_apply">УДАЛИТЬ</string>
+    <string name="dialog_previewDeleteItems_delete_title">Удалить %s айтемов?</string>
+    <string name="toolbar_more_selection_info">Количество: %s</string>
+    <string name="dialog_item_module_item_export">Экспорт</string>
 </resources>
