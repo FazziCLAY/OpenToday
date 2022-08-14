@@ -27,6 +27,7 @@
         <entry key="app/src/main/res/layout/content_main.xml" value="0.32916666666666666" />
         <entry key="app/src/main/res/layout/control_center.xml" value="0.2971014492753623" />
         <entry key="app/src/main/res/layout/debug_entries.xml" value="0.33229166666666665" />
+        <entry key="app/src/main/res/layout/dialog_app_settings.xml" value="0.33" />
         <entry key="app/src/main/res/layout/dialog_item_frame.xml" value="0.2910244786944696" />
         <entry key="app/src/main/res/layout/dialog_item_module_checkbox.xml" value="0.2905711695376247" />
         <entry key="app/src/main/res/layout/dialog_item_module_counter.xml" value="0.14322359982898675" />
@@ -36,6 +37,8 @@
         <entry key="app/src/main/res/layout/dialog_item_module_group.xml" value="0.27276613937580163" />
         <entry key="app/src/main/res/layout/dialog_item_module_item.xml" value="0.2910244786944696" />
         <entry key="app/src/main/res/layout/dialog_item_module_text.xml" value="0.2910244786944696" />
+        <entry key="app/src/main/res/layout/dialog_item_notification.xml" value="0.27276613937580163" />
+        <entry key="app/src/main/res/layout/dialog_item_notifications_editor.xml" value="0.22242817423540315" />
         <entry key="app/src/main/res/layout/dialog_itemstorage_editor.xml" value="0.13286130778842148" />
         <entry key="app/src/main/res/layout/dialog_preview_delete_items.xml" value="0.14389837567680133" />
         <entry key="app/src/main/res/layout/dialog_text_item_edit_text.xml" value="0.2" />
@@ -56,6 +59,7 @@
         <entry key="app/src/main/res/layout/item_cycle_list.xml" value="0.2910244786944696" />
         <entry key="app/src/main/res/layout/item_day_repeatable_checkbox.xml" value="0.2907608695652174" />
         <entry key="app/src/main/res/layout/item_group.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/item_notification.xml" value="0.22" />
         <entry key="app/src/main/res/layout/item_text.xml" value="0.2954253954681488" />
         <entry key="app/src/main/res/layout/item_unknown.xml" value="0.1743188698284561" />
         <entry key="app/src/main/res/layout/listitem_calendar.xml" value="0.28804347826086957" />

@@ -19,26 +19,29 @@ import ru.fazziclay.opentoday.BuildConfig;
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.datafixer.DataFixer;
 import ru.fazziclay.opentoday.app.items.ItemManager;
+import ru.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
+import ru.fazziclay.opentoday.app.receiver.ItemsTickReceiver;
 import ru.fazziclay.opentoday.app.settings.SettingsManager;
-import ru.fazziclay.opentoday.app.updatechecker.UpdateChecker;
 import ru.fazziclay.opentoday.util.DebugUtil;
 
 @SuppressWarnings("PointlessBooleanExpression") // for debug variables
 public class App extends Application {
     // Application
-    public final static int APPLICATION_DATA_VERSION = 2;
+    public final static int APPLICATION_DATA_VERSION = 3;
     public static final String VERSION_NAME = BuildConfig.VERSION_NAME;
     public static final int VERSION_CODE = BuildConfig.VERSION_CODE;
     public static final String APPLICATION_ID = BuildConfig.APPLICATION_ID;
 
     // Notifications
-    public static final String NOTIFICATION_FOREGROUND_CHANNEL = "foreground";
-    public static final int NOTIFICATION_FOREGROUND_ID = 1;
+    public static final String NOTIFICATION_QUCIKNOTE_CHANNEL = QuickNoteReceiver.NOTIFICATION_CHANNEL;
+
 
     // DEBUG
     public final static boolean DEBUG = BuildConfig.DEBUG;
     public final static int MAIN_ACTIVITY_START_SLEEP = (DEBUG & false) ? 6000 : 0;
     public final static int APP_START_SLEEP = (DEBUG & false) ? 1000 : 0;
+    public static final String NOTIFICATION_ITEMS_CHANNEL = "items_notifications";
+    public static final boolean DEBUG_TICK_NOTIFICATION = (DEBUG & false);
 
     // Instance
     private volatile static App instance = null;
@@ -63,7 +66,7 @@ public class App extends Application {
         DataFixer dataFixer = new DataFixer(this);
         dataFixer.fixToCurrentVersion();
         try {
-            FileUtil.setText(new File(getExternalFilesDir(""),"version"), new JSONObject()
+            FileUtil.setText(new File(getExternalFilesDir(""), "version"), new JSONObject()
                     .put("product", "OpenToday")
                     .put("developer", "FazziCLAY ( https://fazziclay.github.io )")
                     .put("licence", "GNU GPLv3")
@@ -79,11 +82,11 @@ public class App extends Application {
         settingsManager = new SettingsManager(new File(getExternalFilesDir(""), "settings.json"));
 
         AppCompatDelegate.setDefaultNightMode(settingsManager.getTheme());
-        notificationManager.createNotificationChannel(new NotificationChannel("foreground", getString(R.string.notification_foreground_title), NotificationManager.IMPORTANCE_HIGH));
-        //startService(new Intent(this, MainService.class));
+        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_QUCIKNOTE_CHANNEL, getString(R.string.notification_quickNote_title), NotificationManager.IMPORTANCE_HIGH));
+        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_ITEMS_CHANNEL, getString(R.string.notification_items_title), NotificationManager.IMPORTANCE_HIGH));
 
         AlarmManager m = getSystemService(AlarmManager.class);
-        m.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 60000, PendingIntent.getService(this, 0, new Intent(this, TickService.class),0));
+        m.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 60000, PendingIntent.getBroadcast(this, 0, new Intent(this, ItemsTickReceiver.class), 0));
     }
 
     // getters & setters

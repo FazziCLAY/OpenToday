@@ -61,14 +61,14 @@ public class DialogSelectItemType {
         this.selectButtonText = selectButtonText;
 
         if (this.selectButtonText == null) {
-            this.selectButtonText = activity.getString(R.string.selectItemTypeDialog_select);
+            this.selectButtonText = activity.getString(R.string.dialog_selectItemType_select);
         }
     }
 
     public void show() {
         new AlertDialog.Builder(activity)
                 .setView(spinner)
-                .setNegativeButton(activity.getString(R.string.selectItemTypeDialog_cancel), null)
+                .setNegativeButton(activity.getString(R.string.dialog_selectItemAction_cancel), null)
                 .setPositiveButton(this.selectButtonText, (i2, i1) -> {
                     Class<? extends Item> itemType = spinnerHelper.getValues()[spinner.getSelectedItemPosition()];
                     onSelected.onSelected(itemType);

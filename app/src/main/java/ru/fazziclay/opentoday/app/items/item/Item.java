@@ -4,14 +4,22 @@ import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import ru.fazziclay.opentoday.annotation.Getter;
 import ru.fazziclay.opentoday.annotation.JSONName;
 import ru.fazziclay.opentoday.annotation.RequireSave;
 import ru.fazziclay.opentoday.annotation.Setter;
+import ru.fazziclay.opentoday.app.TickSession;
 import ru.fazziclay.opentoday.app.items.ItemController;
 import ru.fazziclay.opentoday.app.items.ItemImportExportTool;
+import ru.fazziclay.opentoday.app.items.notifications.ItemNotification;
+import ru.fazziclay.opentoday.app.items.notifications.ItemNotificationIETool;
+import ru.fazziclay.opentoday.app.items.notifications.ItemNotificationsRegistry;
 
 public class Item implements Cloneable {
     private static final String DEFAULT_BACKGROUND_COLOR = "#99999999";
@@ -24,7 +32,8 @@ public class Item implements Cloneable {
                     .put("viewMinHeight", item.viewMinHeight)
                     .put("viewBackgroundColor", item.viewBackgroundColor)
                     .put("viewCustomBackgroundColor", item.viewCustomBackgroundColor)
-                    .put("minimize", item.minimize);
+                    .put("minimize", item.minimize)
+                    .put("notifications", exportNotifications(item.notifications));
         }
 
         private final Item defaultValues = new Item();
@@ -35,7 +44,36 @@ public class Item implements Cloneable {
             o.viewBackgroundColor = json.optInt("viewBackgroundColor", defaultValues.viewBackgroundColor);
             o.viewCustomBackgroundColor = json.optBoolean("viewCustomBackgroundColor", defaultValues.viewCustomBackgroundColor);
             o.minimize = json.optBoolean("minimize", defaultValues.minimize);
+            JSONArray jsonArray = json.optJSONArray("notifications");
+            o.notifications = importNotifications(jsonArray != null ? jsonArray : new JSONArray());
             return o;
+        }
+
+        private JSONArray exportNotifications(List<ItemNotification> notifications) throws Exception {
+            JSONArray array = new JSONArray();
+
+            for (ItemNotification notification : notifications) {
+                ItemNotificationsRegistry.ItemNotificationInfo itemNotificationInfo = ItemNotificationsRegistry.REGISTRY.getByClass(notification.getClass());
+                JSONObject jsonObject = itemNotificationInfo.getIeTool().exportNotification(notification);
+                array.put(jsonObject.put("type", itemNotificationInfo.getStringType()));
+            }
+
+            return array;
+        }
+
+        private List<ItemNotification> importNotifications(JSONArray notifications) throws Exception {
+            List<ItemNotification> list = new ArrayList<>();
+
+            int i = 0;
+            while (i < notifications.length()) {
+                JSONObject jsonObject = notifications.getJSONObject(i);
+                String type = jsonObject.getString("type");
+                ItemNotificationIETool ieTool = ItemNotificationsRegistry.REGISTRY.getByStringType(type).getIeTool();
+                list.add(ieTool.importNotification(jsonObject));
+                i++;
+            }
+
+            return list;
         }
     }
     // END - Save
@@ -44,6 +82,7 @@ public class Item implements Cloneable {
     @JSONName(name = "viewBackgroundColor") @RequireSave private int viewBackgroundColor = Color.parseColor(DEFAULT_BACKGROUND_COLOR); // фоновый цвет
     @JSONName(name = "viewCustomBackgroundColor") @RequireSave private boolean viewCustomBackgroundColor = false; // юзаем ли фоновый цвет
     @JSONName(name = "minimize") @RequireSave private boolean minimize = false;
+    @JSONName(name = "notifications") @RequireSave private List<ItemNotification> notifications = new ArrayList<>();
     private ItemController controller = null;
 
     // Copy
@@ -54,6 +93,7 @@ public class Item implements Cloneable {
             this.viewCustomBackgroundColor = copy.viewCustomBackgroundColor;
             this.minimize = copy.minimize;
             this.controller = copy.controller;
+            this.notifications = new ArrayList<>(copy.notifications);
         }
     }
 
@@ -73,7 +113,13 @@ public class Item implements Cloneable {
         if (controller != null) controller.updateUi(this);
     }
 
-    public void tick() {}
+    public void tick(TickSession tickSession) {
+        for (ItemNotification notification : notifications) {
+            if (notification.tick(tickSession)) {
+                updateUi();
+            }
+        }
+    }
     
     @NonNull
     @Override
@@ -94,4 +140,8 @@ public class Item implements Cloneable {
     @Getter public boolean isMinimize() { return minimize; }
     @Setter public void setMinimize(boolean minimize) { this.minimize = minimize; }
     @Setter public void setController(ItemController controller) { this.controller = controller; }
+
+    public List<ItemNotification> getNotifications() {
+        return notifications;
+    }
 }

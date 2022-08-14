@@ -65,6 +65,7 @@
     </style>
 
     <style name="Theme.OpenToday.Toolbar.Button" parent="Widget.AppCompat.ButtonBar">
-        <item name="android:backgroundTint">#0188EF</item>
+        <item name="android:backgroundTint">#585858</item>
+        <item name="android:textColor">#F5F5F5</item>
     </style>
 </resources>

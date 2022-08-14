@@ -9,6 +9,7 @@ import ru.fazziclay.opentoday.annotation.Getter;
 import ru.fazziclay.opentoday.annotation.JSONName;
 import ru.fazziclay.opentoday.annotation.RequireSave;
 import ru.fazziclay.opentoday.annotation.Setter;
+import ru.fazziclay.opentoday.app.TickSession;
 
 public class DayRepeatableCheckboxItem extends CheckboxItem {
     // START - Save
@@ -59,13 +60,12 @@ public class DayRepeatableCheckboxItem extends CheckboxItem {
 
 
     @Override
-    public void tick() {
-        super.tick();
+    public void tick(TickSession tickSession) {
+        super.tick(tickSession);
         int dayOfYear = new GregorianCalendar().get(Calendar.DAY_OF_YEAR);
         if (dayOfYear != latestDayOfYear) {
             latestDayOfYear = dayOfYear;
             setChecked(startValue);
-            save();
             updateUi();
         }
     }

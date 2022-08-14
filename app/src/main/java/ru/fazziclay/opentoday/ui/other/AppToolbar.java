@@ -3,6 +3,7 @@ package ru.fazziclay.opentoday.ui.other;
 import static ru.fazziclay.opentoday.util.InlineUtil.fcu_viewOnClick;
 
 import android.app.Activity;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.View;
@@ -90,6 +91,9 @@ public class AppToolbar {
         toolbarMoreView.removeAllViews();
         toolbarMoreView.setBackground(null);
         toolbarMoreView.setOnClickListener(null);
+        if (currentToolbarButton != null) {
+            currentToolbarButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#585858")));
+        }
     }
 
     private boolean preOnClick(View buttonView) {
@@ -100,6 +104,7 @@ public class AppToolbar {
             ret = false;
         } else {
             currentToolbarButton = buttonView;
+            currentToolbarButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#0000ff")));
             ret = true;
         }
         return ret;
@@ -129,6 +134,7 @@ public class AppToolbar {
             Toast.makeText(activity, R.string.success, Toast.LENGTH_SHORT).show();
         });
 
+        lBinding.getRoot().setOnClickListener(null);
         toolbarMoreView.addView(lBinding.getRoot());
     }
 
@@ -148,10 +154,12 @@ public class AppToolbar {
 
         ItemManager itemManager = app.getItemManager();
 
-        lBinding.changeOnClick.setOnClickListener(v -> new DialogSelectItemAction(activity, itemManager.getItemOnClickAction(), itemManager::setItemOnClickAction).show());
-        lBinding.changeOnLeftSwipe.setOnClickListener(v -> new DialogSelectItemAction(activity, itemManager.getItemOnLeftAction(), itemManager::setItemOnLeftAction).show());
+        lBinding.changeOnClick.setOnClickListener(v -> new DialogSelectItemAction(activity, itemManager.getItemOnClickAction(), itemManager::setItemOnClickAction, activity.getString(R.string.toolbar_more_items_action_click)).show());
+        lBinding.changeOnLeftSwipe.setOnClickListener(v -> new DialogSelectItemAction(activity, itemManager.getItemOnLeftAction(), itemManager::setItemOnLeftAction, activity.getString(R.string.toolbar_more_items_action_leftSwipe)).show());
 
         lBinding.getRoot().setBackground(new ColorDrawable(Color.parseColor("#99000000")));
+
+        lBinding.getRoot().setOnClickListener(null);
         toolbarMoreView.addView(itemsSectionCacheView = lBinding.getRoot());
     }
 
@@ -161,6 +169,7 @@ public class AppToolbar {
         fcu_viewOnClick(lBinding.about, () -> new DialogAppAbout(activity).show());
         fcu_viewOnClick(lBinding.settings, () -> new DialogAppSettings(activity).show());
 
+        lBinding.getRoot().setOnClickListener(null);
         toolbarMoreView.addView(lBinding.getRoot());
     }
 
@@ -203,7 +212,7 @@ public class AppToolbar {
             }
             new DialogPreviewDeleteItems(activity, items.toArray(new Item[0])).show();
         });
-
+        lBinding.getRoot().setOnClickListener(null);
         toolbarMoreView.addView(lBinding.getRoot());
     }
 

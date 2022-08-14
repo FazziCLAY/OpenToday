@@ -1,6 +1,5 @@
 package ru.fazziclay.opentoday.app.items;
 
-import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 

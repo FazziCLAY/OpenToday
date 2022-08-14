@@ -248,6 +248,7 @@ public class ItemStorageDrawer {
             if (direction == ItemTouchHelper.LEFT) {
                 int positionFrom = viewHolder.getAdapterPosition();
                 Item item = ItemStorageDrawer.this.itemStorage.getItems()[positionFrom];
+                item.updateUi();
                 actionItem(item, itemManager.getItemOnLeftAction());
 
             } else if (direction == ItemTouchHelper.RIGHT) {

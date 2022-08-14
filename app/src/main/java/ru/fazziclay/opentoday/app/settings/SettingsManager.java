@@ -11,8 +11,12 @@ import java.io.File;
 import java.util.Calendar;
 
 import ru.fazziclay.javaneoutil.FileUtil;
+import ru.fazziclay.opentoday.annotation.Getter;
+import ru.fazziclay.opentoday.annotation.Setter;
 
 public class SettingsManager {
+    private static final int VERSION = 7;
+
     // Theme
     private static final String KEY_THEME = "theme";
     private static final String THEME_SYSTEM = "system";
@@ -24,10 +28,13 @@ public class SettingsManager {
     private static final String FIRST_DAY_OF_WEEK_SATURDAY = "saturday";
     private static final String FIRST_DAY_OF_WEEK_MONDAY = "monday";
 
+    private static final String KEY_QUICK_NOTE = "quickNote";
+
     //
     private final File saveFile;
     private int firstDayOfWeek = Calendar.SUNDAY;
     private int theme = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+    private boolean quickNote = true;
 
     public SettingsManager(File saveFile) {
         this.saveFile = saveFile;
@@ -40,6 +47,10 @@ public class SettingsManager {
         }
         try {
             JSONObject jsonObject = new JSONObject(FileUtil.getText(saveFile, "{}"));
+            int version = jsonObject.optInt("version", -1);
+            if (version != VERSION) {
+                Log.e("SettingsManager", "version unspecified; version=" + version);
+            }
 
             // first day of week
             String dayOfWeek = jsonObject.optString(KEY_FIRST_DAY_OF_WEEK, FIRST_DAY_OF_WEEK_SATURDAY);
@@ -58,34 +69,24 @@ public class SettingsManager {
             } else {
                 this.theme = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
             }
+            this.quickNote = jsonObject.optBoolean(KEY_QUICK_NOTE, this.quickNote);
 
         } catch (Exception e) {
             Log.e("SettingsManager", "load", e);
         }
     }
 
-    // Первый день недели
-    public int getFirstDayOfWeek() {
-        return firstDayOfWeek;
-    }
-
-    // тема приложения
-    public int getTheme() {
-        return theme;
-    }
-
-    public void setFirstDayOfWeek(int firstDayOfWeek) {
-        this.firstDayOfWeek = firstDayOfWeek;
-    }
-
-    public void setTheme(int theme) {
-        this.theme = theme;
-    }
+    @Getter public int getFirstDayOfWeek() { return firstDayOfWeek; }
+    @Setter public void setFirstDayOfWeek(int firstDayOfWeek) { this.firstDayOfWeek = firstDayOfWeek; }
+    @Getter public int getTheme() { return theme; }
+    @Setter public void setTheme(int theme) { this.theme = theme; }
+    @Getter public boolean isQuickNote() { return quickNote; }
+    @Setter public void setQuickNote(boolean quickNote) { this.quickNote = quickNote; }
 
     public void save() {
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("version", 6);
+            jsonObject.put("version", VERSION);
 
             String temp_firstDayOfWeek = this.firstDayOfWeek == Calendar.MONDAY ? FIRST_DAY_OF_WEEK_MONDAY : FIRST_DAY_OF_WEEK_SATURDAY;
             String temp_theme = THEME_SYSTEM;
@@ -94,6 +95,7 @@ public class SettingsManager {
 
             jsonObject.put(KEY_THEME, temp_theme);
             jsonObject.put(KEY_FIRST_DAY_OF_WEEK, temp_firstDayOfWeek);
+            jsonObject.put(KEY_QUICK_NOTE, quickNote);
 
             FileUtil.setText(saveFile, jsonObject.toString(2));
         } catch (JSONException e) {

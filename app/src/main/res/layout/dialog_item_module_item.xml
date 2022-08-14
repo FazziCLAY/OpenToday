@@ -64,4 +64,21 @@
         android:minHeight="0sp"
         android:text="@string/dialog_item_module_item_minimize" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_item_module_item_notifications" />
+
+    <TextView
+        android:id="@+id/notifications_preview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/edit_notifications"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_item_module_item_editNotifications"
+        android:layout_gravity="end" />
+
 </LinearLayout>

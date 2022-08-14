@@ -26,18 +26,18 @@
         </activity>
 
         <service
-            android:name=".app.MainService"
+            android:name=".app.receiver.service.UITickService"
             android:enabled="true"
             android:exported="false" />
 
-        <service
-            android:name=".app.TickService"
+        <receiver
+            android:name=".app.receiver.ItemsTickReceiver"
             android:enabled="true"
             android:exported="false" />
 
 
-        <service
-            android:name=".app.FastTickService"
+        <receiver
+            android:name=".app.receiver.QuickNoteReceiver"
             android:enabled="true"
             android:exported="false" />
 

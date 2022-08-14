@@ -35,6 +35,8 @@ import ru.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem;
 import ru.fazziclay.opentoday.app.items.item.GroupItem;
 import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.app.items.item.TextItem;
+import ru.fazziclay.opentoday.app.items.notifications.DayItemNotification;
+import ru.fazziclay.opentoday.app.items.notifications.ItemNotification;
 import ru.fazziclay.opentoday.databinding.DialogItemFrameBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleCheckboxBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleCounterBinding;
@@ -46,6 +48,8 @@ import ru.fazziclay.opentoday.databinding.DialogItemModuleTextBinding;
 import ru.fazziclay.opentoday.util.MinTextWatcher;
 import ru.fazziclay.opentoday.util.ResUtil;
 import ru.fazziclay.opentoday.util.SimpleSpinnerAdapter;
+import ru.fazziclay.opentoday.util.time.ConvertMode;
+import ru.fazziclay.opentoday.util.time.TimeUtil;
 
 public class DialogItem {
     private final Activity activity;
@@ -281,6 +285,20 @@ public class DialogItem {
             });
             binding.minimize.setOnClickListener(v -> onEditStart.run());
             //
+
+            binding.editNotifications.setOnClickListener(v -> new DialogItemNotificationsEditor(activity, item, () -> updateNotificationPreview(item, activity)).show());
+            updateNotificationPreview(item, activity);
+        }
+
+        private void updateNotificationPreview(Item item, Activity activity) {
+            StringBuilder text = new StringBuilder();
+            for (ItemNotification notification : item.getNotifications()) {
+                if (notification instanceof DayItemNotification) {
+                    DayItemNotification d = (DayItemNotification) notification;
+                    text.append(String.format("#%s - %s - %s", d.getNotificationId(), activity.getString(R.string.itemNotification_day), TimeUtil.convertToHumanTime(d.getTime(), ConvertMode.HHMM))).append("\n");
+                }
+            }
+            binding.notificationsPreview.setText(text.toString());
         }
 
         private void updateTextColorIndicator(Activity activity) {

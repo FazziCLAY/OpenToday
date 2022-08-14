@@ -61,7 +61,32 @@ public class DataFixer {
             }
         }
 
+        if (dataVersion == 2) {
+            fix2versionTo3();
+            dataVersion = 3;
+        }
+
         Log.d("DataFixer", "latest dataVersion = " + dataVersion);
+    }
+
+    private void fix2versionTo3() {
+        try {
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.deleteNotificationChannel("foreground");
+        } catch (Exception e) {
+            Log.e("DataFixer", "error delete old notify channel", e);
+        }
+
+
+        File settings = new File(context.getExternalFilesDir(""), "settings.json");
+        try {
+            JSONObject jsonObject = new JSONObject(FileUtil.getText(settings, "{}"));
+            jsonObject.put("quickNote", true);
+            jsonObject.put("version", 7);
+            FileUtil.setText(settings, jsonObject.toString(4));
+        } catch (Exception e){
+            Log.e("DataFixer", "error add quick note", e);
+        }
     }
 
     private void fix1versionTo2() {

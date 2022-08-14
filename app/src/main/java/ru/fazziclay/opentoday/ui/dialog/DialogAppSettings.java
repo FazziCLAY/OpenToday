@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
+import ru.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import ru.fazziclay.opentoday.app.settings.SettingsManager;
 import ru.fazziclay.opentoday.databinding.DialogAppSettingsBinding;
 import ru.fazziclay.opentoday.util.SimpleSpinnerAdapter;
@@ -25,6 +26,17 @@ public class DialogAppSettings {
         this.binding = DialogAppSettingsBinding.inflate(activity.getLayoutInflater());
         this.settingsManager = App.get(activity).getSettingsManager();
         setupThemeSpinner();
+
+        binding.quickNoteCheckbox.setChecked(settingsManager.isQuickNote());
+        binding.quickNoteCheckbox.setOnClickListener(v -> {
+            settingsManager.setQuickNote(binding.quickNoteCheckbox.isChecked());
+            if (settingsManager.isQuickNote()) {
+                QuickNoteReceiver.sendQuickNoteNotification(activity);
+            } else {
+                QuickNoteReceiver.cancelQuickNoteNotification(activity);
+            }
+            settingsManager.save();
+        });
     }
 
     private void setupThemeSpinner() {

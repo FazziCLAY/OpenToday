@@ -21,7 +21,8 @@ import java.util.Locale;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
-import ru.fazziclay.opentoday.app.FastTickService;
+import ru.fazziclay.opentoday.app.receiver.service.UITickService;
+import ru.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import ru.fazziclay.opentoday.app.updatechecker.UpdateChecker;
 import ru.fazziclay.opentoday.databinding.ActivityMainBinding;
 import ru.fazziclay.opentoday.ui.other.AppToolbar;
@@ -65,7 +66,13 @@ public class MainActivity extends AppCompatActivity {
         setupBatteryOptimizationNotify();
         setupUpdateAvailableNotify();
 
-        startService(new Intent(this, FastTickService.class));
+        startService(new Intent(this, UITickService.class));
+
+        sendQuickNoteNotify();
+    }
+
+    private void sendQuickNoteNotify() {
+        QuickNoteReceiver.sendQuickNoteNotification(this);
     }
 
     @Override
@@ -75,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         currentDateHandler.removeCallbacks(currentDateRunnable);
         appToolbar.destroy();
         app.setAppInForeground(false);
-        stopService(new Intent(this, FastTickService.class));
+        stopService(new Intent(this, UITickService.class));
     }
 
     @Override
