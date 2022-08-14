@@ -65,11 +65,6 @@ public class TextItem extends Item {
         this.clickableUrls = copy.clickableUrls;
     }
 
-    @Override
-    public void tick() {
-        super.tick();
-    }
-
     @Getter public String getText() { return text; }
     @Setter public void setText(String v) { this.text = v; }
     @Getter public int getTextColor() { return textColor; }

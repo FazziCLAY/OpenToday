@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import ru.fazziclay.opentoday.app.TickSession;
 import ru.fazziclay.opentoday.app.items.callback.OnItemStorageUpdate;
 import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.callback.CallbackStorage;
@@ -64,10 +65,10 @@ public abstract class SimpleItemStorage implements ItemStorage {
 
     // NOTE: No use 'for-loop' (self-delete item in tick => ConcurrentModificationException)
     @Override
-    public void tick() {
+    public void tick(TickSession tickSession) {
         int i = items.size() - 1;
         while (i >= 0) {
-            items.get(i).tick();
+            items.get(i).tick(tickSession);
             i--;
         }
     }

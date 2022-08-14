@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import ru.fazziclay.opentoday.annotation.Getter;
 import ru.fazziclay.opentoday.annotation.JSONName;
 import ru.fazziclay.opentoday.annotation.RequireSave;
+import ru.fazziclay.opentoday.app.TickSession;
 import ru.fazziclay.opentoday.app.items.DataTransferPacket;
 import ru.fazziclay.opentoday.app.items.ItemIEManager;
 import ru.fazziclay.opentoday.app.items.ItemStorage;
@@ -22,7 +23,6 @@ public class GroupItem extends TextItem {
                     .put("items", ItemIEManager.exportItemList(groupItem.itemStorage.exportData().items));
         }
 
-        private final GroupItem defaultValues = new GroupItem("<import_error>");
         @Override
         public Item importItem(JSONObject json) throws Exception {
             GroupItem o = new GroupItem((TextItem) super.importItem(json));
@@ -71,8 +71,8 @@ public class GroupItem extends TextItem {
     }
 
     @Override
-    public void tick() {
-        itemStorage.tick();
+    public void tick(TickSession tickSession) {
+        itemStorage.tick(tickSession);
     }
 
     @Getter public ItemStorage getItemStorage() { return itemStorage; }

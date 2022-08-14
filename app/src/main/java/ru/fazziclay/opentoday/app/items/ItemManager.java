@@ -13,6 +13,7 @@ import java.util.Random;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
+import ru.fazziclay.opentoday.app.TickSession;
 import ru.fazziclay.opentoday.app.items.callback.OnSelectionChanged;
 import ru.fazziclay.opentoday.app.items.item.CheckboxItem;
 import ru.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem;
@@ -67,6 +68,7 @@ public class ItemManager extends SimpleItemStorage {
             if (selection.getItem() == item) toDelete = selection;
         }
         selections.remove(toDelete);
+        Log.e("deselect", "owo");
 
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
             callback.run(this.selections);
@@ -131,9 +133,9 @@ public class ItemManager extends SimpleItemStorage {
     }
 
     @Override
-    public void tick() {
+    public void tick(TickSession tickSession) {
         Log.d("ItemManager", "tick");
-        super.tick();
+        super.tick(tickSession);
     }
 
     @Override

@@ -7,6 +7,7 @@ import ru.fazziclay.opentoday.annotation.Getter;
 import ru.fazziclay.opentoday.annotation.JSONName;
 import ru.fazziclay.opentoday.annotation.RequireSave;
 import ru.fazziclay.opentoday.annotation.Setter;
+import ru.fazziclay.opentoday.app.TickSession;
 import ru.fazziclay.opentoday.app.items.DataTransferPacket;
 import ru.fazziclay.opentoday.app.items.ItemIEManager;
 import ru.fazziclay.opentoday.app.items.ItemStorage;
@@ -116,13 +117,13 @@ public class CycleListItem extends TextItem {
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    public void tick(TickSession tickSession) {
+        super.tick(tickSession);
         if (tickBehavior == TickBehavior.ALL) {
-            itemsCycleStorage.tick();
+            itemsCycleStorage.tick(tickSession);
         } else if (tickBehavior == TickBehavior.CURRENT) {
             Item c = getCurrentItem();
-            if (c != null) c.tick();
+            if (c != null) c.tick(tickSession);
         }
     }
 
