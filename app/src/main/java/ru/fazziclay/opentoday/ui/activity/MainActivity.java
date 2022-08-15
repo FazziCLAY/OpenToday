@@ -21,21 +21,20 @@ import java.util.Locale;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
-import ru.fazziclay.opentoday.app.receiver.service.UITickService;
+import ru.fazziclay.opentoday.app.items.ItemManager;
 import ru.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
+import ru.fazziclay.opentoday.app.receiver.service.UITickService;
 import ru.fazziclay.opentoday.app.updatechecker.UpdateChecker;
 import ru.fazziclay.opentoday.databinding.ActivityMainBinding;
-import ru.fazziclay.opentoday.ui.other.AppToolbar;
-import ru.fazziclay.opentoday.ui.other.item.ItemStorageDrawer;
+import ru.fazziclay.opentoday.ui.other.ItemsEditor;
 import ru.fazziclay.opentoday.util.DebugUtil;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding; // binding
     private App app;
-    private AppToolbar appToolbar;
-    private ItemStorageDrawer itemStorageDrawer;
     private Handler currentDateHandler;
     private Runnable currentDateRunnable;
+    private ItemsEditor itemsEditor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,13 +51,10 @@ public class MainActivity extends AppCompatActivity {
         app = App.get(this);
         app.setAppInForeground(true);
 
-        itemStorageDrawer = new ItemStorageDrawer(this, app.getItemManager(), app.getItemManager());
-        itemStorageDrawer.create();
-        binding.mainItems.addView(itemStorageDrawer.getView());
-
-        // toolbar
-        appToolbar = new AppToolbar(this);
-        setupToolbar();
+        ItemManager itemManager = app.getItemManager();
+        itemsEditor = new ItemsEditor(this, binding.itemsEditor, itemManager, itemManager);
+        itemsEditor.create();
+        binding.itemsEditor.addView(itemsEditor.getView());
 
         setupCurrentDate();
 
@@ -78,9 +74,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        itemStorageDrawer.destroy();
         currentDateHandler.removeCallbacks(currentDateRunnable);
-        appToolbar.destroy();
+        itemsEditor.destroy();
         app.setAppInForeground(false);
         stopService(new Intent(this, UITickService.class));
     }
@@ -96,11 +91,6 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         currentDateHandler.post(currentDateRunnable);
         setupBatteryOptimizationNotify();
-    }
-
-    private void setupToolbar() {
-        binding.toolbar.addView(appToolbar.getToolbarView());
-        binding.toolbarMore.addView(appToolbar.getToolbarMoreView());
     }
 
     private void setupCurrentDate() {

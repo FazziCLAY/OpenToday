@@ -4,37 +4,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_weight="1"
-        android:padding="5sp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:id="@+id/canvas"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" />
-
-        <LinearLayout
-            android:id="@+id/toolbar_more"
-            android:layout_alignParentBottom="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-
-    </RelativeLayout>
-
-
     <LinearLayout
-        android:id="@+id/toolbar"
-        android:layout_weight="0"
-        android:background="?attr/toolbar_background"
-        android:paddingLeft="5sp"
-        android:paddingRight="5sp"
+        android:id="@+id/items_editor"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical" />
-
 </LinearLayout>

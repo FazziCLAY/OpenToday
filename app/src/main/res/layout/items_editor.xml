@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    tools:context="ru.fazziclay.opentoday.ui.other.ItemsEditor">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <!-- Items editor -->
+        <LinearLayout
+            android:id="@+id/items_editor"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" />
+
+        <!-- Toolbar more -->
+        <LinearLayout
+            android:id="@+id/toolbar_more"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:orientation="vertical" />
+
+    </RelativeLayout>
+
+    <!-- Toolbar buttons -->
+    <LinearLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="0"
+        android:paddingLeft="5sp"
+        android:paddingRight="5sp"
+        android:background="?attr/toolbar_background" />
+</LinearLayout>
