@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private App app;
     private Handler currentDateHandler;
     private Runnable currentDateRunnable;
+    private GregorianCalendar currentDateCalendar;
     private ItemsEditor itemsEditor;
 
     @Override
@@ -94,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupCurrentDate() {
+        currentDateCalendar = new GregorianCalendar();
         setCurrentDate();
         currentDateHandler = new Handler(getMainLooper());
         currentDateRunnable = new Runnable() {
@@ -140,7 +143,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setCurrentDate() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd EEEE HH:mm:ss", Locale.getDefault());
-        binding.currentDate.setText(dateFormat.format(new GregorianCalendar().getTime()));
+        currentDateCalendar.setTimeInMillis(System.currentTimeMillis());
+        Date time = currentDateCalendar.getTime();
+
+        // Date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd EEEE", Locale.getDefault());
+        binding.currentDate.setText(dateFormat.format(time));
+
+        // Time
+        dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+        binding.currentTime.setText(dateFormat.format(time));
     }
 }

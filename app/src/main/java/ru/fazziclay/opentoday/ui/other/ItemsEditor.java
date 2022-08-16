@@ -26,7 +26,7 @@ public class ItemsEditor {
         }
 
         this.itemStorageDrawer = new ItemStorageDrawer(activity, itemManager, itemStorage);
-        this.binding.itemsEditor.addView(this.itemStorageDrawer.getView());
+        this.binding.itemsStorageDrawer.addView(this.itemStorageDrawer.getView());
 
         // toolbar
         this.toolbar = new AppToolbar(activity, itemManager, itemStorage);

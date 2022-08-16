@@ -12,7 +12,7 @@
         tools:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#87000000"
+        android:background="#aa000000"
         android:orientation="vertical">
 
         <TextView
@@ -30,7 +30,9 @@
         android:id="@+id/notEmpty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingStart="5sp"
+        android:paddingEnd="5sp">
 
         <Button
             android:id="@+id/deselect_all"
@@ -75,7 +77,10 @@
             android:layout_height="wrap_content"
             android:textColor="#FFFFFF"
             android:textSize="22sp"
-            android:background="#000000"
+            android:background="@drawable/shape"
+            android:paddingStart="2sp"
+            android:paddingEnd="2sp"
+            android:backgroundTint="#000000"
             android:text="@string/toolbar_more_selection_info" />
 
     </LinearLayout>

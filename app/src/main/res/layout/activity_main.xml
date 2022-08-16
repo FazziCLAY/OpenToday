@@ -7,13 +7,35 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/current_date"
+    <!-- Current date -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="2022.06.25 Saturday"
-        android:textColor="?attr/main_currentDate_color"
-        android:textSize="21sp" />
+        android:paddingStart="4sp"
+        android:paddingEnd="4sp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/current_date"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            tools:text="2022.06.25 Saturday"
+            android:textColor="?attr/main_currentDate_color"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/current_time"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:gravity="end"
+            tools:text="10:00:59"
+            android:textColor="?attr/main_currentDate_color"
+            android:textSize="24sp" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/disable_battery_optimization_warning"
@@ -21,6 +43,9 @@
         tools:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5sp"
+        android:layout_marginStart="2sp"
+        android:layout_marginEnd="2sp"
         android:background="@drawable/shape"
         android:padding="5sp"
         android:backgroundTint="?attr/disableBatteryOptimization_backgroundColor"
@@ -39,7 +64,9 @@
         android:id="@+id/update_available"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10sp"
+        android:layout_marginTop="5sp"
+        android:layout_marginStart="2sp"
+        android:layout_marginEnd="2sp"
         android:background="@drawable/shape"
         android:backgroundTint="?attr/updateAvailable_backgroundColor"
         android:orientation="vertical"

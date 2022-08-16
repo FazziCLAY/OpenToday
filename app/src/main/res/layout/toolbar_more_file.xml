@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:clickable="false">
+    android:clickable="false"
+    android:paddingStart="5sp"
+    android:paddingEnd="5sp">
 
     <Button
         android:id="@+id/saveAll"

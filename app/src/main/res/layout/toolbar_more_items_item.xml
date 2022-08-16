@@ -4,8 +4,9 @@
     android:layout_height="wrap_content"
     android:layout_width="wrap_content"
     android:background="@drawable/shape"
-    android:backgroundTint="#77000000"
+    android:backgroundTint="#aa000000"
     android:paddingStart="3sp"
+    android:paddingEnd="3sp"
     android:orientation="horizontal">
 
     <Button
