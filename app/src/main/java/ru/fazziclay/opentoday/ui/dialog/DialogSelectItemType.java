@@ -3,82 +3,60 @@ package ru.fazziclay.opentoday.ui.dialog;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import ru.fazziclay.opentoday.R;
-import ru.fazziclay.opentoday.app.items.item.CheckboxItem;
-import ru.fazziclay.opentoday.app.items.item.CounterItem;
-import ru.fazziclay.opentoday.app.items.item.CycleListItem;
-import ru.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem;
-import ru.fazziclay.opentoday.app.items.item.GroupItem;
+import ru.fazziclay.opentoday.app.items.ItemsRegistry;
 import ru.fazziclay.opentoday.app.items.item.Item;
-import ru.fazziclay.opentoday.app.items.item.TextItem;
-import ru.fazziclay.opentoday.util.SpinnerHelper;
+import ru.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 
 public class DialogSelectItemType {
-    private final Activity activity;
-    private Dialog dialog;
+    private final String selectButtonText;
+    private final OnSelected onSelected;
     private final Spinner spinner;
-    private final SpinnerHelper<Class<? extends Item>> spinnerHelper;
+    private final SimpleSpinnerAdapter<Class<? extends Item>> simpleSpinnerAdapter;
+    private final Dialog dialog;
 
-    private String selectButtonText;
-    private OnSelected onSelected = (i) -> {};
-
-    public DialogSelectItemType(Activity activity) {
-        this(activity, null);
+    public DialogSelectItemType(Activity activity, OnSelected onSelected) {
+        this(activity, null, onSelected);
     }
 
-    public DialogSelectItemType(Activity activity, int resId) {
-        this(activity, activity.getString(resId));
+    public DialogSelectItemType(Activity activity, int resId, OnSelected onSelected) {
+        this(activity, activity.getString(resId), onSelected);
     }
 
-    public DialogSelectItemType(Activity activity, String selectButtonText) {
-        this.activity = activity;
-        this.spinnerHelper = new SpinnerHelper<Class<? extends Item>>(
-                new String[]{
-                        activity.getString(R.string.item_text),
-                        activity.getString(R.string.item_checkbox),
-                        activity.getString(R.string.item_checkboxDayRepeatable),
-                        activity.getString(R.string.item_cycleList),
-                        activity.getString(R.string.item_counter),
-                        activity.getString(R.string.item_group)
-                },
-                new Class[]{
-                        TextItem.class,
-                        CheckboxItem.class,
-                        DayRepeatableCheckboxItem.class,
-                        CycleListItem.class,
-                        CounterItem.class,
-                        GroupItem.class
-                }
-        );
-
-
-        spinner = new Spinner(activity);
-        spinner.setAdapter(new ArrayAdapter<>(activity, android.R.layout.simple_expandable_list_item_1, spinnerHelper.getNames()));
-
-        this.selectButtonText = selectButtonText;
-
-        if (this.selectButtonText == null) {
+    public DialogSelectItemType(Activity activity, String selectButtonText, OnSelected onSelected) {
+        if (selectButtonText == null) {
             this.selectButtonText = activity.getString(R.string.dialog_selectItemType_select);
+        } else {
+            this.selectButtonText = selectButtonText;
         }
-    }
+        this.onSelected = onSelected;
 
-    public void show() {
-        new AlertDialog.Builder(activity)
+        this.simpleSpinnerAdapter = new SimpleSpinnerAdapter<>(activity);
+        for (ItemsRegistry.ItemInfo itemInfo : ItemsRegistry.REGISTRY.getAllItems()) {
+            this.simpleSpinnerAdapter.add(activity.getString(itemInfo.getNameResId()), itemInfo.getClassType());
+        }
+
+        this.spinner = new Spinner(activity);
+        this.spinner.setAdapter(simpleSpinnerAdapter);
+
+        this.dialog = new AlertDialog.Builder(activity)
                 .setView(spinner)
                 .setNegativeButton(activity.getString(R.string.dialog_selectItemAction_cancel), null)
                 .setPositiveButton(this.selectButtonText, (i2, i1) -> {
-                    Class<? extends Item> itemType = spinnerHelper.getValues()[spinner.getSelectedItemPosition()];
+                    Class<? extends Item> itemType = simpleSpinnerAdapter.getItem(spinner.getSelectedItemPosition());
                     onSelected.onSelected(itemType);
                 })
-                .show();
+                .create();
     }
 
-    public DialogSelectItemType setOnSelected(OnSelected onSelected) {
-        this.onSelected = onSelected;
-        return this;
+    public void show() {
+        dialog.show();
+    }
+
+    public void cancel() {
+        dialog.cancel();
     }
 
     @FunctionalInterface

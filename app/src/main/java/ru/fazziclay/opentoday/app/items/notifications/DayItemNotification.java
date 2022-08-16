@@ -14,8 +14,8 @@ import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.TickSession;
 
 public class DayItemNotification implements ItemNotification {
-    public static final ItemNotificationIETool IE_TOOL = new IETOOL();
-    private static class IETOOL extends ItemNotificationIETool {
+    public static final ItemNotificationIETool IE_TOOL = new IeTool();
+    private static class IeTool extends ItemNotificationIETool {
         @Override
         public JSONObject exportNotification(ItemNotification itemNotification) throws Exception {
             DayItemNotification d = (DayItemNotification) itemNotification;
@@ -73,14 +73,11 @@ public class DayItemNotification implements ItemNotification {
     }
 
     private void sendNotify(Context context) {
-        context.getSystemService(NotificationManager.class).notify(notificationId,
+        context.getSystemService(NotificationManager.class).notify(this.notificationId,
                 new NotificationCompat.Builder(context, App.NOTIFICATION_ITEMS_CHANNEL)
                         .setSmallIcon(R.mipmap.ic_launcher)
-                        .setSilent(true)
                         .setContentTitle(notifyTitle)
                         .setContentText(notifyText)
-                        .setSound(null)
-                        .setShowWhen(false)
                         .setPriority(NotificationCompat.PRIORITY_MAX)
                         .build());
     }
