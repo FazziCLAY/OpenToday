@@ -68,4 +68,9 @@
         <item name="android:backgroundTint">#585858</item>
         <item name="android:textColor">#F5F5F5</item>
     </style>
+
+    <style name="Theme.OpenToday.Toolbar.Button.Selected" parent="Theme.OpenToday.Toolbar.Button">
+        <item name="android:backgroundTint">#2046B8</item>
+        <item name="android:textColor">#F5F5F5</item>
+    </style>
 </resources>

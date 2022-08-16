@@ -88,7 +88,7 @@
     <string name="open_in_external_editor">Open in external editor</string>
     <string name="toolbar_file">File</string>
     <string name="toolbar_more_file_saveAll">Save all</string>
-    <string name="success">Successfully</string>
+    <string name="toolbar_more_file_saveAll_success">Successfully</string>
     <string name="menuItem_delete">Delete</string>
     <string name="toolbar_more_items_changeOnLeftSwipe">On left swipe</string>
     <string name="toolbar_more_items_changeOnClick">On item click</string>
@@ -124,4 +124,6 @@
     <string name="dialog_itemNotification_text">Notification text</string>
     <string name="dialog_itemNotification_title">Notification title</string>
     <string name="dialog_itemNotification_notifyid">Notification ID</string>
+    <string name="toolbar_more_selection_nothingSelected">Nothing selected</string>
+    <string name="toolbar_more_selection_empty">Nothing selected!\nSelect items for use this menu</string>
 </resources>

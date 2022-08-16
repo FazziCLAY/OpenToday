@@ -86,7 +86,7 @@
     <string name="open_in_external_editor">Открыть в внешнем редакторе</string>
     <string name="toolbar_file">Файл</string>
     <string name="toolbar_more_file_saveAll">Сохранить всё</string>
-    <string name="success">Успешно</string>
+    <string name="toolbar_more_file_saveAll_success">Успешно</string>
     <string name="menuItem_delete">Удалить</string>
     <string name="toolbar_more_items_changeOnLeftSwipe">Свайп влево</string>
     <string name="toolbar_more_items_changeOnClick">Нажатие на айтем</string>
@@ -122,4 +122,6 @@
     <string name="dialog_itemNotification_text">Текст уведомления</string>
     <string name="dialog_itemNotification_title">Заголовок уведомления</string>
     <string name="dialog_itemNotification_notifyid">АЙДИ Уведомления</string>
+    <string name="toolbar_more_selection_nothingSelected">Ничего не выделенно</string>
+    <string name="toolbar_more_selection_empty">Ничего не выделенно!\nВыделите айтемы для использования этого меню</string>
 </resources>

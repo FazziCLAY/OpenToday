@@ -14,29 +14,24 @@ import ru.fazziclay.opentoday.ui.other.item.ItemStorageDrawer;
 
 // layout/items_editor.xml
 public class ItemsEditor {
-    private final Activity activity;
-    private final ViewGroup parent;
     private final ItemsEditorBinding binding;
     private final ItemStorageDrawer itemStorageDrawer;
     private final AppToolbar toolbar;
 
     public ItemsEditor(@NonNull Activity activity, @Nullable ViewGroup parent, ItemManager itemManager, ItemStorage itemStorage) {
-        this.activity = activity;
-        this.parent = parent;
         if (parent == null) {
             this.binding = ItemsEditorBinding.inflate(activity.getLayoutInflater());
         } else {
             this.binding = ItemsEditorBinding.inflate(activity.getLayoutInflater(), parent, false);
         }
 
-        itemStorageDrawer = new ItemStorageDrawer(activity, itemManager, itemStorage);
-        itemStorageDrawer.create();
-        binding.itemsEditor.addView(itemStorageDrawer.getView());
+        this.itemStorageDrawer = new ItemStorageDrawer(activity, itemManager, itemStorage);
+        this.binding.itemsEditor.addView(this.itemStorageDrawer.getView());
 
         // toolbar
-        toolbar = new AppToolbar(activity, itemStorage);
-        binding.toolbar.addView(toolbar.getToolbarView());
-        binding.toolbarMore.addView(toolbar.getToolbarMoreView());
+        this.toolbar = new AppToolbar(activity, itemManager, itemStorage);
+        this.binding.toolbar.addView(this.toolbar.getToolbarView());
+        this.binding.toolbarMore.addView(this.toolbar.getToolbarMoreView());
     }
 
     public View getView() {
@@ -49,6 +44,7 @@ public class ItemsEditor {
     }
 
     public void create() {
-        // TODO: 15.08.2022 make create method
+        itemStorageDrawer.create();
+        toolbar.create();
     }
 }

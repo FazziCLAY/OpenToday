@@ -15,12 +15,12 @@ import ru.fazziclay.opentoday.ui.other.item.ItemStorageDrawer;
 import ru.fazziclay.opentoday.ui.other.item.ItemViewGenerator;
 import ru.fazziclay.opentoday.util.MinBaseAdapter;
 
-public class DialogPreviewDeleteItems {
+public class DialogDeleteItems {
     private final DialogPreviewDeleteItemsBinding binding;
     private final ItemViewGenerator itemViewGenerator;
     private final Dialog dialog;
 
-    public DialogPreviewDeleteItems(Activity activity, Item[] items) {
+    public DialogDeleteItems(Activity activity, Item[] items) {
         if (items.length == 0) {
             throw new RuntimeException("Empty list");
         }

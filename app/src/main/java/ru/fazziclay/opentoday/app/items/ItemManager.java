@@ -143,14 +143,16 @@ public class ItemManager extends SimpleItemStorage {
         saveThread.request();
     }
 
-    public void saveAllDirect() {
+    public boolean saveAllDirect() {
         try {
             ItemManager.this.itemIEManager.saveToFile(exportData());
+            return true;
         } catch (Exception e) {
             Log.e("ItemManager", "SaveThread exception", e);
             try {
                 new Handler(App.get().getMainLooper()).post(() -> Toast.makeText(App.get(), "Error: Save exception: " + e + "; cause: " + e.getCause(), Toast.LENGTH_LONG).show());
             } catch (Exception ignored) {}
+            return false;
         }
     }
 

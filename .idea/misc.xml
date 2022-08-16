@@ -62,6 +62,7 @@
         <entry key="app/src/main/res/layout/item_notification.xml" value="0.22" />
         <entry key="app/src/main/res/layout/item_text.xml" value="0.2954253954681488" />
         <entry key="app/src/main/res/layout/item_unknown.xml" value="0.1743188698284561" />
+        <entry key="app/src/main/res/layout/items_editor.xml" value="0.13286130778842148" />
         <entry key="app/src/main/res/layout/listitem_calendar.xml" value="0.28804347826086957" />
         <entry key="app/src/main/res/layout/task.xml" value="0.32916666666666666" />
         <entry key="app/src/main/res/layout/tasks.xml" value="0.32916666666666666" />
