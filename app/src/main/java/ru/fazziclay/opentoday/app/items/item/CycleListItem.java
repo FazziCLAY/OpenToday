@@ -25,7 +25,7 @@ public class CycleListItem extends TextItem {
             return super.exportItem(item)
                     .put("currentItemPosition", cycleListItem.currentItemPosition)
                     .put("itemsCycle", ItemIEManager.exportItemList(cycleListItem.itemsCycleStorage.exportData().items))
-                    .put("itemsCycleBackgroundWork", cycleListItem.tickBehavior.name());
+                    .put("tickBehavior", cycleListItem.tickBehavior.name());
         }
 
         private final CycleListItem defaultValues = new CycleListItem("<import_error>");
@@ -40,7 +40,7 @@ public class CycleListItem extends TextItem {
             o.itemsCycleStorage.importData(dataTransferPacket);
             o.currentItemPosition = json.optInt("currentItemPosition", defaultValues.currentItemPosition);
             try {
-                o.tickBehavior = TickBehavior.valueOf(json.optString("itemsCycleBackgroundWork", defaultValues.tickBehavior.name()).toUpperCase());
+                o.tickBehavior = TickBehavior.valueOf(json.optString("tickBehavior", defaultValues.tickBehavior.name()).toUpperCase());
             } catch (Exception e) {
                 o.tickBehavior = defaultValues.tickBehavior;
             }
@@ -55,7 +55,7 @@ public class CycleListItem extends TextItem {
 
     @JSONName(name = "itemsCycle") @RequireSave private final SimpleItemStorage itemsCycleStorage;
     @JSONName(name = "currentItemPosition") @RequireSave private int currentItemPosition = 0;
-    @JSONName(name = "itemsCycleBackgroundWork") @RequireSave private TickBehavior tickBehavior = TickBehavior.CURRENT;
+    @JSONName(name = "tickBehavior") @RequireSave private TickBehavior tickBehavior = TickBehavior.CURRENT;
 
     public CycleListItem(String text) {
         super(text);
