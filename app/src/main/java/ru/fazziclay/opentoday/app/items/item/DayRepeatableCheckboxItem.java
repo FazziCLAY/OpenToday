@@ -3,7 +3,6 @@ package ru.fazziclay.opentoday.app.items.item;
 import org.json.JSONObject;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 import ru.fazziclay.opentoday.annotation.Getter;
 import ru.fazziclay.opentoday.annotation.JSONName;
@@ -62,7 +61,7 @@ public class DayRepeatableCheckboxItem extends CheckboxItem {
     @Override
     public void tick(TickSession tickSession) {
         super.tick(tickSession);
-        int dayOfYear = new GregorianCalendar().get(Calendar.DAY_OF_YEAR);
+        int dayOfYear = tickSession.getGregorianCalendar().get(Calendar.DAY_OF_YEAR);
         if (dayOfYear != latestDayOfYear) {
             latestDayOfYear = dayOfYear;
             setChecked(startValue);
