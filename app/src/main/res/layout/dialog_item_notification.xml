@@ -28,9 +28,25 @@
         android:hint="@string/dialog_itemNotification_text"
         android:importantForAutofill="no" />
 
+    <EditText
+        android:id="@+id/notifySubText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:hint="@string/dialog_itemNotification_subtext"
+        android:importantForAutofill="no" />
+
     <Button
         android:id="@+id/time"
         android:text="@string/dialog_itemNotification_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- Bad idea -->
+    <Button
+        android:id="@+id/test"
+        android:visibility="gone"
+        android:text="@string/dialog_itemNotification_testNotify"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

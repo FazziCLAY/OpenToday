@@ -24,6 +24,7 @@ public class DayItemNotification implements ItemNotification {
                     .put("notifyTitle", d.notifyTitle)
                     .put("notifyText", d.notifyText)
                     .put("latestDayOfYear", d.latestDayOfYear)
+                    .put("notifySubText", d.notifySubText)
                     .put("time", d.time);
         }
 
@@ -33,6 +34,7 @@ public class DayItemNotification implements ItemNotification {
             o.notificationId = json.optInt("notificationId", 543);
             o.notifyTitle = json.optString("notifyTitle", "owo");
             o.notifyText = json.optString("notifyText", "owo");
+            o.notifySubText = json.optString("notifySubText", "owo");
             o.latestDayOfYear = json.optInt("latestDayOfYear", 0);
             o.time = json.optInt("time", 0);
 
@@ -43,6 +45,7 @@ public class DayItemNotification implements ItemNotification {
     private int notificationId = 0;
     private String notifyTitle;
     private String notifyText;
+    private String notifySubText;
     private int latestDayOfYear;
     private int time;
 
@@ -50,10 +53,11 @@ public class DayItemNotification implements ItemNotification {
 
     }
 
-    public DayItemNotification(int notificationId, String notifyTitle, String notifyText, int time) {
+    public DayItemNotification(int notificationId, String notifyTitle, String notifyText, String notifySubText, int time) {
         this.notificationId = notificationId;
         this.notifyTitle = notifyTitle;
         this.notifyText = notifyText;
+        this.notifySubText = notifySubText;
         this.time = time;
     }
 
@@ -72,12 +76,13 @@ public class DayItemNotification implements ItemNotification {
         return false;
     }
 
-    private void sendNotify(Context context) {
+    public void sendNotify(Context context) {
         context.getSystemService(NotificationManager.class).notify(this.notificationId,
                 new NotificationCompat.Builder(context, App.NOTIFICATION_ITEMS_CHANNEL)
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentTitle(notifyTitle)
                         .setContentText(notifyText)
+                        .setSubText(notifySubText)
                         .setPriority(NotificationCompat.PRIORITY_MAX)
                         .build());
     }
@@ -120,5 +125,13 @@ public class DayItemNotification implements ItemNotification {
 
     public void setNotifyText(String notifyText) {
         this.notifyText = notifyText;
+    }
+
+    public String getNotifySubText() {
+        return notifySubText;
+    }
+
+    public void setNotifySubText(String notifySubText) {
+        this.notifySubText = notifySubText;
     }
 }

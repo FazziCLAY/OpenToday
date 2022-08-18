@@ -2,6 +2,7 @@ package ru.fazziclay.opentoday.ui.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.view.Gravity;
@@ -15,8 +16,10 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.NotificationCompat;
 
 import ru.fazziclay.opentoday.R;
+import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.app.items.notifications.DayItemNotification;
 import ru.fazziclay.opentoday.app.items.notifications.ItemNotification;
@@ -67,13 +70,13 @@ public class DialogItemNotificationsEditor {
 
                 b.delete.setOnClickListener(v -> {
                     new AlertDialog.Builder(activity)
-                            .setTitle("Delete?")
-                            .setPositiveButton("DELETE", (ee, eee) -> {
+                            .setTitle(R.string.dialogItem_delete_title)
+                            .setPositiveButton(R.string.dialogItem_delete_apply, (ee, eee) -> {
                                 item.getNotifications().remove(itemNotification);
                                 item.save();
                                 notifyDataSetChanged();
                             })
-                            .setNegativeButton("Cancel", null)
+                            .setNegativeButton(R.string.dialogItem_delete_cancel, null)
                             .show();
                 });
 
@@ -86,6 +89,10 @@ public class DialogItemNotificationsEditor {
                     l.notificationId.setText(String.valueOf(d.getNotificationId()));
                     l.text.setText(d.getNotifyText());
                     l.title.setText(d.getNotifyTitle());
+                    l.notifySubText.setText(d.getNotifySubText());
+                    l.test.setOnClickListener(v2132321 -> {
+
+                    });
                     l.time.setText(activity.getString(R.string.dialog_itemNotification_time, TimeUtil.convertToHumanTime(d.getTime(), ConvertMode.HHMM)));
                     l.time.setOnClickListener(v421213 -> new TimePickerDialog(activity, (view, hourOfDay, minute) -> {
                         d.setTime((hourOfDay * 60 * 60) + (minute * 60));
@@ -96,19 +103,20 @@ public class DialogItemNotificationsEditor {
 
                     new AlertDialog.Builder(activity)
                             .setView(l.getRoot())
-                            .setPositiveButton("Apply", (rere, reerdf) -> {
+                            .setPositiveButton(R.string.dialog_itemNotification_apply, (refre, werwer) -> {
                                 d.setNotifyTitle(l.title.getText().toString());
                                 d.setNotifyText(l.text.getText().toString());
+                                d.setNotifySubText(l.notifySubText.getText().toString());
                                 try {
                                     int i = Integer.parseInt(l.notificationId.getText().toString());
                                     d.setNotificationId(i);
                                 } catch (Exception e) {
-                                    Toast.makeText(activity, "e: " + e, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(activity, R.string.dialog_itemNotification_incorrectNotificationId, Toast.LENGTH_SHORT).show();
                                 }
                                 notifyDataSetChanged();
                                 item.save();
                             })
-                            .setNegativeButton("Cancel", null)
+                            .setNegativeButton(R.string.dialog_itemNotification_cancel, null)
                             .show();
                 });
 

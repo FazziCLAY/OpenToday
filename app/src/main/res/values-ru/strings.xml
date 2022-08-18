@@ -124,4 +124,9 @@
     <string name="dialog_itemNotification_notifyid">АЙДИ Уведомления</string>
     <string name="toolbar_more_selection_nothingSelected">Ничего не выделенно</string>
     <string name="toolbar_more_selection_empty">Ничего не выделенно!\nВыделите айтемы для использования этого меню</string>
+    <string name="dialog_itemNotification_subtext">Доп. текст</string>
+    <string name="dialog_itemNotification_testNotify">Отправить тестовое уведомление</string>
+    <string name="dialog_itemNotification_apply">Применить</string>
+    <string name="dialog_itemNotification_cancel">Отменить</string>
+    <string name="dialog_itemNotification_incorrectNotificationId">Не корректное поле \'АЙДИ Уведомления\'</string>
 </resources>
