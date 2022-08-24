@@ -47,6 +47,9 @@
         <item name="item_group_backgroundColor">#80252525</item>
         <item name="item_group_textColor">#FFFFFF</item>
 
+        <item name="item_filterGroup_backgroundColor">#80252525</item>
+        <item name="item_filterGroup_textColor">#FFFFFF</item>
+
         <item name="item_selectionForegroundColor">#66ff7722</item>
         <item name="toolbar_background">#8C000000</item>
         <item name="toolbar_more_items_item_textColor">#FFFFFF</item>

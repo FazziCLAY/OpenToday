@@ -58,6 +58,7 @@
         <entry key="app/src/main/res/layout/item_counter.xml" value="0.2910244786944696" />
         <entry key="app/src/main/res/layout/item_cycle_list.xml" value="0.2910244786944696" />
         <entry key="app/src/main/res/layout/item_day_repeatable_checkbox.xml" value="0.2907608695652174" />
+        <entry key="app/src/main/res/layout/item_filter_group.xml" value="0.21" />
         <entry key="app/src/main/res/layout/item_group.xml" value="0.33" />
         <entry key="app/src/main/res/layout/item_notification.xml" value="0.22" />
         <entry key="app/src/main/res/layout/item_text.xml" value="0.2954253954681488" />

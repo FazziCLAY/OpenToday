@@ -26,7 +26,7 @@
         <item name="updateAvailable_backgroundColor">#FF5F6A</item>
         <item name="updateAvailable_textColor">#000000</item>
 
-        <!-- Entries -->
+        <!-- Items -->
         <item name="item_backgroundColor">#803D3D3D</item>
         <item name="item_textColor">#2B2B2B</item>
 
@@ -47,6 +47,9 @@
 
         <item name="item_group_backgroundColor">#803D3D3D</item>
         <item name="item_group_textColor">#2B2B2B</item>
+
+        <item name="item_filterGroup_backgroundColor">#803D3D3D</item>
+        <item name="item_filterGroup_textColor">#2B2B2B</item>
 
         <item name="item_selectionForegroundColor">#66ff7722</item>
         <item name="toolbar_background">#8C000000</item>

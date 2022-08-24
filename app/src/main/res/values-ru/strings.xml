@@ -129,4 +129,5 @@
     <string name="dialog_itemNotification_apply">Применить</string>
     <string name="dialog_itemNotification_cancel">Отменить</string>
     <string name="dialog_itemNotification_incorrectNotificationId">Не корректное поле \'АЙДИ Уведомления\'</string>
+    <string name="item_filterGroup">Фильтрованная группа</string>
 </resources>

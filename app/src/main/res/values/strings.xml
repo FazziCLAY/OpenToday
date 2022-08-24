@@ -131,4 +131,5 @@
     <string name="dialog_itemNotification_apply">Apply</string>
     <string name="dialog_itemNotification_cancel">Cancel</string>
     <string name="dialog_itemNotification_incorrectNotificationId">Incorrect notification id field</string>
+    <string name="item_filterGroup">Filter group</string>
 </resources>
