@@ -170,13 +170,14 @@ public class ItemManager extends SimpleItemStorage {
         public void run() {
             while (!isInterrupted()) {
                 if (request) {
-                    internalSave();
-                    Log.i("SaveThread", String.format("requestCount=%s\nfirstTime=%s\nlatestTime=%s", requestsCount, firstRequestTime, latestRequestTime));
-
                     request = false;
                     requestsCount = 0;
                     firstRequestTime = 0;
                     latestRequestTime = 0;
+
+                    // Save
+                    internalSave();
+                    Log.i("SaveThread", String.format("requestCount=%s\nfirstTime=%s\nlatestTime=%s", requestsCount, firstRequestTime, latestRequestTime));
                 }
 
             }
