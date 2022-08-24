@@ -63,10 +63,8 @@ public class CounterItem extends TextItem {
         updateUi();
     }
 
-    @Getter
-    public double getCounter() { return counter; }
-    @Getter
-    public double getStep() { return step; }
+    @Getter public double getCounter() { return counter; }
+    @Getter public double getStep() { return step; }
     @Setter public void setCounter(double counter) { this.counter = counter; }
     @Setter public void setStep(double step) { this.step = step; }
 }
