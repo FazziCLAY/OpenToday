@@ -72,6 +72,7 @@ public class GroupItem extends TextItem {
 
     @Override
     public void tick(TickSession tickSession) {
+        super.tick(tickSession);
         itemStorage.tick(tickSession);
     }
 
