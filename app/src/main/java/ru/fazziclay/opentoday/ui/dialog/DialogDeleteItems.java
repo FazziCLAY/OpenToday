@@ -11,7 +11,7 @@ import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.databinding.DialogPreviewDeleteItemsBinding;
-import ru.fazziclay.opentoday.ui.other.item.ItemStorageDrawer;
+import ru.fazziclay.opentoday.ui.other.ItemViewHolder;
 import ru.fazziclay.opentoday.ui.other.item.ItemViewGenerator;
 import ru.fazziclay.opentoday.util.MinBaseAdapter;
 
@@ -39,7 +39,7 @@ public class DialogDeleteItems {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 Item item = items[position];
-                ItemStorageDrawer.ItemViewHolder itemViewHolder = new ItemStorageDrawer.ItemViewHolder(activity);
+                ItemViewHolder itemViewHolder = new ItemViewHolder(activity);
                 itemViewHolder.layout.addView(itemViewGenerator.generate(item, parent));
                 return itemViewHolder.itemView;
             }
