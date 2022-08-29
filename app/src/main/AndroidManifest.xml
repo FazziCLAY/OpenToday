@@ -14,41 +14,41 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/Theme.OpenToday">
-        <activity
-            android:name=".ui.activity.OpenSourceLicenseActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.activity.OpenSourceLicensesActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
 
-        <service
-            android:name=".app.receiver.service.UITickService"
-            android:enabled="true"
-            android:exported="false" />
-
-        <receiver
-            android:name=".app.receiver.ItemsTickReceiver"
-            android:enabled="true"
-            android:exported="false" />
-
-
-        <receiver
-            android:name=".app.receiver.QuickNoteReceiver"
-            android:enabled="true"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.activity.MainActivity"
+        <!-- Activities -->
+        <activity android:name=".ui.activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.activity.OpenSourceLicensesActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ui.activity.OpenSourceLicenseActivity" android:exported="false" />
+
+        <activity android:name=".debug.TestItemViewGenerator" android:exported="false" />
+
+        <!-- Services -->
+        <service
+            android:name=".app.receiver.service.UITickService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <!-- Receivers -->
+        <receiver
+            android:name=".app.receiver.ItemsTickReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+        <receiver
+            android:name=".app.receiver.QuickNoteReceiver"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>
