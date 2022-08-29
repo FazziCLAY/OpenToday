@@ -6,21 +6,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class SimpleSpinnerAdapter<T> extends MinBaseAdapter {
-    private final Context context;
     private final ViewStyle<T> viewStyle;
     private final List<Set> setList = new ArrayList<>();
 
-    public SimpleSpinnerAdapter(Context context, ViewStyle<T> viewStyle) {
-        this.context = context;
+    public SimpleSpinnerAdapter(ViewStyle<T> viewStyle) {
         this.viewStyle = viewStyle;
     }
 
     public SimpleSpinnerAdapter(Context context) {
-        this(context, (string, value, convertedView, parent) -> createViewFromResource(string, LayoutInflater.from(context), convertedView, parent, android.R.layout.simple_dropdown_item_1line));
+        this((string, value, convertedView, parent) -> createViewFromResource(string, LayoutInflater.from(context), convertedView, parent, android.R.layout.simple_dropdown_item_1line));
     }
 
     public SimpleSpinnerAdapter<T> add(String text, T value) {
@@ -51,7 +51,7 @@ public class SimpleSpinnerAdapter<T> extends MinBaseAdapter {
         return set.text;
     }
 
-    public int getValuePosition(T value) {
+    public int getValuePosition(@Nullable T value) {
         for (Set set : setList) {
             if (set.value.equals(value)) {
                 return setList.indexOf(set);

@@ -10,10 +10,14 @@
         android:layout_height="wrap_content"
         android:text="@string/item_group" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="// do nothing"
+    <Button
+        android:layout_marginStart="2sp"
+        android:id="@+id/externalEditor"
+        android:layout_width="100sp"
+        android:layout_height="40sp"
+        android:gravity="center"
+        android:text="Ed"
+        android:textSize="14sp"
         tools:ignore="HardcodedText" />
 
 </LinearLayout>

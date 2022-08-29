@@ -10,6 +10,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
@@ -21,6 +22,7 @@ import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.app.items.item.TextItem;
 import ru.fazziclay.opentoday.callback.CallbackStorage;
 import ru.fazziclay.opentoday.callback.Status;
+import ru.fazziclay.opentoday.util.Profiler;
 
 public class ItemManager extends SimpleItemStorage {
     private static final boolean DEBUG_ITEMS_SET = (App.DEBUG && false);
@@ -42,10 +44,12 @@ public class ItemManager extends SimpleItemStorage {
     }
 
     private void load() {
+        Profiler profiler = new Profiler("ItemManager load");
         DataTransferPacket load = DEBUG_ITEMS_SET ? generateDebugData() : itemIEManager.loadFromFile();
         if (load != null) {
             importData(load);
         }
+        profiler.end();
     }
 
     public Selection[] getSelections() {
@@ -68,7 +72,6 @@ public class ItemManager extends SimpleItemStorage {
             if (selection.getItem() == item) toDelete = selection;
         }
         selections.remove(toDelete);
-        Log.e("deselect", "owo");
 
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
             callback.run(this.selections);
@@ -134,7 +137,6 @@ public class ItemManager extends SimpleItemStorage {
 
     @Override
     public void tick(TickSession tickSession) {
-        Log.d("ItemManager", "tick");
         super.tick(tickSession);
     }
 
@@ -153,6 +155,15 @@ public class ItemManager extends SimpleItemStorage {
                 new Handler(App.get().getMainLooper()).post(() -> Toast.makeText(App.get(), "Error: Save exception: " + e + "; cause: " + e.getCause(), Toast.LENGTH_LONG).show());
             } catch (Exception ignored) {}
             return false;
+        }
+    }
+
+    public void tick(TickSession tickSession, List<UUID> uuids) {
+        for (UUID uuid : uuids) {
+            Item i = getItemById(uuid);
+            if (i != null) {
+                i.tick(tickSession);
+            }
         }
     }
 

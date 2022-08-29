@@ -50,7 +50,7 @@ public class DialogTextItemEditText {
             textItem.setText(binding.editText.getText().toString());
             textItem.save();
             unsaved = false;
-            textItem.updateUi();
+            textItem.visibleChanged();
             cancel();
         });
 

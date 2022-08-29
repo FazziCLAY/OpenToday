@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:padding="5sp"
+    android:layout_height="match_parent">
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbarSize="10sp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="40sp"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="17sp"
+                    android:text="@string/dialog_editItemFilter_title_currentValue"/>
+
+                <TextView
+                    android:layout_width="130sp"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="17sp"
+                    android:text="@string/dialog_editItemFilter_title_field"/>
+
+                <TextView
+                    android:layout_width="130sp"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="17sp"
+                    android:text="@string/dialog_editItemFilter_title_mode"/>
+
+
+                <TextView
+                    android:layout_width="100sp"
+                    android:layout_height="match_parent"
+                    android:textStyle="bold"
+                    android:textSize="17sp"
+                    android:text="@string/dialog_editItemFilter_title_value"/>
+
+
+                <TextView
+                    android:layout_width="100sp"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="17sp"
+                    android:text="@string/dialog_editItemFilter_title_shift"/>
+
+                <TextView
+                    android:layout_width="60sp"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="17sp"
+                    android:text="@string/dialog_editItemFilter_title_invert"/>
+            </LinearLayout>
+
+            <include
+                android:id="@+id/year"
+                layout="@layout/dialog_edit_item_filter_row" />
+
+            <include
+                android:id="@+id/month"
+                layout="@layout/dialog_edit_item_filter_row" />
+
+            <include
+                android:id="@+id/dayOfMonth"
+                layout="@layout/dialog_edit_item_filter_row" />
+
+            <include
+                android:id="@+id/dayOfWeek"
+                layout="@layout/dialog_edit_item_filter_row" />
+
+            <include
+                android:id="@+id/weekOfYear"
+                layout="@layout/dialog_edit_item_filter_row" />
+
+            <include
+                android:id="@+id/dayOfYear"
+                layout="@layout/dialog_edit_item_filter_row" />
+
+            <include
+                android:id="@+id/hour"
+                layout="@layout/dialog_edit_item_filter_row" />
+
+            <include
+                android:id="@+id/minute"
+                layout="@layout/dialog_edit_item_filter_row" />
+
+            <include
+                android:id="@+id/second"
+                layout="@layout/dialog_edit_item_filter_row" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+</ScrollView>

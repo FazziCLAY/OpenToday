@@ -132,4 +132,29 @@
     <string name="dialog_itemNotification_cancel">Cancel</string>
     <string name="dialog_itemNotification_incorrectNotificationId">Incorrect notification id field</string>
     <string name="item_filterGroup">Filter group</string>
+    <string name="toolbar_more_file_import">Import</string>
+    <string name="toolbar_more_file_export">Export</string>
+    <string name="toolbar_more_selection_export">Export selected</string>
+    <string name="toolbar_more_file_import_import">Import!</string>
+    <string name="toolbar_more_file_import_cancel">Cancel</string>
+    <string name="toolbar_more_selection_export_success">Successfully</string>
+    <string name="toolbar_more_selection_export_clipdata_label">OpenToday export</string>
+    <string name="dialog_editItemFilter_title_field">Field</string>
+    <string name="dialog_editItemFilter_title_mode">Mode</string>
+    <string name="dialog_editItemFilter_title_value">Value</string>
+    <string name="dialog_editItemFilter_title_invert">Invert</string>
+    <string name="dialog_editItemFilter_year">Year</string>
+    <string name="dialog_editItemFilter_month">Month</string>
+    <string name="dialog_editItemFilter_dayOfWeek">Day of week</string>
+    <string name="dialog_editItemFilter_dayOfMonth">Day of month</string>
+    <string name="dialog_editItemFilter_weekOfYear">Week of year</string>
+    <string name="dialog_editItemFilter_hour">Hour</string>
+    <string name="dialog_editItemFilter_minute">Minute</string>
+    <string name="dialog_editItemFilter_second">Second</string>
+    <string name="dialog_editItemFilter_title_currentValue" translatable="false">C</string>
+    <string name="dialog_editItemFilter_dayOfYear">Day of year</string>
+    <string name="dialog_editItemFilter_title_shift">Shift</string>
+    <string name="menuItem_copy_exception">Copy error:\n%s</string>
+    <string name="toolbar_more_file_import_exception">Import error:\n%s</string>
+    <string name="toolbar_more_selection_export_exception">Export error:\n%s</string>
 </resources>

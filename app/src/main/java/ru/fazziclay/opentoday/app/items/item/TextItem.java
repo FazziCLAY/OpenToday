@@ -2,10 +2,13 @@ package ru.fazziclay.opentoday.app.items.item;
 
 import android.graphics.Color;
 
+import androidx.annotation.NonNull;
+
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import ru.fazziclay.opentoday.annotation.Getter;
-import ru.fazziclay.opentoday.annotation.JSONName;
+import ru.fazziclay.opentoday.annotation.SaveKey;
 import ru.fazziclay.opentoday.annotation.RequireSave;
 import ru.fazziclay.opentoday.annotation.Setter;
 
@@ -15,8 +18,9 @@ public class TextItem extends Item {
     // START - Save
     public final static TextItemIETool IE_TOOL = new TextItemIETool();
     public static class TextItemIETool extends Item.ItemIETool {
+        @NonNull
         @Override
-        public JSONObject exportItem(Item item) throws Exception {
+        public JSONObject exportItem(@NonNull Item item) throws Exception {
             TextItem textItem = (TextItem) item;
             return super.exportItem(textItem)
                     .put("text", textItem.text)
@@ -25,14 +29,17 @@ public class TextItem extends Item {
                     .put("clickableUrls", textItem.clickableUrls);
         }
 
-        private final TextItem defaultValues = new TextItem("<import_error>");
+        private final TextItem defaultValues = new TextItem();
+        @NonNull
         @Override
-        public Item importItem(JSONObject json) throws Exception {
-            TextItem o = new TextItem(super.importItem(json), json.optString("text", defaultValues.text));
-            o.textColor = json.optInt("textColor", defaultValues.textColor);
-            o.customTextColor = json.optBoolean("customTextColor", defaultValues.customTextColor);
-            o.clickableUrls = json.optBoolean("clickableUrls", defaultValues.clickableUrls);
-            return o;
+        public Item importItem(@NonNull JSONObject json, Item item) throws Exception {
+            TextItem textItem = item != null ? (TextItem) item : new TextItem();
+            super.importItem(json, textItem);
+            textItem.text = json.optString("text", defaultValues.text);
+            textItem.textColor = json.optInt("textColor", defaultValues.textColor);
+            textItem.customTextColor = json.optBoolean("customTextColor", defaultValues.customTextColor);
+            textItem.clickableUrls = json.optBoolean("clickableUrls", defaultValues.clickableUrls);
+            return textItem;
         }
     }
     // END - Save
@@ -41,17 +48,19 @@ public class TextItem extends Item {
         return new TextItem("");
     }
 
-    @JSONName(name = "text") @RequireSave private String text;
-    @JSONName(name = "textColor") @RequireSave private int textColor = Color.parseColor(DEFAULT_TEXT_COLOR);
-    @JSONName(name = "customTextColor") @RequireSave private boolean customTextColor = false;
-    @JSONName(name = "clickableUrls") @RequireSave private boolean clickableUrls = false;
+    @NotNull @SaveKey(key = "text") @RequireSave private String text = "";
+    @SaveKey(key = "textColor") @RequireSave private int textColor = Color.parseColor(DEFAULT_TEXT_COLOR);
+    @SaveKey(key = "customTextColor") @RequireSave private boolean customTextColor = false;
+    @SaveKey(key = "clickableUrls") @RequireSave private boolean clickableUrls = false;
+
+    protected TextItem() {}
 
     public TextItem(String text) {
         this(null, text);
     }
 
     // Append
-    public TextItem(Item item, String text) {
+    public TextItem(Item item, @NonNull String text) {
         super(item);
         this.text = text;
     }
@@ -65,8 +74,8 @@ public class TextItem extends Item {
         this.clickableUrls = copy.clickableUrls;
     }
 
-    @Getter public String getText() { return text; }
-    @Setter public void setText(String v) { this.text = v; }
+    @Getter @NonNull public String getText() { return text; }
+    @Setter public void setText(@NonNull String v) { this.text = v; }
     @Getter public int getTextColor() { return textColor; }
     @Setter public void setTextColor(int v) { this.textColor = v; }
     @Getter public boolean isCustomTextColor() { return customTextColor; }

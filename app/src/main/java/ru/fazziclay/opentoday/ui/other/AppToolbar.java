@@ -3,19 +3,25 @@ package ru.fazziclay.opentoday.ui.other;
 import static ru.fazziclay.opentoday.util.InlineUtil.fcu_viewOnClick;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import ru.fazziclay.opentoday.R;
+import ru.fazziclay.opentoday.app.items.ImportWrapper;
 import ru.fazziclay.opentoday.app.items.ItemManager;
 import ru.fazziclay.opentoday.app.items.ItemStorage;
 import ru.fazziclay.opentoday.app.items.ItemsRegistry;
@@ -132,6 +138,27 @@ public class AppToolbar {
             if (success) Toast.makeText(activity, R.string.toolbar_more_file_saveAll_success, Toast.LENGTH_LONG).show();
         });
 
+        fcu_viewOnClick(b.importData, () -> {
+            EditText editText = new EditText(activity);
+
+            new AlertDialog.Builder(activity)
+                    .setView(editText)
+                    .setPositiveButton(R.string.toolbar_more_file_import_import, (ignore123213, ignore342143) -> {
+                        try {
+                            ImportWrapper i = ImportWrapper.finalImport(editText.getText().toString());
+
+                            for (Item item : i.getItems()) {
+                                itemStorage.addItem(item);
+                                itemManager.selectItem(new Selection(itemStorage, item));
+                            }
+                        } catch (Exception e) {
+                            Toast.makeText(activity, activity.getString(R.string.toolbar_more_file_import_exception, e.toString()), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setNegativeButton(R.string.toolbar_more_file_import_cancel, null)
+                    .show();
+        });
+
         toolbarMoreView.addView(b.getRoot());
     }
 
@@ -194,6 +221,22 @@ public class AppToolbar {
             b.empty.setVisibility(View.VISIBLE);
             b.notEmpty.setVisibility(View.GONE);
         }
+
+        fcu_viewOnClick(b.exportSelected, () -> {
+            try {
+                ImportWrapper.Builder builder = ImportWrapper.createImport();
+                for (Selection selection : itemManager.getSelections()) {
+                    builder.addItem(selection.getItem());
+                }
+                ImportWrapper importWrapper = builder.build();
+                ClipboardManager clipboardManager = activity.getSystemService(ClipboardManager.class);
+                clipboardManager.setPrimaryClip(ClipData.newPlainText(activity.getString(R.string.toolbar_more_selection_export_clipdata_label), importWrapper.finalExport()));
+                Toast.makeText(activity, R.string.toolbar_more_selection_export_success, Toast.LENGTH_SHORT).show();
+
+            } catch (Exception e) {
+                Toast.makeText(activity, activity.getString(R.string.toolbar_more_selection_export_exception, e.toString()), Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // Deselect all
         fcu_viewOnClick(b.deselectAll, itemManager::deselectAll);

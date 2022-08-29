@@ -35,8 +35,20 @@
         android:paddingEnd="5sp">
 
         <Button
+            android:id="@+id/exportSelected"
+            android:backgroundTint="#BA1DF4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1sp"
+            android:layout_marginRight="1sp"
+            android:minHeight="45sp"
+            android:minWidth="0sp"
+            android:textAllCaps="false"
+            android:text="@string/toolbar_more_selection_export" />
+
+        <Button
             android:id="@+id/deselect_all"
-            android:backgroundTint="#E8514D"
+            android:backgroundTint="#16FF2D"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="1sp"
@@ -61,7 +73,7 @@
 
         <Button
             android:id="@+id/move_selected_to_root"
-            android:backgroundTint="#E8514D"
+            android:backgroundTint="#1C919C"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="1sp"

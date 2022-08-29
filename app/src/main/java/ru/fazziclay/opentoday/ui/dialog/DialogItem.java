@@ -26,12 +26,14 @@ import java.util.List;
 import java.util.Locale;
 
 import ru.fazziclay.opentoday.R;
+import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.items.ItemManager;
 import ru.fazziclay.opentoday.app.items.ItemsRegistry;
 import ru.fazziclay.opentoday.app.items.item.CheckboxItem;
 import ru.fazziclay.opentoday.app.items.item.CounterItem;
 import ru.fazziclay.opentoday.app.items.item.CycleListItem;
 import ru.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem;
+import ru.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import ru.fazziclay.opentoday.app.items.item.GroupItem;
 import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.app.items.item.TextItem;
@@ -42,6 +44,7 @@ import ru.fazziclay.opentoday.databinding.DialogItemModuleCheckboxBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleCounterBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleCyclelistBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleDayrepeatablecheckboxBinding;
+import ru.fazziclay.opentoday.databinding.DialogItemModuleFiltergroupBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleGroupBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleItemBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleTextBinding;
@@ -118,6 +121,9 @@ public class DialogItem {
         if (item instanceof GroupItem) {
             binding.canvas.addView(addEditModule(new GroupItemEditModule()));
         }
+        if (item instanceof FilterGroupItem) {
+            binding.canvas.addView(addEditModule(new FilterGroupItemEditModule()));
+        }
 
         fcu_viewOnClick(binding.applyButton, this::applyRequest);
         fcu_viewOnClick(binding.cancelButton, this::cancelRequest);
@@ -158,7 +164,7 @@ public class DialogItem {
                 return;
             }
         }
-        item.updateUi();
+        item.visibleChanged();
         item.save();
 
         if (onEditDone != null) onEditDone.run(item);
@@ -499,6 +505,10 @@ public class DialogItem {
             CycleListItem cycleListItem = (CycleListItem) item;
 
             binding = DialogItemModuleCyclelistBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
+            fcu_viewOnClick(binding.externalEditor, () -> {
+                // TODO: 29.08.2022 path unsupported fix
+                new DialogItemStorageEditor(activity, App.get(activity).getItemManager(), cycleListItem.getItemsCycleStorage(), null, "unsupported").show();
+            });
             simpleSpinnerAdapter = new SimpleSpinnerAdapter<CycleListItem.TickBehavior>(activity)
                     .add(activity.getString(R.string.cycleListItem_tick_all), CycleListItem.TickBehavior.ALL)
                     .add(activity.getString(R.string.cycleListItem_tick_current), CycleListItem.TickBehavior.CURRENT);
@@ -585,7 +595,37 @@ public class DialogItem {
 
         @Override
         public void setup(Item item, Activity activity, View view) {
+            GroupItem groupItem = (GroupItem) item;
             binding = DialogItemModuleGroupBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
+            fcu_viewOnClick(binding.externalEditor, () -> {
+                // TODO: 29.08.2022 path unsupported fix
+                new DialogItemStorageEditor(activity, App.get(activity).getItemManager(), groupItem.getItemStorage(), null, "unsupported").show();
+            });
+        }
+
+        @Override
+        public void commit(Item item) {}
+
+        @Override
+        public void setOnStartEditListener(Runnable o) { }
+    }
+
+    private static class FilterGroupItemEditModule extends BaseEditUiModule {
+        private DialogItemModuleFiltergroupBinding binding;
+
+        @Override
+        public View getView() {
+            return binding.getRoot();
+        }
+
+        @Override
+        public void setup(Item item, Activity activity, View view) {
+            FilterGroupItem fGroupItem = (FilterGroupItem) item;
+            binding = DialogItemModuleFiltergroupBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
+            fcu_viewOnClick(binding.externalEditor, () -> {
+                // TODO: 29.08.2022 path unsupported fix
+                new DialogFilterGroupEdit(activity, fGroupItem, "unsupported").show();
+            });
         }
 
         @Override

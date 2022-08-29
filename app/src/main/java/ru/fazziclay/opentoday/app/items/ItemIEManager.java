@@ -74,7 +74,7 @@ public class ItemIEManager {
         /*get itemType form json*/String itemType = jsonItem.optString(KEY_ITEMTYPE);
         /*get class by itemType*/Class<? extends Item> itemClass = ItemsRegistry.REGISTRY.getItemInfoByStringName(itemType).getClassType();
         /*get IETool by class*/ItemImportExportTool ieTool = ItemsRegistry.REGISTRY.getItemInfoByClass(itemClass).getItemIETool();
-        return ieTool.importItem(jsonItem);
+        return ieTool.importItem(jsonItem, null);
     }
 
     // export item (Item -> JSON)

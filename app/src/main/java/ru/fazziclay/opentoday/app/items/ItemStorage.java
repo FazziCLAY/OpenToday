@@ -6,7 +6,7 @@ import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.callback.CallbackStorage;
 
 public interface ItemStorage {
-    Item[] getItems();
+    Item[] getAllItems();
     int size();
     void addItem(Item item);
     void deleteItem(Item item);

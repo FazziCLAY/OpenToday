@@ -5,7 +5,9 @@ import static ru.fazziclay.opentoday.util.InlineUtil.fcu_viewOnClick;
 import android.app.Activity;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -13,6 +15,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.content.res.AppCompatResources;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
@@ -22,6 +27,7 @@ import ru.fazziclay.opentoday.app.items.item.CheckboxItem;
 import ru.fazziclay.opentoday.app.items.item.CounterItem;
 import ru.fazziclay.opentoday.app.items.item.CycleListItem;
 import ru.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem;
+import ru.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import ru.fazziclay.opentoday.app.items.item.GroupItem;
 import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.app.items.item.TextItem;
@@ -29,19 +35,26 @@ import ru.fazziclay.opentoday.databinding.ItemCheckboxBinding;
 import ru.fazziclay.opentoday.databinding.ItemCounterBinding;
 import ru.fazziclay.opentoday.databinding.ItemCycleListBinding;
 import ru.fazziclay.opentoday.databinding.ItemDayRepeatableCheckboxBinding;
+import ru.fazziclay.opentoday.databinding.ItemFilterGroupBinding;
 import ru.fazziclay.opentoday.databinding.ItemGroupBinding;
 import ru.fazziclay.opentoday.databinding.ItemTextBinding;
+import ru.fazziclay.opentoday.ui.dialog.DialogFilterGroupEdit;
 import ru.fazziclay.opentoday.ui.dialog.DialogItemStorageEditor;
+import ru.fazziclay.opentoday.ui.other.ItemViewHolder;
+import ru.fazziclay.opentoday.util.DebugUtil;
+import ru.fazziclay.opentoday.util.ResUtil;
 
 public class ItemViewGenerator {
-    private final Activity activity;
-    private final ItemManager itemManager;
-    private final ItemStorageDrawer.OnItemClick onItemClick;
-    private final boolean previewMode;
+    @NotNull private final Activity activity;
+    @NotNull private final ItemManager itemManager;
+    @Nullable private final String path; // Path (/item1/item3/item32/item3)
+    @Nullable private final OnItemClick onItemClick; // Action when view click
+    private final boolean previewMode; // Disable items minimize view patch & disable buttons
 
-    public ItemViewGenerator(Activity activity, ItemManager itemManager, ItemStorageDrawer.OnItemClick onItemClick, boolean previewMode) {
+    public ItemViewGenerator(@NotNull Activity activity, @NotNull ItemManager itemManager, @Nullable String path, @Nullable OnItemClick onItemClick, boolean previewMode) {
         this.activity = activity;
         this.itemManager = itemManager;
+        this.path = path;
         this.onItemClick = onItemClick;
         this.previewMode = previewMode;
     }
@@ -71,14 +84,24 @@ public class ItemViewGenerator {
         } else if (type == GroupItem.class) {
             ret = generateGroupItemView(activity, (GroupItem) item, view);
 
+        } else if (type == FilterGroupItem.class) {
+            ret = generateFilterGroupItemView(activity, (FilterGroupItem) item, view);
+
         } else {
+            Log.e("Unknown item type", "Throw exception for 3 seconds...");
+            DebugUtil.sleep(3000);
             throw new RuntimeException("Unknown item type '" + type.getName() + "'! check ItemViewGenerator!");
         }
 
-        ret.setMinimumHeight(item.getViewMinHeight());
+        // Minimal height
+        if (!item.isMinimize()) ret.setMinimumHeight(item.getViewMinHeight());
+
+        // BackgroundColor
         if (item.isViewCustomBackgroundColor()) {
             ret.setBackgroundTintList(ColorStateList.valueOf(item.getViewBackgroundColor()));
         }
+
+        // Minimize view patch
         if (!previewMode && item.isMinimize()) {
             ret.setForeground(AppCompatResources.getDrawable(activity, R.drawable.shape));
             ret.setForegroundTintList(ColorStateList.valueOf(Color.parseColor("#44f0fff0")));
@@ -86,8 +109,34 @@ public class ItemViewGenerator {
             layoutParams.setMargins(15, 0, 0, 0);
             ret.setLayoutParams(layoutParams);
         }
-        fcu_viewOnClick(ret, () -> onItemClick.run(itemManager, item));
+        if (onItemClick != null) fcu_viewOnClick(ret, () -> onItemClick.run(item));
         return ret;
+    }
+
+    private View generateFilterGroupItemView(Activity activity, FilterGroupItem item, ViewGroup view) {
+        ItemFilterGroupBinding binding = ItemFilterGroupBinding.inflate(activity.getLayoutInflater(), view, false);
+
+        applyTextItemToTextView(item, binding.title);
+        // group
+        if (!item.isMinimize()) {
+            for (Item activeItem : item.getActiveItems()) {
+                ItemViewHolder holder = new ItemViewHolder(activity);
+                ItemViewGenerator itemViewGenerator = new ItemViewGenerator(activity, itemManager, appendPath(item.getText()), onItemClick, previewMode);
+                holder.layout.addView(itemViewGenerator.generate(activeItem, binding.content));
+
+                if (itemManager.isSelected(activeItem)) {
+                    holder.layout.setForeground(new ColorDrawable(ResUtil.getAttrColor(activity, R.attr.item_selectionForegroundColor)));
+                } else {
+                    holder.layout.setForeground(null);
+                }
+
+                binding.content.addView(holder.layout);
+            }
+        }
+
+        binding.externalEditor.setOnClickListener(v -> new DialogFilterGroupEdit(activity, item, appendPath(item.getText())).show());
+
+        return binding.getRoot();
     }
 
     private View generateGroupItemView(Activity activity, GroupItem item, ViewGroup view) {
@@ -98,11 +147,11 @@ public class ItemViewGenerator {
 
         // group
         if (!item.isMinimize()) {
-            ItemStorageDrawer itemStorageDrawer = new ItemStorageDrawer(activity, App.get().getItemManager(), item.getItemStorage(), onItemClick, previewMode);
+            ItemStorageDrawer itemStorageDrawer = new ItemStorageDrawer(activity, App.get().getItemManager(), item.getItemStorage(), appendPath(item.getText()), onItemClick, previewMode);
             itemStorageDrawer.create();
             binding.content.addView(itemStorageDrawer.getView());
         }
-        applyExternalEditorButton(item.getItemStorage(), binding.externalEditor);
+        applyExternalEditorButton(item.getItemStorage(), binding.externalEditor, item.getText());
 
         return binding.getRoot();
     }
@@ -143,12 +192,22 @@ public class ItemViewGenerator {
             binding.previous.setEnabled(false);
         }
 
-        applyExternalEditorButton(item.getItemsCycleStorage(), binding.externalEditor);
+        applyExternalEditorButton(item.getItemsCycleStorage(), binding.externalEditor, item.getText());
 
         Item current = item.getCurrentItem();
         if (!item.isMinimize()) {
             if (current != null) {
-                binding.content.addView(generate(current, binding.getRoot()));
+                ItemViewHolder holder = new ItemViewHolder(activity);
+                ItemViewGenerator itemViewGenerator = new ItemViewGenerator(activity, itemManager, appendPath(item.getText()), onItemClick, previewMode);
+                holder.layout.addView(itemViewGenerator.generate(current, binding.getRoot()));
+
+                if (itemManager.isSelected(item)) {
+                    holder.layout.setForeground(new ColorDrawable(ResUtil.getAttrColor(activity, R.attr.item_selectionForegroundColor)));
+                } else {
+                    holder.layout.setForeground(null);
+                }
+
+                binding.content.addView(holder.layout);
             } else {
                 TextView textView = new TextView(activity);
                 textView.setText(R.string.empty);
@@ -207,13 +266,18 @@ public class ItemViewGenerator {
         if (previewMode) view.setEnabled(false);
         fcu_viewOnClick(view, () -> {
             item.setChecked(view.isChecked());
-            item.updateUi();
+            item.visibleChanged();
             item.save();
         });
     }
 
-    private void applyExternalEditorButton(ItemStorage itemStorage, View view) {
+    private void applyExternalEditorButton(ItemStorage itemStorage, View view, String localPath) {
         if (previewMode) view.setEnabled(false);
-        view.setOnClickListener(v -> new DialogItemStorageEditor(activity, itemManager, itemStorage, onItemClick).show());
+        view.setOnClickListener(v -> new DialogItemStorageEditor(activity, itemManager, itemStorage, onItemClick, appendPath(localPath)).show());
+    }
+
+    private String appendPath(String localPath) {
+        if (this.path == null) return null;
+        return this.path + (this.path.endsWith("/") ? "" : "/") + "(" + localPath + ")";
     }
 }

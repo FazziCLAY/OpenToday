@@ -78,10 +78,27 @@ public class DataFixer {
             isUpdated = true;
         }
 
+        if (dataVersion == 4) {
+            fix4versionTo5();
+            dataVersion = 5;
+            isUpdated = true;
+        }
+
         Log.d("DataFixer", "latest dataVersion = " + dataVersion);
         if (isUpdated) {
-            File logFile = new File(context.getExternalCacheDir(), "data-fixer-logs/" + System.currentTimeMillis() + ".txt");
+            File logFile = new File(context.getExternalCacheDir(), "data-fixer/logs/" + System.currentTimeMillis() + ".txt");
             FileUtil.setText(logFile, logs.toString());
+        }
+    }
+
+    private void fix4versionTo5() {
+        try {
+            File from = new File(context.getExternalFilesDir(""), "item_data.json");
+            File to = new File(context.getExternalCacheDir(), "/data-fixer/backups/4to5/item_data.json");
+            FileUtil.setText(to, FileUtil.getText(from));
+            log("[4to5] backup done ");
+        } catch (Exception e) {
+            log("[4to5] backup exception ", e);
         }
     }
 

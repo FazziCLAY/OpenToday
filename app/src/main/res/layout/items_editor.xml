@@ -6,6 +6,43 @@
     android:layout_height="match_parent"
     tools:context="ru.fazziclay.opentoday.ui.other.ItemsEditor">
 
+    <!-- Current date -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="4sp"
+        android:paddingEnd="4sp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/current_date"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            tools:text="2022.06.25 Saturday"
+            android:textColor="?attr/main_currentDate_color"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/current_time"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:gravity="end"
+            tools:text="10:00:59"
+            android:textColor="?attr/main_currentDate_color"
+            android:textSize="24sp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/path"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        tools:text="/text/stes" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

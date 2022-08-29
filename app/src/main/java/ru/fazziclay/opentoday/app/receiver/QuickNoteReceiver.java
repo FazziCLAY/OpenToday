@@ -13,10 +13,9 @@ import androidx.core.app.RemoteInput;
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.items.item.TextItem;
-import ru.fazziclay.opentoday.ui.dialog.DialogAppSettings;
 
 public class QuickNoteReceiver extends BroadcastReceiver {
-    public static final String REMOTE_INPUT_KEY = "io8jj7234d191324";
+    public static final String REMOTE_INPUT_KEY = "opentoday_quick_note_remote_input";
     public static final int NOTIFICATION_ID = 10;
     public static final String NOTIFICATION_CHANNEL = "quick_note";
 

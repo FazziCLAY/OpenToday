@@ -28,12 +28,15 @@
         <entry key="app/src/main/res/layout/control_center.xml" value="0.2971014492753623" />
         <entry key="app/src/main/res/layout/debug_entries.xml" value="0.33229166666666665" />
         <entry key="app/src/main/res/layout/dialog_app_settings.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/dialog_edit_item_filter.xml" value="0.28195829555757024" />
+        <entry key="app/src/main/res/layout/dialog_edit_item_filter_row.xml" value="0.2815049864007253" />
         <entry key="app/src/main/res/layout/dialog_item_frame.xml" value="0.2910244786944696" />
         <entry key="app/src/main/res/layout/dialog_item_module_checkbox.xml" value="0.2905711695376247" />
         <entry key="app/src/main/res/layout/dialog_item_module_counter.xml" value="0.14322359982898675" />
         <entry key="app/src/main/res/layout/dialog_item_module_countr.xml" value="0.2910244786944696" />
         <entry key="app/src/main/res/layout/dialog_item_module_cyclelist.xml" value="0.2910244786944696" />
         <entry key="app/src/main/res/layout/dialog_item_module_dayrepeatablecheckbox.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/dialog_item_module_filtergroup.xml" value="0.22242817423540315" />
         <entry key="app/src/main/res/layout/dialog_item_module_group.xml" value="0.27276613937580163" />
         <entry key="app/src/main/res/layout/dialog_item_module_item.xml" value="0.2910244786944696" />
         <entry key="app/src/main/res/layout/dialog_item_module_text.xml" value="0.2910244786944696" />

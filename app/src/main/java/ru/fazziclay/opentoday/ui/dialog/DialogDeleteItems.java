@@ -28,7 +28,7 @@ public class DialogDeleteItems {
 
         this.dialog = new Dialog(activity, android.R.style.ThemeOverlay_Material);
         this.dialog.setContentView(binding.getRoot());
-        this.itemViewGenerator = new ItemViewGenerator(activity, App.get().getItemManager(), (fsfdgfdge, edfdggfdg) -> {}, true);
+        this.itemViewGenerator = new ItemViewGenerator(activity, App.get().getItemManager(), null, null, true);
 
         binding.list.setAdapter(new MinBaseAdapter() {
             @Override

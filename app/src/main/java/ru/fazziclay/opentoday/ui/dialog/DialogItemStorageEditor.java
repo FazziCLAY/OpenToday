@@ -5,24 +5,21 @@ import android.app.Dialog;
 
 import ru.fazziclay.opentoday.app.items.ItemManager;
 import ru.fazziclay.opentoday.app.items.ItemStorage;
-import ru.fazziclay.opentoday.databinding.DialogItemstorageEditorBinding;
 import ru.fazziclay.opentoday.ui.other.ItemsEditor;
 import ru.fazziclay.opentoday.ui.other.item.ItemStorageDrawer;
+import ru.fazziclay.opentoday.ui.other.item.OnItemClick;
 
 public class DialogItemStorageEditor {
     private final Dialog dialog;
     private final ItemsEditor itemsEditor;
 
-    public DialogItemStorageEditor(Activity activity, ItemManager itemManager, ItemStorage itemStorage, ItemStorageDrawer.OnItemClick onItemClick) {
+    public DialogItemStorageEditor(Activity activity, ItemManager itemManager, ItemStorage itemStorage, OnItemClick onItemClick, String path) {
         this.dialog = new Dialog(activity, android.R.style.ThemeOverlay_Material);
 
-        DialogItemstorageEditorBinding binding = DialogItemstorageEditorBinding.inflate(activity.getLayoutInflater());
-
-        this.itemsEditor = new ItemsEditor(activity, binding.itemsEditor, itemManager, itemStorage);
+        this.itemsEditor = new ItemsEditor(activity, null, itemManager, itemStorage, path, onItemClick, false);
         this.itemsEditor.create();
-        binding.itemsEditor.addView(itemsEditor.getView());
 
-        dialog.setContentView(binding.getRoot());
+        dialog.setContentView(itemsEditor.getView());
         dialog.setOnCancelListener(dialog -> itemsEditor.destroy());
     }
 

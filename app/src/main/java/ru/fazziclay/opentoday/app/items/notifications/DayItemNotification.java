@@ -1,7 +1,11 @@
 package ru.fazziclay.opentoday.app.items.notifications;
 
+import android.app.AlarmManager;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
@@ -12,6 +16,8 @@ import java.util.Calendar;
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.TickSession;
+import ru.fazziclay.opentoday.app.items.item.Item;
+import ru.fazziclay.opentoday.app.receiver.ItemsTickReceiver;
 
 public class DayItemNotification implements ItemNotification {
     public static final ItemNotificationIETool IE_TOOL = new IeTool();
@@ -32,9 +38,9 @@ public class DayItemNotification implements ItemNotification {
         public ItemNotification importNotification(JSONObject json) {
             DayItemNotification o = new DayItemNotification();
             o.notificationId = json.optInt("notificationId", 543);
-            o.notifyTitle = json.optString("notifyTitle", "owo");
-            o.notifyText = json.optString("notifyText", "owo");
-            o.notifySubText = json.optString("notifySubText", "owo");
+            o.notifyTitle = json.optString("notifyTitle", "");
+            o.notifyText = json.optString("notifyText", "");
+            o.notifySubText = json.optString("notifySubText", "");
             o.latestDayOfYear = json.optInt("latestDayOfYear", 0);
             o.time = json.optInt("time", 0);
 
@@ -62,7 +68,7 @@ public class DayItemNotification implements ItemNotification {
     }
 
     @Override
-    public boolean tick(TickSession tickSession) {
+    public boolean tick(TickSession tickSession, Item item) {
         int dayofy = tickSession.getGregorianCalendar().get(Calendar.DAY_OF_YEAR);
 
         if (dayofy != latestDayOfYear) {
@@ -70,6 +76,14 @@ public class DayItemNotification implements ItemNotification {
                 sendNotify(tickSession.getContext());
                 latestDayOfYear = dayofy;
                 tickSession.saveNeeded();
+
+                try {
+                    AlarmManager alarmManager = tickSession.getContext().getSystemService(AlarmManager.class);
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, tickSession.getNoTimeCalendar().getTimeInMillis() + (24*60*60*1000L) + (this.time * 1000L) - 1000, PendingIntent.getBroadcast(tickSession.getContext(), 0, new Intent(tickSession.getContext(), ItemsTickReceiver.class).putExtra(ItemsTickReceiver.EXTRA_PERSONAL_TICK, new String[]{item.getId().toString()}).putExtra("debugMessage", "dayItemNotification is work :)"), 0));
+                } catch (Exception e) {
+                    Log.e("DayItemNotification", "AlarmManager in item experiment is not complete", e);
+                }
+
                 return true;
             }
         }

@@ -1,9 +1,11 @@
 package ru.fazziclay.opentoday.app.items.item;
 
+import androidx.annotation.NonNull;
+
 import org.json.JSONObject;
 
 import ru.fazziclay.opentoday.annotation.Getter;
-import ru.fazziclay.opentoday.annotation.JSONName;
+import ru.fazziclay.opentoday.annotation.SaveKey;
 import ru.fazziclay.opentoday.annotation.RequireSave;
 import ru.fazziclay.opentoday.annotation.Setter;
 
@@ -11,8 +13,9 @@ public class CounterItem extends TextItem {
     // START - Save
     public final static CounterItemIETool IE_TOOL = new CounterItemIETool();
     public static class CounterItemIETool extends TextItem.TextItemIETool {
+        @NonNull
         @Override
-        public JSONObject exportItem(Item item) throws Exception {
+        public JSONObject exportItem(@NonNull Item item) throws Exception {
             CounterItem counterItem = (CounterItem) item;
             return super.exportItem(item)
                     .put("counter", counterItem.counter)
@@ -20,9 +23,11 @@ public class CounterItem extends TextItem {
         }
 
         private final CounterItem defaultValues = new CounterItem("<import_error>");
+        @NonNull
         @Override
-        public Item importItem(JSONObject json) throws Exception {
-            CounterItem counterItem = new CounterItem((TextItem) super.importItem(json));
+        public Item importItem(@NonNull JSONObject json, Item item) throws Exception {
+            CounterItem counterItem = item != null ? (CounterItem) item : new CounterItem();
+            super.importItem(json, counterItem);
             counterItem.counter = json.optDouble("counter", defaultValues.counter);
             counterItem.step = json.optDouble("step", defaultValues.step);
             return counterItem;
@@ -34,8 +39,10 @@ public class CounterItem extends TextItem {
         return new CounterItem("");
     }
 
-    @JSONName(name = "counter") @RequireSave private double counter = 0;
-    @JSONName(name = "step") @RequireSave private double step = 1;
+    @SaveKey(key = "counter") @RequireSave private double counter = 0;
+    @SaveKey(key = "step") @RequireSave private double step = 1;
+
+    protected CounterItem() {}
 
     public CounterItem(String text) {
         super(text);
@@ -54,13 +61,13 @@ public class CounterItem extends TextItem {
     public void up() {
         counter = counter + step;
         save();
-        updateUi();
+        visibleChanged();
     }
 
     public void down() {
         counter = counter - step;
         save();
-        updateUi();
+        visibleChanged();
     }
 
     @Getter public double getCounter() { return counter; }

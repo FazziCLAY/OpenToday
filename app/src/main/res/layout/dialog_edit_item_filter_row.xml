@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/currentValue"
+        android:layout_width="40sp"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/field"
+        android:layout_width="130sp"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        tools:text="Title"/>
+
+    <Spinner
+        android:id="@+id/mode"
+        android:layout_width="130sp"
+        android:layout_height="match_parent" />
+
+    <EditText
+        android:id="@+id/value"
+        android:layout_width="100sp"
+        android:importantForAutofill="no"
+        android:hint="0"
+        android:inputType="number"
+        android:layout_height="match_parent"
+        tools:ignore="HardcodedText" />
+
+    <EditText
+        android:id="@+id/shift"
+        android:layout_width="100sp"
+        android:importantForAutofill="no"
+        android:hint="0"
+        android:inputType="numberSigned"
+        android:layout_height="match_parent"
+        tools:ignore="HardcodedText" />
+
+    <CheckBox
+        android:id="@+id/invert"
+        android:layout_width="60sp"
+        android:layout_height="wrap_content" />
+</LinearLayout>
