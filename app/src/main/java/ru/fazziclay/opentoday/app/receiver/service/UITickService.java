@@ -23,7 +23,8 @@ public class UITickService extends Service {
     public void tick() {
         sendBroadcast(new Intent(this, ItemsTickReceiver.class));
         this.handler.removeCallbacks(runnable);
-        this.handler.postDelayed(runnable, 1000);
+        long millis = System.currentTimeMillis() % 1000;
+        this.handler.postDelayed(runnable, 1000 - millis);
     }
 
     @Override
