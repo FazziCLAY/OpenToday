@@ -32,6 +32,11 @@
         <activity android:name=".ui.activity.OpenSourceLicenseActivity" android:exported="false" />
 
         <activity android:name=".debug.TestItemViewGenerator" android:exported="false" />
+        <activity android:name=".ui.activity.CrashReportActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
 
         <!-- Services -->
         <service

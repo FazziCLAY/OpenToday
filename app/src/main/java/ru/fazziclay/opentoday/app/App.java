@@ -8,12 +8,15 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.NotificationCompat;
 
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.Random;
 
 import ru.fazziclay.javaneoutil.FileUtil;
 import ru.fazziclay.opentoday.BuildConfig;
@@ -24,7 +27,7 @@ import ru.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import ru.fazziclay.opentoday.app.receiver.ItemsTickReceiver;
 import ru.fazziclay.opentoday.app.settings.SettingsManager;
 import ru.fazziclay.opentoday.debug.TestItemViewGenerator;
-import ru.fazziclay.opentoday.ui.activity.MainActivity;
+import ru.fazziclay.opentoday.ui.activity.CrashReportActivity;
 import ru.fazziclay.opentoday.util.DebugUtil;
 import ru.fazziclay.opentoday.util.Profiler;
 
@@ -39,6 +42,7 @@ public class App extends Application {
     // Notifications
     public static final String NOTIFICATION_QUCIKNOTE_CHANNEL = QuickNoteReceiver.NOTIFICATION_CHANNEL;
     public static final String NOTIFICATION_ITEMS_CHANNEL = "items_notifications";
+    private static final String NOTIFICATION_CRASH_CHANNEL = "crash_report";
 
     // DEBUG
     public static final boolean DEBUG = BuildConfig.DEBUG;
@@ -65,6 +69,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+        setupCrashReporter();
         /* debug */ DebugUtil.sleep(DEBUG_APP_START_SLEEP);
 
         Profiler appProfiler = new Profiler("App onCreate");
@@ -98,6 +103,48 @@ public class App extends Application {
         AlarmManager alarmManager = getSystemService(AlarmManager.class);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 60*1000, PendingIntent.getBroadcast(this, 0, new Intent(this, ItemsTickReceiver.class), 0));
         appProfiler.end();
+    }
+
+    private void setupCrashReporter() {
+        Thread.UncaughtExceptionHandler defaultHandler = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+            App.crash(App.this, CrashReport.create(thread, throwable, System.currentTimeMillis(), System.nanoTime(), Thread.getAllStackTraces()));
+            if (defaultHandler != null) {
+                defaultHandler.uncaughtException(thread, throwable);
+            }
+        });
+    }
+
+    public static void crash(Context context, CrashReport crashReport) {
+        // File
+        File file = new File(context.getExternalCacheDir(), "crash_report/" + crashReport.getID().toString());
+        FileUtil.setText(file, crashReport.convertToText());
+
+        // === NOTIFICATION ===
+        final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+
+        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_CRASH_CHANNEL, context.getString(R.string.notification_crash_title), NotificationManager.IMPORTANCE_DEFAULT));
+
+        int flag;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            flag = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE;
+        } else {
+            flag = PendingIntent.FLAG_UPDATE_CURRENT;
+        }
+
+        notificationManager.notify(new Random().nextInt(), new NotificationCompat.Builder(context, App.NOTIFICATION_CRASH_CHANNEL)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(context.getString(R.string.crash_notification_title))
+                .setContentText(context.getString(R.string.crash_notification_text))
+                .setSubText(context.getString(R.string.crash_notification_subtext))
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(context.getString(R.string.crash_notification_big_text))
+                        .setBigContentTitle(context.getString(R.string.crash_notification_big_title))
+                        .setSummaryText(context.getString(R.string.crash_notification_big_summary)))
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setContentIntent(PendingIntent.getActivity(context, 0, new Intent(context, CrashReportActivity.class).putExtra("path", file.getAbsolutePath()), flag))
+                .setAutoCancel(true)
+                .build());
     }
 
     // getters & setters

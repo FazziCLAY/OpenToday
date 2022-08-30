@@ -157,4 +157,12 @@
     <string name="menuItem_copy_exception">Copy error:\n%s</string>
     <string name="toolbar_more_file_import_exception">Import error:\n%s</string>
     <string name="toolbar_more_selection_export_exception">Export error:\n%s</string>
+    <string name="notification_crash_title">App Crash</string>
+    <string name="crash_notification_title">OpenToday crash</string>
+    <string name="crash_notification_text">Click to see details</string>
+    <string name="crash_notification_subtext" translatable="false" />
+    <string name="crash_notification_big_title">OpenToday crashed</string>
+    <string name="crash_notification_big_summary" translatable="false">""</string>
+    <string name="crash_notification_big_text" translatable="false">""</string>
+    <string name="crash_activity_sendToDeveloper">Send to developer</string>
 </resources>

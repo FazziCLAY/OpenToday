@@ -19,6 +19,7 @@
         <entry key="app/src/main/res/drawable/shape_color_indicator.xml" value="0.3085" />
         <entry key="app/src/main/res/drawable/update_available.xml" value="0.214" />
         <entry key="app/src/main/res/layout/activity_allautomationlist.xml" value="0.2884963768115942" />
+        <entry key="app/src/main/res/layout/activity_crash_report.xml" value="0.14389837567680133" />
         <entry key="app/src/main/res/layout/activity_editautomationlist.xml" value="0.2980072463768116" />
         <entry key="app/src/main/res/layout/activity_launcher_test.xml" value="0.1515625" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.26449787835926447" />
