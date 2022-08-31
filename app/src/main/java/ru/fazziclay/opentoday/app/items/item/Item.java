@@ -122,7 +122,11 @@ public abstract class Item implements Cloneable {
             this.viewBackgroundColor = copy.viewBackgroundColor;
             this.viewCustomBackgroundColor = copy.viewCustomBackgroundColor;
             this.minimize = copy.minimize;
-            this.notifications = new ArrayList<>(copy.notifications);
+            this.notifications = new ArrayList<>();
+            for (ItemNotification copyNotify : copy.notifications) {
+                ItemNotification newNotify = copyNotify.clone();
+                this.notifications.add(newNotify);
+            }
             this.controller = copy.controller;
         } else {
             this.id = UUID.randomUUID();

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import org.json.JSONObject;
@@ -88,6 +89,16 @@ public class DayItemNotification implements ItemNotification {
             }
         }
         return false;
+    }
+
+    @NonNull
+    @Override
+    public DayItemNotification clone() {
+        try {
+            return (DayItemNotification) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("Clone exception", e);
+        }
     }
 
     public void sendNotify(Context context) {

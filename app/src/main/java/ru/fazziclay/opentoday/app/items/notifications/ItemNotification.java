@@ -1,8 +1,12 @@
 package ru.fazziclay.opentoday.app.items.notifications;
 
+import androidx.annotation.NonNull;
+
 import ru.fazziclay.opentoday.app.TickSession;
 import ru.fazziclay.opentoday.app.items.item.Item;
 
-public interface ItemNotification {
+public interface ItemNotification extends Cloneable {
     boolean tick(TickSession tickSession, Item item);
+    @NonNull
+    ItemNotification clone();
 }
