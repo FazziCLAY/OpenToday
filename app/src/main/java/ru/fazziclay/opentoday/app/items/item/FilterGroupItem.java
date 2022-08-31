@@ -17,6 +17,7 @@ import java.util.List;
 
 import ru.fazziclay.opentoday.annotation.SaveKey;
 import ru.fazziclay.opentoday.annotation.RequireSave;
+import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.TickSession;
 import ru.fazziclay.opentoday.app.items.ContainerItem;
 import ru.fazziclay.opentoday.app.items.ItemController;
@@ -147,6 +148,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemStor
 
     @Override
     public void deleteItem(Item item) {
+        App.get().getItemManager().deselectItem(item); // TODO: 31.08.2022 other fix??  !!BUGFIX!!
         itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onDeleted(item));
 
         ItemFilterWrapper toDel = null;
@@ -502,6 +504,8 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemStor
     private class FilterGroupItemController extends ItemController {
         @Override
         public void delete(Item item) {
+            App.get().getItemManager().deselectItem(item); // TODO: 31.08.2022 other fix??  !!BUGFIX!!
+
             itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onDeleted(item));
 
 

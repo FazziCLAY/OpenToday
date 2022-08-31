@@ -9,6 +9,7 @@ import ru.fazziclay.opentoday.annotation.Getter;
 import ru.fazziclay.opentoday.annotation.SaveKey;
 import ru.fazziclay.opentoday.annotation.RequireSave;
 import ru.fazziclay.opentoday.annotation.Setter;
+import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.TickSession;
 import ru.fazziclay.opentoday.app.items.DataTransferPacket;
 import ru.fazziclay.opentoday.app.items.ItemIEManager;
@@ -163,6 +164,12 @@ public class CycleListItem extends TextItem implements ContainerItem {
         @Override
         public void save() {
             CycleListItem.this.save();
+        }
+
+        @Override
+        public void deleteItem(Item item) {
+            App.get().getItemManager().deselectItem(item); // TODO: 31.08.2022 other fix??  !!BUGFIX!!
+            super.deleteItem(item);
         }
     }
 
