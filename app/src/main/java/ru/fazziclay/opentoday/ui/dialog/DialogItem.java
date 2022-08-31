@@ -68,6 +68,7 @@ public class DialogItem {
 
     // Edit
     private final List<BaseEditUiModule> editModules = new ArrayList<>();
+    private String path;
 
     public DialogItem(Activity activity, ItemManager itemManager) {
         this.activity = activity;
@@ -76,16 +77,17 @@ public class DialogItem {
 
     public void create(Class<? extends Item> type, OnEditDone onEditDone) {
         Item item = ItemsRegistry.REGISTRY.getItemInfoByClass(type).create();
-        show(item, true, onEditDone);
+        show(item, "unsupported", true, onEditDone);
     }
 
-    public void edit(Item item) {
-        show(item, false, null);
+    public void edit(Item item, String path) {
+        show(item, path, false, null);
     }
 
-    private void show(Item item, boolean create, OnEditDone onEditDone) {
+    private void show(Item item, String path, boolean create, OnEditDone onEditDone) {
         cancel();
         this.item = item;
+        this.path = path;
         this.create = create;
         this.onEditDone = onEditDone;
         this.canceled = false;
@@ -100,6 +102,7 @@ public class DialogItem {
     private View generateView() {
         DialogItemFrameBinding binding = DialogItemFrameBinding.inflate(this.activity.getLayoutInflater());
 
+        binding.path.setText(path != null ? path : "unsupported");
         if (item instanceof Item) {
             binding.canvas.addView(addEditModule(new ItemEditModule()));
         }
@@ -237,7 +240,7 @@ public class DialogItem {
         public void notifyCreateMode() {}
     }
 
-    public static class ItemEditModule extends BaseEditUiModule {
+    public class ItemEditModule extends BaseEditUiModule {
         private DialogItemModuleItemBinding binding;
         private Runnable onEditStart;
 
@@ -292,6 +295,7 @@ public class DialogItem {
             binding.minimize.setOnClickListener(v -> onEditStart.run());
             //
 
+            binding.editNotifications.setEnabled(!DialogItem.this.create);
             binding.editNotifications.setOnClickListener(v -> new DialogItemNotificationsEditor(activity, item, () -> updateNotificationPreview(item, activity)).show());
             updateNotificationPreview(item, activity);
         }
@@ -489,7 +493,7 @@ public class DialogItem {
         }
     }
 
-    public static class CycleListItemEditModule extends BaseEditUiModule {
+    public class CycleListItemEditModule extends BaseEditUiModule {
         private DialogItemModuleCyclelistBinding binding;
         private SimpleSpinnerAdapter<CycleListItem.TickBehavior> simpleSpinnerAdapter;
         private Runnable onEditStart;
@@ -505,10 +509,8 @@ public class DialogItem {
             CycleListItem cycleListItem = (CycleListItem) item;
 
             binding = DialogItemModuleCyclelistBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
-            fcu_viewOnClick(binding.externalEditor, () -> {
-                // TODO: 29.08.2022 path unsupported fix
-                new DialogItemStorageEditor(activity, App.get(activity).getItemManager(), cycleListItem.getItemsCycleStorage(), null, "unsupported").show();
-            });
+            binding.externalEditor.setEnabled(!DialogItem.this.create);
+            fcu_viewOnClick(binding.externalEditor, () -> new DialogItemStorageEditor(activity, App.get(activity).getItemManager(), cycleListItem.getItemsCycleStorage(), null, DialogItem.this.path).show());
             simpleSpinnerAdapter = new SimpleSpinnerAdapter<CycleListItem.TickBehavior>(activity)
                     .add(activity.getString(R.string.cycleListItem_tick_all), CycleListItem.TickBehavior.ALL)
                     .add(activity.getString(R.string.cycleListItem_tick_current), CycleListItem.TickBehavior.CURRENT);
@@ -585,7 +587,7 @@ public class DialogItem {
         }
     }
 
-    private static class GroupItemEditModule extends BaseEditUiModule {
+    private class GroupItemEditModule extends BaseEditUiModule {
         private DialogItemModuleGroupBinding binding;
 
         @Override
@@ -597,10 +599,8 @@ public class DialogItem {
         public void setup(Item item, Activity activity, View view) {
             GroupItem groupItem = (GroupItem) item;
             binding = DialogItemModuleGroupBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
-            fcu_viewOnClick(binding.externalEditor, () -> {
-                // TODO: 29.08.2022 path unsupported fix
-                new DialogItemStorageEditor(activity, App.get(activity).getItemManager(), groupItem.getItemStorage(), null, "unsupported").show();
-            });
+            binding.externalEditor.setEnabled(!DialogItem.this.create);
+            fcu_viewOnClick(binding.externalEditor, () -> new DialogItemStorageEditor(activity, App.get(activity).getItemManager(), groupItem.getItemStorage(), null, DialogItem.this.path).show());
         }
 
         @Override
@@ -610,7 +610,7 @@ public class DialogItem {
         public void setOnStartEditListener(Runnable o) { }
     }
 
-    private static class FilterGroupItemEditModule extends BaseEditUiModule {
+    private class FilterGroupItemEditModule extends BaseEditUiModule {
         private DialogItemModuleFiltergroupBinding binding;
 
         @Override
@@ -622,10 +622,8 @@ public class DialogItem {
         public void setup(Item item, Activity activity, View view) {
             FilterGroupItem fGroupItem = (FilterGroupItem) item;
             binding = DialogItemModuleFiltergroupBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
-            fcu_viewOnClick(binding.externalEditor, () -> {
-                // TODO: 29.08.2022 path unsupported fix
-                new DialogFilterGroupEdit(activity, fGroupItem, "unsupported").show();
-            });
+            binding.externalEditor.setEnabled(!DialogItem.this.create);
+            fcu_viewOnClick(binding.externalEditor, () -> new DialogFilterGroupEdit(activity, fGroupItem, DialogItem.this.path).show());
         }
 
         @Override

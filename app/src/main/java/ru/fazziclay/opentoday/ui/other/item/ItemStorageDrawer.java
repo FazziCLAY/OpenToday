@@ -261,11 +261,16 @@ public class ItemStorageDrawer {
     private void actionItem(Item item, ItemManager.ItemAction action) {
         switch (action) {
             case OPEN_EDIT_DIALOG:
-                dialogItem.edit(item);
+                String name = "Unknown";
+                if (item instanceof TextItem) {
+                    TextItem t = (TextItem) item;
+                    name = t.getText();
+                }
+                dialogItem.edit(item, ItemViewGenerator.appendPath(path, name));
                 break;
 
             case SELECT_ON:
-                itemManager.selectItem(new Selection(itemStorage, item));                item.visibleChanged();
+                itemManager.selectItem(new Selection(itemStorage, item));
                 item.visibleChanged();
                 break;
 
@@ -352,7 +357,12 @@ public class ItemStorageDrawer {
                     }
 
                     DialogItem dialogItem = new DialogItem(activity, itemManager);
-                    dialogItem.edit(copyItem);
+                    String text = "Unknown";
+                    if (copyItem instanceof TextItem) {
+                        TextItem t = (TextItem) copyItem;
+                        text = t.getText();
+                    }
+                    dialogItem.edit(copyItem, ItemViewGenerator.appendPath(path, text));
 
                     int createPos = itemStorage.getItemPosition(copyItem);
                     if (createPos != (currPos + 1)) itemStorage.move(createPos, currPos + 1);

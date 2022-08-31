@@ -280,4 +280,9 @@ public class ItemViewGenerator {
         if (this.path == null) return null;
         return this.path + (this.path.endsWith("/") ? "" : "/") + "(" + localPath + ")";
     }
+
+    public static String appendPath(String path, String localPath) {
+        if (path == null) return null;
+        return path + (path.endsWith("/") ? "" : "/") + "(" + localPath + ")";
+    }
 }
