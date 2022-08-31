@@ -308,6 +308,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemStor
             i.year = IntegerValue.importI(json.optJSONObject("year"));
             i.month = IntegerValue.importI(json.optJSONObject("month"));
             i.dayOfWeek = IntegerValue.importI(json.optJSONObject("dayOfWeek"));
+            i.dayOfMonth = IntegerValue.importI(json.optJSONObject("dayOfMonth"));
             i.weekOfYear = IntegerValue.importI(json.optJSONObject("weekOfYear"));
             i.dayOfYear = IntegerValue.importI(json.optJSONObject("dayOfYear"));
             i.hour = IntegerValue.importI(json.optJSONObject("hour"));
