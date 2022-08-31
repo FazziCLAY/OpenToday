@@ -35,7 +35,7 @@ public class CrashReport {
 
     public String convertToText() {
         String text = "=== OpenToday Crash ===\n" +
-                "CrashID: %_CRASH_ID_%" +
+                "CrashID: %_CRASH_ID_%\n" +
                 "Application:\n" +
                 " * Build: %_APPLICATION_VERSION_BUILD_%\n" +
                 " * Name: %_APPLICATION_VERSION_NAME_%\n" +
@@ -46,20 +46,10 @@ public class CrashReport {
                 "* Millis: %_TIME_MILLIS_%\n" +
                 "* Nano: %_TIME_NANO_%\n" +
                 "\n" +
+                "Thread: %_THREAD_%\n" +
                 "Throwable:\n" +
                 "%_THROWABLE_%\n" +
-                "%_THROWABLE_STACKTRACE_%\n" +
-                "\n" +
-                "\n" +
-                "\n" +
-                "\n" +
-                "\n" +
-                "\n" +
-                "\n" +
-                "\n" +
-                "\n" +
-                "\n" +
-                "\n";
+                "--- OpenToday Crash ---\n";
 
         String timeFormatted;
 
@@ -71,21 +61,19 @@ public class CrashReport {
             timeFormatted = "(Unknown: " + e + ")";
         }
 
-        String throwableText = (this.throwable != null ? this.throwable.toString() : "null");
-        String throwableStackTraceText;
-
+        String throwableText;
         try {
             if (this.throwable == null) {
-                throwableStackTraceText = "(Throwable is null)";
+                throwableText = "null";
             } else {
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
                 this.throwable.printStackTrace(pw);
                 pw.flush();
-                throwableStackTraceText = sw.toString();
+                throwableText = sw.toString();
             }
         } catch (Exception e) {
-            throwableStackTraceText = "(Unknown: " + e + ")";
+            throwableText = "(Unknown: " + e + ")";
         }
 
         text = text.replace("%_CRASH_ID_%", (this.id == null ? "null" : this.id.toString()));
@@ -96,8 +84,8 @@ public class CrashReport {
         text = text.replace("%_TIME_MILLIS_%", String.valueOf(this.crashTimeMillis));
         text = text.replace("%_TIME_NANO_%", String.valueOf(this.crashTimeNano));
 
+        text = text.replace("%_THREAD_%", this.thread != null ? this.thread.toString() : "null");
         text = text.replace("%_THROWABLE_%", throwableText);
-        text = text.replace("%_THROWABLE_STACKTRACE_%", throwableStackTraceText);
 
         return text;
     }
