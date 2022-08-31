@@ -87,9 +87,11 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemStor
     // Copy
     public FilterGroupItem(FilterGroupItem copy) {
         super(copy);
-        for (ItemFilterWrapper item : copy.items) {
+        for (ItemFilterWrapper copyWrapper : copy.items) {
             try {
-                this.items.add(ItemFilterWrapper.importWrapper(item.exportWrapper()));
+                ItemFilterWrapper newWrapper = ItemFilterWrapper.importWrapper(copyWrapper.exportWrapper());
+                newWrapper.item.setController(this.groupItemController);
+                this.items.add(newWrapper);
             } catch (Exception e) {
                 throw new RuntimeException("Copy exception", e);
             }
