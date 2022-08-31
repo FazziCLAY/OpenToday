@@ -1,7 +1,5 @@
 package ru.fazziclay.opentoday.app.items.item;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -15,14 +13,15 @@ import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import ru.fazziclay.opentoday.annotation.SaveKey;
 import ru.fazziclay.opentoday.annotation.RequireSave;
+import ru.fazziclay.opentoday.annotation.SaveKey;
 import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.TickSession;
 import ru.fazziclay.opentoday.app.items.ContainerItem;
 import ru.fazziclay.opentoday.app.items.ItemController;
 import ru.fazziclay.opentoday.app.items.ItemIEManager;
 import ru.fazziclay.opentoday.app.items.ItemStorage;
+import ru.fazziclay.opentoday.app.items.ItemsRegistry;
 import ru.fazziclay.opentoday.app.items.callback.OnItemStorageUpdate;
 import ru.fazziclay.opentoday.callback.CallbackStorage;
 
@@ -131,19 +130,23 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemStor
         return items.size();
     }
 
-    @Override
-    public void addItem(Item item) {
-        if (item.getClass() == Item.class) {
+    private void addItem(ItemFilterWrapper item) {
+        if (item.item.getClass() == Item.class) {
             throw new RuntimeException("'Item' not allowed to add (add Item parents)");
         }
-        item.regenerateId();
-        item.setController(groupItemController);
-        items.add(new ItemFilterWrapper(item, new ItemFilter()));
-        itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onAdded(item));
+        item.item.regenerateId();
+        item.item.setController(groupItemController);
+        items.add(item);
+        itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onAdded(item.item));
         if (!recalculate(new GregorianCalendar())) {
             visibleChanged();
         }
         save();
+    }
+    
+    @Override
+    public void addItem(Item item) {
+        addItem(new ItemFilterWrapper(item, new ItemFilter()));
     }
 
     @Override
@@ -162,6 +165,21 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemStor
             visibleChanged();
         }
         save();
+    }
+
+    @Override
+    public Item copyItem(Item item) {
+        ItemFilter filter = getItemFilter(item);
+
+        Item copy = ItemsRegistry.REGISTRY.getItemInfoByClass(item.getClass()).copy(item);
+        ItemFilter copyFilter;
+        try {
+            copyFilter = filter.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("Copy error", e);
+        }
+        addItem(new ItemFilterWrapper(copy, copyFilter));
+        return copy;
     }
 
     @Override
@@ -260,7 +278,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemStor
         }
     }
 
-    public static class ItemFilter {
+    public static class ItemFilter implements Cloneable {
         private IntegerValue year = null;
         private IntegerValue month = null;
         private IntegerValue dayOfMonth = null;
@@ -322,7 +340,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemStor
             return i;
         }
 
-        public abstract static class Value {
+        public abstract static class Value implements Cloneable {
             private boolean isInvert = false;
 
             public boolean isInvert() {
@@ -337,9 +355,15 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemStor
                 return new JSONObject()
                         .put("isInvert", isInvert);
             }
+
+            @NonNull
+            @Override
+            protected Value clone() throws CloneNotSupportedException {
+                return (Value) super.clone();
+            }
         }
 
-        public static class IntegerValue extends Value {
+        public static class IntegerValue extends Value implements Cloneable {
             private int shift = 0;
             private int value = 0;
             private String mode;
@@ -426,6 +450,12 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemStor
             public void setShift(int shift) {
                 this.shift = shift;
             }
+
+            @NonNull
+            @Override
+            protected IntegerValue clone() throws CloneNotSupportedException {
+                return (IntegerValue) super.clone();
+            }
         }
 
         public IntegerValue getYear() {
@@ -498,6 +528,23 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemStor
 
         public void setSecond(IntegerValue second) {
             this.second = second;
+        }
+        
+        @NonNull
+        @Override
+        protected ItemFilter clone() throws CloneNotSupportedException {
+            ItemFilter c = (ItemFilter) super.clone();
+            c.year = this.year != null ? this.year.clone() : null;
+            c.month = this.month != null ? this.month.clone() : null;
+            c.dayOfMonth = this.dayOfMonth != null ? this.dayOfMonth.clone() : null;
+            c.dayOfYear = this.dayOfYear != null ? this.dayOfYear.clone() : null;
+            c.dayOfWeek = this.dayOfWeek != null ? this.dayOfWeek.clone() : null;
+            c.weekOfYear = this.weekOfYear != null ? this.weekOfYear.clone() : null;
+            c.hour = this.hour != null ? this.hour.clone() : null;
+            c.minute = this.minute != null ? this.minute.clone() : null;
+            c.second = this.second != null ? this.second.clone() : null;
+
+            return c;
         }
     }
 

@@ -101,6 +101,13 @@ public abstract class SimpleItemStorage implements ItemStorage {
     }
 
     @Override
+    public Item copyItem(Item item) {
+        Item copy = ItemsRegistry.REGISTRY.getItemInfoByClass(item.getClass()).copy(item);
+        addItem(copy);
+        return copy;
+    }
+
+    @Override
     public void move(int positionFrom, int positionTo) {
         onUpdateCallbacks.run((callbackStorage, callback) -> callback.onMoved(getAllItems()[positionFrom], positionTo));
         Collections.swap(this.items, positionFrom, positionTo);

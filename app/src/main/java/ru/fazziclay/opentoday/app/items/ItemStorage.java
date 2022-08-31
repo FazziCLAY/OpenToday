@@ -10,6 +10,7 @@ public interface ItemStorage {
     int size();
     void addItem(Item item);
     void deleteItem(Item item);
+    Item copyItem(Item item);
     void move(int positionFrom, int positionTo);
     void tick(TickSession tickSession);
     void save();

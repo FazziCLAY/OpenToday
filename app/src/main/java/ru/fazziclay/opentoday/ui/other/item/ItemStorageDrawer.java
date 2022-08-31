@@ -345,7 +345,7 @@ public class ItemStorageDrawer {
                     int currPos = itemStorage.getItemPosition(item);
                     Item copyItem;
                     try {
-                        copyItem = ItemsRegistry.REGISTRY.getItemInfoByClass(item.getClass()).copy(item);
+                        copyItem = itemStorage.copyItem(item);
                     } catch (Exception e) {
                         Toast.makeText(activity, activity.getString(R.string.menuItem_copy_exception, e.toString()), Toast.LENGTH_SHORT).show();
                         return false;
@@ -354,9 +354,8 @@ public class ItemStorageDrawer {
                     DialogItem dialogItem = new DialogItem(activity, itemManager);
                     dialogItem.edit(copyItem);
 
-                    itemStorage.addItem(copyItem);
                     int createPos = itemStorage.getItemPosition(copyItem);
-                    itemStorage.move(createPos, currPos + 1);
+                    if (createPos != (currPos + 1)) itemStorage.move(createPos, currPos + 1);
                     break;
 
                 case R.id.textItem_clickableUrls:
