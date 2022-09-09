@@ -38,6 +38,7 @@ public class CycleListItem extends TextItem implements ContainerItem {
         @Override
         public Item importItem(@NonNull JSONObject json, Item item) throws Exception {
             CycleListItem cycleListItem = item != null ? (CycleListItem) item : new CycleListItem();
+            super.importItem(json, cycleListItem);
 
             // Items cycle
             JSONArray jsonItemsCycle = json.getJSONArray("itemsCycle");
