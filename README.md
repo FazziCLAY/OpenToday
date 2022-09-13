@@ -1,6 +1,8 @@
 # OpenToday
 Android application for the organization of life
 
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/fazziclay/opentoday?style=plastic)
+
 # Other Development Docs
 "/docs" folder
 
