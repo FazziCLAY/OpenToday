@@ -110,6 +110,7 @@ public class App extends Application {
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
             App.crash(App.this, CrashReport.create(thread, throwable, System.currentTimeMillis(), System.nanoTime(), Thread.getAllStackTraces()));
             if (defaultHandler != null) {
+                if (DEBUG) DebugUtil.sleep(7000);
                 defaultHandler.uncaughtException(thread, throwable);
             }
         });
