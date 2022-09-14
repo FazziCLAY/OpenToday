@@ -13,11 +13,13 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import ru.fazziclay.javaneoutil.JavaNeoUtil;
 import ru.fazziclay.opentoday.R;
 
 public class OpenSourceLicensesActivity extends AppCompatActivity {
     private final Licence[] licences = new Licence[] {
             new Licence("LICENSE_OpenToday", "OpenToday (this app)", "fazziclay@gmail.com\nhttps://fazziclay.github.io/opentoday"),
+            new Licence("LICENSE_JavaNeoUtil", "JavaNeoUtil v" + JavaNeoUtil.VERSION_NAME, "https://github.com/fazziclay/javaneoutil"),
             new Licence("LICENSE_hsv-alpha-color-picker-android", "hsv-alpha-color-picker-android", "https://github.com/martin-stone/hsv-alpha-color-picker-android")
     };
 
