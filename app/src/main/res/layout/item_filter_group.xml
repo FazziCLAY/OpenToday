@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:background="@drawable/shape"
-    android:backgroundTint="?attr/item_filterGroup_backgroundColor"
-    android:padding="3sp">
+    android:backgroundTint="?attr/item_filterGroup_backgroundColor">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -17,7 +16,8 @@
             android:id="@+id/title"
             android:layout_weight="1"
             tools:text="Simple FilterGroup"
-            android:textSize="18sp"
+            android:textSize="19sp"
+            android:paddingLeft="5sp"
             android:textColor="?attr/item_filterGroup_textColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -26,7 +26,7 @@
             android:layout_marginStart="2sp"
             android:id="@+id/externalEditor"
             android:layout_width="53sp"
-            android:layout_height="40sp"
+            android:layout_height="35sp"
             android:layout_weight="0"
             android:gravity="center"
             android:text="Ed"
@@ -40,6 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingLeft="3sp" />
+        android:paddingLeft="3sp"
+        android:paddingRight="2sp" />
 
 </LinearLayout>

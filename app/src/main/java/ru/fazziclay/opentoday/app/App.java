@@ -23,8 +23,8 @@ import ru.fazziclay.opentoday.BuildConfig;
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.datafixer.DataFixer;
 import ru.fazziclay.opentoday.app.items.ItemManager;
-import ru.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import ru.fazziclay.opentoday.app.receiver.ItemsTickReceiver;
+import ru.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import ru.fazziclay.opentoday.app.settings.SettingsManager;
 import ru.fazziclay.opentoday.debug.TestItemViewGenerator;
 import ru.fazziclay.opentoday.ui.activity.CrashReportActivity;
@@ -50,6 +50,10 @@ public class App extends Application {
     public static final int DEBUG_MAIN_ACTIVITY_START_SLEEP = (DEBUG & false) ? 6000 : 0;
     public static final int DEBUG_APP_START_SLEEP = (DEBUG & false) ? 1000 : 0;
     public static Class<? extends Activity> DEBUG_MAIN_ACTIVITY = (DEBUG & false) ? TestItemViewGenerator.class : null;
+    public static final boolean DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY = (DEBUG && false);
+
+    private static Thread.UncaughtExceptionHandler defaultHandler;
+
 
     // Instance
     private static volatile App instance = null;
@@ -92,8 +96,11 @@ public class App extends Application {
 
         appProfiler.point("Init");
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
         itemManager = new ItemManager(new File(getExternalFilesDir(""), "item_data.json"));
         settingsManager = new SettingsManager(new File(getExternalFilesDir(""), "settings.json"));
+
+        sendBroadcast(new Intent(this, ItemsTickReceiver.class));
 
         AppCompatDelegate.setDefaultNightMode(settingsManager.getTheme());
         notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_QUCIKNOTE_CHANNEL, getString(R.string.notification_quickNote_title), NotificationManager.IMPORTANCE_HIGH));
@@ -106,18 +113,12 @@ public class App extends Application {
     }
 
     private void setupCrashReporter() {
-        Thread.UncaughtExceptionHandler defaultHandler = Thread.getDefaultUncaughtExceptionHandler();
-        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
-            App.crash(App.this, CrashReport.create(thread, throwable, System.currentTimeMillis(), System.nanoTime(), Thread.getAllStackTraces()));
-            if (defaultHandler != null) {
-                if (DEBUG) DebugUtil.sleep(7000);
-                defaultHandler.uncaughtException(thread, throwable);
-            }
-        });
+        defaultHandler = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> App.crash(App.this, CrashReport.create(thread, throwable, System.currentTimeMillis(), System.nanoTime(), Thread.getAllStackTraces())));
     }
 
     public static void crash(Context context, CrashReport crashReport) {
-        // File
+        // === File ===
         File file = new File(context.getExternalCacheDir(), "crash_report/" + crashReport.getID().toString());
         FileUtil.setText(file, crashReport.convertToText());
 
@@ -146,6 +147,11 @@ public class App extends Application {
                 .setContentIntent(PendingIntent.getActivity(context, 0, new Intent(context, CrashReportActivity.class).putExtra("path", file.getAbsolutePath()), flag))
                 .setAutoCancel(true)
                 .build());
+
+        if (defaultHandler != null) {
+            if (DEBUG) DebugUtil.sleep(7000);
+            defaultHandler.uncaughtException(crashReport.getThread(), crashReport.getThrowable());
+        }
     }
 
     // getters & setters

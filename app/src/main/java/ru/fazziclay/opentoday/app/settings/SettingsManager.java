@@ -102,4 +102,9 @@ public class SettingsManager {
             Log.e("SettingsManager", "save", e);
         }
     }
+
+    // TODO: 14.09.2022 make variable
+    public boolean isMinimizeGrayColor() {
+        return false;
+    }
 }

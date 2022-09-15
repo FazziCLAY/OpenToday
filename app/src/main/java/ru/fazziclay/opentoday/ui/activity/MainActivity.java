@@ -37,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(this, App.DEBUG_MAIN_ACTIVITY));
             finish();
         }
+        if (App.DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY) {
+            throw new RuntimeException("This is cute Runtime Exception :)", new RuntimeException("DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY is enabled :)"));
+        }
 
         try {
             getSupportActionBar().hide();

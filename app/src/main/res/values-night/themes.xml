@@ -2,9 +2,9 @@
     <!-- Base application theme. -->
     <style name="Theme.OpenToday" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">#67D26F</item>
+        <item name="colorPrimary">#7F08FF</item>
         <item name="colorPrimaryVariant">#000000</item>
-        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorOnPrimary">#ffffff</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">#03DA47</item>
         <item name="colorSecondaryVariant">#03DA4E</item>

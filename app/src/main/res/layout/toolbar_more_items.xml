@@ -23,7 +23,7 @@
         <Button
             android:id="@+id/changeOnLeftSwipe"
             android:text="@string/toolbar_more_items_changeOnLeftSwipe"
-            android:backgroundTint="#14DECD"
+            android:backgroundTint="#0B9287"
             android:layout_marginLeft="1sp"
             android:layout_marginRight="1sp"
             android:minHeight="45sp"
@@ -35,7 +35,7 @@
         <Button
             android:id="@+id/changeOnClick"
             android:text="@string/toolbar_more_items_changeOnClick"
-            android:backgroundTint="#14DECD"
+            android:backgroundTint="#0B9287"
             android:layout_marginLeft="1sp"
             android:layout_marginRight="1sp"
             android:minHeight="45sp"

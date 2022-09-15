@@ -58,7 +58,7 @@
         <entry key="app/src/main/res/layout/fragment_main.xml" value="0.18" />
         <entry key="app/src/main/res/layout/fragment_second.xml" value="0.32916666666666666" />
         <entry key="app/src/main/res/layout/fragment_setting_automationtask.xml" value="0.2980072463768116" />
-        <entry key="app/src/main/res/layout/item_checkbox.xml" value="0.2907608695652174" />
+        <entry key="app/src/main/res/layout/item_checkbox.xml" value="0.33" />
         <entry key="app/src/main/res/layout/item_counter.xml" value="0.2910244786944696" />
         <entry key="app/src/main/res/layout/item_cycle_list.xml" value="0.2910244786944696" />
         <entry key="app/src/main/res/layout/item_day_repeatable_checkbox.xml" value="0.2907608695652174" />

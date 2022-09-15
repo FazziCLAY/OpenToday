@@ -41,6 +41,7 @@ public class ItemStorageDrawer {
     private final RecyclerView view;
     private RecyclerView.Adapter<ItemViewHolder> adapter;
     private ItemViewGenerator itemViewGenerator;
+    private Thread originalThread;
 
     private boolean destroyed = false;
     private boolean created = false;
@@ -103,6 +104,7 @@ public class ItemStorageDrawer {
         this.itemManager = itemManager;
         this.itemStorage = itemStorage;
         this.path = path;
+        this.originalThread = Thread.currentThread();
         this.view = new RecyclerView(activity);
         this.onItemClick = onItemClick;
         this.previewMode = previewMode;
@@ -162,30 +164,39 @@ public class ItemStorageDrawer {
     private class DrawerOnItemStorageUpdated implements OnItemStorageUpdate {
         @Override
         public Status onAdded(Item item) {
-            adapter.notifyItemInserted(getItemPos(item));
+            rou(() -> adapter.notifyItemInserted(getItemPos(item)));
             return Status.NONE;
         }
 
         @Override
         public Status onDeleted(Item item) {
-            adapter.notifyItemRemoved(getItemPos(item));
+            rou(() -> adapter.notifyItemRemoved(getItemPos(item)));
             return Status.NONE;
         }
 
         @Override
         public Status onMoved(Item item, int from) {
-            adapter.notifyItemMoved(from, getItemPos(item));
+            rou(() -> adapter.notifyItemMoved(from, getItemPos(item)));
             return Status.NONE;
         }
 
         @Override
         public Status onUpdated(Item item) {
-            adapter.notifyItemChanged(getItemPos(item));
+            rou(() -> adapter.notifyItemChanged(getItemPos(item)));
             return Status.NONE;
         }
 
         private int getItemPos(Item item) {
             return ItemStorageDrawer.this.itemStorage.getItemPosition(item);
+        }
+
+        private void rou(Runnable runnable) {
+            Thread thread = Thread.currentThread();
+            if (thread == originalThread) {
+                runnable.run();
+            } else {
+                activity.runOnUiThread(runnable);
+            }
         }
     }
 

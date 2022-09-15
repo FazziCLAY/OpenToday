@@ -2,11 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:backgroundTint="?attr/item_counter_backgroundColor"
-    android:background="@drawable/shape"
-    android:padding="3sp">
+    android:background="@drawable/shape">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -19,28 +18,33 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="Simple Counter"
-            android:textSize="18sp"
+            android:textSize="19sp"
+            android:paddingLeft="5sp"
             android:textColor="?attr/item_counter_textColor" />
 
         <Button
             android:id="@+id/down"
             android:layout_width="40sp"
-            android:layout_height="36sp"
+            android:layout_height="35sp"
+            android:layout_gravity="center"
             android:layout_weight="0"
+            android:minHeight="0sp"
+            android:minWidth="0sp"
             android:gravity="center"
             android:text="-"
-            android:textSize="14sp"
+            android:textSize="13sp"
             tools:ignore="HardcodedText" />
 
         <Button
             android:layout_marginStart="2sp"
             android:id="@+id/up"
             android:layout_width="40sp"
-            android:layout_height="36sp"
+            android:layout_height="35sp"
+            android:layout_gravity="center"
             android:layout_weight="0"
             android:gravity="center"
             android:text="+"
-            android:textSize="14sp"
+            android:textSize="13sp"
             tools:ignore="HardcodedText" />
 
     </LinearLayout>
@@ -50,5 +54,6 @@
         android:layout_width="match_parent"
         android:textSize="20sp"
         android:paddingLeft="5sp"
+        tools:text="0.0"
         android:layout_height="wrap_content" />
 </LinearLayout>

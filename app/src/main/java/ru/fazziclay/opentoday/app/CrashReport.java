@@ -1,5 +1,7 @@
 package ru.fazziclay.opentoday.app;
 
+import android.os.Build;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
@@ -36,10 +38,20 @@ public class CrashReport {
     public String convertToText() {
         String text = "=== OpenToday Crash ===\n" +
                 "CrashID: %_CRASH_ID_%\n" +
-                "Application:\n" +
-                " * Build: %_APPLICATION_VERSION_BUILD_%\n" +
-                " * Name: %_APPLICATION_VERSION_NAME_%\n" +
+                "Application: (%_APPLICATION_PACKAGE_%)\n" +
+                " * VERSION_BUILD: %_APPLICATION_VERSION_BUILD_%\n" +
+                " * VERSION_NAME: %_APPLICATION_VERSION_NAME_%\n" +
+                " * DATA_VERSION: %_APPLICATION_DATA_VERSION_%\n" +
                 " * DEBUG: %_APPLICATION_DEBUG_%\n" +
+                " * DEBUG_TICK_NOTIFICATION: %_APPLICATION_DEBUG_TICK_NOTIFICATION_%\n" +
+                " * DEBUG_MAIN_ACTIVITY_START_SLEEP: %_APPLICATION_DEBUG_MAIN_ACTIVITY_START_SLEEP_%\n" +
+                " * DEBUG_APP_START_SLEEP: %_APPLICATION_DEBUG_APP_START_SLEEP_%\n" +
+                " * DEBUG_MAIN_ACTIVITY: %_APPLICATION_DEBUG_MAIN_ACTIVITY_%\n" +
+                " * DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY: %_APPLICATION_DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY_%\n" +
+                "\n" +
+                "Device:\n" +
+                " * SDK_INT: %_DEVICE_ANDROID_SDK_INT_%\n" +
+                " * BASE_OS: %_DEVICE_ANDROID_BASE_OS_%\n" +
                 "\n" +
                 "Time:\n" +
                 "* Formatted: %_TIME_FORMATTED_%\n" +
@@ -77,16 +89,33 @@ public class CrashReport {
         }
 
         text = text.replace("%_CRASH_ID_%", (this.id == null ? "null" : this.id.toString()));
+        text = text.replace("%_APPLICATION_PACKAGE_%", App.APPLICATION_ID);
         text = text.replace("%_APPLICATION_VERSION_BUILD_%", String.valueOf(App.VERSION_CODE));
         text = text.replace("%_APPLICATION_VERSION_NAME_%", App.VERSION_NAME);
+        text = text.replace("%_APPLICATION_DATA_VERSION_%", String.valueOf(App.APPLICATION_DATA_VERSION));
         text = text.replace("%_APPLICATION_DEBUG_%", String.valueOf(App.DEBUG));
+        text = text.replace("%_APPLICATION_DEBUG_TICK_NOTIFICATION_%", String.valueOf(App.DEBUG_TICK_NOTIFICATION));
+        text = text.replace("%_APPLICATION_DEBUG_MAIN_ACTIVITY_START_SLEEP_%", String.valueOf(App.DEBUG_MAIN_ACTIVITY_START_SLEEP));
+        text = text.replace("%_APPLICATION_DEBUG_APP_START_SLEEP_%", String.valueOf(App.DEBUG_APP_START_SLEEP));
+        text = text.replace("%_APPLICATION_DEBUG_MAIN_ACTIVITY_%", String.valueOf(App.DEBUG_MAIN_ACTIVITY));
+        text = text.replace("%_APPLICATION_DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY_%", String.valueOf(App.DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY));
         text = text.replace("%_TIME_FORMATTED_%", timeFormatted);
         text = text.replace("%_TIME_MILLIS_%", String.valueOf(this.crashTimeMillis));
         text = text.replace("%_TIME_NANO_%", String.valueOf(this.crashTimeNano));
-
+        ;
         text = text.replace("%_THREAD_%", this.thread != null ? this.thread.toString() : "null");
         text = text.replace("%_THROWABLE_%", throwableText);
+        text = text.replace("%_DEVICE_ANDROID_SDK_INT_%", String.valueOf(Build.VERSION.SDK_INT));
+        text = text.replace("%_DEVICE_ANDROID_BASE_OS_%", String.valueOf(Build.VERSION.BASE_OS));
 
         return text;
+    }
+
+    public Throwable getThrowable() {
+        return throwable;
+    }
+
+    public Thread getThread() {
+        return thread;
     }
 }

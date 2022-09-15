@@ -3,6 +3,7 @@ package ru.fazziclay.opentoday.ui.other;
 import static ru.fazziclay.opentoday.util.InlineUtil.fcu_viewOnClick;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.res.ColorStateList;
@@ -12,9 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.widget.ContentLoadingProgressBar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +43,7 @@ import ru.fazziclay.opentoday.ui.dialog.DialogAppSettings;
 import ru.fazziclay.opentoday.ui.dialog.DialogDeleteItems;
 import ru.fazziclay.opentoday.ui.dialog.DialogItem;
 import ru.fazziclay.opentoday.ui.dialog.DialogSelectItemAction;
+import ru.fazziclay.opentoday.util.NetworkUtil;
 import ru.fazziclay.opentoday.util.ResUtil;
 import ru.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 
@@ -143,16 +147,43 @@ public class AppToolbar {
 
             new AlertDialog.Builder(activity)
                     .setView(editText)
+                    .setMessage(R.string.toolbar_more_file_import_hint)
                     .setPositiveButton(R.string.toolbar_more_file_import_import, (ignore123213, ignore342143) -> {
-                        try {
-                            ImportWrapper i = ImportWrapper.finalImport(editText.getText().toString());
+                        Dialog loading = new Dialog(activity, android.R.style.ThemeOverlay_Material);
+                        loading.setCancelable(false);
+                        loading.setCanceledOnTouchOutside(false);
+                        ProgressBar view = new ProgressBar(activity);
+                        view.setIndeterminate(true);
+                        loading.setContentView(view);
+                        loading.show();
 
-                            for (Item item : i.getItems()) {
-                                itemStorage.addItem(item);
-                                itemManager.selectItem(new Selection(itemStorage, item));
-                            }
+                        try {
+                            new Thread(() -> {
+                                String text = editText.getText().toString();
+                                try {
+                                    String content;
+                                    if (text.startsWith("https://") || text.startsWith("http://")) {
+                                        content = NetworkUtil.parseTextPage(text);
+                                    } else {
+                                        content = text;
+                                    }
+
+                                    ImportWrapper i = ImportWrapper.finalImport(content);
+
+                                    for (Item item : i.getItems()) {
+                                        itemStorage.addItem(item);
+                                        itemManager.selectItem(new Selection(itemStorage, item));
+                                    }
+                                    activity.runOnUiThread(() -> Toast.makeText(activity, R.string.toolbar_more_file_import_success, Toast.LENGTH_SHORT).show());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    activity.runOnUiThread(() -> Toast.makeText(activity, activity.getString(R.string.toolbar_more_file_import_exception, e.toString()), Toast.LENGTH_SHORT).show());
+                                }
+                                activity.runOnUiThread(loading::cancel);
+                            }).start();
                         } catch (Exception e) {
                             Toast.makeText(activity, activity.getString(R.string.toolbar_more_file_import_exception, e.toString()), Toast.LENGTH_SHORT).show();
+                            loading.cancel();
                         }
                     })
                     .setNegativeButton(R.string.toolbar_more_file_import_cancel, null)

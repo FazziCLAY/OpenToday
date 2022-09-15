@@ -31,6 +31,7 @@ import ru.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import ru.fazziclay.opentoday.app.items.item.GroupItem;
 import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.app.items.item.TextItem;
+import ru.fazziclay.opentoday.app.settings.SettingsManager;
 import ru.fazziclay.opentoday.databinding.ItemCheckboxBinding;
 import ru.fazziclay.opentoday.databinding.ItemCounterBinding;
 import ru.fazziclay.opentoday.databinding.ItemCycleListBinding;
@@ -47,6 +48,7 @@ import ru.fazziclay.opentoday.util.ResUtil;
 public class ItemViewGenerator {
     @NotNull private final Activity activity;
     @NotNull private final ItemManager itemManager;
+    @NotNull private final SettingsManager settingsManager;
     @Nullable private final String path; // Path (/item1/item3/item32/item3)
     @Nullable private final OnItemClick onItemClick; // Action when view click
     private final boolean previewMode; // Disable items minimize view patch & disable buttons
@@ -54,6 +56,7 @@ public class ItemViewGenerator {
     public ItemViewGenerator(@NotNull Activity activity, @NotNull ItemManager itemManager, @Nullable String path, @Nullable OnItemClick onItemClick, boolean previewMode) {
         this.activity = activity;
         this.itemManager = itemManager;
+        this.settingsManager = App.get(activity).getSettingsManager();
         this.path = path;
         this.onItemClick = onItemClick;
         this.previewMode = previewMode;
@@ -103,10 +106,12 @@ public class ItemViewGenerator {
 
         // Minimize view patch
         if (!previewMode && item.isMinimize()) {
-            ret.setForeground(AppCompatResources.getDrawable(activity, R.drawable.shape));
-            ret.setForegroundTintList(ColorStateList.valueOf(Color.parseColor("#44f0fff0")));
+            if (settingsManager.isMinimizeGrayColor()) {
+                ret.setForeground(AppCompatResources.getDrawable(activity, R.drawable.shape));
+                ret.setForegroundTintList(ColorStateList.valueOf(Color.parseColor("#44f0fff0")));
+            }
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            layoutParams.setMargins(15, 0, 0, 0);
+            layoutParams.setMargins(10, 0, 0, 0);
             ret.setLayoutParams(layoutParams);
         }
         if (onItemClick != null) fcu_viewOnClick(ret, () -> onItemClick.run(item));

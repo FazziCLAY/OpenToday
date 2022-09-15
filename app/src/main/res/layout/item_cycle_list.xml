@@ -2,11 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:backgroundTint="?attr/item_cycleList_backgroundColor"
-    android:background="@drawable/shape"
-    android:padding="3sp">
+    android:background="@drawable/shape">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -19,39 +18,40 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="Simple Cycle list"
-            android:textSize="18sp"
+            android:paddingLeft="5sp"
+            android:textSize="19sp"
             android:textColor="?attr/item_cycleList_textColor" />
 
         <Button
             android:id="@+id/previous"
             android:layout_width="40sp"
-            android:layout_height="40sp"
+            android:layout_height="35sp"
             android:layout_weight="0"
             android:gravity="center"
             android:text="b"
-            android:textSize="14sp"
+            android:textSize="11sp"
             tools:ignore="HardcodedText" />
 
         <Button
             android:layout_marginStart="2sp"
             android:id="@+id/next"
             android:layout_width="40sp"
-            android:layout_height="40sp"
+            android:layout_height="35sp"
             android:layout_weight="0"
             android:gravity="center"
             android:text="n"
-            android:textSize="14sp"
+            android:textSize="11sp"
             tools:ignore="HardcodedText" />
 
         <Button
             android:layout_marginStart="2sp"
             android:id="@+id/externalEditor"
             android:layout_width="53sp"
-            android:layout_height="40sp"
+            android:layout_height="35sp"
             android:layout_weight="0"
             android:gravity="center"
             android:text="Ed"
-            android:textSize="14sp"
+            android:textSize="13sp"
             tools:ignore="HardcodedText" />
 
     </LinearLayout>
@@ -60,5 +60,7 @@
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" />
+        android:orientation="vertical"
+        android:paddingLeft="3sp"
+        android:paddingRight="2sp"/>
 </LinearLayout>
