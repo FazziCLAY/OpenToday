@@ -149,17 +149,18 @@ public class AppToolbar {
                     .setView(editText)
                     .setMessage(R.string.toolbar_more_file_import_hint)
                     .setPositiveButton(R.string.toolbar_more_file_import_import, (ignore123213, ignore342143) -> {
-                        Dialog loading = new Dialog(activity, android.R.style.ThemeOverlay_Material);
+                        Dialog loading = new Dialog(activity);
+                        loading.getWindow().setBackgroundDrawable(null);
                         loading.setCancelable(false);
                         loading.setCanceledOnTouchOutside(false);
-                        ProgressBar view = new ProgressBar(activity);
-                        view.setIndeterminate(true);
-                        loading.setContentView(view);
+                        ProgressBar progressBar = new ProgressBar(activity);
+                        progressBar.setIndeterminate(true);
+                        loading.setContentView(progressBar);
                         loading.show();
 
                         try {
+                            String text = editText.getText().toString();
                             new Thread(() -> {
-                                String text = editText.getText().toString();
                                 try {
                                     String content;
                                     if (text.startsWith("https://") || text.startsWith("http://")) {
@@ -182,6 +183,7 @@ public class AppToolbar {
                                 activity.runOnUiThread(loading::cancel);
                             }).start();
                         } catch (Exception e) {
+                            e.printStackTrace();
                             Toast.makeText(activity, activity.getString(R.string.toolbar_more_file_import_exception, e.toString()), Toast.LENGTH_SHORT).show();
                             loading.cancel();
                         }

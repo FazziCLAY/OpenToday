@@ -159,4 +159,6 @@
     <string name="crash_notification_text">Нажмите для деталей</string>
     <string name="crash_notification_big_title">OpenToday завершился с ошибкой</string>
     <string name="crash_activity_sendToDeveloper">Отправить разработчику</string>
+    <string name="toolbar_more_file_import_success">Успешно</string>
+    <string name="toolbar_more_file_import_hint">Вставте экспортированный текст или ссылку</string>
 </resources>

@@ -166,5 +166,5 @@
     <string name="crash_notification_big_text" translatable="false">""</string>
     <string name="crash_activity_sendToDeveloper">Send to developer</string>
     <string name="toolbar_more_file_import_hint">Paste exported text or URL</string>
-    <string name="toolbar_more_file_import_success">Success</string>
+    <string name="toolbar_more_file_import_success">Successfully</string>
 </resources>

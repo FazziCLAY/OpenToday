@@ -81,7 +81,12 @@ public class ItemStorageDrawer {
 
             for (Selection selection : toUpdate) {
                 int pos = itemStorage.getItemPosition(selection.getItem());
-                adapter.notifyItemChanged(pos);
+                Runnable updateRunnable = () -> adapter.notifyItemChanged(pos);
+                if (Thread.currentThread() == originalThread) {
+                    updateRunnable.run();
+                } else {
+                    activity.runOnUiThread(updateRunnable);
+                }
             }
             visibleSelections.clear();
             visibleSelections.addAll(selections);
