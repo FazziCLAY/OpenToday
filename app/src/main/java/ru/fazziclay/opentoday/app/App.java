@@ -67,49 +67,59 @@ public class App extends Application {
     // Application
     private ItemManager itemManager;
     private SettingsManager settingsManager;
+    private Telemetry telemetry;
+    private JSONObject versionData;
     private boolean appInForeground = false;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        instance = this;
-        setupCrashReporter();
-        /* debug */ DebugUtil.sleep(DEBUG_APP_START_SLEEP);
-
-        Profiler appProfiler = new Profiler("App onCreate");
-        appProfiler.point("DataFixer");
-        DataFixer dataFixer = new DataFixer(this);
-        dataFixer.fixToCurrentVersion();
-
-        appProfiler.point("version file");
         try {
-            FileUtil.setText(new File(getExternalFilesDir(""), "version"), new JSONObject()
-                    .put("product", "OpenToday")
-                    .put("developer", "FazziCLAY ( https://fazziclay.github.io )")
-                    .put("licence", "GNU GPLv3")
-                    .put("data_version", APPLICATION_DATA_VERSION)
-                    .put("latest_start", System.currentTimeMillis())
-                    .toString(4));
+            instance = this;
+            setupCrashReporter();
+            /* debug */ DebugUtil.sleep(DEBUG_APP_START_SLEEP);
+
+            Profiler appProfiler = new Profiler("App onCreate");
+            appProfiler.point("DataFixer");
+            DataFixer dataFixer = new DataFixer(this);
+            dataFixer.fixToCurrentVersion();
+
+            appProfiler.point("version file");
+            try {
+                this.versionData = new JSONObject()
+                        .put("product", "OpenToday")
+                        .put("developer", "FazziCLAY ( https://fazziclay.github.io )")
+                        .put("licence", "GNU GPLv3")
+                        .put("data_version", APPLICATION_DATA_VERSION)
+                        .put("application_version", VERSION_CODE)
+                        .put("latest_start", System.currentTimeMillis());
+                FileUtil.setText(new File(getExternalFilesDir(""), "version"), versionData.toString(4));
+            } catch (Exception e) {
+                throw new RuntimeException("Exception!", e);
+            }
+
+            appProfiler.point("Init");
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+            itemManager = new ItemManager(new File(getExternalFilesDir(""), "item_data.json"));
+            settingsManager = new SettingsManager(new File(getExternalFilesDir(""), "settings.json"));
+            telemetry = new Telemetry(this);
+
+            sendBroadcast(new Intent(this, ItemsTickReceiver.class));
+
+            AppCompatDelegate.setDefaultNightMode(settingsManager.getTheme());
+            notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_QUCIKNOTE_CHANNEL, getString(R.string.notification_quickNote_title), NotificationManager.IMPORTANCE_HIGH));
+            notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_ITEMS_CHANNEL, getString(R.string.notification_items_title), NotificationManager.IMPORTANCE_HIGH));
+
+            appProfiler.point("AlarmManager");
+            AlarmManager alarmManager = getSystemService(AlarmManager.class);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 60 * 1000, PendingIntent.getBroadcast(this, 0, new Intent(this, ItemsTickReceiver.class), 0));
+            appProfiler.end();
+
+            telemetry.applicationStart();
         } catch (Exception e) {
-            throw new RuntimeException("Exception!", e);
+            crash(this, CrashReport.create(Thread.currentThread(), new RuntimeException("opentoday.app.App initialization exception", e), System.currentTimeMillis(), System.nanoTime(), Thread.getAllStackTraces()), false);
         }
-
-        appProfiler.point("Init");
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-        itemManager = new ItemManager(new File(getExternalFilesDir(""), "item_data.json"));
-        settingsManager = new SettingsManager(new File(getExternalFilesDir(""), "settings.json"));
-
-        sendBroadcast(new Intent(this, ItemsTickReceiver.class));
-
-        AppCompatDelegate.setDefaultNightMode(settingsManager.getTheme());
-        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_QUCIKNOTE_CHANNEL, getString(R.string.notification_quickNote_title), NotificationManager.IMPORTANCE_HIGH));
-        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_ITEMS_CHANNEL, getString(R.string.notification_items_title), NotificationManager.IMPORTANCE_HIGH));
-
-        appProfiler.point("AlarmManager");
-        AlarmManager alarmManager = getSystemService(AlarmManager.class);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 60*1000, PendingIntent.getBroadcast(this, 0, new Intent(this, ItemsTickReceiver.class), 0));
-        appProfiler.end();
     }
 
     private void setupCrashReporter() {
@@ -118,6 +128,10 @@ public class App extends Application {
     }
 
     public static void crash(Context context, CrashReport crashReport) {
+        crash(context, crashReport, true);
+    }
+
+    public static void crash(Context context, CrashReport crashReport, boolean sendToUp) {
         // === File ===
         File file = new File(context.getExternalCacheDir(), "crash_report/" + crashReport.getID().toString());
         FileUtil.setText(file, crashReport.convertToText());
@@ -148,7 +162,15 @@ public class App extends Application {
                 .setAutoCancel(true)
                 .build());
 
-        if (defaultHandler != null) {
+        App app = App.get(context);
+        if (app != null) {
+            if (app.telemetry != null) {
+                app.telemetry.crash(context, crashReport);
+                DebugUtil.sleep(1000);
+            }
+        }
+
+        if (defaultHandler != null && sendToUp) {
             if (DEBUG) DebugUtil.sleep(7000);
             defaultHandler.uncaughtException(crashReport.getThread(), crashReport.getThrowable());
         }
@@ -159,5 +181,7 @@ public class App extends Application {
     public SettingsManager getSettingsManager() { return this.settingsManager; }
     public boolean isAppInForeground() { return appInForeground; }
     public void setAppInForeground(boolean appInForeground) { this.appInForeground = appInForeground; }
+    public Telemetry getTelemetry() { return telemetry; }
+    public JSONObject getVersionData() { return versionData; }
     // not getters & setters :)
 }

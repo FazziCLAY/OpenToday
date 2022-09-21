@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
         app = App.get(this);
         app.setAppInForeground(true);
+        app.getTelemetry().mainActivityStart();
 
         ItemManager itemManager = app.getItemManager();
         itemsEditor = new ItemsEditor(this, binding.itemsEditor, itemManager, itemManager, "/");

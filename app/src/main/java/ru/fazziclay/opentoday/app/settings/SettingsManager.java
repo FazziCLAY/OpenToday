@@ -9,8 +9,10 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.Calendar;
+import java.util.UUID;
 
 import ru.fazziclay.javaneoutil.FileUtil;
+import ru.fazziclay.javaneoutil.NonNull;
 import ru.fazziclay.opentoday.annotation.Getter;
 import ru.fazziclay.opentoday.annotation.Setter;
 
@@ -35,6 +37,7 @@ public class SettingsManager {
     private int firstDayOfWeek = Calendar.SUNDAY;
     private int theme = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
     private boolean quickNote = true;
+    private UUID instanceId = null;
 
     public SettingsManager(File saveFile) {
         this.saveFile = saveFile;
@@ -50,6 +53,10 @@ public class SettingsManager {
             int version = jsonObject.optInt("version", -1);
             if (version != VERSION) {
                 Log.e("SettingsManager", "version unspecified; version=" + version);
+            }
+
+            if (jsonObject.has("instanceId")) {
+                instanceId = UUID.fromString(jsonObject.getString("instanceId"));
             }
 
             // first day of week
@@ -86,6 +93,7 @@ public class SettingsManager {
     public void save() {
         try {
             JSONObject jsonObject = new JSONObject();
+            jsonObject.put("instanceId", instanceId.toString());
             jsonObject.put("version", VERSION);
 
             String temp_firstDayOfWeek = this.firstDayOfWeek == Calendar.MONDAY ? FIRST_DAY_OF_WEEK_MONDAY : FIRST_DAY_OF_WEEK_SATURDAY;
@@ -106,5 +114,14 @@ public class SettingsManager {
     // TODO: 14.09.2022 make variable
     public boolean isMinimizeGrayColor() {
         return false;
+    }
+
+    @NonNull
+    public UUID getInstanceId() {
+        if (instanceId == null) {
+            instanceId = UUID.randomUUID();
+            save();
+        }
+        return instanceId;
     }
 }
