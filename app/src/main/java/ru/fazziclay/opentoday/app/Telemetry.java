@@ -15,7 +15,7 @@ import ru.fazziclay.opentoday.util.DebugUtil;
 import ru.fazziclay.opentoday.util.NetworkUtil;
 
 public class Telemetry {
-    private static final boolean NO_DELAY = true;
+    private static final boolean NO_DELAY = false;
 
     private final App app;
     private final File latestAutoSendTimeFile;
