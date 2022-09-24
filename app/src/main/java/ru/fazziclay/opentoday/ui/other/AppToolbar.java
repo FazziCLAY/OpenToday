@@ -32,6 +32,7 @@ import ru.fazziclay.opentoday.app.items.Selection;
 import ru.fazziclay.opentoday.app.items.callback.OnSelectionChanged;
 import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.callback.CallbackImportance;
+import ru.fazziclay.opentoday.databinding.DialogImportBinding;
 import ru.fazziclay.opentoday.databinding.ToolbarBinding;
 import ru.fazziclay.opentoday.databinding.ToolbarMoreFileBinding;
 import ru.fazziclay.opentoday.databinding.ToolbarMoreItemsBinding;
@@ -143,53 +144,64 @@ public class AppToolbar {
         });
 
         fcu_viewOnClick(b.importData, () -> {
-            EditText editText = new EditText(activity);
+            DialogImportBinding binding = DialogImportBinding.inflate(activity.getLayoutInflater());
+            View dView = binding.getRoot();
+            EditText editText = binding.editText;
 
-            new AlertDialog.Builder(activity)
-                    .setView(editText)
-                    .setMessage(R.string.toolbar_more_file_import_hint)
-                    .setPositiveButton(R.string.toolbar_more_file_import_import, (ignore123213, ignore342143) -> {
-                        Dialog loading = new Dialog(activity);
-                        loading.getWindow().setBackgroundDrawable(null);
-                        loading.setCancelable(false);
-                        loading.setCanceledOnTouchOutside(false);
-                        ProgressBar progressBar = new ProgressBar(activity);
-                        progressBar.setIndeterminate(true);
-                        loading.setContentView(progressBar);
-                        loading.show();
+            Runnable importRun = () -> {
+                Dialog loading = new Dialog(activity);
+                loading.getWindow().setBackgroundDrawable(null);
+                loading.setCancelable(false);
+                loading.setCanceledOnTouchOutside(false);
+                ProgressBar progressBar = new ProgressBar(activity);
+                progressBar.setIndeterminate(true);
+                loading.setContentView(progressBar);
+                loading.show();
 
+                try {
+                    String text = editText.getText().toString();
+                    new Thread(() -> {
                         try {
-                            String text = editText.getText().toString();
-                            new Thread(() -> {
-                                try {
-                                    String content;
-                                    if (text.startsWith("https://") || text.startsWith("http://")) {
-                                        content = NetworkUtil.parseTextPage(text);
-                                    } else {
-                                        content = text;
-                                    }
+                            String content;
+                            if (text.startsWith("https://") || text.startsWith("http://")) {
+                                content = NetworkUtil.parseTextPage(text);
+                            } else {
+                                content = text;
+                            }
 
-                                    ImportWrapper i = ImportWrapper.finalImport(content);
+                            ImportWrapper i = ImportWrapper.finalImport(content);
 
-                                    for (Item item : i.getItems()) {
-                                        itemStorage.addItem(item);
-                                        itemManager.selectItem(new Selection(itemStorage, item));
-                                    }
-                                    activity.runOnUiThread(() -> Toast.makeText(activity, R.string.toolbar_more_file_import_success, Toast.LENGTH_SHORT).show());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    activity.runOnUiThread(() -> Toast.makeText(activity, activity.getString(R.string.toolbar_more_file_import_exception, e.toString()), Toast.LENGTH_SHORT).show());
-                                }
-                                activity.runOnUiThread(loading::cancel);
-                            }).start();
+                            for (Item item : i.getItems()) {
+                                itemStorage.addItem(item);
+                                itemManager.selectItem(new Selection(itemStorage, item));
+                            }
+                            activity.runOnUiThread(() -> Toast.makeText(activity, R.string.toolbar_more_file_import_success, Toast.LENGTH_SHORT).show());
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Toast.makeText(activity, activity.getString(R.string.toolbar_more_file_import_exception, e.toString()), Toast.LENGTH_SHORT).show();
-                            loading.cancel();
+                            activity.runOnUiThread(() -> Toast.makeText(activity, activity.getString(R.string.toolbar_more_file_import_exception, e.toString()), Toast.LENGTH_SHORT).show());
                         }
-                    })
-                    .setNegativeButton(R.string.toolbar_more_file_import_cancel, null)
-                    .show();
+                        activity.runOnUiThread(loading::cancel);
+                    }).start();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(activity, activity.getString(R.string.toolbar_more_file_import_exception, e.toString()), Toast.LENGTH_SHORT).show();
+                    loading.cancel();
+                }
+            };
+
+
+            Dialog d = new Dialog(activity, android.R.style.ThemeOverlay_Material);
+            d.setContentView(dView);
+            d.show();
+
+            binding.runImport.setOnClickListener(ig -> {
+                importRun.run();
+                d.cancel();
+            });
+
+            binding.cancel.setOnClickListener(ig -> {
+                d.cancel();
+            });
         });
 
         toolbarMoreView.addView(b.getRoot());

@@ -79,12 +79,9 @@ public class App extends Application {
             setupCrashReporter();
             /* debug */ DebugUtil.sleep(DEBUG_APP_START_SLEEP);
 
-            Profiler appProfiler = new Profiler("App onCreate");
-            appProfiler.point("DataFixer");
             DataFixer dataFixer = new DataFixer(this);
             dataFixer.fixToCurrentVersion();
 
-            appProfiler.point("version file");
             try {
                 this.versionData = new JSONObject()
                         .put("product", "OpenToday")
@@ -98,7 +95,6 @@ public class App extends Application {
                 throw new RuntimeException("Exception!", e);
             }
 
-            appProfiler.point("Init");
             NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
             itemManager = new ItemManager(new File(getExternalFilesDir(""), "item_data.json"));
@@ -111,10 +107,8 @@ public class App extends Application {
             notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_QUCIKNOTE_CHANNEL, getString(R.string.notification_quickNote_title), NotificationManager.IMPORTANCE_HIGH));
             notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_ITEMS_CHANNEL, getString(R.string.notification_items_title), NotificationManager.IMPORTANCE_HIGH));
 
-            appProfiler.point("AlarmManager");
-            AlarmManager alarmManager = getSystemService(AlarmManager.class);
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 60 * 1000, PendingIntent.getBroadcast(this, 0, new Intent(this, ItemsTickReceiver.class), 0));
-            appProfiler.end();
+            //AlarmManager alarmManager = getSystemService(AlarmManager.class);
+            //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 5 * 60 * 1000, PendingIntent.getBroadcast(this, 0, new Intent(this, ItemsTickReceiver.class), 0));
 
             telemetry.applicationStart();
         } catch (Exception e) {
@@ -125,6 +119,10 @@ public class App extends Application {
     private void setupCrashReporter() {
         defaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> App.crash(App.this, CrashReport.create(thread, throwable, System.currentTimeMillis(), System.nanoTime(), Thread.getAllStackTraces())));
+    }
+
+    public static void exception(Context context, Exception exception) {
+        App.crash(context, CrashReport.create(Thread.currentThread(), exception, System.currentTimeMillis(), System.nanoTime(), Thread.getAllStackTraces()), false);
     }
 
     public static void crash(Context context, CrashReport crashReport) {

@@ -151,6 +151,7 @@ public class ItemManager extends SimpleItemStorage {
             return true;
         } catch (Exception e) {
             Log.e("ItemManager", "SaveThread exception", e);
+            App.exception(App.get(), e);
             try {
                 new Handler(App.get().getMainLooper()).post(() -> Toast.makeText(App.get(), "Error: Save exception: " + e + "; cause: " + e.getCause(), Toast.LENGTH_LONG).show());
             } catch (Exception ignored) {}

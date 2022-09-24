@@ -8,6 +8,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import ru.fazziclay.javaneoutil.FileUtil;
 import ru.fazziclay.opentoday.telemetry.Client;
@@ -27,10 +29,15 @@ public class Telemetry {
     }
 
     public void applicationStart() {
+        if (true) return; // TODO: 24.09.2022 versioned disable this feature
         try {
             Log.e("Telemetry", "App started");
 
-            boolean timeToSend = System.currentTimeMillis() - Long.parseLong(FileUtil.getText(latestAutoSendTimeFile, "0")) > 24 * 60 * 60 * 1000;
+            long lastSeen = Long.parseLong(FileUtil.getText(latestAutoSendTimeFile, "0"));
+            GregorianCalendar lastSeenCalendar = new GregorianCalendar();
+            lastSeenCalendar.setTimeInMillis(lastSeen);
+
+            boolean timeToSend = new GregorianCalendar().get(Calendar.DAY_OF_YEAR) != lastSeenCalendar.get(Calendar.DAY_OF_YEAR);
             if (timeToSend || NO_DELAY) {
                 FileUtil.setText(latestAutoSendTimeFile, String.valueOf(System.currentTimeMillis()));
 
@@ -47,7 +54,11 @@ public class Telemetry {
         try {
             Log.e("Telemetry", "mainActivityStarted");
 
-            boolean timeToSend = System.currentTimeMillis() - Long.parseLong(FileUtil.getText(latestAutoSendTimeFile, "0")) > 24 * 60 * 60 * 1000;
+            long lastSeen = Long.parseLong(FileUtil.getText(latestAutoSendTimeFile, "0"));
+            GregorianCalendar lastSeenCalendar = new GregorianCalendar();
+            lastSeenCalendar.setTimeInMillis(lastSeen);
+
+            boolean timeToSend = new GregorianCalendar().get(Calendar.DAY_OF_YEAR) != lastSeenCalendar.get(Calendar.DAY_OF_YEAR);
             if (timeToSend || NO_DELAY) {
                 FileUtil.setText(latestAutoSendTimeFile, String.valueOf(System.currentTimeMillis()));
 
