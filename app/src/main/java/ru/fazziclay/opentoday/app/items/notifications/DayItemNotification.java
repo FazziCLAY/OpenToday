@@ -51,7 +51,9 @@ public class DayItemNotification implements ItemNotification {
 
     private int notificationId = 0;
     private String notifyTitle;
+    private boolean notifyTitleFromItemText = false;
     private String notifyText;
+    private boolean notifyTextFromItemText = false;
     private String notifySubText;
     private int latestDayOfYear;
     private int time;
@@ -72,18 +74,19 @@ public class DayItemNotification implements ItemNotification {
     public boolean tick(TickSession tickSession, Item item) {
         int dayofy = tickSession.getGregorianCalendar().get(Calendar.DAY_OF_YEAR);
 
+        try {
+            long shift = tickSession.getDayTime() >= time ? (24*60*60*1000L) : 0;
+            AlarmManager alarmManager = tickSession.getContext().getSystemService(AlarmManager.class);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, tickSession.getNoTimeCalendar().getTimeInMillis() + shift + (this.time * 1000L) - 5000, PendingIntent.getBroadcast(tickSession.getContext(), 0, new Intent(tickSession.getContext(), ItemsTickReceiver.class).putExtra(ItemsTickReceiver.EXTRA_PERSONAL_TICK, new String[]{item.getId().toString()}).putExtra("debugMessage", "dayItemNotification is work :)"), 0));
+        } catch (Exception e) {
+            Log.e("DayItemNotification", "AlarmManager in item experiment is not complete", e);
+        }
+
         if (dayofy != latestDayOfYear) {
             if (tickSession.getDayTime() >= time) {
-                sendNotify(tickSession.getContext());
+                sendNotify(tickSession.getContext(), item);
                 latestDayOfYear = dayofy;
                 tickSession.saveNeeded();
-
-                try {
-                    AlarmManager alarmManager = tickSession.getContext().getSystemService(AlarmManager.class);
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, tickSession.getNoTimeCalendar().getTimeInMillis() + (24*60*60*1000L) + (this.time * 1000L) - 1000, PendingIntent.getBroadcast(tickSession.getContext(), 0, new Intent(tickSession.getContext(), ItemsTickReceiver.class).putExtra(ItemsTickReceiver.EXTRA_PERSONAL_TICK, new String[]{item.getId().toString()}).putExtra("debugMessage", "dayItemNotification is work :)"), 0));
-                } catch (Exception e) {
-                    Log.e("DayItemNotification", "AlarmManager in item experiment is not complete", e);
-                }
 
                 return true;
             }
@@ -101,12 +104,15 @@ public class DayItemNotification implements ItemNotification {
         }
     }
 
-    public void sendNotify(Context context) {
+    public void sendNotify(Context context, Item item) {
+        String nTitle = notifyTitleFromItemText ? item.getText() : notifyTitle;
+        String nText = notifyTextFromItemText ? item.getText() : notifyText;
+
         context.getSystemService(NotificationManager.class).notify(this.notificationId,
                 new NotificationCompat.Builder(context, App.NOTIFICATION_ITEMS_CHANNEL)
                         .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle(notifyTitle)
-                        .setContentText(notifyText)
+                        .setContentTitle(nTitle)
+                        .setContentText(nText)
                         .setSubText(notifySubText)
                         .setPriority(NotificationCompat.PRIORITY_MAX)
                         .build());
@@ -158,5 +164,21 @@ public class DayItemNotification implements ItemNotification {
 
     public void setNotifySubText(String notifySubText) {
         this.notifySubText = notifySubText;
+    }
+
+    public boolean isNotifyTitleFromItemText() {
+        return notifyTitleFromItemText;
+    }
+
+    public boolean isNotifyTextFromItemText() {
+        return notifyTextFromItemText;
+    }
+
+    public void setNotifyTitleFromItemText(boolean notifyTitleFromItemText) {
+        this.notifyTitleFromItemText = notifyTitleFromItemText;
+    }
+
+    public void setNotifyTextFromItemText(boolean notifyTextFromItemText) {
+        this.notifyTextFromItemText = notifyTextFromItemText;
     }
 }

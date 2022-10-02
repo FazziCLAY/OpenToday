@@ -10,8 +10,7 @@
         android:id="@+id/sendToDeveloper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/crash_activity_sendToDeveloper"
-        />
+        android:text="@string/crash_activity_sendToDeveloper" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -25,7 +24,7 @@
                 android:id="@+id/crashReportText"
                 android:layout_width="wrap_content"
                 android:textSize="18sp"
-                tools:text="owowowo"
+                tools:text="==== OpenToday CrashReport ===="
                 android:layout_height="match_parent" />
 
         </HorizontalScrollView>

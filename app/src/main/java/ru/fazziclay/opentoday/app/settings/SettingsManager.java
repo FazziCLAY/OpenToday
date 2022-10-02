@@ -38,6 +38,8 @@ public class SettingsManager {
     private int theme = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
     private boolean quickNote = true;
     private UUID instanceId = null;
+    private final boolean parseTimeFromQuickNote = true; // TODO: 02.10.2022 owo
+    private final boolean isMinimizeGrayColor = false; // TODO: 02.10.2022 owo
 
     public SettingsManager(File saveFile) {
         this.saveFile = saveFile;
@@ -113,7 +115,7 @@ public class SettingsManager {
 
     // TODO: 14.09.2022 make variable
     public boolean isMinimizeGrayColor() {
-        return false;
+        return isMinimizeGrayColor;
     }
 
     @NonNull
@@ -123,5 +125,9 @@ public class SettingsManager {
             save();
         }
         return instanceId;
+    }
+
+    public boolean isParseTimeFromQuickNote() {
+        return parseTimeFromQuickNote;
     }
 }

@@ -45,4 +45,66 @@
 
     </LinearLayout>
 
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingRight="3sp"
+            android:paddingLeft="3sp"
+            android:background="#000000"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffff"
+                android:text="Tabs:" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/deleteTab"
+                    android:text="@string/toolbar_more_items_tab_delete"
+                    android:backgroundTint="#920B0B"
+                    android:layout_marginLeft="1sp"
+                    android:layout_marginRight="1sp"
+                    android:minHeight="45sp"
+                    android:minWidth="0sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+
+                <Button
+                    android:id="@+id/addTab"
+                    android:text="@string/toolbar_more_items_tab_add"
+                    android:backgroundTint="#12D02B"
+                    android:layout_marginLeft="1sp"
+                    android:layout_marginRight="1sp"
+                    android:minHeight="45sp"
+                    android:minWidth="0sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+
+                <Button
+                    android:id="@+id/renameTab"
+                    android:text="@string/toolbar_more_items_tab_rename"
+                    android:backgroundTint="#0B921D"
+                    android:layout_marginLeft="1sp"
+                    android:layout_marginRight="1sp"
+                    android:minHeight="45sp"
+                    android:minWidth="0sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </HorizontalScrollView>
 </LinearLayout>

@@ -6,13 +6,6 @@
     android:orientation="vertical"
     android:padding="5sp">
 
-    <TextView
-        android:id="@+id/path"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        tools:text="/text/stes" />
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

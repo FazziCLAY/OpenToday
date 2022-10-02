@@ -20,6 +20,12 @@
         android:hint="@string/dialog_itemNotification_title"
         android:importantForAutofill="no" />
 
+    <CheckBox
+        android:id="@+id/titleFromItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Title from item text" />
+
     <EditText
         android:id="@+id/text"
         android:layout_width="match_parent"
@@ -27,6 +33,13 @@
         android:inputType="textMultiLine"
         android:hint="@string/dialog_itemNotification_text"
         android:importantForAutofill="no" />
+
+
+    <CheckBox
+        android:id="@+id/textFromItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Text from item text" />
 
     <EditText
         android:id="@+id/notifySubText"

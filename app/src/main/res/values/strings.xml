@@ -168,4 +168,11 @@
     <string name="toolbar_more_file_import_hint">Paste exported text or URL</string>
     <string name="toolbar_more_file_import_success">Successfully</string>
     <string name="toolbar_more_file_import_textHint">Enter import text or URL here</string>
+    <string name="quickNote_hint">Type here</string>
+    <string name="quickNote_add">Add quick note</string>
+    <string name="toolbar_more_items_tab_rename">Rename</string>
+    <string name="toolbar_more_items_tab_add">Add</string>
+    <string name="toolbar_more_items_tab_delete">Delete</string>
+    <string name="abc_cancel">Cancel</string>
+    <string name="tab_noEmptyName">Empty name</string>
 </resources>

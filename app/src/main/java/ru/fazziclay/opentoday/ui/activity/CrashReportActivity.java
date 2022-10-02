@@ -1,6 +1,7 @@
 package ru.fazziclay.opentoday.ui.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -16,6 +17,13 @@ import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
 
 public class CrashReportActivity extends Activity {
+    private static final String EXTRA_PATH = "crash_report_activity_path";
+
+    public static Intent createLaunchIntent(Context context, String path) {
+        return new Intent(context, CrashReportActivity.class)
+                .putExtra(EXTRA_PATH, path);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,12 +36,12 @@ public class CrashReportActivity extends Activity {
             return;
         }
 
-        if (getIntent() == null || getIntent().getExtras() == null || !getIntent().getExtras().containsKey("path")) {
+        if (getIntent() == null || getIntent().getExtras() == null || !getIntent().getExtras().containsKey(EXTRA_PATH)) {
             Toast.makeText(this, "App break... (Extras)", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        File file = new File(getIntent().getExtras().getString("path"));
+        File file = new File(getIntent().getExtras().getString(EXTRA_PATH));
         String string = FileUtil.getText(file);
 
         crashReportText.setText(string);

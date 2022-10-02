@@ -74,7 +74,7 @@ public class TextItem extends Item {
         this.clickableUrls = copy.clickableUrls;
     }
 
-    @Getter @NonNull public String getText() { return text; }
+    @Override @Getter @NonNull public String getText() { return text; }
     @Setter public void setText(@NonNull String v) { this.text = v; }
     @Getter public int getTextColor() { return textColor; }
     @Setter public void setTextColor(int v) { this.textColor = v; }

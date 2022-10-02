@@ -9,8 +9,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.UUID;
 
 import ru.fazziclay.javaneoutil.FileUtil;
+import ru.fazziclay.opentoday.app.App;
 
 public class DataFixer {
     private final Context context;
@@ -84,10 +86,53 @@ public class DataFixer {
             isUpdated = true;
         }
 
+        if (dataVersion == 5) {
+            fix5versionTo6();
+            dataVersion = 6;
+            isUpdated = true;
+        }
+
         Log.d("DataFixer", "latest dataVersion = " + dataVersion);
         if (isUpdated) {
             File logFile = new File(context.getExternalCacheDir(), "data-fixer/logs/" + System.currentTimeMillis() + ".txt");
             FileUtil.setText(logFile, logs.toString());
+        }
+    }
+
+    private void fix5versionTo6() {
+        // DO NOT EDIT!
+        final File itemsDataFile = new File(context.getExternalFilesDir(""), "item_data.json");
+
+        try {
+            JSONObject oldJson = new JSONObject(FileUtil.getText(itemsDataFile));
+            JSONObject newJson = new JSONObject();
+
+            JSONObject mainTab = new JSONObject();
+            mainTab.put("id", UUID.randomUUID());
+            mainTab.put("name", "My Items");
+
+            if (oldJson.has("items")) {
+                JSONArray items = oldJson.getJSONArray("items");
+                mainTab.put("items", items);
+
+            } else {
+                mainTab.put("items", new JSONArray());
+                log("[5to6] ! items key not found");
+            }
+
+            JSONArray newJsonTabs = new JSONArray();
+            newJsonTabs.put(mainTab);
+            newJson.put("tabs", newJsonTabs);
+
+            log("[5to6] write to file");
+            FileUtil.setText(itemsDataFile, newJson.toString(2));
+            log("[5to6] write to file: DONE");
+
+
+            log("[5to6] done");
+        } catch (Exception e) {
+            log("[5to6] exception", e);
+            App.exception(context, e);
         }
     }
 

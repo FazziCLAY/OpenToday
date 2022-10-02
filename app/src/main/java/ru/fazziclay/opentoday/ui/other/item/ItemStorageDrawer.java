@@ -16,12 +16,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.items.ItemManager;
 import ru.fazziclay.opentoday.app.items.ItemStorage;
-import ru.fazziclay.opentoday.app.items.ItemsRegistry;
 import ru.fazziclay.opentoday.app.items.Selection;
 import ru.fazziclay.opentoday.app.items.callback.OnItemStorageUpdate;
 import ru.fazziclay.opentoday.app.items.callback.OnSelectionChanged;
@@ -31,6 +31,8 @@ import ru.fazziclay.opentoday.callback.CallbackImportance;
 import ru.fazziclay.opentoday.callback.Status;
 import ru.fazziclay.opentoday.ui.dialog.DialogItem;
 import ru.fazziclay.opentoday.ui.dialog.DialogTextItemEditText;
+import ru.fazziclay.opentoday.ui.interfaces.CurrentItemsTab;
+import ru.fazziclay.opentoday.ui.interfaces.IVGEditButtonInterface;
 import ru.fazziclay.opentoday.ui.other.ItemViewHolder;
 import ru.fazziclay.opentoday.util.ResUtil;
 
@@ -38,10 +40,12 @@ public class ItemStorageDrawer {
     private final Activity activity;
     private final ItemManager itemManager;
     private final ItemStorage itemStorage;
+    private final UUID tabId;
     private final RecyclerView view;
+    private IVGEditButtonInterface storageEdits;
     private RecyclerView.Adapter<ItemViewHolder> adapter;
     private ItemViewGenerator itemViewGenerator;
-    private Thread originalThread;
+    private final Thread originalThread;
 
     private boolean destroyed = false;
     private boolean created = false;
@@ -96,19 +100,14 @@ public class ItemStorageDrawer {
     private final OnItemClick onItemClick;
     private final DialogItem dialogItem;
     private final boolean previewMode;
-    private final String path;
     private ItemViewWrapper itemViewWrapper = null;
 
     // Public
-    public ItemStorageDrawer(Activity activity, ItemManager itemManager, ItemStorage itemStorage, String path) {
-        this(activity, itemManager, itemStorage, path, null, false);
-    }
-
-    public ItemStorageDrawer(Activity activity, ItemManager itemManager, ItemStorage itemStorage, String path, OnItemClick onItemClick, boolean previewMode) {
+    public ItemStorageDrawer(Activity activity, ItemManager itemManager, ItemStorage itemStorage, OnItemClick onItemClick, boolean previewMode, IVGEditButtonInterface storageEdits) {
         this.activity = activity;
         this.itemManager = itemManager;
         this.itemStorage = itemStorage;
-        this.path = path;
+        this.tabId = ((CurrentItemsTab) activity).getCurrentTabId();
         this.originalThread = Thread.currentThread();
         this.view = new RecyclerView(activity);
         this.onItemClick = onItemClick;
@@ -117,14 +116,15 @@ public class ItemStorageDrawer {
         this.view.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1));
         this.itemManager.getOnSelectionUpdated().addCallback(CallbackImportance.DEFAULT, onSelectionChanged);
 
-        this.dialogItem = new DialogItem(this.activity, this.itemManager);
-        this.itemViewGenerator = new ItemViewGenerator(this.activity, this.itemManager, this.path, (item) -> {
+        this.dialogItem = new DialogItem(this.activity, this.itemManager, this.tabId);
+        this.itemViewGenerator = new ItemViewGenerator(this.activity, this.itemManager, (item) -> {
             if (this.onItemClick == null) {
                 if (!previewMode) actionItem(item, itemManager.getItemOnClickAction());
             } else {
                 this.onItemClick.run(item);
             }
-        }, previewMode);
+        }, previewMode, storageEdits);
+
     }
 
     public void create() {
@@ -277,12 +277,7 @@ public class ItemStorageDrawer {
     private void actionItem(Item item, ItemManager.ItemAction action) {
         switch (action) {
             case OPEN_EDIT_DIALOG:
-                String name = "Unknown";
-                if (item instanceof TextItem) {
-                    TextItem t = (TextItem) item;
-                    name = t.getText();
-                }
-                dialogItem.edit(item, ItemViewGenerator.appendPath(path, name));
+                dialogItem.edit(item);
                 break;
 
             case SELECT_ON:
@@ -372,13 +367,8 @@ public class ItemStorageDrawer {
                         return false;
                     }
 
-                    DialogItem dialogItem = new DialogItem(activity, itemManager);
-                    String text = "Unknown";
-                    if (copyItem instanceof TextItem) {
-                        TextItem t = (TextItem) copyItem;
-                        text = t.getText();
-                    }
-                    dialogItem.edit(copyItem, ItemViewGenerator.appendPath(path, text));
+                    DialogItem dialogItem = new DialogItem(activity, itemManager, tabId);
+                    dialogItem.edit(copyItem);
 
                     int createPos = itemStorage.getItemPosition(copyItem);
                     if (createPos != (currPos + 1)) itemStorage.move(createPos, currPos + 1);

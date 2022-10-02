@@ -45,7 +45,7 @@ public class DialogItemNotificationsEditor {
         this.item = item;
         this.onApply = o;
 
-        dialog = new Dialog(activity, android.R.style.ThemeOverlay_Material);
+        dialog = new Dialog(activity);
         dialog.setOnCancelListener(dialog -> onApply.run());
 
         binding = DialogItemNotificationsEditorBinding.inflate(activity.getLayoutInflater());
@@ -88,7 +88,15 @@ public class DialogItemNotificationsEditor {
 
                     l.notificationId.setText(String.valueOf(d.getNotificationId()));
                     l.text.setText(d.getNotifyText());
+                    l.textFromItem.setChecked(d.isNotifyTextFromItemText());
+                    l.textFromItem.setOnClickListener(vvv -> {
+                        l.text.setEnabled(!l.textFromItem.isChecked());
+                    });
                     l.title.setText(d.getNotifyTitle());
+                    l.titleFromItem.setChecked(d.isNotifyTitleFromItemText());
+                    l.titleFromItem.setOnClickListener(vvv -> {
+                        l.title.setEnabled(!l.titleFromItem.isChecked());
+                    });
                     l.notifySubText.setText(d.getNotifySubText());
                     l.test.setOnClickListener(v2132321 -> {
 
@@ -107,6 +115,8 @@ public class DialogItemNotificationsEditor {
                                 d.setNotifyTitle(l.title.getText().toString());
                                 d.setNotifyText(l.text.getText().toString());
                                 d.setNotifySubText(l.notifySubText.getText().toString());
+                                d.setNotifyTitleFromItemText(l.titleFromItem.isChecked());
+                                d.setNotifyTextFromItemText(l.textFromItem.isChecked());
                                 try {
                                     int i = Integer.parseInt(l.notificationId.getText().toString());
                                     d.setNotificationId(i);

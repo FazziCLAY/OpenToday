@@ -22,7 +22,7 @@ public class DialogAppSettings {
 
     public DialogAppSettings(Activity activity) {
         this.activity = activity;
-        this.dialog = new Dialog(activity, android.R.style.ThemeOverlay_Material);
+        this.dialog = new Dialog(activity);
         this.binding = DialogAppSettingsBinding.inflate(activity.getLayoutInflater());
         this.settingsManager = App.get(activity).getSettingsManager();
         setupThemeSpinner();

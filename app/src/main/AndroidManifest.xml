@@ -16,7 +16,7 @@
         android:theme="@style/Theme.OpenToday">
 
         <!-- Activities -->
-        <activity android:name=".ui.activity.MainActivity"
+        <activity android:name=".ui.activity.PreMainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,8 +30,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.activity.OpenSourceLicenseActivity" android:exported="false" />
+        <activity android:name=".ui.activity.MainActivity" android:exported="false" />
 
         <activity android:name=".debug.TestItemViewGenerator" android:exported="false" />
+        <activity android:name=".debug.TestItemStorageDrawer" android:exported="false" />
+        <activity android:name=".debug.TestActivityFragment" android:exported="false" />
+        <activity android:name=".debug.TestItemManager" android:exported="false" />
         <activity android:name=".ui.activity.CrashReportActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

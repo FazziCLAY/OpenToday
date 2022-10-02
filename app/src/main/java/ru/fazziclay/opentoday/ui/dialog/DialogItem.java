@@ -24,9 +24,9 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 import ru.fazziclay.opentoday.R;
-import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.items.ItemManager;
 import ru.fazziclay.opentoday.app.items.ItemsRegistry;
 import ru.fazziclay.opentoday.app.items.item.CheckboxItem;
@@ -48,6 +48,8 @@ import ru.fazziclay.opentoday.databinding.DialogItemModuleFiltergroupBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleGroupBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleItemBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleTextBinding;
+import ru.fazziclay.opentoday.ui.fragment.ItemsEditorFragment;
+import ru.fazziclay.opentoday.ui.interfaces.NavigationHost;
 import ru.fazziclay.opentoday.util.MinTextWatcher;
 import ru.fazziclay.opentoday.util.ResUtil;
 import ru.fazziclay.opentoday.util.SimpleSpinnerAdapter;
@@ -61,6 +63,7 @@ public class DialogItem {
     private Dialog dialog;
     private View view;
     private Item item;
+    private UUID tabId;
     private boolean create;
     private OnEditDone onEditDone;
     private boolean canceled = false;
@@ -68,26 +71,25 @@ public class DialogItem {
 
     // Edit
     private final List<BaseEditUiModule> editModules = new ArrayList<>();
-    private String path;
 
-    public DialogItem(Activity activity, ItemManager itemManager) {
+    public DialogItem(Activity activity, ItemManager itemManager, UUID tabId) {
         this.activity = activity;
         this.itemManager = itemManager;
+        this.tabId = tabId;
     }
 
     public void create(Class<? extends Item> type, OnEditDone onEditDone) {
         Item item = ItemsRegistry.REGISTRY.getItemInfoByClass(type).create();
-        show(item, "unsupported", true, onEditDone);
+        show(item, true, onEditDone);
     }
 
-    public void edit(Item item, String path) {
-        show(item, path, false, null);
+    public void edit(Item item) {
+        show(item, false, null);
     }
 
-    private void show(Item item, String path, boolean create, OnEditDone onEditDone) {
+    private void show(Item item, boolean create, OnEditDone onEditDone) {
         cancel();
         this.item = item;
-        this.path = path;
         this.create = create;
         this.onEditDone = onEditDone;
         this.canceled = false;
@@ -102,7 +104,6 @@ public class DialogItem {
     private View generateView() {
         DialogItemFrameBinding binding = DialogItemFrameBinding.inflate(this.activity.getLayoutInflater());
 
-        binding.path.setText(path != null ? path : "unsupported");
         if (item instanceof Item) {
             binding.canvas.addView(addEditModule(new ItemEditModule()));
         }
@@ -120,12 +121,6 @@ public class DialogItem {
         }
         if (item instanceof CounterItem) {
             binding.canvas.addView(addEditModule(new CounterItemEditModule()));
-        }
-        if (item instanceof GroupItem) {
-            binding.canvas.addView(addEditModule(new GroupItemEditModule()));
-        }
-        if (item instanceof FilterGroupItem) {
-            binding.canvas.addView(addEditModule(new FilterGroupItemEditModule()));
         }
 
         fcu_viewOnClick(binding.applyButton, this::applyRequest);
@@ -200,7 +195,7 @@ public class DialogItem {
 
 
     private Dialog generateDialog() {
-        Dialog dialog = new Dialog(this.activity, android.R.style.ThemeOverlay_Material);
+        Dialog dialog = new Dialog(this.activity);
         dialog.setContentView(this.view);
         dialog.setCanceledOnTouchOutside(false);
         dialog.setOnCancelListener(dialog1 -> {
@@ -509,8 +504,6 @@ public class DialogItem {
             CycleListItem cycleListItem = (CycleListItem) item;
 
             binding = DialogItemModuleCyclelistBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
-            binding.externalEditor.setEnabled(!DialogItem.this.create);
-            fcu_viewOnClick(binding.externalEditor, () -> new DialogItemStorageEditor(activity, App.get(activity).getItemManager(), cycleListItem.getItemsCycleStorage(), null, DialogItem.this.path).show());
             simpleSpinnerAdapter = new SimpleSpinnerAdapter<CycleListItem.TickBehavior>(activity)
                     .add(activity.getString(R.string.cycleListItem_tick_all), CycleListItem.TickBehavior.ALL)
                     .add(activity.getString(R.string.cycleListItem_tick_current), CycleListItem.TickBehavior.CURRENT);
@@ -588,19 +581,14 @@ public class DialogItem {
     }
 
     private class GroupItemEditModule extends BaseEditUiModule {
-        private DialogItemModuleGroupBinding binding;
-
         @Override
         public View getView() {
-            return binding.getRoot();
+            return null;
         }
 
         @Override
         public void setup(Item item, Activity activity, View view) {
-            GroupItem groupItem = (GroupItem) item;
-            binding = DialogItemModuleGroupBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
-            binding.externalEditor.setEnabled(!DialogItem.this.create);
-            fcu_viewOnClick(binding.externalEditor, () -> new DialogItemStorageEditor(activity, App.get(activity).getItemManager(), groupItem.getItemStorage(), null, DialogItem.this.path).show());
+
         }
 
         @Override
@@ -611,19 +599,14 @@ public class DialogItem {
     }
 
     private class FilterGroupItemEditModule extends BaseEditUiModule {
-        private DialogItemModuleFiltergroupBinding binding;
-
         @Override
         public View getView() {
-            return binding.getRoot();
+            return null;
         }
 
         @Override
         public void setup(Item item, Activity activity, View view) {
-            FilterGroupItem fGroupItem = (FilterGroupItem) item;
-            binding = DialogItemModuleFiltergroupBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
-            binding.externalEditor.setEnabled(!DialogItem.this.create);
-            fcu_viewOnClick(binding.externalEditor, () -> new DialogFilterGroupEdit(activity, fGroupItem, DialogItem.this.path).show());
+
         }
 
         @Override

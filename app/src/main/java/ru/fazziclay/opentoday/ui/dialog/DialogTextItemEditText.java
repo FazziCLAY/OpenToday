@@ -78,7 +78,7 @@ public class DialogTextItemEditText {
     }
 
     private Dialog generateDialog() {
-        Dialog dialog = new Dialog(this.activity, android.R.style.ThemeOverlay_Material);
+        Dialog dialog = new Dialog(this.activity);
         dialog.setContentView(this.view);
         dialog.setCanceledOnTouchOutside(false);
         dialog.setOnCancelListener(dialog1 -> {

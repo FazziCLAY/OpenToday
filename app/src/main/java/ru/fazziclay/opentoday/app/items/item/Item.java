@@ -23,7 +23,7 @@ import ru.fazziclay.opentoday.app.items.notifications.ItemNotification;
 import ru.fazziclay.opentoday.app.items.notifications.ItemNotificationIETool;
 import ru.fazziclay.opentoday.app.items.notifications.ItemNotificationsRegistry;
 
-public abstract class Item implements Cloneable {
+public abstract class Item {
     private static final String DEFAULT_BACKGROUND_COLOR = "#99999999";
 
     // START - Save
@@ -158,6 +158,11 @@ public abstract class Item implements Cloneable {
     public Item regenerateId() {
         this.id = UUID.randomUUID();
         return this;
+    }
+
+    // For fast get text (no cast to TextItem)
+    public String getText() {
+        return "{Item}";
     }
 
     // Getters & Setters

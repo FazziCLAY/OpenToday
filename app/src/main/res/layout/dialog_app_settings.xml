@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="5sp"
@@ -14,7 +15,10 @@
     <Spinner
         android:id="@+id/theme_spinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/settings_theme_title"
+        android:minHeight="48dp"
+        tools:ignore="DuplicateSpeakableTextCheck" />
 
     <CheckBox
         android:id="@+id/quickNote_checkbox"

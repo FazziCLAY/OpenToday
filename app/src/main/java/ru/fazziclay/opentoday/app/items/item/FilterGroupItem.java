@@ -19,7 +19,7 @@ import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.TickSession;
 import ru.fazziclay.opentoday.app.items.ContainerItem;
 import ru.fazziclay.opentoday.app.items.ItemController;
-import ru.fazziclay.opentoday.app.items.ItemIEManager;
+import ru.fazziclay.opentoday.app.items.ItemIEUtil;
 import ru.fazziclay.opentoday.app.items.ItemStorage;
 import ru.fazziclay.opentoday.app.items.ItemsRegistry;
 import ru.fazziclay.opentoday.app.items.callback.OnItemStorageUpdate;
@@ -269,12 +269,12 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemStor
 
         public JSONObject exportWrapper() throws Exception {
             return new JSONObject()
-                    .put("item", ItemIEManager.exportItem(item))
+                    .put("item", ItemIEUtil.exportItem(item))
                     .put("filter", filter.export());
         }
 
         public static ItemFilterWrapper importWrapper(JSONObject json) throws Exception {
-            return new ItemFilterWrapper(ItemIEManager.importItem(json.getJSONObject("item")), ItemFilter.importFilter(json.getJSONObject("filter")));
+            return new ItemFilterWrapper(ItemIEUtil.importItem(json.getJSONObject("item")), ItemFilter.importFilter(json.getJSONObject("filter")));
         }
     }
 

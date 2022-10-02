@@ -26,7 +26,7 @@ public class ImportWrapper {
                 .put("importVersion", importVersion);
 
 
-        jsonObject.put("items", ItemIEManager.exportItemList(items));
+        jsonObject.put("items", ItemIEUtil.exportItemList(items));
 
         return "--OPENTODAY-IMPORT-START--\n" + importVersion + "\n" + Base64.getEncoder().encodeToString(jsonObject.toString().getBytes(StandardCharsets.UTF_8)) + "\n--OPENTODAY-IMPORT-END--";
     }
@@ -50,7 +50,7 @@ public class ImportWrapper {
             throw new Exception("Version not compatible");
         }
 
-        return new ImportWrapper(ItemIEManager.importItemList(jsonObject.getJSONArray("items")));
+        return new ImportWrapper(ItemIEUtil.importItemList(jsonObject.getJSONArray("items")));
     }
 
 

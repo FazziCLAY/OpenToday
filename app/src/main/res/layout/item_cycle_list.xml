@@ -62,5 +62,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingLeft="3sp"
-        android:paddingRight="2sp"/>
+        android:paddingRight="2sp">
+
+        <TextView
+            android:id="@+id/empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/empty" />
+
+    </LinearLayout>
 </LinearLayout>

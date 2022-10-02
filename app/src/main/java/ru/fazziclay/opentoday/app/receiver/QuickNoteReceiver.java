@@ -42,12 +42,20 @@ public class QuickNoteReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         App app = App.get(context);
-        Bundle bundle = RemoteInput.getResultsFromIntent(intent);
-        if (bundle != null) {
-            String s = String.valueOf(bundle.getCharSequence(REMOTE_INPUT_KEY));
-            app.getItemManager().addItem(new TextItem(context.getString(R.string.quickNote) + ": " + s));
-
-            sendQuickNoteNotification(context);
+        boolean rawTextMode = false;
+        String rawText = null;
+        if (intent.getExtras() != null && intent.getExtras().containsKey("rawText")) {
+            rawTextMode = true;
+            rawText = intent.getExtras().getString("rawText");
+        } else {
+            Bundle bundle = RemoteInput.getResultsFromIntent(intent);
+            if (bundle != null) {
+                rawText = String.valueOf(bundle.getCharSequence(REMOTE_INPUT_KEY));
+            }
+        }
+        if (rawText != null) {
+            app.getItemManager().getMainTab().addItem(new TextItem(context.getString(R.string.quickNote) + ": " + rawText));
+            if (!rawTextMode) sendQuickNoteNotification(context);
         }
     }
 }

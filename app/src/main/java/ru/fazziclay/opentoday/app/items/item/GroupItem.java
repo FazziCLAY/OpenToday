@@ -11,12 +11,14 @@ import ru.fazziclay.opentoday.annotation.RequireSave;
 import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.TickSession;
 import ru.fazziclay.opentoday.app.items.DataTransferPacket;
-import ru.fazziclay.opentoday.app.items.ItemIEManager;
+import ru.fazziclay.opentoday.app.items.ItemIEUtil;
 import ru.fazziclay.opentoday.app.items.ItemStorage;
 import ru.fazziclay.opentoday.app.items.ContainerItem;
 import ru.fazziclay.opentoday.app.items.SimpleItemStorage;
+import ru.fazziclay.opentoday.app.items.callback.OnItemStorageUpdate;
+import ru.fazziclay.opentoday.callback.CallbackStorage;
 
-public class GroupItem extends TextItem implements ContainerItem {
+public class GroupItem extends TextItem implements ContainerItem, ItemStorage {
     // START - Save
     public final static GroupItemIETool IE_TOOL = new GroupItemIETool();
     public static class GroupItemIETool extends TextItem.TextItemIETool {
@@ -25,7 +27,7 @@ public class GroupItem extends TextItem implements ContainerItem {
         public JSONObject exportItem(@NonNull Item item) throws Exception {
             GroupItem groupItem = (GroupItem) item;
             return super.exportItem(item)
-                    .put("items", ItemIEManager.exportItemList(groupItem.itemStorage.exportData().items));
+                    .put("items", ItemIEUtil.exportItemList(groupItem.itemStorage.exportData().items));
         }
 
         @NonNull
@@ -38,7 +40,7 @@ public class GroupItem extends TextItem implements ContainerItem {
             JSONArray jsonItems = json.optJSONArray("items");
             if (jsonItems == null) jsonItems = new JSONArray();
             DataTransferPacket dataTransferPacket = new DataTransferPacket();
-            dataTransferPacket.items = ItemIEManager.importItemList(jsonItems);
+            dataTransferPacket.items = ItemIEUtil.importItemList(jsonItems);
             groupItem.itemStorage.importData(dataTransferPacket);
 
             return groupItem;
@@ -71,7 +73,7 @@ public class GroupItem extends TextItem implements ContainerItem {
         DataTransferPacket copyData = copy.itemStorage.exportData();
         DataTransferPacket newData = new DataTransferPacket();
         try {
-            newData.items = ItemIEManager.importItemList(ItemIEManager.exportItemList(copyData.items));
+            newData.items = ItemIEUtil.importItemList(ItemIEUtil.exportItemList(copyData.items));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -94,8 +96,43 @@ public class GroupItem extends TextItem implements ContainerItem {
     }
 
     @Override
+    public int getItemPosition(Item item) {
+        return itemStorage.getItemPosition(item);
+    }
+
+    @Override
+    public CallbackStorage<OnItemStorageUpdate> getOnUpdateCallbacks() {
+        return itemStorage.getOnUpdateCallbacks();
+    }
+
+    @Override
     public Item[] getAllItems() {
         return itemStorage.getAllItems();
+    }
+
+    @Override
+    public int size() {
+        return itemStorage.size();
+    }
+
+    @Override
+    public void addItem(Item item) {
+        itemStorage.addItem(item);
+    }
+
+    @Override
+    public void deleteItem(Item item) {
+        itemStorage.deleteItem(item);
+    }
+
+    @Override
+    public Item copyItem(Item item) {
+        return itemStorage.copyItem(item);
+    }
+
+    @Override
+    public void move(int positionFrom, int positionTo) {
+        itemStorage.move(positionFrom, positionTo);
     }
 
     @Getter public ItemStorage getItemStorage() { return itemStorage; }

@@ -26,6 +26,9 @@ import ru.fazziclay.opentoday.app.items.ItemManager;
 import ru.fazziclay.opentoday.app.receiver.ItemsTickReceiver;
 import ru.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import ru.fazziclay.opentoday.app.settings.SettingsManager;
+import ru.fazziclay.opentoday.debug.TestActivityFragment;
+import ru.fazziclay.opentoday.debug.TestItemManager;
+import ru.fazziclay.opentoday.debug.TestItemStorageDrawer;
 import ru.fazziclay.opentoday.debug.TestItemViewGenerator;
 import ru.fazziclay.opentoday.ui.activity.CrashReportActivity;
 import ru.fazziclay.opentoday.util.DebugUtil;
@@ -34,7 +37,7 @@ import ru.fazziclay.opentoday.util.Profiler;
 @SuppressWarnings("PointlessBooleanExpression") // for debug variables
 public class App extends Application {
     // Application
-    public static final int APPLICATION_DATA_VERSION = 5;
+    public static final int APPLICATION_DATA_VERSION = 6;
     public static final String VERSION_NAME = BuildConfig.VERSION_NAME;
     public static final int VERSION_CODE = BuildConfig.VERSION_CODE;
     public static final String APPLICATION_ID = BuildConfig.APPLICATION_ID;
@@ -49,7 +52,7 @@ public class App extends Application {
     public static final boolean DEBUG_TICK_NOTIFICATION = (DEBUG & false);
     public static final int DEBUG_MAIN_ACTIVITY_START_SLEEP = (DEBUG & false) ? 6000 : 0;
     public static final int DEBUG_APP_START_SLEEP = (DEBUG & false) ? 1000 : 0;
-    public static Class<? extends Activity> DEBUG_MAIN_ACTIVITY = (DEBUG & false) ? TestItemViewGenerator.class : null;
+    public static Class<? extends Activity> DEBUG_MAIN_ACTIVITY = (DEBUG & false) ? TestActivityFragment.class : null;
     public static final boolean DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY = (DEBUG && false);
 
     private static Thread.UncaughtExceptionHandler defaultHandler;
@@ -156,7 +159,7 @@ public class App extends Application {
                         .setBigContentTitle(context.getString(R.string.crash_notification_big_title))
                         .setSummaryText(context.getString(R.string.crash_notification_big_summary)))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setContentIntent(PendingIntent.getActivity(context, 0, new Intent(context, CrashReportActivity.class).putExtra("path", file.getAbsolutePath()), flag))
+                .setContentIntent(PendingIntent.getActivity(context, 0, CrashReportActivity.createLaunchIntent(context, file.getAbsolutePath()), flag))
                 .setAutoCancel(true)
                 .build());
 

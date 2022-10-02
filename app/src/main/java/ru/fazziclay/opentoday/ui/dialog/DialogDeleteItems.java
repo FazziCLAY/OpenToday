@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
+import ru.fazziclay.opentoday.app.items.ItemManager;
 import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.databinding.DialogPreviewDeleteItemsBinding;
 import ru.fazziclay.opentoday.ui.other.ItemViewHolder;
@@ -26,9 +27,9 @@ public class DialogDeleteItems {
         }
         this.binding = DialogPreviewDeleteItemsBinding.inflate(activity.getLayoutInflater());
 
-        this.dialog = new Dialog(activity, android.R.style.ThemeOverlay_Material);
+        this.dialog = new Dialog(activity);
         this.dialog.setContentView(binding.getRoot());
-        this.itemViewGenerator = new ItemViewGenerator(activity, App.get().getItemManager(), null, null, true);
+        this.itemViewGenerator = new ItemViewGenerator(activity, App.get().getItemManager(), null, true, null);
 
         binding.list.setAdapter(new MinBaseAdapter() {
             @Override
@@ -45,11 +46,13 @@ public class DialogDeleteItems {
             }
         });
 
+        ItemManager itemManager = App.get(activity).getItemManager();
         binding.deleteButton.setOnClickListener(v -> new AlertDialog.Builder(activity)
                 .setTitle(activity.getString(R.string.dialog_previewDeleteItems_delete_title, String.valueOf(items.length)))
                 .setNegativeButton(R.string.dialog_previewDeleteItems_delete_cancel, null)
                 .setPositiveButton(R.string.dialog_previewDeleteItems_delete_apply, ((dialog1, which) -> {
                     for (Item item : items) {
+                        itemManager.deselectItem(item);
                         item.delete();
                     }
                     dialog.cancel();

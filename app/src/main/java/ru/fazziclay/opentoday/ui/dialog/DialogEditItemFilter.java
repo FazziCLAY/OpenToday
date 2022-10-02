@@ -38,7 +38,7 @@ public class DialogEditItemFilter {
         this.activity = activity;
 
         this.binding = DialogEditItemFilterBinding.inflate(activity.getLayoutInflater());
-        this.dialog = new Dialog(activity, android.R.style.ThemeOverlay_Material);
+        this.dialog = new Dialog(activity);
         this.saveSignal = saveSignal;
         this.calendar = new GregorianCalendar();
         this.handler = new Handler(Looper.getMainLooper());
