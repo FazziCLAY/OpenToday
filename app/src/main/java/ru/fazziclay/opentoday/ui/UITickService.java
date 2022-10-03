@@ -1,47 +1,36 @@
-package ru.fazziclay.opentoday.app.receiver.service;
+package ru.fazziclay.opentoday.ui;
 
-import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Looper;
-
-import androidx.annotation.Nullable;
 
 import ru.fazziclay.opentoday.app.receiver.ItemsTickReceiver;
 
 // Тик во время активного интерфейса приложения (раз в секунду) для того что бы изменения
 // Были видры резче
-public class UITickService extends Service {
+public class UITickService {
+    private final Context context;
     private final Handler handler;
     private final Runnable runnable = this::tick;
 
-    public UITickService() {
+    public UITickService(Context context) {
+        this.context = context;
         this.handler = new Handler(Looper.myLooper());
     }
 
     public void tick() {
-        sendBroadcast(new Intent(this, ItemsTickReceiver.class));
+        context.sendBroadcast(new Intent(context, ItemsTickReceiver.class));
         this.handler.removeCallbacks(runnable);
         long millis = System.currentTimeMillis() % 1000;
         this.handler.postDelayed(runnable, 1000 - millis);
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public void create() {
         handler.post(runnable);
-        return super.onStartCommand(intent, flags, startId);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void destroy() {
         handler.removeCallbacks(runnable);
-    }
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
     }
 }

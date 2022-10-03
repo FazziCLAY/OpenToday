@@ -20,7 +20,11 @@ public class QuickNoteReceiver extends BroadcastReceiver {
     public static final String NOTIFICATION_CHANNEL = "quick_note";
 
     public static void sendQuickNoteNotification(Context context) {
-        NotificationCompat.Action action = new NotificationCompat.Action.Builder(R.drawable.ic_launcher_foreground, context.getString(R.string.quickNote), PendingIntent.getBroadcast(context, 0, new Intent(context, QuickNoteReceiver.class), 0))
+        int flags = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            flags = PendingIntent.FLAG_MUTABLE;
+        }
+        NotificationCompat.Action action = new NotificationCompat.Action.Builder(R.drawable.ic_launcher_foreground, context.getString(R.string.quickNote), PendingIntent.getBroadcast(context, 0, new Intent(context, QuickNoteReceiver.class), flags))
                 .addRemoteInput(new RemoteInput.Builder(QuickNoteReceiver.REMOTE_INPUT_KEY).setLabel(context.getString(R.string.quickNote)).build())
                 .build();
 
@@ -54,7 +58,9 @@ public class QuickNoteReceiver extends BroadcastReceiver {
             }
         }
         if (rawText != null) {
-            app.getItemManager().getMainTab().addItem(new TextItem(context.getString(R.string.quickNote) + ": " + rawText));
+            TextItem item = new TextItem(context.getString(R.string.quickNote) + ": " + rawText);
+            if (app.getSettingsManager().isParseTimeFromQuickNote()) item.getNotifications().addAll(App.QUICK_NOTE.run(rawText));
+            app.getItemManager().getMainTab().addItem(item);
             if (!rawTextMode) sendQuickNoteNotification(context);
         }
     }

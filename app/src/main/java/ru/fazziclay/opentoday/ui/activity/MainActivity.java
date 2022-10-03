@@ -25,6 +25,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -35,19 +36,18 @@ import ru.fazziclay.opentoday.app.items.ItemManager;
 import ru.fazziclay.opentoday.app.items.ItemStorage;
 import ru.fazziclay.opentoday.app.items.ItemsTab;
 import ru.fazziclay.opentoday.app.items.callback.OnTabsChanged;
-import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.app.items.item.TextItem;
-import ru.fazziclay.opentoday.app.items.notifications.DayItemNotification;
+import ru.fazziclay.opentoday.app.items.notifications.ItemNotification;
 import ru.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
-import ru.fazziclay.opentoday.app.receiver.service.UITickService;
+import ru.fazziclay.opentoday.ui.UITickService;
 import ru.fazziclay.opentoday.app.updatechecker.UpdateChecker;
 import ru.fazziclay.opentoday.callback.CallbackImportance;
 import ru.fazziclay.opentoday.callback.Status;
 import ru.fazziclay.opentoday.databinding.ActivityMainBinding;
 import ru.fazziclay.opentoday.ui.fragment.ItemsEditorRootFragment;
+import ru.fazziclay.opentoday.ui.interfaces.ContainBackStack;
 import ru.fazziclay.opentoday.ui.interfaces.CurrentItemsTab;
 import ru.fazziclay.opentoday.ui.interfaces.NavigationHost;
-import ru.fazziclay.opentoday.ui.interfaces.ContainBackStack;
 import ru.fazziclay.opentoday.ui.other.AppToolbar;
 
 public class MainActivity extends AppCompatActivity implements NavigationHost, CurrentItemsTab {
@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements NavigationHost, C
     private ItemManager itemManager;
     private AppToolbar toolbar;
     private ItemStorage currentItemStorage;
+    private UITickService uiTickService;
 
     // Tabs
     private UUID currentTab = null;
@@ -81,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements NavigationHost, C
         this.app.setAppInForeground(true);
         this.app.getTelemetry().mainActivityStart();
         this.itemManager = app.getItemManager();
+        this.uiTickService = new UITickService(this);
         this.binding = ActivityMainBinding.inflate(getLayoutInflater());
 
         // Tabs
@@ -125,50 +127,30 @@ public class MainActivity extends AppCompatActivity implements NavigationHost, C
         setupUpdateAvailableNotify();
         setupCurrentDate();
 
-        QuickNoteReceiver.sendQuickNoteNotification(this);
-        startService(new Intent(this, UITickService.class));
+        if (app.getSettingsManager().isQuickNote()) {
+            QuickNoteReceiver.sendQuickNoteNotification(this);
+        }
+        uiTickService.create();
     }
 
     private void setupQuickNote() {
-        QuickNoteInterface quickNote = s -> {
-            Item item = new TextItem(s);
-            boolean parseTime = app.getSettingsManager().isParseTimeFromQuickNote();
-            if (parseTime) {
-                char[] chars = s.toCharArray();
-                int i = 0;
-                for (char aChar : chars) {
-                    if (aChar == ':') {
-                        try {
-                            if (i >= 2 && chars.length >= 5) {
-                                int hours = Integer.parseInt(String.valueOf(chars[i - 2]) + chars[i - 1]);
-                                int minutes = Integer.parseInt(String.valueOf(chars[i + 1]) + chars[i + 2]);
-
-                                DayItemNotification noti = new DayItemNotification();
-                                noti.setTime((hours * 60 * 60) + (minutes * 60));
-                                noti.setNotifyTextFromItemText(true);
-                                item.getNotifications().add(noti);
-                            }
-                        } catch (Exception ignored) {
-                        }
-                    }
-                    i++;
-                }
-            }
-            return item;
-        };
         binding.quickNoteAdd.setOnClickListener(v -> {
             String s = binding.quickNoteText.getText().toString();
             if (s.isEmpty()) return;
             binding.quickNoteText.setText("");
             if (currentItemStorage != null) {
-                currentItemStorage.addItem(quickNote.run(s));
+                TextItem item = new TextItem(s);
+                if (app.getSettingsManager().isParseTimeFromQuickNote()) item.getNotifications().addAll(App.QUICK_NOTE.run(s));
+                currentItemStorage.addItem(item);
             }
         });
 
         binding.quickNoteAdd.setOnLongClickListener(v -> {
             String s = binding.quickNoteText.getText().toString();
             if (currentItemStorage != null) {
-                currentItemStorage.addItem(quickNote.run(s));
+                TextItem item = new TextItem(s);
+                if (app.getSettingsManager().isParseTimeFromQuickNote()) item.getNotifications().addAll(App.QUICK_NOTE.run(s));
+                currentItemStorage.addItem(item);
             }
             return true;
         });
@@ -180,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements NavigationHost, C
         Runnable exit = super::onBackPressed;
         Runnable def = () -> {
             if (System.currentTimeMillis() - lastExitClick > 1000) {
-                Toast.makeText(this, "Tap 2 count to exit", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.exit_tab_2_count, Toast.LENGTH_SHORT).show();
                 lastExitClick = System.currentTimeMillis();
             } else {
                 exit.run();
@@ -208,8 +190,10 @@ public class MainActivity extends AppCompatActivity implements NavigationHost, C
         if (toolbar != null) {
             toolbar.destroy();
         }
+        if (uiTickService != null) {
+            uiTickService.destroy();
+        }
         currentDateHandler.removeCallbacks(currentDateRunnable);
-        stopService(new Intent(this, UITickService.class));
     }
 
     @Override
@@ -453,7 +437,7 @@ public class MainActivity extends AppCompatActivity implements NavigationHost, C
         if (ALOG) Log.e("------------D", stringBuilder.toString());
     }
 
-    private interface QuickNoteInterface {
-        Item run(String text);
+    public interface QuickNoteInterface {
+        List<ItemNotification> run(String text);
     }
 }

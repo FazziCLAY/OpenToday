@@ -175,4 +175,5 @@
     <string name="toolbar_more_items_tab_delete">Delete</string>
     <string name="abc_cancel">Cancel</string>
     <string name="tab_noEmptyName">Empty name</string>
+    <string name="exit_tab_2_count">Tab 2 count for exit from OpenToday</string>
 </resources>

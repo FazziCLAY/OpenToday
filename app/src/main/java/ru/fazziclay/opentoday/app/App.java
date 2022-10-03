@@ -1,7 +1,6 @@
 package ru.fazziclay.opentoday.app;
 
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -16,6 +15,8 @@ import androidx.core.app.NotificationCompat;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import ru.fazziclay.javaneoutil.FileUtil;
@@ -23,16 +24,15 @@ import ru.fazziclay.opentoday.BuildConfig;
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.datafixer.DataFixer;
 import ru.fazziclay.opentoday.app.items.ItemManager;
+import ru.fazziclay.opentoday.app.items.notifications.DayItemNotification;
+import ru.fazziclay.opentoday.app.items.notifications.ItemNotification;
 import ru.fazziclay.opentoday.app.receiver.ItemsTickReceiver;
 import ru.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import ru.fazziclay.opentoday.app.settings.SettingsManager;
 import ru.fazziclay.opentoday.debug.TestActivityFragment;
-import ru.fazziclay.opentoday.debug.TestItemManager;
-import ru.fazziclay.opentoday.debug.TestItemStorageDrawer;
-import ru.fazziclay.opentoday.debug.TestItemViewGenerator;
 import ru.fazziclay.opentoday.ui.activity.CrashReportActivity;
+import ru.fazziclay.opentoday.ui.activity.MainActivity;
 import ru.fazziclay.opentoday.util.DebugUtil;
-import ru.fazziclay.opentoday.util.Profiler;
 
 @SuppressWarnings("PointlessBooleanExpression") // for debug variables
 public class App extends Application {
@@ -73,6 +73,33 @@ public class App extends Application {
     private Telemetry telemetry;
     private JSONObject versionData;
     private boolean appInForeground = false;
+
+    public static final MainActivity.QuickNoteInterface QUICK_NOTE = s -> {
+        List<ItemNotification> notifys = new ArrayList<>();
+        boolean parseTime = true;
+        if (parseTime) {
+            char[] chars = s.toCharArray();
+            int i = 0;
+            for (char aChar : chars) {
+                if (aChar == ':') {
+                    try {
+                        if (i >= 2 && chars.length >= 5) {
+                            int hours = Integer.parseInt(String.valueOf(chars[i - 2]) + chars[i - 1]);
+                            int minutes = Integer.parseInt(String.valueOf(chars[i + 1]) + chars[i + 2]);
+
+                            DayItemNotification noti = new DayItemNotification();
+                            noti.setTime((hours * 60 * 60) + (minutes * 60));
+                            noti.setNotifyTextFromItemText(true);
+                            notifys.add(noti);
+                        }
+                    } catch (Exception ignored) {
+                    }
+                }
+                i++;
+            }
+        }
+        return notifys;
+    };
 
     @Override
     public void onCreate() {

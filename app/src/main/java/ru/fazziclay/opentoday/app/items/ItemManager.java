@@ -64,8 +64,13 @@ public class ItemManager {
 
         } else {
             try {
-                JSONObject jRoot = new JSONObject(FileUtil.getText(dataFile));
-                JSONArray jTabs = jRoot.getJSONArray("tabs");
+                JSONObject jRoot = new JSONObject(FileUtil.getText(dataFile, "{}"));
+                JSONArray jTabs;
+                if (jRoot.has("tabs")) {
+                    jTabs = jRoot.getJSONArray("tabs");
+                } else {
+                    jTabs = new JSONArray();
+                }
 
                 int i = 0;
                 while (i < jTabs.length()) {

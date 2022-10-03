@@ -162,4 +162,12 @@
     <string name="toolbar_more_file_import_success">Успешно</string>
     <string name="toolbar_more_file_import_hint">Вставте экспортированный текст или ссылку</string>
     <string name="toolbar_more_file_import_textHint">Введите сюда текст импорта или ссылку</string>
+    <string name="quickNote_hint">Введите текст</string>
+    <string name="quickNote_add">Добавить быструю заметку</string>
+    <string name="toolbar_more_items_tab_rename">Переименовать</string>
+    <string name="toolbar_more_items_tab_add">Создать</string>
+    <string name="toolbar_more_items_tab_delete">Удалить</string>
+    <string name="abc_cancel">Отмена</string>
+    <string name="tab_noEmptyName">Пустое имя недопустимо</string>
+    <string name="exit_tab_2_count">Нажмите 2 раза что бы выйти</string>
 </resources>

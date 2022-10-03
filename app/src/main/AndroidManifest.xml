@@ -43,10 +43,6 @@
         </activity>
 
         <!-- Services -->
-        <service
-            android:name=".app.receiver.service.UITickService"
-            android:enabled="true"
-            android:exported="false" />
 
         <!-- Receivers -->
         <receiver
