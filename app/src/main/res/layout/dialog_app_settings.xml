@@ -26,4 +26,16 @@
         android:layout_height="wrap_content"
         android:text="@string/settings_quickNote" />
 
+    <CheckBox
+        android:id="@+id/parseTimeFromQuickNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_parseTimeFromQuickNote" />
+
+    <CheckBox
+        android:id="@+id/minimizeGrayColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_minimizeGrayColor" />
+
 </LinearLayout>

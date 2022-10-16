@@ -2,27 +2,18 @@ package ru.fazziclay.opentoday.ui.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.NotificationManager;
 import android.app.TimePickerDialog;
-import android.content.DialogInterface;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.NotificationCompat;
 
 import ru.fazziclay.opentoday.R;
-import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.items.item.Item;
-import ru.fazziclay.opentoday.app.items.notifications.DayItemNotification;
-import ru.fazziclay.opentoday.app.items.notifications.ItemNotification;
+import ru.fazziclay.opentoday.app.items.notification.DayItemNotification;
+import ru.fazziclay.opentoday.app.items.notification.ItemNotification;
 import ru.fazziclay.opentoday.databinding.DialogItemNotificationBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemNotificationsEditorBinding;
 import ru.fazziclay.opentoday.databinding.ItemNotificationBinding;

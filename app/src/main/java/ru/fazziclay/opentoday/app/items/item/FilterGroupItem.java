@@ -12,20 +12,18 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.UUID;
 
 import ru.fazziclay.opentoday.annotation.RequireSave;
 import ru.fazziclay.opentoday.annotation.SaveKey;
 import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.TickSession;
-import ru.fazziclay.opentoday.app.items.ContainerItem;
-import ru.fazziclay.opentoday.app.items.ItemController;
-import ru.fazziclay.opentoday.app.items.ItemIEUtil;
-import ru.fazziclay.opentoday.app.items.ItemStorage;
-import ru.fazziclay.opentoday.app.items.ItemsRegistry;
+import ru.fazziclay.opentoday.app.items.ItemsStorage;
+import ru.fazziclay.opentoday.app.items.ItemsUtils;
 import ru.fazziclay.opentoday.app.items.callback.OnItemStorageUpdate;
 import ru.fazziclay.opentoday.callback.CallbackStorage;
 
-public class FilterGroupItem extends TextItem implements ContainerItem, ItemStorage {
+public class FilterGroupItem extends TextItem implements ContainerItem, ItemsStorage {
     // START - Save
     public final static FilterGroupItemIETool IE_TOOL = new FilterGroupItemIETool();
     public static class FilterGroupItemIETool extends TextItem.TextItemIETool {
@@ -115,6 +113,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemStor
         return ret.toArray(new Item[0]);
     }
 
+    @NonNull
     @Override
     public Item[] getAllItems() {
         List<Item> ret = new ArrayList<>();
@@ -122,6 +121,15 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemStor
             ret.add(wrapper.item);
         }
         return ret.toArray(new Item[0]);
+    }
+
+    @Override
+    public Item regenerateId() {
+        super.regenerateId();
+        for (ItemFilterWrapper item : items) {
+            item.item.regenerateId();
+        }
+        return this;
     }
 
     // Item storage
@@ -134,8 +142,8 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemStor
         if (item.item.getClass() == Item.class) {
             throw new RuntimeException("'Item' not allowed to add (add Item parents)");
         }
-        item.item.regenerateId();
         item.item.setController(groupItemController);
+        item.item.regenerateId();
         items.add(item);
         itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onAdded(item.item));
         if (!recalculate(new GregorianCalendar())) {
@@ -167,6 +175,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemStor
         save();
     }
 
+    @NonNull
     @Override
     public Item copyItem(Item item) {
         ItemFilter filter = getItemFilter(item);
@@ -206,9 +215,15 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemStor
         return -1; // List.indexOf()
     }
 
+    @NonNull
     @Override
     public CallbackStorage<OnItemStorageUpdate> getOnUpdateCallbacks() {
         return itemStorageUpdateCallbacks;
+    }
+
+    @Override
+    public Item getItemById(UUID itemId) {
+        return ItemsUtils.getItemById(getAllItems(), itemId);
     }
 
     @Override
@@ -223,15 +238,6 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemStor
             tickList.get(i).item.tick(tickSession);
             i--;
         }
-    }
-
-    @Override
-    public Item regenerateId() {
-        super.regenerateId();
-        for (Item item : getAllItems()) {
-            item.regenerateId();
-        }
-        return this;
     }
 
     public boolean recalculate(GregorianCalendar gregorianCalendar) {

@@ -1,4 +1,4 @@
-package ru.fazziclay.opentoday.app.items.notifications;
+package ru.fazziclay.opentoday.app.items.notification;
 
 public class ItemNotificationsRegistry {
     public static final ItemNotificationsRegistry REGISTRY = new ItemNotificationsRegistry();

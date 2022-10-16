@@ -17,15 +17,15 @@ import ru.fazziclay.opentoday.annotation.RequireSave;
 import ru.fazziclay.opentoday.annotation.SaveKey;
 import ru.fazziclay.opentoday.annotation.Setter;
 import ru.fazziclay.opentoday.app.TickSession;
-import ru.fazziclay.opentoday.app.items.ItemController;
-import ru.fazziclay.opentoday.app.items.ItemImportExportTool;
-import ru.fazziclay.opentoday.app.items.notifications.ItemNotification;
-import ru.fazziclay.opentoday.app.items.notifications.ItemNotificationIETool;
-import ru.fazziclay.opentoday.app.items.notifications.ItemNotificationsRegistry;
+import ru.fazziclay.opentoday.app.items.notification.ItemNotification;
+import ru.fazziclay.opentoday.app.items.notification.ItemNotificationIETool;
+import ru.fazziclay.opentoday.app.items.notification.ItemNotificationsRegistry;
 
+/**
+ * Main app count (contain information) todo add javadoc to Item :)
+ */
 public abstract class Item {
     private static final String DEFAULT_BACKGROUND_COLOR = "#99999999";
-
     // START - Save
     public static class ItemIETool extends ItemImportExportTool {
         @NonNull
@@ -94,8 +94,10 @@ public abstract class Item {
     }
     // END - Save
 
-    @NonNull @RequireSave @SaveKey(key = "id")
+    @RequireSave @SaveKey(key = "id")
     private UUID id;
+
+    @Nullable private ItemController controller = null;
 
     @SaveKey(key = "viewMinHeight") @RequireSave
     private int viewMinHeight = 0; // минимальная высота
@@ -112,12 +114,11 @@ public abstract class Item {
     @NonNull @SaveKey(key = "notifications") @RequireSave
     private List<ItemNotification> notifications = new ArrayList<>();
 
-    @Nullable private ItemController controller = null;
-
     // Copy constructor
     public Item(@Nullable Item copy) {
+        this.id = null;
+        this.controller = null;
         if (copy != null) {
-            this.id = copy.id != null ? copy.id : UUID.randomUUID();
             this.viewMinHeight = copy.viewMinHeight;
             this.viewBackgroundColor = copy.viewBackgroundColor;
             this.viewCustomBackgroundColor = copy.viewCustomBackgroundColor;
@@ -127,9 +128,6 @@ public abstract class Item {
                 ItemNotification newNotify = copyNotify.clone();
                 this.notifications.add(newNotify);
             }
-            this.controller = copy.controller;
-        } else {
-            this.id = UUID.randomUUID();
         }
     }
 
@@ -165,17 +163,32 @@ public abstract class Item {
         return "{Item}";
     }
 
+    public boolean isAttached() {
+        return controller != null;
+    }
+
+    public void setId(UUID randomUUID) {
+        this.id = id;
+    }
+
     // Getters & Setters
     @Getter @NonNull public UUID getId() { return id; }
-    @Setter public void setId(@NonNull UUID id) { this.id = id; }
+
     @Getter public int getViewMinHeight() { return viewMinHeight; }
     @Setter public void setViewMinHeight(int v) { this.viewMinHeight = v; }
+
     @Getter public int getViewBackgroundColor() { return viewBackgroundColor; }
     @Setter public void setViewBackgroundColor(int v) { this.viewBackgroundColor = v; }
+
     @Getter public boolean isViewCustomBackgroundColor() { return viewCustomBackgroundColor; }
     @Setter public void setViewCustomBackgroundColor(boolean v) { this.viewCustomBackgroundColor = v; }
+
     @Getter public boolean isMinimize() { return minimize; }
     @Setter public void setMinimize(boolean minimize) { this.minimize = minimize; }
-    @Setter public void setController(@Nullable ItemController controller) { this.controller = controller; }
+
+    public void setController(@Nullable ItemController controller) {
+        this.controller = controller;
+    }
+
     @Getter @NonNull public List<ItemNotification> getNotifications() { return notifications; }
 }

@@ -1,5 +1,11 @@
 package ru.fazziclay.opentoday.util;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
+import android.widget.Toast;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,6 +13,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import ru.fazziclay.opentoday.R;
 
 /**
  * Набор утилит для работы с сетью
@@ -46,6 +54,15 @@ public class NetworkUtil {
         int logKey = new Random().nextInt();
         if (logKey < 0) logKey *= -1;
         return logKey;
+    }
+    
+    public static void openBrowser(Activity activity, String url) {
+        try {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            activity.startActivity(browserIntent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(activity, R.string.abc_error_browserNotFound, Toast.LENGTH_LONG).show();
+        }
     }
 
     public interface LogInterface {

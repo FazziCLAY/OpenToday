@@ -1,5 +1,6 @@
 package ru.fazziclay.opentoday.util;
 
+@Deprecated
 public class SpinnerHelper<T> {
     private final T[] values;
     private final String[] names;

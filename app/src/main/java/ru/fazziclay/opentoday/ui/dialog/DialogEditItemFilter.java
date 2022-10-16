@@ -2,7 +2,6 @@ package ru.fazziclay.opentoday.ui.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
@@ -12,10 +11,12 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.items.item.FilterGroupItem;
@@ -43,15 +44,16 @@ public class DialogEditItemFilter {
         this.calendar = new GregorianCalendar();
         this.handler = new Handler(Looper.getMainLooper());
         this.dialog.setContentView(binding.getRoot());
-        this.dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                for (Runnable runnable : runnableList) {
-                    handler.removeCallbacks(runnable);
-                }
-                runnableList.clear();
+        this.dialog.setOnCancelListener(dialog -> {
+            for (Runnable runnable : runnableList) {
+                handler.removeCallbacks(runnable);
             }
+            runnableList.clear();
         });
+
+        DateFormatSymbols dfs = DateFormatSymbols.getInstance(Locale.getDefault());
+        String[] months = dfs.getMonths();
+        String[] weekdays = dfs.getWeekdays();
 
         setupRow(new SetupInterface() {
             @Override
@@ -85,7 +87,21 @@ public class DialogEditItemFilter {
             public int getCurrentValue() {
                 return calendar.get(Calendar.MONTH);
             }
-        }, binding.month, R.string.dialog_editItemFilter_month);
+        }, binding.month, R.string.dialog_editItemFilter_month, new SimpleSpinnerAdapter<Integer>(activity)
+                .add("(0) " + months[0], 0)
+                .add("(1) " + months[1], 1)
+                .add("(2) " + months[2], 2)
+                .add("(3) " + months[3], 3)
+                .add("(4) " + months[4], 4)
+                .add("(5) " + months[5], 5)
+                .add("(6) " + months[6], 6)
+                .add("(7) " + months[7], 7)
+                .add("(8) " + months[8], 8)
+                .add("(9) " + months[9], 9)
+                .add("(10) " + months[10], 10)
+                .add("(11) " + months[11], 11)
+
+        );
         setupRow(new SetupInterface() {
             @Override
             public FilterGroupItem.ItemFilter.IntegerValue get() {
@@ -118,7 +134,16 @@ public class DialogEditItemFilter {
             public int getCurrentValue() {
                 return calendar.get(Calendar.DAY_OF_WEEK);
             }
-        }, binding.dayOfWeek, R.string.dialog_editItemFilter_dayOfWeek);
+        }, binding.dayOfWeek, R.string.dialog_editItemFilter_dayOfWeek, new SimpleSpinnerAdapter<Integer>(activity)
+                .add("(1) " + weekdays[1], 1)
+                .add("(2) " + weekdays[2], 2)
+                .add("(3) " + weekdays[3], 3)
+                .add("(4) " + weekdays[4], 4)
+                .add("(5) " + weekdays[5], 5)
+                .add("(6) " + weekdays[6], 6)
+                .add("(7) " + weekdays[7], 7)
+
+        );
         setupRow(new SetupInterface() {
             @Override
             public FilterGroupItem.ItemFilter.IntegerValue get() {
@@ -207,12 +232,19 @@ public class DialogEditItemFilter {
     }
 
     private void setupRow(SetupInterface setup, DialogEditItemFilterRowBinding binding, int resId) {
-        setupRow(setup, binding.currentValue, binding.field, resId, binding.mode, binding.value, binding.shift, binding.invert);
+        setupRow(setup, binding, resId, null);
     }
 
-    private void setupRow(SetupInterface setup, TextView currentValue, TextView field, int resId, Spinner mode, EditText value, EditText shift, CheckBox isInvert) {
+    private void setupRow(SetupInterface setup, DialogEditItemFilterRowBinding binding, int resId, SimpleSpinnerAdapter<Integer> s) {
+        setupRow(setup, binding.currentValue, binding.field, resId, binding.mode, binding.value, binding.valueEnum, binding.shift, binding.invert, s);
+    }
+
+    private void setupRow(SetupInterface setup, TextView currentValue, TextView field, int resId, Spinner mode, EditText value, Spinner valueEnum, EditText shift, CheckBox isInvert, SimpleSpinnerAdapter<Integer> enumAdapter) {
+        boolean enumMode = enumAdapter != null;
         FilterGroupItem.ItemFilter.IntegerValue setupValue = setup.get();
         value.setEnabled(setupValue != null);
+        valueEnum.setEnabled(setupValue != null);
+        if (enumMode) valueEnum.setAdapter(enumAdapter);
         shift.setEnabled(setupValue != null);
         isInvert.setEnabled(setupValue != null);
 
@@ -230,7 +262,7 @@ public class DialogEditItemFilter {
         });
 
         SimpleSpinnerAdapter<String> simpleSpinnerAdapter = new SimpleSpinnerAdapter<String>(activity)
-                .add("Disable", "disable")
+                .add(activity.getString(R.string.dialog_editItemFilter_disable), "disable")
                 .add("==", "==")
                 .add(">", ">")
                 .add(">=", ">=")
@@ -248,6 +280,7 @@ public class DialogEditItemFilter {
                 mode.setSelection(simpleSpinnerAdapter.getValuePosition(setupValue.getMode()));
             }
             value.setText(String.valueOf(setupValue.getValue()));
+            if (enumMode) valueEnum.setSelection(enumAdapter.getValuePosition(setupValue.getValue()));
             shift.setText(String.valueOf(setupValue.getShift()));
             isInvert.setChecked(setupValue.isInvert());
         }
@@ -264,6 +297,7 @@ public class DialogEditItemFilter {
                 if ("disable".equals(selected)) {
                     value.setEnabled(false);
                     value.setText("");
+                    valueEnum.setEnabled(false);
                     shift.setEnabled(false);
                     shift.setText("");
                     isInvert.setEnabled(false);
@@ -273,12 +307,14 @@ public class DialogEditItemFilter {
                 }
 
                 value.setEnabled(true);
+                valueEnum.setEnabled(true);
                 shift.setEnabled(true);
                 isInvert.setEnabled(true);
                 FilterGroupItem.ItemFilter.IntegerValue integerValue = setup.get();
                 if (integerValue == null) {
                     setup.set(integerValue = new FilterGroupItem.ItemFilter.IntegerValue());
                 }
+                if (enumMode) integerValue.setValue(enumAdapter.getItem(valueEnum.getSelectedItemPosition()));
                 integerValue.setMode(selected);
                 saveSignal.run();
             }
@@ -287,22 +323,46 @@ public class DialogEditItemFilter {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        value.addTextChangedListener(new MinTextWatcher() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String text = value.getText().toString();
-                int val = 0;
-                try {
-                    val = Integer.parseInt(text);
-                } catch (Exception ignored) {}
 
-                FilterGroupItem.ItemFilter.IntegerValue integerValue = setup.get();
-                if (integerValue != null) {
-                    integerValue.setValue(val);
-                    saveSignal.run();
+        value.setVisibility(!enumMode ? View.VISIBLE : View.GONE);
+        valueEnum.setVisibility(enumMode ? View.VISIBLE : View.GONE);
+
+        if (!enumMode) {
+            value.addTextChangedListener(new MinTextWatcher() {
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    String text = value.getText().toString();
+                    int val = 0;
+                    try {
+                        val = Integer.parseInt(text);
+                    } catch (Exception ignored) {
+                    }
+
+                    FilterGroupItem.ItemFilter.IntegerValue integerValue = setup.get();
+                    if (integerValue != null) {
+                        integerValue.setValue(val);
+                        saveSignal.run();
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            valueEnum.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    int val = enumAdapter.getItem(position);
+                    FilterGroupItem.ItemFilter.IntegerValue integerValue = setup.get();
+                    if (integerValue != null) {
+                        integerValue.setValue(val);
+                        saveSignal.run();
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+        }
 
         shift.addTextChangedListener(new MinTextWatcher() {
             @Override

@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 
 import org.json.JSONArray;
@@ -11,6 +12,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -30,7 +32,13 @@ import ru.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem;
 import ru.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import ru.fazziclay.opentoday.app.items.item.GroupItem;
 import ru.fazziclay.opentoday.app.items.item.Item;
+import ru.fazziclay.opentoday.app.items.item.ItemIEUtil;
 import ru.fazziclay.opentoday.app.items.item.TextItem;
+import ru.fazziclay.opentoday.app.items.tab.LocalItemsTab;
+import ru.fazziclay.opentoday.app.items.tab.ItemsTabController;
+import ru.fazziclay.opentoday.app.items.tab.Tab;
+import ru.fazziclay.opentoday.app.items.tab.TabIEUtil;
+import ru.fazziclay.opentoday.app.items.tab.TabsRegistry;
 import ru.fazziclay.opentoday.callback.CallbackStorage;
 import ru.fazziclay.opentoday.callback.Status;
 import ru.fazziclay.opentoday.util.Profiler;
@@ -38,20 +46,22 @@ import ru.fazziclay.opentoday.util.Profiler;
 public class ItemManager {
     private static final boolean DEBUG_ITEMS_SET = (App.DEBUG && false);
 
-    private final File dataFile;
-    private final SaveThread saveThread = new SaveThread();
-
+    // Selection
     private final List<Selection> selections = new ArrayList<>();
     private final CallbackStorage<OnSelectionChanged> onSelectionUpdated = new CallbackStorage<>();
 
+    // TODO: 13.10.2022 move to settings
     private ItemAction itemOnClickAction = ItemAction.OPEN_EDIT_DIALOG;
     private ItemAction itemOnLeftAction = ItemAction.MINIMIZE_REVERT;
 
-    @RequireSave @SaveKey(key = "tabs") private final List<ItemsTab> tabs = new ArrayList<>();
-    private final ItemsTabController itemsTabController = new LocalItemTabsController();
-    private final CallbackStorage<OnTabsChanged> onTabsChangedCallbacks = new CallbackStorage<>();
 
-    public ItemManager(File dataFile) {
+    @NonNull private final File dataFile;
+    @NonNull private final SaveThread saveThread = new SaveThread();
+    @NonNull @RequireSave @SaveKey(key = "tabs") private final List<Tab> tabs = new ArrayList<>();
+    @NonNull private final ItemsTabController itemsTabController = new LocalItemTabsController();
+    @NonNull private final CallbackStorage<OnTabsChanged> onTabsChangedCallbacks = new CallbackStorage<>();
+
+    public ItemManager(@NonNull File dataFile) {
         this.dataFile = dataFile;
         load();
         saveThread.start();
@@ -60,32 +70,24 @@ public class ItemManager {
     private void load() {
         Profiler profiler = new Profiler("ItemManager load");
         if (DEBUG_ITEMS_SET) {
-            tabs.addAll(generateDebugData());
+            tabs.addAll(generateDebugDataSet());
 
         } else {
             try {
-                JSONObject jRoot = new JSONObject(FileUtil.getText(dataFile, "{}"));
-                JSONArray jTabs;
-                if (jRoot.has("tabs")) {
-                    jTabs = jRoot.getJSONArray("tabs");
+                JSONObject jsonRoot = new JSONObject(FileUtil.getText(dataFile, "{}"));
+                JSONArray jsonTabs;
+                if (jsonRoot.has("tabs")) {
+                    jsonTabs = jsonRoot.getJSONArray("tabs");
                 } else {
-                    jTabs = new JSONArray();
+                    jsonTabs = new JSONArray();
                 }
-
-                int i = 0;
-                while (i < jTabs.length()) {
-                    JSONObject jTab = jTabs.getJSONObject(i);
-                    ItemsTab tab = new ItemsTab(UUID.fromString(jTab.getString("id")), jTab.getString("name"), itemsTabController);
-                    DataTransferPacket d = new DataTransferPacket();
-                    d.items = ItemIEUtil.importItemList(jTab.getJSONArray("items"));
-                    tab.importData(d);
-                    i++;
-                    this.tabs.add(tab);
+                List<Tab> tabs = TabIEUtil.importTabs(jsonTabs);
+                for (Tab tab : tabs) {
+                    tab.setController(itemsTabController);
                 }
-
+                this.tabs.addAll(tabs);
             } catch (Exception e) {
-                e.printStackTrace();
-                throw new RuntimeException("ItemManager load exception", e);
+                throw new RuntimeException("Load error! Data is break", e);
             }
         }
         if (tabs.isEmpty()) {
@@ -95,24 +97,42 @@ public class ItemManager {
     }
 
     // ==== TABS ====
-    public List<ItemsTab> getTabs() {
+    @NonNull
+    public List<Tab> getTabs() {
         return tabs;
     }
 
-    public ItemsTab getTab(UUID uuid) {
-        for (ItemsTab itemsTab : getTabs()) {
-            if (itemsTab.getId().equals(uuid)) {
-                return itemsTab;
+    public Tab getTab(UUID uuid) {
+        for (Tab tab : getTabs()) {
+            if (tab.getId().equals(uuid)) {
+                return tab;
             }
         }
         return null;
     }
 
-    public ItemsTab getMainTab() {
+    public Tab getMainTab() {
         return getTabs().get(0);
     }
 
-    public void deleteTab(ItemsTab tab) {
+    public void createTab(String name) {
+        if (name.trim().isEmpty()) {
+            throw new RuntimeException("Empty name for tab is not allowed!");
+        }
+        addTab(new LocalItemsTab(UUID.randomUUID(), name));
+        internalOnTabChanged();
+        save();
+    }
+
+    private void addTab(Tab tab) {
+        if (tab.getId() == null) tab.setId(UUID.randomUUID());
+        tab.setController(itemsTabController);
+        this.tabs.add(tab);
+        internalOnTabChanged();
+        save();
+    }
+
+    public void deleteTab(Tab tab) {
         if (this.tabs.size() == 1) {
             throw new SecurityException("Not allowed one tab (after delete tabs count == 0)");
         }
@@ -121,26 +141,22 @@ public class ItemManager {
         save();
     }
 
-    public void createTab(String name) {
-        if (name.trim().isEmpty()) {
-            throw new RuntimeException("Empty name for tab is not allowed!");
-        }
-        this.tabs.add(new ItemsTab(UUID.randomUUID(), name, itemsTabController));
+    public void moveTabs(int positionFrom, int positionTo) {
+        Collections.swap(this.tabs, positionFrom, positionTo);
         internalOnTabChanged();
-        save();
     }
 
     private void internalOnTabChanged() {
-        onTabsChangedCallbacks.run((callbackStorage, callback) -> callback.run(this.tabs.toArray(new ItemsTab[0])));
+        onTabsChangedCallbacks.run((callbackStorage, callback) -> callback.run(this.tabs.toArray(new Tab[0])));
     }
 
     private class LocalItemTabsController implements ItemsTabController {
         @Override
-        public void save(ItemsTab itemsTab) {
+        public void save(Tab tab) {
             ItemManager.this.save();
         }
         @Override
-        public void nameChanged(ItemsTab itemsTab) {
+        public void nameChanged(Tab tab) {
             ItemManager.this.internalOnTabChanged();
         }
     }
@@ -148,7 +164,7 @@ public class ItemManager {
     // ==== Tick ====
     public void tick(TickSession tickSession, List<UUID> uuids) {
         for (UUID uuid : uuids) {
-            for (ItemsTab tab : tabs) {
+            for (Tab tab : tabs) {
                 Item i = tab.getItemById(uuid);
                 if (i != null) {
                     i.tick(tickSession);
@@ -158,7 +174,8 @@ public class ItemManager {
     }
 
     public void tick(TickSession tickSession) {
-        for (ItemsTab tab : tabs) {
+        for (Tab tab : tabs) {
+            if (tab == null) continue;
             tab.tick(tickSession);
         }
     }
@@ -237,15 +254,7 @@ public class ItemManager {
             // Save
             {
                 JSONObject jRoot = new JSONObject();
-                JSONArray jTabs = new JSONArray();
-
-                for (ItemsTab tab : this.tabs) {
-                    JSONObject jTab = new JSONObject();
-                    jTab.put("id", tab.getId().toString());
-                    jTab.put("name", tab.getName());
-                    jTab.put("items", ItemIEUtil.exportItemList(tab.exportData().items));
-                    jTabs.put(jTab);
-                }
+                JSONArray jTabs = TabIEUtil.exportTabs(this.tabs);
                 jRoot.put("tabs", jTabs);
 
                 FileUtil.setText(dataFile, jRoot.toString(2));
@@ -312,7 +321,7 @@ public class ItemManager {
         }
     }
 
-    private List<ItemsTab> generateDebugData() {
+    private List<Tab> generateDebugDataSet() {
         List<Item> items = new ArrayList<>();
         items.add(new TextItem("first TextItem"));
         items.add(new CheckboxItem("first CheckboxItem", false));
@@ -330,13 +339,8 @@ public class ItemManager {
             i++;
         }
 
-        ItemsTab tab = new ItemsTab(UUID.randomUUID(), "Debug Set", itemsTabController);
-        for (Item item : items) {
-            tab.addItem(item);
-        }
-        List<ItemsTab> tabs = new ArrayList<>();
-        tabs.add(tab);
-        tabs.add(new ItemsTab(UUID.randomUUID(), "DebutSetNone", itemsTabController));
+        List<Tab> tabs = new ArrayList<>();
+        addTab(new LocalItemsTab(UUID.randomUUID(), "Debug1"));
         return tabs;
     }
 

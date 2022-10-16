@@ -10,6 +10,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import ru.fazziclay.opentoday.util.L;
+
 public class CrashReport {
     private final UUID id;
     private final Thread thread;
@@ -17,6 +19,7 @@ public class CrashReport {
     private final long crashTimeMillis;
     private final long crashTimeNano;
     private final Map<Thread, StackTraceElement[]> allStackTraces;
+    private FatalEnum fatal = FatalEnum.UNKNOWN;
 
     public static CrashReport create(Thread thread, Throwable throwable, long crashTimeMillis, long crashTimeNano, Map<Thread, StackTraceElement[]> allStackTraces) {
         return new CrashReport(thread, throwable, crashTimeMillis, crashTimeNano, allStackTraces);
@@ -38,10 +41,14 @@ public class CrashReport {
     public String convertToText() {
         String text = "=== OpenToday Crash ===\n" +
                 "CrashID: %_CRASH_ID_%\n" +
+                "Fatal: %_FATAL_%\n" +
                 "Application: (%_APPLICATION_PACKAGE_%)\n" +
+                " * instanceId: %_INSTANCE_ID_%\n" +
                 " * VERSION_BUILD: %_APPLICATION_VERSION_BUILD_%\n" +
                 " * VERSION_NAME: %_APPLICATION_VERSION_NAME_%\n" +
                 " * DATA_VERSION: %_APPLICATION_DATA_VERSION_%\n" +
+                " * version file: \n" +
+                "%_VERSION_FILE_%\n" +
                 " * DEBUG: %_APPLICATION_DEBUG_%\n" +
                 " * DEBUG_TICK_NOTIFICATION: %_APPLICATION_DEBUG_TICK_NOTIFICATION_%\n" +
                 " * DEBUG_MAIN_ACTIVITY_START_SLEEP: %_APPLICATION_DEBUG_MAIN_ACTIVITY_START_SLEEP_%\n" +
@@ -52,11 +59,20 @@ public class CrashReport {
                 "Device:\n" +
                 " * SDK_INT: %_DEVICE_ANDROID_SDK_INT_%\n" +
                 " * BASE_OS: %_DEVICE_ANDROID_BASE_OS_%\n" +
+                " * Product: %_DEVICE_PRODUCT_%\n" +
+                " * Brand: %_DEVICE_BRAND_%\n" +
+                " * Model: %_DEVICE_MODEL_%\n" +
+                " * Manufacturer: %_DEVICE_MANUFACTURER_%\n" +
+                " * Display: %_DEVICE_DISPLAY_%\n" +
+                " * Bootloader: %_DEVICE_BOOTLOADER_%\n" +
                 "\n" +
                 "Time:\n" +
                 "* Formatted: %_TIME_FORMATTED_%\n" +
                 "* Millis: %_TIME_MILLIS_%\n" +
                 "* Nano: %_TIME_NANO_%\n" +
+                "\n" +
+                "L(debug logger):\n" +
+                "%_L_LOGS_%\n" +
                 "\n" +
                 "Thread: %_THREAD_%\n" +
                 "Throwable:\n" +
@@ -88,11 +104,33 @@ public class CrashReport {
             throwableText = "(Unknown: " + e + ")";
         }
 
+        String versionFileText;
+        try {
+            versionFileText = App.get().getVersionData().toString(2);
+            String[] r = versionFileText.split("\n");
+            StringBuilder temp = new StringBuilder();
+            for (String s : r) {
+                temp.append(" * * ").append(s).append("\n");
+            }
+            versionFileText = temp.substring(0, temp.length()-1);
+
+        } catch (Exception e) {
+            versionFileText = "(Unknown " + e + ")";
+        }
+
+        UUID instanceId = null;
+        try {
+            instanceId = App.get().getInstanceId();
+        } catch (Exception ignored) {}
+
+        text = text.replace("%_INSTANCE_ID_%", (instanceId == null ? "null" : instanceId.toString()));
         text = text.replace("%_CRASH_ID_%", (this.id == null ? "null" : this.id.toString()));
+        text = text.replace("%_FATAL_%", (this.fatal == null ? "null" : this.fatal.name()));
         text = text.replace("%_APPLICATION_PACKAGE_%", App.APPLICATION_ID);
         text = text.replace("%_APPLICATION_VERSION_BUILD_%", String.valueOf(App.VERSION_CODE));
         text = text.replace("%_APPLICATION_VERSION_NAME_%", App.VERSION_NAME);
         text = text.replace("%_APPLICATION_DATA_VERSION_%", String.valueOf(App.APPLICATION_DATA_VERSION));
+        text = text.replace("%_VERSION_FILE_%", versionFileText == null ? "null" : versionFileText);
         text = text.replace("%_APPLICATION_DEBUG_%", String.valueOf(App.DEBUG));
         text = text.replace("%_APPLICATION_DEBUG_TICK_NOTIFICATION_%", String.valueOf(App.DEBUG_TICK_NOTIFICATION));
         text = text.replace("%_APPLICATION_DEBUG_MAIN_ACTIVITY_START_SLEEP_%", String.valueOf(App.DEBUG_MAIN_ACTIVITY_START_SLEEP));
@@ -107,6 +145,20 @@ public class CrashReport {
         text = text.replace("%_THROWABLE_%", throwableText);
         text = text.replace("%_DEVICE_ANDROID_SDK_INT_%", String.valueOf(Build.VERSION.SDK_INT));
         text = text.replace("%_DEVICE_ANDROID_BASE_OS_%", String.valueOf(Build.VERSION.BASE_OS));
+        text = text.replace("%_DEVICE_PRODUCT_%", String.valueOf(Build.PRODUCT));
+        text = text.replace("%_DEVICE_BRAND_%", String.valueOf(Build.BRAND));
+        text = text.replace("%_DEVICE_MODEL_%", String.valueOf(Build.MODEL));
+        text = text.replace("%_DEVICE_MANUFACTURER_%", String.valueOf(Build.MANUFACTURER));
+        text = text.replace("%_DEVICE_DISPLAY_%", String.valueOf(Build.DISPLAY));
+        text = text.replace("%_DEVICE_BOOTLOADER_%", String.valueOf(Build.BOOTLOADER));
+
+        String loggerLLogs;
+        try {
+            loggerLLogs = L.getInstance().getFinalText();
+        } catch (Exception e) {
+            loggerLLogs = "(Unknown " + e + ")";
+        }
+        text = text.replace("%_L_LOGS_%", loggerLLogs != null ? loggerLLogs : "null");
 
         return text;
     }
@@ -117,5 +169,19 @@ public class CrashReport {
 
     public Thread getThread() {
         return thread;
+    }
+
+    public void setFatal(FatalEnum fatal) {
+        this.fatal = fatal;
+    }
+
+    public FatalEnum getFatal() {
+        return fatal;
+    }
+
+    public enum FatalEnum {
+        UNKNOWN,
+        YES,
+        NO
     }
 }

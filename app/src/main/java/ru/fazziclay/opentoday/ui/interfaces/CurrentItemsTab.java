@@ -2,10 +2,10 @@ package ru.fazziclay.opentoday.ui.interfaces;
 
 import java.util.UUID;
 
-import ru.fazziclay.opentoday.app.items.ItemsTab;
+import ru.fazziclay.opentoday.app.items.tab.Tab;
 
 public interface CurrentItemsTab {
     UUID getCurrentTabId();
-    ItemsTab getCurrentTab();
+    Tab getCurrentTab();
     void setCurrentTab(UUID id);
 }

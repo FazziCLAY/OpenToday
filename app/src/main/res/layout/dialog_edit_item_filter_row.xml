@@ -24,10 +24,19 @@
 
     <EditText
         android:id="@+id/value"
-        android:layout_width="100sp"
+        android:layout_width="120sp"
         android:importantForAutofill="no"
         android:hint="0"
         android:inputType="number"
+        android:layout_height="match_parent"
+        tools:ignore="HardcodedText" />
+
+    <Spinner
+        android:id="@+id/valueEnum"
+        android:visibility="gone"
+        android:layout_width="120sp"
+        android:importantForAutofill="no"
+        android:hint="0"
         android:layout_height="match_parent"
         tools:ignore="HardcodedText" />
 

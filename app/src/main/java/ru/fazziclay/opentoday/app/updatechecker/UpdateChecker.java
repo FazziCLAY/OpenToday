@@ -12,9 +12,9 @@ import ru.fazziclay.opentoday.util.NetworkUtil;
 public class UpdateChecker {
     private static final String URL = "https://fazziclay.github.io/api/project_3/v1/latest/url";
     private static final String BUILD = "https://fazziclay.github.io/api/project_3/v1/latest/build";
-    private static final long CACHE_TIMEOUT_MILLIS = 1000 * 60 * 60;
+    private static final long CACHE_TIMEOUT_MILLIS = 5 * 60 * 60 * 1000; // 5 hours
     
-    public static void check(Context context, Check check) {
+    public static void check(Context context, Result result) {
         new Thread(() -> {
             final long CURRENT_TIME = System.currentTimeMillis();
             File cacheFile = new File(context.getExternalCacheDir(), "latest_update_check");
@@ -22,7 +22,7 @@ public class UpdateChecker {
                 try {
                     long latestCheck = Long.parseLong(FileUtil.getText(cacheFile));
                     if (CURRENT_TIME - latestCheck < CACHE_TIMEOUT_MILLIS) {
-                        check.run(false, null);
+                        result.run(false, null);
                         Log.d("UpdateChecker", "run. available=false (CACHED!!!)");
                         return;
                     }
@@ -39,10 +39,10 @@ public class UpdateChecker {
                 if (App.VERSION_CODE < latestBuild) {
                     String url = NetworkUtil.parseTextPage(URL);
                     Log.d("UpdateChecker", "url (remote) = " + url);
-                    check.run(true, url);
+                    result.run(true, url);
                     Log.d("UpdateChecker", "run. available=true");
                 } else {
-                    check.run(false, null);
+                    result.run(false, null);
                     Log.d("UpdateChecker", "run. available=false");
                     FileUtil.setText(cacheFile, String.valueOf(CURRENT_TIME));
                 }
@@ -53,7 +53,7 @@ public class UpdateChecker {
         }).start();
     }
 
-    public interface Check {
+    public interface Result {
         void run(boolean available, String url);
     }
 }

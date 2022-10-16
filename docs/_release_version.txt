@@ -1,7 +1,7 @@
 # 0. Check TODOs
      - check AndroidManifest.xml (todo elements???)
      - check all files in "./docs/todo" folder
-     - check "app/src/main/java/ru.fazziclay.opentoday.app.App" TODOs                          
+     - check "app/src/main/java/ru.fazziclay.opentoday.app.App" TODOs
      - check other TODOs wich IDE
 
 # 1. Commit

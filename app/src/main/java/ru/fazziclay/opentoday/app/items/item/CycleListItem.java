@@ -2,12 +2,13 @@ package ru.fazziclay.opentoday.app.items.item;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Half;
 
 import androidx.annotation.NonNull;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.UUID;
 
 import ru.fazziclay.opentoday.annotation.Getter;
 import ru.fazziclay.opentoday.annotation.SaveKey;
@@ -16,17 +17,16 @@ import ru.fazziclay.opentoday.annotation.Setter;
 import ru.fazziclay.opentoday.app.TickSession;
 import ru.fazziclay.opentoday.app.items.CurrentItemStorage;
 import ru.fazziclay.opentoday.app.items.DataTransferPacket;
-import ru.fazziclay.opentoday.app.items.ItemIEUtil;
-import ru.fazziclay.opentoday.app.items.ItemStorage;
-import ru.fazziclay.opentoday.app.items.ContainerItem;
-import ru.fazziclay.opentoday.app.items.SimpleItemStorage;
+import ru.fazziclay.opentoday.app.items.ItemsStorage;
+import ru.fazziclay.opentoday.app.items.ItemsUtils;
+import ru.fazziclay.opentoday.app.items.SimpleItemsStorage;
 import ru.fazziclay.opentoday.app.items.callback.OnCurrentItemStorageUpdate;
 import ru.fazziclay.opentoday.app.items.callback.OnItemStorageUpdate;
 import ru.fazziclay.opentoday.callback.CallbackImportance;
 import ru.fazziclay.opentoday.callback.CallbackStorage;
 import ru.fazziclay.opentoday.callback.Status;
 
-public class CycleListItem extends TextItem implements ContainerItem, ItemStorage, CurrentItemStorage {
+public class CycleListItem extends TextItem implements ContainerItem, ItemsStorage, CurrentItemStorage {
     // START - Save
     public final static CycleListItemIETool IE_TOOL = new CycleListItemIETool();
     public static class CycleListItemIETool extends TextItem.TextItemIETool {
@@ -36,7 +36,7 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemStorag
             CycleListItem cycleListItem = (CycleListItem) item;
             return super.exportItem(item)
                     .put("currentItemPosition", cycleListItem.currentItemPosition)
-                    .put("itemsCycle", ItemIEUtil.exportItemList(cycleListItem.itemsCycleStorage.exportData().items))
+                    .put("itemsCycle", ItemIEUtil.exportItemList(cycleListItem.getAllItems()))
                     .put("tickBehavior", cycleListItem.tickBehavior.name());
         }
 
@@ -50,9 +50,7 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemStorag
             // Items cycle
             JSONArray jsonItemsCycle = json.getJSONArray("itemsCycle");
             if (jsonItemsCycle == null) jsonItemsCycle = new JSONArray();
-            DataTransferPacket dataTransferPacket = new DataTransferPacket();
-            dataTransferPacket.items = ItemIEUtil.importItemList(jsonItemsCycle);
-            cycleListItem.itemsCycleStorage.importData(dataTransferPacket);
+            cycleListItem.itemsCycleStorage.importData(ItemIEUtil.importItemList(jsonItemsCycle));
 
             // Current item pos
             cycleListItem.currentItemPosition = json.optInt("currentItemPosition", defaultValues.currentItemPosition);
@@ -72,7 +70,7 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemStorag
         return new CycleListItem("");
     }
 
-    @SaveKey(key = "itemsCycle") @RequireSave private final CycleItemStorage itemsCycleStorage = new CycleItemStorage();
+    @SaveKey(key = "itemsCycle") @RequireSave private final CycleItemsStorage itemsCycleStorage = new CycleItemsStorage();
     @SaveKey(key = "currentItemPosition") @RequireSave private int currentItemPosition = 0;
     @SaveKey(key = "tickBehavior") @RequireSave private TickBehavior tickBehavior = TickBehavior.CURRENT;
     private final CallbackStorage<OnCurrentItemStorageUpdate> onCurrentItemStorageUpdateCallback = new CallbackStorage<>();
@@ -89,15 +87,7 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemStorag
 
     public CycleListItem(CycleListItem copy) {
         super(copy);
-        DataTransferPacket copyData = copy.itemsCycleStorage.exportData();
-        DataTransferPacket newData = new DataTransferPacket();
-        try {
-            newData.items = ItemIEUtil.importItemList(ItemIEUtil.exportItemList(copyData.items));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        this.itemsCycleStorage.importData(newData);
-
+        this.itemsCycleStorage.importData(ItemsUtils.copy(copy.getAllItems()));
         this.currentItemPosition = copy.currentItemPosition;
         this.tickBehavior = copy.tickBehavior;
     }
@@ -175,11 +165,18 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemStorag
         return itemsCycleStorage.getItemPosition(item);
     }
 
+    @NonNull
     @Override
     public CallbackStorage<OnItemStorageUpdate> getOnUpdateCallbacks() {
         return itemsCycleStorage.getOnUpdateCallbacks();
     }
 
+    @Override
+    public Item getItemById(UUID itemId) {
+        return itemsCycleStorage.getItemById(itemId);
+    }
+
+    @NonNull
     @Override
     public Item[] getAllItems() {
         return itemsCycleStorage.getAllItems();
@@ -204,6 +201,7 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemStorag
         if (p != getCurrentItem()) onCurrentItemStorageUpdateCallback.run((callbackStorage, callback) -> callback.onCurrentChanged(getCurrentItem()));
     }
 
+    @NonNull
     @Override
     public Item copyItem(Item item) {
         return itemsCycleStorage.copyItem(item);
@@ -216,12 +214,12 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemStorag
         if (p != getCurrentItem()) onCurrentItemStorageUpdateCallback.run((callbackStorage, callback) -> callback.onCurrentChanged(getCurrentItem()));
     }
 
-    @Getter public ItemStorage getItemsCycleStorage() { return itemsCycleStorage; }
+    @Getter public ItemsStorage getItemsCycleStorage() { return itemsCycleStorage; }
     @Getter public TickBehavior getTickBehavior() { return tickBehavior; }
     @Setter public void setTickBehavior(TickBehavior tickBehavior) { this.tickBehavior = tickBehavior; }
 
-    private class CycleItemStorage extends SimpleItemStorage {
-        public CycleItemStorage() {
+    private class CycleItemsStorage extends SimpleItemsStorage {
+        public CycleItemsStorage() {
             getOnUpdateCallbacks().addCallback(CallbackImportance.DEFAULT, new OnItemStorageUpdate() {
                 @Override
                 public Status onAdded(Item item) {

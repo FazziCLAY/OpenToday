@@ -1,4 +1,4 @@
-package ru.fazziclay.opentoday.app.items.notifications;
+package ru.fazziclay.opentoday.app.items.notification;
 
 import org.json.JSONObject;
 

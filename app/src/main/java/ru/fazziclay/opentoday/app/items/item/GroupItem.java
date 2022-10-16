@@ -5,20 +5,21 @@ import androidx.annotation.NonNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.UUID;
+
 import ru.fazziclay.opentoday.annotation.Getter;
 import ru.fazziclay.opentoday.annotation.SaveKey;
 import ru.fazziclay.opentoday.annotation.RequireSave;
 import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.TickSession;
 import ru.fazziclay.opentoday.app.items.DataTransferPacket;
-import ru.fazziclay.opentoday.app.items.ItemIEUtil;
-import ru.fazziclay.opentoday.app.items.ItemStorage;
-import ru.fazziclay.opentoday.app.items.ContainerItem;
-import ru.fazziclay.opentoday.app.items.SimpleItemStorage;
+import ru.fazziclay.opentoday.app.items.ItemsStorage;
+import ru.fazziclay.opentoday.app.items.ItemsUtils;
+import ru.fazziclay.opentoday.app.items.SimpleItemsStorage;
 import ru.fazziclay.opentoday.app.items.callback.OnItemStorageUpdate;
 import ru.fazziclay.opentoday.callback.CallbackStorage;
 
-public class GroupItem extends TextItem implements ContainerItem, ItemStorage {
+public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
     // START - Save
     public final static GroupItemIETool IE_TOOL = new GroupItemIETool();
     public static class GroupItemIETool extends TextItem.TextItemIETool {
@@ -27,7 +28,7 @@ public class GroupItem extends TextItem implements ContainerItem, ItemStorage {
         public JSONObject exportItem(@NonNull Item item) throws Exception {
             GroupItem groupItem = (GroupItem) item;
             return super.exportItem(item)
-                    .put("items", ItemIEUtil.exportItemList(groupItem.itemStorage.exportData().items));
+                    .put("items", ItemIEUtil.exportItemList(groupItem.getAllItems()));
         }
 
         @NonNull
@@ -39,9 +40,7 @@ public class GroupItem extends TextItem implements ContainerItem, ItemStorage {
             // Items
             JSONArray jsonItems = json.optJSONArray("items");
             if (jsonItems == null) jsonItems = new JSONArray();
-            DataTransferPacket dataTransferPacket = new DataTransferPacket();
-            dataTransferPacket.items = ItemIEUtil.importItemList(jsonItems);
-            groupItem.itemStorage.importData(dataTransferPacket);
+            groupItem.itemStorage.importData(ItemIEUtil.importItemList(jsonItems));
 
             return groupItem;
         }
@@ -52,7 +51,7 @@ public class GroupItem extends TextItem implements ContainerItem, ItemStorage {
         return new GroupItem("");
     }
 
-    @SaveKey(key = "items") @RequireSave private final SimpleItemStorage itemStorage = new GroupItemStorage();
+    @SaveKey(key = "items") @RequireSave private final SimpleItemsStorage itemStorage = new GroupItemsStorage();
 
     protected GroupItem() {
         super();
@@ -70,14 +69,7 @@ public class GroupItem extends TextItem implements ContainerItem, ItemStorage {
     // Copy
     public GroupItem(GroupItem copy) {
         super(copy);
-        DataTransferPacket copyData = copy.itemStorage.exportData();
-        DataTransferPacket newData = new DataTransferPacket();
-        try {
-            newData.items = ItemIEUtil.importItemList(ItemIEUtil.exportItemList(copyData.items));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        this.itemStorage.importData(newData);
+        this.itemStorage.importData(ItemsUtils.copy(copy.getAllItems()));
     }
 
     @Override
@@ -100,11 +92,18 @@ public class GroupItem extends TextItem implements ContainerItem, ItemStorage {
         return itemStorage.getItemPosition(item);
     }
 
+    @NonNull
     @Override
     public CallbackStorage<OnItemStorageUpdate> getOnUpdateCallbacks() {
         return itemStorage.getOnUpdateCallbacks();
     }
 
+    @Override
+    public Item getItemById(UUID itemId) {
+        return itemStorage.getItemById(itemId);
+    }
+
+    @NonNull
     @Override
     public Item[] getAllItems() {
         return itemStorage.getAllItems();
@@ -125,6 +124,7 @@ public class GroupItem extends TextItem implements ContainerItem, ItemStorage {
         itemStorage.deleteItem(item);
     }
 
+    @NonNull
     @Override
     public Item copyItem(Item item) {
         return itemStorage.copyItem(item);
@@ -135,9 +135,9 @@ public class GroupItem extends TextItem implements ContainerItem, ItemStorage {
         itemStorage.move(positionFrom, positionTo);
     }
 
-    @Getter public ItemStorage getItemStorage() { return itemStorage; }
+    @Getter public ItemsStorage getItemStorage() { return itemStorage; }
 
-    private class GroupItemStorage extends SimpleItemStorage {
+    private class GroupItemsStorage extends SimpleItemsStorage {
         @Override
         public void save() {
             GroupItem.this.save();

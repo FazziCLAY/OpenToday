@@ -1,6 +1,4 @@
-package ru.fazziclay.opentoday.app.items;
-
-import ru.fazziclay.opentoday.app.items.item.Item;
+package ru.fazziclay.opentoday.app.items.item;
 
 public abstract class ItemController {
     public abstract void delete(Item item);

@@ -28,19 +28,14 @@
             android:orientation="horizontal">
         </LinearLayout>
 
-        <ImageView
+        <CheckBox
+            android:layout_weight="0"
+            android:id="@+id/default_background_color"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@android:drawable/ic_menu_preferences"
-            android:contentDescription="@string/dialog_item_module_item_backgroundColor_edit" />
+            android:minHeight="0sp" />
     </LinearLayout>
 
-    <CheckBox
-        android:id="@+id/default_background_color"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="0sp"
-        android:text="@string/dialog_item_module_item_defaultBackgroundColor" />
 
     <TextView
         android:layout_width="match_parent"

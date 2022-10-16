@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <!-- Tabs -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:tabGravity="start"
+        app:tabMode="scrollable" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <!-- ViewPager -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
+
+                android:paddingRight="4sp"
+                android:paddingLeft="4sp"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="0dp" />
+
+            <LinearLayout
+                android:id="@+id/quickNote"
+                android:layout_width="match_parent"
+                android:layout_weight="0"
+                android:layout_height="wrap_content"
+                android:minHeight="40sp"
+                android:background="#D710DB2B"
+                android:gravity="bottom"
+                android:paddingRight="2sp"
+                android:paddingLeft="2sp"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/quickNoteText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/quickNote_hint"
+                    android:inputType="textMultiLine"
+                    android:importantForAutofill="no" />
+
+                <ImageButton
+                    android:id="@+id/quickNoteAdd"
+                    android:layout_width="45sp"
+                    android:layout_height="45sp"
+                    android:layout_weight="0"
+                    android:src="@android:drawable/ic_menu_send"
+                    android:contentDescription="@string/quickNote_add" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Toolbar more -->
+        <LinearLayout
+            android:id="@+id/toolbar_more"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical"
+            android:clickable="false" />
+    </RelativeLayout>
+
+    <!-- Toolbar buttons -->
+    <LinearLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="0"
+        android:paddingLeft="5sp"
+        android:paddingRight="5sp"
+        android:background="?attr/toolbar_background">
+
+        <!-- include layout="@layout/toolbar" / -->
+
+    </LinearLayout>
+
+</LinearLayout>

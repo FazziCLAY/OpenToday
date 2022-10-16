@@ -57,7 +57,7 @@
     <string name="dialogItem_module_text_textColor_dialog_apply">Apply</string>
     <string name="disable_battery_optimization_warning">Add app to battery optimization exceptions\nFor correct work of notifications and application</string>
     <string name="update_available">Update available! Click to download</string>
-    <string name="update_available_error_browserNotFound">Please install web-browser</string>
+    <string name="abc_error_browserNotFound">Please install web-browser</string>
     <string name="dayRepeatable_startValue">Start value</string>
     <string name="dialog_item_module_cyclelist_warninigApply">Important: The changes are applied immediately here! And it will be impossible to cancel them</string>
     <string name="item_counter">Counter</string>
@@ -176,4 +176,21 @@
     <string name="abc_cancel">Cancel</string>
     <string name="tab_noEmptyName">Empty name</string>
     <string name="exit_tab_2_count">Tab 2 count for exit from OpenToday</string>
+    <string name="manuallyCrash_7tap">7 tab todo</string>
+    <string name="manuallyCrash_crash">Crashed</string>
+    <string name="manuallyCrash_dialog_title">Crash app?</string>
+    <string name="manuallyCrash_dialog_message">For debug reasons only!</string>
+    <string name="manuallyCrash_dialog_apply">CRASH!</string>
+    <string name="manuallyCrash_dialog_cancel">Cancel</string>
+    <string name="manuallyCrash_dialog_inputHint">Enter message to developer</string>
+    <string name="dialog_item_module_item_notifications_empty">Notifications none!</string>
+    <string name="dialog_editItemFilter_disable">Disable</string>
+    <string name="toolbar_tabs">Tabs</string>
+    <string name="edit_tabs">Edit tabs</string>
+    <string name="add_new_tab">Add new tab</string>
+    <string name="settings_minimizeGrayColor">Minimize gray color</string>
+    <string name="settings_parseTimeFromQuickNote">Parse time from quick note</string>
+    <string name="aboutapp_text_sourceCode">Source Code:</string>
+    <string name="aboutapp_text_issues">Issues</string>
+    <string name="temporarly_unavailable">This function temporarily unavailable; use other button</string>
 </resources>

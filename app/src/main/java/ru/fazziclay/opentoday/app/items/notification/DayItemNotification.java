@@ -1,4 +1,4 @@
-package ru.fazziclay.opentoday.app.items.notifications;
+package ru.fazziclay.opentoday.app.items.notification;
 
 import android.app.AlarmManager;
 import android.app.NotificationManager;

@@ -142,7 +142,7 @@ public class ItemViewGenerator {
                 ret.setForegroundTintList(ColorStateList.valueOf(Color.parseColor("#44f0fff0")));
             }
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            layoutParams.setMargins(10, 0, 0, 0);
+            layoutParams.setMargins(0, 0, 15, 0);
             ret.setLayoutParams(layoutParams);
         }
         if (onItemClick != null) fcu_viewOnClick(ret, () -> onItemClick.run(item));
@@ -260,7 +260,11 @@ public class ItemViewGenerator {
     //
     private void applyTextItemToTextView(TextItem item, TextView view) {
         if (!previewMode && item.isMinimize()) {
-            view.setText(item.getText().split("\n")[0]);
+            String text = item.getText().split("\n")[0];
+            if (text.length() > 60) {
+                text = text.substring(0, 57) + "...";
+            }
+            view.setText(text);
         } else {
             view.setText(item.getText());
         }

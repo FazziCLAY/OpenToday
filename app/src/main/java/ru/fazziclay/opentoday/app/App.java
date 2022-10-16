@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.NotificationCompat;
@@ -18,26 +19,27 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import ru.fazziclay.javaneoutil.FileUtil;
 import ru.fazziclay.opentoday.BuildConfig;
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.datafixer.DataFixer;
 import ru.fazziclay.opentoday.app.items.ItemManager;
-import ru.fazziclay.opentoday.app.items.notifications.DayItemNotification;
-import ru.fazziclay.opentoday.app.items.notifications.ItemNotification;
+import ru.fazziclay.opentoday.app.items.notification.DayItemNotification;
+import ru.fazziclay.opentoday.app.items.notification.ItemNotification;
 import ru.fazziclay.opentoday.app.receiver.ItemsTickReceiver;
 import ru.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import ru.fazziclay.opentoday.app.settings.SettingsManager;
 import ru.fazziclay.opentoday.debug.TestActivityFragment;
 import ru.fazziclay.opentoday.ui.activity.CrashReportActivity;
-import ru.fazziclay.opentoday.ui.activity.MainActivity;
+import ru.fazziclay.opentoday.ui.fragment.ItemsTabIncludeFragment;
 import ru.fazziclay.opentoday.util.DebugUtil;
 
 @SuppressWarnings("PointlessBooleanExpression") // for debug variables
 public class App extends Application {
     // Application
-    public static final int APPLICATION_DATA_VERSION = 6;
+    public static final int APPLICATION_DATA_VERSION = 8;
     public static final String VERSION_NAME = BuildConfig.VERSION_NAME;
     public static final int VERSION_CODE = BuildConfig.VERSION_CODE;
     public static final String APPLICATION_ID = BuildConfig.APPLICATION_ID;
@@ -51,7 +53,7 @@ public class App extends Application {
     public static final boolean DEBUG = BuildConfig.DEBUG;
     public static final boolean DEBUG_TICK_NOTIFICATION = (DEBUG & false);
     public static final int DEBUG_MAIN_ACTIVITY_START_SLEEP = (DEBUG & false) ? 6000 : 0;
-    public static final int DEBUG_APP_START_SLEEP = (DEBUG & false) ? 1000 : 0;
+    public static final int DEBUG_APP_START_SLEEP = (DEBUG & false) ? 8000 : 0;
     public static Class<? extends Activity> DEBUG_MAIN_ACTIVITY = (DEBUG & false) ? TestActivityFragment.class : null;
     public static final boolean DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY = (DEBUG && false);
 
@@ -68,13 +70,14 @@ public class App extends Application {
     }
 
     // Application
+    private UUID instanceId;
     private ItemManager itemManager;
     private SettingsManager settingsManager;
     private Telemetry telemetry;
     private JSONObject versionData;
     private boolean appInForeground = false;
 
-    public static final MainActivity.QuickNoteInterface QUICK_NOTE = s -> {
+    public static final ItemsTabIncludeFragment.QuickNoteInterface QUICK_NOTE = s -> {
         List<ItemNotification> notifys = new ArrayList<>();
         boolean parseTime = true;
         if (parseTime) {
@@ -110,7 +113,7 @@ public class App extends Application {
             /* debug */ DebugUtil.sleep(DEBUG_APP_START_SLEEP);
 
             DataFixer dataFixer = new DataFixer(this);
-            dataFixer.fixToCurrentVersion();
+            DataFixer.FixResult fixResult = dataFixer.fixToCurrentVersion();
 
             try {
                 this.versionData = new JSONObject()
@@ -125,11 +128,24 @@ public class App extends Application {
                 throw new RuntimeException("Exception!", e);
             }
 
-            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            File instanceIdFile = new File(getExternalFilesDir(""), "instanceId");
+            if (FileUtil.isExist(instanceIdFile)) {
+                try {
+                    instanceId = UUID.fromString(FileUtil.getText(instanceIdFile));
+                } catch (Exception e) {
+                    throw new RuntimeException("Cannot get App instanceId!", e);
+                }
 
+            } else {
+                instanceId = UUID.randomUUID();
+                FileUtil.setText(instanceIdFile, instanceId.toString());
+            }
+
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            telemetry = new Telemetry(this);
+            telemetry.queryTelemetryStatus();
             itemManager = new ItemManager(new File(getExternalFilesDir(""), "item_data.json"));
             settingsManager = new SettingsManager(new File(getExternalFilesDir(""), "settings.json"));
-            telemetry = new Telemetry(this);
 
             sendBroadcast(new Intent(this, ItemsTickReceiver.class));
 
@@ -140,7 +156,9 @@ public class App extends Application {
             //AlarmManager alarmManager = getSystemService(AlarmManager.class);
             //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 5 * 60 * 1000, PendingIntent.getBroadcast(this, 0, new Intent(this, ItemsTickReceiver.class), 0));
 
-            telemetry.applicationStart();
+            if (fixResult.isFixed()) {
+                telemetry.send(new Telemetry.DataFixerLogsLPacket(fixResult.getDataVersion(), fixResult.getLogs()));
+            }
         } catch (Exception e) {
             crash(this, CrashReport.create(Thread.currentThread(), new RuntimeException("opentoday.app.App initialization exception", e), System.currentTimeMillis(), System.nanoTime(), Thread.getAllStackTraces()), false);
         }
@@ -159,47 +177,54 @@ public class App extends Application {
         crash(context, crashReport, true);
     }
 
-    public static void crash(Context context, CrashReport crashReport, boolean sendToUp) {
+    public static void crash(Context context, CrashReport crashReport, boolean fatal) {
+        crashReport.setFatal(fatal ? CrashReport.FatalEnum.YES : CrashReport.FatalEnum.NO);
+        if (context == null) context = App.get();
+
         // === File ===
         File file = new File(context.getExternalCacheDir(), "crash_report/" + crashReport.getID().toString());
         FileUtil.setText(file, crashReport.convertToText());
 
-        // === NOTIFICATION ===
-        final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        try {
+            Log.e("OpenToday-Crash", crashReport.convertToText(), crashReport.getThrowable());
+        } catch (Exception ignored) {}
 
-        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_CRASH_CHANNEL, context.getString(R.string.notification_crash_title), NotificationManager.IMPORTANCE_DEFAULT));
+        if (fatal) {
+            // === NOTIFICATION ===
+            final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
 
-        int flag;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            flag = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE;
-        } else {
-            flag = PendingIntent.FLAG_UPDATE_CURRENT;
+            notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_CRASH_CHANNEL, context.getString(R.string.notification_crash_title), NotificationManager.IMPORTANCE_DEFAULT));
+
+            int flag;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                flag = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE;
+            } else {
+                flag = PendingIntent.FLAG_UPDATE_CURRENT;
+            }
+
+            notificationManager.notify(new Random().nextInt(), new NotificationCompat.Builder(context, App.NOTIFICATION_CRASH_CHANNEL)
+                    .setSmallIcon(android.R.drawable.stat_sys_warning)
+                    .setContentTitle(context.getString(R.string.crash_notification_title))
+                    .setContentText(context.getString(R.string.crash_notification_text))
+                    .setSubText(context.getString(R.string.crash_notification_subtext))
+                    .setStyle(new NotificationCompat.BigTextStyle()
+                            .bigText(context.getString(R.string.crash_notification_big_text))
+                            .setBigContentTitle(context.getString(R.string.crash_notification_big_title))
+                            .setSummaryText(context.getString(R.string.crash_notification_big_summary)))
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setContentIntent(PendingIntent.getActivity(context, 0, CrashReportActivity.createLaunchIntent(context, file.getAbsolutePath()), flag))
+                    .setAutoCancel(true)
+                    .build());
+
         }
-
-        notificationManager.notify(new Random().nextInt(), new NotificationCompat.Builder(context, App.NOTIFICATION_CRASH_CHANNEL)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(context.getString(R.string.crash_notification_title))
-                .setContentText(context.getString(R.string.crash_notification_text))
-                .setSubText(context.getString(R.string.crash_notification_subtext))
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(context.getString(R.string.crash_notification_big_text))
-                        .setBigContentTitle(context.getString(R.string.crash_notification_big_title))
-                        .setSummaryText(context.getString(R.string.crash_notification_big_summary)))
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setContentIntent(PendingIntent.getActivity(context, 0, CrashReportActivity.createLaunchIntent(context, file.getAbsolutePath()), flag))
-                .setAutoCancel(true)
-                .build());
-
         App app = App.get(context);
         if (app != null) {
             if (app.telemetry != null) {
-                app.telemetry.crash(context, crashReport);
-                DebugUtil.sleep(1000);
+                app.telemetry.send(new Telemetry.CrashReportLPacket(crashReport));
             }
         }
 
-        if (defaultHandler != null && sendToUp) {
-            if (DEBUG) DebugUtil.sleep(7000);
+        if (defaultHandler != null && fatal) {
             defaultHandler.uncaughtException(crashReport.getThread(), crashReport.getThrowable());
         }
     }
@@ -211,5 +236,9 @@ public class App extends Application {
     public void setAppInForeground(boolean appInForeground) { this.appInForeground = appInForeground; }
     public Telemetry getTelemetry() { return telemetry; }
     public JSONObject getVersionData() { return versionData; }
+
+    public UUID getInstanceId() {
+        return instanceId;
+    }
     // not getters & setters :)
 }

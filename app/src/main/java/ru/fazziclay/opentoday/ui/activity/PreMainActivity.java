@@ -26,8 +26,6 @@ public class PreMainActivity extends Activity {
             startActivity(new Intent(this, App.DEBUG_MAIN_ACTIVITY));
             return;
         }
-
-        // TODO: 30.09.2022 | create lastTab field in settings?
-        startActivity(new Intent(this, MainActivity.class).putExtra("tabId", App.get(this).getItemManager().getMainTab().getId().toString()));
+        startActivity(new Intent(this, MainActivity.class));
     }
 }

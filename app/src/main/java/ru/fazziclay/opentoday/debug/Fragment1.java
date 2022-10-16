@@ -16,13 +16,15 @@ import androidx.annotation.Nullable;
 import ru.fazziclay.opentoday.R;
 
 public class Fragment1 extends BaseFragment {
+    int ID = R.id.notificationId;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
             getChildFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.opentoday, new Fragment2())
+                    .replace(ID, new Fragment2())
                     .commit();
         }
     }
@@ -45,13 +47,13 @@ public class Fragment1 extends BaseFragment {
             getChildFragmentManager()
                     .beginTransaction()
                     .addToBackStack(null)
-                    .replace(R.id.opentoday, new Fragment3())
+                    .replace(ID, new Fragment3())
                     .commit();
         });
         linearLayout.addView(b);
 
         FrameLayout frameLayout = new FrameLayout(c);
-        frameLayout.setId(R.id.opentoday);
+        frameLayout.setId(ID);
         linearLayout.addView(frameLayout);
 
         return linearLayout;

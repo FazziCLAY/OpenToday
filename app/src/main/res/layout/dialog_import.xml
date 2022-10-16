@@ -21,14 +21,16 @@
             android:text="@string/toolbar_more_file_import_cancel"
             android:id="@+id/cancel"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            style="?android:attr/buttonBarButtonStyle" />
 
         <Button
             android:layout_margin="5sp"
             android:text="@string/toolbar_more_file_import_import"
             android:id="@+id/runImport"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            style="?android:attr/buttonBarButtonStyle" />
 
     </LinearLayout>
 

@@ -56,7 +56,7 @@
     <string name="dialogItem_module_text_textColor_dialog_apply">Применить</string>
     <string name="disable_battery_optimization_warning">Добавьте приложение в исключения оптимизации батареи\nЭто необходимо для корректной работы уведомледний и приложения</string>
     <string name="update_available">Доступно обновление! Нажмите для скачивания</string>
-    <string name="update_available_error_browserNotFound">Пожалуйста установите web-браузер</string>
+    <string name="abc_error_browserNotFound">Пожалуйста установите web-браузер</string>
     <string name="dayRepeatable_startValue">Начальное значение</string>
     <string name="dialog_item_module_cyclelist_warninigApply">Важно: Изменения тут применяются сразу! И их невозможно будет отменить</string>
     <string name="item_counter">Счётчик</string>
@@ -170,4 +170,22 @@
     <string name="abc_cancel">Отмена</string>
     <string name="tab_noEmptyName">Пустое имя недопустимо</string>
     <string name="exit_tab_2_count">Нажмите 2 раза что бы выйти</string>
+
+    <string name="manuallyCrash_7tap">Нажмите ещё 7 раз для вылета</string>
+    <string name="manuallyCrash_crash">Краш</string>
+    <string name="manuallyCrash_dialog_title">Крашнуть приложение?</string>
+    <string name="manuallyCrash_dialog_message">Функция только для отладки приложения!</string>
+    <string name="manuallyCrash_dialog_apply">КРАШНУТЬ!</string>
+    <string name="manuallyCrash_dialog_cancel">Отмена</string>
+    <string name="manuallyCrash_dialog_inputHint">Введите послание разработчику</string>
+    <string name="dialog_item_module_item_notifications_empty">Уведомления отсутствуют!</string>
+    <string name="dialog_editItemFilter_disable">НЕ Используется</string>
+    <string name="toolbar_tabs">Вкладки</string>
+    <string name="edit_tabs">Редактировать вкладки</string>
+    <string name="add_new_tab">Добавить новую вкладку</string>
+    <string name="settings_minimizeGrayColor">Засеривать уменьшеные айтемы</string>
+    <string name="settings_parseTimeFromQuickNote">Парсить время из быстрых заметок</string>
+    <string name="aboutapp_text_sourceCode">Исходный код:</string>
+    <string name="aboutapp_text_issues">Баги/идеи</string>
+    <string name="temporarly_unavailable">Эта функция временно недоступна; Воспользутесь кнопкой рядом</string>
 </resources>

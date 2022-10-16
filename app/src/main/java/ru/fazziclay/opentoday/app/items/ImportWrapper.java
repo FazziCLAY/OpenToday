@@ -9,6 +9,7 @@ import java.util.Base64;
 import java.util.List;
 
 import ru.fazziclay.opentoday.app.items.item.Item;
+import ru.fazziclay.opentoday.app.items.item.ItemIEUtil;
 
 public class ImportWrapper {
     public static final int VERSION = 0;

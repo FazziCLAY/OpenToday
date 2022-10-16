@@ -16,12 +16,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.items.ItemManager;
-import ru.fazziclay.opentoday.app.items.ItemStorage;
+import ru.fazziclay.opentoday.app.items.ItemsStorage;
 import ru.fazziclay.opentoday.app.items.Selection;
 import ru.fazziclay.opentoday.app.items.callback.OnItemStorageUpdate;
 import ru.fazziclay.opentoday.app.items.callback.OnSelectionChanged;
@@ -29,18 +28,17 @@ import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.app.items.item.TextItem;
 import ru.fazziclay.opentoday.callback.CallbackImportance;
 import ru.fazziclay.opentoday.callback.Status;
-import ru.fazziclay.opentoday.ui.dialog.DialogItem;
+import ru.fazziclay.opentoday.ui.fragment.ItemEditorFragment;
 import ru.fazziclay.opentoday.ui.dialog.DialogTextItemEditText;
-import ru.fazziclay.opentoday.ui.interfaces.CurrentItemsTab;
 import ru.fazziclay.opentoday.ui.interfaces.IVGEditButtonInterface;
+import ru.fazziclay.opentoday.ui.interfaces.NavigationHost;
 import ru.fazziclay.opentoday.ui.other.ItemViewHolder;
 import ru.fazziclay.opentoday.util.ResUtil;
 
 public class ItemStorageDrawer {
     private final Activity activity;
     private final ItemManager itemManager;
-    private final ItemStorage itemStorage;
-    private final UUID tabId;
+    private final ItemsStorage itemsStorage;
     private final RecyclerView view;
     private IVGEditButtonInterface storageEdits;
     private RecyclerView.Adapter<ItemViewHolder> adapter;
@@ -84,7 +82,7 @@ public class ItemStorageDrawer {
             }
 
             for (Selection selection : toUpdate) {
-                int pos = itemStorage.getItemPosition(selection.getItem());
+                int pos = itemsStorage.getItemPosition(selection.getItem());
                 Runnable updateRunnable = () -> adapter.notifyItemChanged(pos);
                 if (Thread.currentThread() == originalThread) {
                     updateRunnable.run();
@@ -98,16 +96,16 @@ public class ItemStorageDrawer {
     };
 
     private final OnItemClick onItemClick;
-    private final DialogItem dialogItem;
+    private final ItemEditorFragment dialogItem;
     private final boolean previewMode;
     private ItemViewWrapper itemViewWrapper = null;
+    private NavigationHost navigationHost;
 
     // Public
-    public ItemStorageDrawer(Activity activity, ItemManager itemManager, ItemStorage itemStorage, OnItemClick onItemClick, boolean previewMode, IVGEditButtonInterface storageEdits) {
+    public ItemStorageDrawer(Activity activity, ItemManager itemManager, ItemsStorage itemsStorage, OnItemClick onItemClick, boolean previewMode, IVGEditButtonInterface storageEdits) {
         this.activity = activity;
         this.itemManager = itemManager;
-        this.itemStorage = itemStorage;
-        this.tabId = ((CurrentItemsTab) activity).getCurrentTabId();
+        this.itemsStorage = itemsStorage;
         this.originalThread = Thread.currentThread();
         this.view = new RecyclerView(activity);
         this.onItemClick = onItemClick;
@@ -116,7 +114,7 @@ public class ItemStorageDrawer {
         this.view.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1));
         this.itemManager.getOnSelectionUpdated().addCallback(CallbackImportance.DEFAULT, onSelectionChanged);
 
-        this.dialogItem = new DialogItem(this.activity, this.itemManager, this.tabId);
+        this.dialogItem = new ItemEditorFragment(this.activity, this.itemManager);
         this.itemViewGenerator = new ItemViewGenerator(this.activity, this.itemManager, (item) -> {
             if (this.onItemClick == null) {
                 if (!previewMode) actionItem(item, itemManager.getItemOnClickAction());
@@ -137,7 +135,7 @@ public class ItemStorageDrawer {
         this.created = true;
         this.adapter = new DrawerAdapter();
         this.view.setAdapter(adapter);
-        this.itemStorage.getOnUpdateCallbacks().addCallback(CallbackImportance.DEFAULT, onItemStorageUpdate);
+        this.itemsStorage.getOnUpdateCallbacks().addCallback(CallbackImportance.DEFAULT, onItemStorageUpdate);
 
         if (!previewMode) new ItemTouchHelper(new DrawerTouchCallback()).attachToRecyclerView(view);
     }
@@ -150,7 +148,7 @@ public class ItemStorageDrawer {
             throw new RuntimeException("ItemStorageDrawer destroyed!");
         }
         destroyed = true;
-        this.itemStorage.getOnUpdateCallbacks().deleteCallback(onItemStorageUpdate);
+        this.itemsStorage.getOnUpdateCallbacks().deleteCallback(onItemStorageUpdate);
         this.itemManager.getOnSelectionUpdated().deleteCallback(onSelectionChanged);
         this.view.setAdapter(null);
         this.itemViewGenerator = null;
@@ -192,7 +190,7 @@ public class ItemStorageDrawer {
         }
 
         private int getItemPos(Item item) {
-            return ItemStorageDrawer.this.itemStorage.getItemPosition(item);
+            return ItemStorageDrawer.this.itemsStorage.getItemPosition(item);
         }
 
         private void rou(Runnable runnable) {
@@ -218,7 +216,7 @@ public class ItemStorageDrawer {
 
         @Override
         public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-            Item item = itemStorage.getAllItems()[position];
+            Item item = itemsStorage.getAllItems()[position];
             View view = generateViewForItem(item);
 
             holder.layout.removeAllViews();
@@ -233,7 +231,7 @@ public class ItemStorageDrawer {
 
         @Override
         public int getItemCount() {
-            return itemStorage.getAllItems().length;
+            return itemsStorage.getAllItems().length;
         }
     }
 
@@ -252,7 +250,7 @@ public class ItemStorageDrawer {
 
             //! NOTE: Adapter receive notify signal from callbacks!
             //ItemUIDrawer.this.adapter.notifyItemMoved(positionFrom, positionTo);
-            ItemStorageDrawer.this.itemStorage.move(positionFrom, positionTo);
+            ItemStorageDrawer.this.itemsStorage.move(positionFrom, positionTo);
             return true;
         }
 
@@ -260,13 +258,13 @@ public class ItemStorageDrawer {
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             if (direction == ItemTouchHelper.LEFT) {
                 int positionFrom = viewHolder.getAdapterPosition();
-                Item item = ItemStorageDrawer.this.itemStorage.getAllItems()[positionFrom];
+                Item item = ItemStorageDrawer.this.itemsStorage.getAllItems()[positionFrom];
                 item.visibleChanged();
                 actionItem(item, itemManager.getItemOnLeftAction());
 
             } else if (direction == ItemTouchHelper.RIGHT) {
                 int position = viewHolder.getAdapterPosition();
-                Item item = ItemStorageDrawer.this.itemStorage.getAllItems()[position];
+                Item item = ItemStorageDrawer.this.itemsStorage.getAllItems()[position];
                 item.visibleChanged();
                 ItemViewHolder itemViewHolder = (ItemViewHolder) viewHolder;
                 showRightMenu(item, itemViewHolder.itemView);
@@ -277,11 +275,12 @@ public class ItemStorageDrawer {
     private void actionItem(Item item, ItemManager.ItemAction action) {
         switch (action) {
             case OPEN_EDIT_DIALOG:
+
                 dialogItem.edit(item);
                 break;
 
             case SELECT_ON:
-                itemManager.selectItem(new Selection(itemStorage, item));
+                itemManager.selectItem(new Selection(itemsStorage, item));
                 item.visibleChanged();
                 break;
 
@@ -314,7 +313,7 @@ public class ItemStorageDrawer {
                 if (itemManager.isSelected(item)) {
                     itemManager.deselectItem(item);
                 } else {
-                    itemManager.selectItem(new Selection(itemStorage, item));
+                    itemManager.selectItem(new Selection(itemsStorage, item));
                 }
                 item.visibleChanged();
                 break;
@@ -358,20 +357,20 @@ public class ItemStorageDrawer {
                     break;
 
                 case R.id.copy:
-                    int currPos = itemStorage.getItemPosition(item);
+                    int currPos = itemsStorage.getItemPosition(item);
                     Item copyItem;
                     try {
-                        copyItem = itemStorage.copyItem(item);
+                        copyItem = itemsStorage.copyItem(item);
                     } catch (Exception e) {
                         Toast.makeText(activity, activity.getString(R.string.menuItem_copy_exception, e.toString()), Toast.LENGTH_SHORT).show();
                         return false;
                     }
 
-                    DialogItem dialogItem = new DialogItem(activity, itemManager, tabId);
+                    ItemEditorFragment dialogItem = new ItemEditorFragment(activity, itemManager);
                     dialogItem.edit(copyItem);
 
-                    int createPos = itemStorage.getItemPosition(copyItem);
-                    if (createPos != (currPos + 1)) itemStorage.move(createPos, currPos + 1);
+                    int createPos = itemsStorage.getItemPosition(copyItem);
+                    if (createPos != (currPos + 1)) itemsStorage.move(createPos, currPos + 1);
                     break;
 
                 case R.id.textItem_clickableUrls:

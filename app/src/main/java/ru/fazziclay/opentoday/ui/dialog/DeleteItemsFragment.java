@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
@@ -16,18 +17,18 @@ import ru.fazziclay.opentoday.ui.other.ItemViewHolder;
 import ru.fazziclay.opentoday.ui.other.item.ItemViewGenerator;
 import ru.fazziclay.opentoday.util.MinBaseAdapter;
 
-public class DialogDeleteItems {
+public class DeleteItemsFragment extends Fragment {
     private final DialogPreviewDeleteItemsBinding binding;
     private final ItemViewGenerator itemViewGenerator;
     private final Dialog dialog;
 
-    public DialogDeleteItems(Activity activity, Item[] items) {
+    public DeleteItemsFragment(Activity activity, Item[] items) {
         if (items.length == 0) {
             throw new RuntimeException("Empty list");
         }
         this.binding = DialogPreviewDeleteItemsBinding.inflate(activity.getLayoutInflater());
 
-        this.dialog = new Dialog(activity);
+        this.dialog = new Dialog(activity, android.R.style.ThemeOverlay_Material);
         this.dialog.setContentView(binding.getRoot());
         this.itemViewGenerator = new ItemViewGenerator(activity, App.get().getItemManager(), null, true, null);
 

@@ -6,7 +6,7 @@ import android.app.Dialog;
 import android.widget.Spinner;
 
 import ru.fazziclay.opentoday.R;
-import ru.fazziclay.opentoday.app.items.ItemsRegistry;
+import ru.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 

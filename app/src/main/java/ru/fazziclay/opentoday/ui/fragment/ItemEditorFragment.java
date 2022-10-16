@@ -1,20 +1,24 @@
-package ru.fazziclay.opentoday.ui.dialog;
+package ru.fazziclay.opentoday.ui.fragment;
 
 
 import static ru.fazziclay.opentoday.util.InlineUtil.fcu_viewOnClick;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.res.ColorStateList;
+import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
 
 import com.rarepebble.colorpicker.ColorPickerView;
 
@@ -27,82 +31,107 @@ import java.util.Locale;
 import java.util.UUID;
 
 import ru.fazziclay.opentoday.R;
+import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.items.ItemManager;
-import ru.fazziclay.opentoday.app.items.ItemsRegistry;
+import ru.fazziclay.opentoday.app.items.ItemsStorage;
+import ru.fazziclay.opentoday.app.items.tab.LocalItemsTab;
 import ru.fazziclay.opentoday.app.items.item.CheckboxItem;
 import ru.fazziclay.opentoday.app.items.item.CounterItem;
 import ru.fazziclay.opentoday.app.items.item.CycleListItem;
 import ru.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem;
-import ru.fazziclay.opentoday.app.items.item.FilterGroupItem;
-import ru.fazziclay.opentoday.app.items.item.GroupItem;
 import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.app.items.item.TextItem;
-import ru.fazziclay.opentoday.app.items.notifications.DayItemNotification;
-import ru.fazziclay.opentoday.app.items.notifications.ItemNotification;
+import ru.fazziclay.opentoday.app.items.notification.DayItemNotification;
+import ru.fazziclay.opentoday.app.items.notification.ItemNotification;
+import ru.fazziclay.opentoday.app.items.tab.Tab;
 import ru.fazziclay.opentoday.databinding.DialogItemFrameBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleCheckboxBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleCounterBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleCyclelistBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleDayrepeatablecheckboxBinding;
-import ru.fazziclay.opentoday.databinding.DialogItemModuleFiltergroupBinding;
-import ru.fazziclay.opentoday.databinding.DialogItemModuleGroupBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleItemBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleTextBinding;
-import ru.fazziclay.opentoday.ui.fragment.ItemsEditorFragment;
-import ru.fazziclay.opentoday.ui.interfaces.NavigationHost;
+import ru.fazziclay.opentoday.ui.dialog.DialogItemNotificationsEditor;
+import ru.fazziclay.opentoday.ui.interfaces.ContainBackStack;
 import ru.fazziclay.opentoday.util.MinTextWatcher;
 import ru.fazziclay.opentoday.util.ResUtil;
 import ru.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 import ru.fazziclay.opentoday.util.time.ConvertMode;
 import ru.fazziclay.opentoday.util.time.TimeUtil;
 
-public class DialogItem {
-    private final Activity activity;
-    private final ItemManager itemManager;
-    // By session
-    private Dialog dialog;
-    private View view;
+public class ItemEditorFragment extends Fragment implements ContainBackStack {
+    public static ItemEditorFragment create(UUID tabId, UUID subItem, Class<? extends Item> itemType) {
+        ItemEditorFragment d = new ItemEditorFragment();
+
+        Bundle a = new Bundle();
+        a.putString("mode", "create");
+        a.putString("tabId", tabId.toString());
+        if (subItem != null) a.putString("subItem", subItem.toString());
+        a.putString("itemType", itemType.getName());
+        d.setArguments(a);
+
+        return d;
+    }
+
+    public static ItemEditorFragment edit(UUID tabId, UUID itemId) {
+        ItemEditorFragment d = new ItemEditorFragment();
+
+        Bundle a = new Bundle();
+        a.putString("mode", "edit");
+        a.putString("tabId", tabId.toString());
+        a.putString("itemId", itemId.toString());
+        d.setArguments(a);
+
+        return d;
+    }
+
+    private ItemManager itemManager;
     private Item item;
-    private UUID tabId;
-    private boolean create;
     private OnEditDone onEditDone;
-    private boolean canceled = false;
     private boolean unsavedChanges = false;
+    private boolean create;
 
     // Edit
     private final List<BaseEditUiModule> editModules = new ArrayList<>();
 
-    public DialogItem(Activity activity, ItemManager itemManager, UUID tabId) {
-        this.activity = activity;
-        this.itemManager = itemManager;
-        this.tabId = tabId;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        itemManager = App.get(requireContext()).getItemManager();
+
+        String mode = getArguments().getString("mode");
+        if ("create".equals(mode)) {
+            Tab tab = itemManager.getTab(UUID.fromString(getArguments().getString("tabId")));
+            ItemsStorage itemsStorage;
+            if (getArguments().containsKey("subItem")) {
+                itemsStorage = (ItemsStorage) tab.getItemById(UUID.fromString(getArguments().getString("subItem")));
+
+            } else {
+                itemsStorage = tab;
+            }
+
+            create = true;
+            item = itemsStorage.getItemById(UUID.fromString(getArguments().getString("itemId")));
+        } else {
+            Tab tab = itemManager.getTab(UUID.fromString(getArguments().getString("tabId")));
+            ItemsStorage itemsStorage;
+            if (getArguments().containsKey("subItem")) {
+                itemsStorage = (ItemsStorage) tab.getItemById(UUID.fromString(getArguments().getString("subItem")));
+
+            } else {
+                itemsStorage = tab;
+            }
+
+            create = false;
+            item = itemsStorage.getItemById(UUID.fromString(getArguments().getString("itemId")));
+        }
     }
 
-    public void create(Class<? extends Item> type, OnEditDone onEditDone) {
-        Item item = ItemsRegistry.REGISTRY.getItemInfoByClass(type).create();
-        show(item, true, onEditDone);
-    }
-
-    public void edit(Item item) {
-        show(item, false, null);
-    }
-
-    private void show(Item item, boolean create, OnEditDone onEditDone) {
-        cancel();
-        this.item = item;
-        this.create = create;
-        this.onEditDone = onEditDone;
-        this.canceled = false;
-        this.unsavedChanges = false;
-        editModules.clear();
-
-        this.view = generateView();
-        this.dialog = generateDialog();
-        this.dialog.show();
-    }
-
-    private View generateView() {
-        DialogItemFrameBinding binding = DialogItemFrameBinding.inflate(this.activity.getLayoutInflater());
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        DialogItemFrameBinding binding = DialogItemFrameBinding.inflate(inflater);
 
         if (item instanceof Item) {
             binding.canvas.addView(addEditModule(new ItemEditModule()));
@@ -126,18 +155,32 @@ public class DialogItem {
         fcu_viewOnClick(binding.applyButton, this::applyRequest);
         fcu_viewOnClick(binding.cancelButton, this::cancelRequest);
         fcu_viewOnClick(binding.deleteButton, this::deleteRequest);
-        if (create) binding.deleteButton.setVisibility(View.GONE);
 
         return binding.getRoot();
     }
 
+    public ItemEditorFragment() {
+
+    }
+
+    @Deprecated
+    public ItemEditorFragment(Activity activity, ItemManager itemManager) {
+    }
+
+    @Deprecated
+    public void create(Class<? extends Item> type, OnEditDone onEditDone) {
+    }
+
+    @Deprecated
+    public void edit(Item item) {
+    }
+
     private View addEditModule(BaseEditUiModule editUiModule) {
-        editUiModule.setup(this.item, this.activity, this.view);
+        editUiModule.setup(this.item, requireActivity(), null);
         editUiModule.setOnStartEditListener(() -> {
             new Exception().printStackTrace();
             unsavedChanges = true;
         });
-        if (create) editUiModule.notifyCreateMode();
         editModules.add(editUiModule);
 
         View view = editUiModule.getView();
@@ -154,10 +197,10 @@ public class DialogItem {
                 editModule.commit(item);
             } catch (Exception e) {
                 if (e instanceof UserException) {
-                    Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 } else {
                     Log.e("DialogItem", "apply exception", e);
-                    Toast.makeText(activity, "Error: " + e, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "Error: " + e, Toast.LENGTH_SHORT).show();
                 }
                 return;
             }
@@ -174,7 +217,7 @@ public class DialogItem {
             cancel();
             return;
         }
-        new AlertDialog.Builder(activity)
+        new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.dialogItem_cancel_unsaved_title)
                 .setNegativeButton(R.string.dialogItem_cancel_unsaved_contunue, null)
                 .setPositiveButton(R.string.dialogItem_cancel_unsaved_discard, ((dialog1, which) -> cancel()))
@@ -183,7 +226,7 @@ public class DialogItem {
 
 
     private void deleteRequest() {
-        new AlertDialog.Builder(activity)
+        new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.dialogItem_delete_title)
                 .setNegativeButton(R.string.dialogItem_delete_cancel, null)
                 .setPositiveButton(R.string.dialogItem_delete_apply, ((dialog1, which) -> {
@@ -193,27 +236,16 @@ public class DialogItem {
                 .show();
     }
 
-
-    private Dialog generateDialog() {
-        Dialog dialog = new Dialog(this.activity);
-        dialog.setContentView(this.view);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setOnCancelListener(dialog1 -> {
-            if (!canceled && unsavedChanges) {
-                dialog.show();
-                cancelRequest();
-            }
-        });
-        return dialog;
+    private void cancel() {
+        getParentFragmentManager().popBackStack();
     }
 
-    public void cancel() {
-        canceled = true;
-        if (dialog != null) {
-            if (dialog.isShowing()) {
-                dialog.cancel();
-            }
+    @Override
+    public boolean popBackStack() {
+        if (unsavedChanges) {
+            cancelRequest();
         }
+        return unsavedChanges;
     }
 
     @FunctionalInterface
@@ -290,7 +322,6 @@ public class DialogItem {
             binding.minimize.setOnClickListener(v -> onEditStart.run());
             //
 
-            binding.editNotifications.setEnabled(!DialogItem.this.create);
             binding.editNotifications.setOnClickListener(v -> new DialogItemNotificationsEditor(activity, item, () -> updateNotificationPreview(item, activity)).show());
             updateNotificationPreview(item, activity);
         }

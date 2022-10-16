@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,30 +17,33 @@ import java.util.UUID;
 
 import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.items.ItemManager;
-import ru.fazziclay.opentoday.app.items.ItemStorage;
-import ru.fazziclay.opentoday.app.items.ItemsTab;
+import ru.fazziclay.opentoday.app.items.ItemsStorage;
+import ru.fazziclay.opentoday.app.items.tab.LocalItemsTab;
 import ru.fazziclay.opentoday.app.items.item.CycleListItem;
 import ru.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import ru.fazziclay.opentoday.app.items.item.GroupItem;
 import ru.fazziclay.opentoday.app.items.item.Item;
-import ru.fazziclay.opentoday.app.items.item.TextItem;
+import ru.fazziclay.opentoday.app.items.tab.Tab;
+import ru.fazziclay.opentoday.ui.UI;
 import ru.fazziclay.opentoday.ui.activity.MainActivity;
 import ru.fazziclay.opentoday.ui.dialog.DialogEditItemFilter;
 import ru.fazziclay.opentoday.ui.interfaces.IVGEditButtonInterface;
 import ru.fazziclay.opentoday.ui.interfaces.NavigationHost;
 import ru.fazziclay.opentoday.ui.other.item.ItemStorageDrawer;
-import ru.fazziclay.opentoday.util.SimpleSpinnerAdapter;
+import ru.fazziclay.opentoday.util.L;
 
 public class ItemsEditorFragment extends Fragment {
     private static final int RES_FILTER_BUTTON_IMAGE = android.R.drawable.stat_notify_voicemail;
     private static final String EXTRA_TAB_ID = "items_editor_fragment_tabId";
     private static final String EXTRA_ITEM_ID = "items_editor_fragment_itemId";
     private static final String EXTRA_PREVIEW_MODE = "items_editor_fragment_previewMode";
+    private static final String TAG = "ItemsEditorFragment";
 
     private MainActivity activity;
     private NavigationHost navigationHost;
+    private NavigationHost rootNavigationHost;
     private ItemManager itemManager;
-    private ItemStorage itemStorage;
+    private ItemsStorage itemsStorage;
     private boolean previewMode;
     private ItemStorageDrawer itemStorageDrawer;
 
@@ -49,7 +51,7 @@ public class ItemsEditorFragment extends Fragment {
     private UUID itemId;
     private boolean isRoot;
 
-    private ItemsTab tab;
+    private Tab tab;
     private Item item;
     private final List<Runnable> onCreateListeners = new ArrayList<>();
 
@@ -74,8 +76,10 @@ public class ItemsEditorFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        L.o(TAG, "onCreate", L.nn(savedInstanceState));
         activity = (MainActivity) requireActivity();
         navigationHost = (NavigationHost) getParentFragment();
+        rootNavigationHost = (NavigationHost) UI.findFragmentInParents(this, MainRootFragment.class);
         itemManager = App.get(requireContext()).getItemManager();
 
         Bundle args = getArguments();
@@ -85,20 +89,20 @@ public class ItemsEditorFragment extends Fragment {
 
         isRoot = !args.containsKey(EXTRA_ITEM_ID);
         if (isRoot) {
-            this.itemStorage = tab;
+            this.itemsStorage = tab;
 
         } else {
             itemId = UUID.fromString(args.getString(EXTRA_ITEM_ID));
             item = tab.getItemById(itemId);
 
-            if (item instanceof ItemStorage) {
-                itemStorage = (ItemStorage) item;
+            if (item instanceof ItemsStorage) {
+                itemsStorage = (ItemsStorage) item;
             } else {
-                throw new RuntimeException("Cannot get ItemStorage from item");
+                throw new RuntimeException("Cannot get ItemStorage from item. Item=" + item + "; id=" + itemId + "; tab=" + tab + "; tabId="+tabId);
             }
         }
 
-        this.itemStorageDrawer = new ItemStorageDrawer(activity, itemManager, itemStorage, null, previewMode, new IVGEditButtonInterface() {
+        this.itemStorageDrawer = new ItemStorageDrawer(activity, itemManager, itemsStorage, item -> rootNavigationHost.navigate(ItemEditorFragment.edit(tabId, item.getId()), true), previewMode, new IVGEditButtonInterface() {
             @Override
             public void onGroupEdit(GroupItem groupItem) {
                 navigationHost.navigate(createItem(tabId, groupItem.getId()), true);
@@ -127,11 +131,18 @@ public class ItemsEditorFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        L.o(TAG, "onCreateView", L.nn(savedInstanceState));
         return itemStorageDrawer.getView();
     }
 
-    public ItemStorage getItemStorage() {
-        return itemStorage;
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (this.itemStorageDrawer != null) this.itemStorageDrawer.destroy();
+    }
+
+    public ItemsStorage getItemStorage() {
+        return itemsStorage;
     }
 
     public UUID getTabId() {
@@ -152,12 +163,6 @@ public class ItemsEditorFragment extends Fragment {
             return UUID.fromString(getArguments().getString(EXTRA_ITEM_ID));
         }
         return null;
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return item != null ? item.getText() : "Unknown";
     }
 
     private void applyFilterGroupViewPatch(FilterGroupItem filterGroupItem) {

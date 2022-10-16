@@ -3,11 +3,11 @@ package ru.fazziclay.opentoday.app.items;
 import ru.fazziclay.opentoday.app.items.item.Item;
 
 public class Selection {
-    private ItemStorage itemStorage;
+    private ItemsStorage itemsStorage;
     private final Item item;
 
-    public Selection(ItemStorage itemStorage, Item item) {
-        this.itemStorage = itemStorage;
+    public Selection(ItemsStorage itemsStorage, Item item) {
+        this.itemsStorage = itemsStorage;
         this.item = item;
     }
 
@@ -15,13 +15,13 @@ public class Selection {
         return item;
     }
 
-    public ItemStorage getItemStorage() {
-        return itemStorage;
+    public ItemsStorage getItemStorage() {
+        return itemsStorage;
     }
 
-    public void moveToStorage(ItemStorage l) {
-        this.itemStorage.deleteItem(this.item);
-        this.itemStorage = l;
-        this.itemStorage.addItem(this.item);
+    public void moveToStorage(ItemsStorage l) {
+        this.itemsStorage.deleteItem(this.item);
+        this.itemsStorage = l;
+        this.itemsStorage.addItem(this.item);
     }
 }

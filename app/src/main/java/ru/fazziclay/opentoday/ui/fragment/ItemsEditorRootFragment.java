@@ -17,15 +17,17 @@ import java.util.UUID;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
-import ru.fazziclay.opentoday.app.items.ItemStorage;
-import ru.fazziclay.opentoday.app.items.ItemsTab;
+import ru.fazziclay.opentoday.app.items.ItemsStorage;
+import ru.fazziclay.opentoday.app.items.tab.LocalItemsTab;
 import ru.fazziclay.opentoday.app.items.item.Item;
-import ru.fazziclay.opentoday.ui.activity.MainActivity;
+import ru.fazziclay.opentoday.app.items.tab.Tab;
 import ru.fazziclay.opentoday.ui.interfaces.NavigationHost;
+import ru.fazziclay.opentoday.util.L;
 
 public class ItemsEditorRootFragment extends Fragment implements NavigationHost {
     private static final int ROOT_CONTAINER_ID = R.id.changeOnLeftSwipe;
     private static final String EXTRA_TAB_ID = "items_editor_root_fragment_tabId";
+    private static final String TAG = "ItemsEditorRootFragment";
     private TextView path;
 
     @NonNull
@@ -38,11 +40,12 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
     }
 
     private UUID tabId;
-    private ItemsTab tab;
+    private Tab tab;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        L.o(TAG, "onCreate", L.nn(savedInstanceState));
 
         Bundle args = getArguments();
         tabId = UUID.fromString(args.getString(EXTRA_TAB_ID));
@@ -61,6 +64,7 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        L.o(TAG, "onCreateView", L.nn(savedInstanceState));
         path = new TextView(requireContext());
         path.setText("/");
 
@@ -88,6 +92,7 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
 
     @Override
     public void navigate(Fragment fragment, boolean addToBackStack) {
+        L.o(TAG, "navigate", "to=", fragment, "back=", addToBackStack);
         if (!(fragment instanceof ItemsEditorFragment)) throw new RuntimeException("Other fragments not allowed.");
         ItemsEditorFragment ief = (ItemsEditorFragment) fragment;
 
@@ -100,7 +105,7 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
         Item item = tab.getItemById(itemId);
         if (item != null) {
             backStackName = item.getText();
-            updateItemStorageContext((ItemStorage) item);
+            updateItemStorageContext((ItemsStorage) item);
         }
 
         if (addToBackStack) transaction.addToBackStack(backStackName);
@@ -109,6 +114,8 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
 
     @Override
     public boolean popBackStack() {
+        L.o(TAG, "popBackStack");
+
         if (getChildFragmentManager().getBackStackEntryCount() > 0) {
             getChildFragmentManager().popBackStackImmediate();
             ItemsEditorFragment fragment = (ItemsEditorFragment) getChildFragmentManager().findFragmentById(ROOT_CONTAINER_ID);
@@ -118,7 +125,12 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
         return false;
     }
 
-    private void updateItemStorageContext(ItemStorage itemStorage) {
-        ((MainActivity) requireActivity()).setItemStorageInContext(itemStorage);
+    private void updateItemStorageContext(ItemsStorage itemsStorage) {
+        ItemsTabIncludeFragment f = ((ItemsTabIncludeFragment) getParentFragment());
+        if (f == null) {
+            L.o(TAG, "updateItemStorageContext", "parent fragment is null!!!!");
+            return;
+        }
+        f.setItemStorageInContext(itemsStorage);
     }
 }

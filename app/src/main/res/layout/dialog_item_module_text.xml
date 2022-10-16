@@ -8,6 +8,26 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="@string/dialog_item_module_text_text_title"/>
+
+    <EditText
+        android:id="@+id/text"
+        android:hint="@string/dialog_item_module_text_text_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:importantForAutofill="no"
+        android:inputType="textMultiLine" />
+
+    <CheckBox
+        android:id="@+id/clickableUrls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="0sp"
+        android:text="@string/uidialog_edit_textentry_clickableUrls" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/uidialog_edit_textentry_textColor_title" />
 
     <LinearLayout
@@ -27,38 +47,12 @@
             android:orientation="horizontal">
         </LinearLayout>
 
-        <ImageView
+        <CheckBox
+            android:id="@+id/default_text_color"
+            android:layout_weight="0"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@android:drawable/ic_menu_preferences"
-            android:contentDescription="@string/uidialog_edit_textentry_textColor_edit" />
+            android:minHeight="0sp" />
+
     </LinearLayout>
-
-    <CheckBox
-        android:id="@+id/default_text_color"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="0sp"
-        android:text="@string/uidialog_edit_textentry_defaultTextColor" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/dialog_item_module_text_text_title"/>
-
-    <EditText
-        android:id="@+id/text"
-        android:hint="@string/dialog_item_module_text_text_hint"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:importantForAutofill="no"
-        android:inputType="textMultiLine" />
-
-    <CheckBox
-        android:id="@+id/clickableUrls"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="0sp"
-        android:text="@string/uidialog_edit_textentry_clickableUrls" />
-
 </LinearLayout>

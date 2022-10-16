@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,158 +7,91 @@
     android:orientation="vertical"
     tools:context=".ui.activity.MainActivity">
 
-    <!-- Current date -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="4sp"
-        android:paddingEnd="4sp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/current_date"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            tools:text="2022.06.25 Saturday"
-            android:textColor="?attr/main_currentDate_color"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/current_time"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0"
-            android:gravity="end"
-            tools:text="10:00:59"
-            android:textColor="?attr/main_currentDate_color"
-            android:textSize="24sp" />
-
-    </LinearLayout>
-
-    <!-- Notifications -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <!-- Current date -->
         <LinearLayout
-            android:id="@+id/disable_battery_optimization_warning"
-            android:visibility="gone"
-            tools:visibility="visible"
+            android:id="@+id/current_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5sp"
-            android:layout_marginStart="2sp"
-            android:layout_marginEnd="2sp"
-            android:background="@drawable/shape"
-            android:padding="5sp"
-            android:backgroundTint="?attr/disableBatteryOptimization_backgroundColor"
+            android:paddingStart="4sp"
+            android:paddingEnd="4sp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/current_date_date"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                tools:text="2022.06.25 Saturday"
+                android:textColor="?attr/main_currentDate_color"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/current_date_time"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                android:gravity="end"
+                tools:text="10:00:59"
+                android:textColor="?attr/main_currentDate_color"
+                android:textSize="24sp" />
+
+        </LinearLayout>
+
+        <!-- Notifications -->
+        <LinearLayout
+            android:id="@+id/notifications"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
+            <LinearLayout
+                android:id="@+id/update_available"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/disable_battery_optimization_warning"
-                android:textSize="20sp"
-                android:textColor="?attr/disableBatteryOptimization_textColor"
-                app:drawableLeftCompat="@android:drawable/ic_lock_idle_low_battery" />
+                android:layout_marginTop="5sp"
+                android:layout_marginStart="2sp"
+                android:layout_marginEnd="2sp"
+                android:background="@drawable/shape"
+                android:backgroundTint="?attr/updateAvailable_backgroundColor"
+                android:orientation="vertical"
+                android:padding="5sp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/update_available"
+                    android:textColor="?attr/updateAvailable_textColor"
+                    android:textSize="20sp"
+                    app:drawableLeftCompat="@drawable/update_available" />
+            </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/update_available"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5sp"
-            android:layout_marginStart="2sp"
-            android:layout_marginEnd="2sp"
-            android:background="@drawable/shape"
-            android:backgroundTint="?attr/updateAvailable_backgroundColor"
-            android:orientation="vertical"
-            android:padding="5sp"
-            android:visibility="gone"
-            tools:visibility="visible">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/update_available"
-                android:textColor="?attr/updateAvailable_textColor"
-                android:textSize="20sp"
-                app:drawableLeftCompat="@drawable/update_available" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <!-- Tabs -->
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabs"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabGravity="start"
-        app:tabMode="scrollable" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
-
-        <!-- ViewPager -->
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPager"
-            android:paddingRight="4sp"
-            android:paddingLeft="4sp"
+        <FrameLayout
+            android:id="@+id/content_root"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <!-- Toolbar more -->
-        <LinearLayout
-            android:id="@+id/toolbar_more"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:orientation="vertical"
-            android:clickable="false" />
-    </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/quickNote"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="40sp"
-        android:background="#D710DB2B"
-        android:gravity="bottom"
-        android:paddingRight="2sp"
-        android:paddingLeft="2sp"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/quickNoteText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="@string/quickNote_hint"
-            android:inputType="textMultiLine"
-            android:importantForAutofill="no" />
-
-        <ImageButton
-            android:id="@+id/quickNoteAdd"
-            android:layout_width="45sp"
-            android:layout_height="45sp"
-            android:layout_weight="0"
-            android:src="@android:drawable/ic_menu_send"
-            android:contentDescription="@string/quickNote_add" />
-
     </LinearLayout>
-
-    <!-- Toolbar buttons -->
-    <LinearLayout
-        android:id="@+id/toolbar"
+    <TextView
+        android:visibility="gone"
+        android:clickable="false"
+        android:overScrollMode="always"
+        android:contextClickable="false"
+        android:id="@+id/debugs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="0"
-        android:paddingLeft="5sp"
-        android:paddingRight="5sp"
-        android:background="?attr/toolbar_background" />
-</LinearLayout>
+        tools:text="[AOo] 123213"
+        android:textColor="#FFEA00"
+        android:shadowColor="#000000"
+        android:shadowRadius="4"
+        android:background="#18000000"
+        android:textSize="13sp" />
+</RelativeLayout>

@@ -1,4 +1,4 @@
-package ru.fazziclay.opentoday.app.items;
+package ru.fazziclay.opentoday.app.items.item;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -6,12 +6,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.fazziclay.opentoday.app.items.item.Item;
-
 public class ItemIEUtil {
     private static final String KEY_ITEMTYPE = "itemType";
 
     public static JSONArray exportItemList(List<Item> items) throws Exception {
+        return exportItemList(items.toArray(new Item[0]));
+    }
+
+    public static JSONArray exportItemList(Item[] items) throws Exception {
         JSONArray o = new JSONArray();
         for (Item item : items) {
             o.put(exportItem(item));
