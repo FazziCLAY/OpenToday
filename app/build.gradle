@@ -9,8 +9,8 @@ android {
         applicationId "ru.fazziclay.opentoday.dev"
         minSdk 26
         targetSdk 32
-        versionCode 57
-        versionName "0.9._6 (build 57 dev)"
+        versionCode 61
+        versionName "0.9._7 (build 61 dev)"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -39,7 +39,8 @@ android {
 
 dependencies {
     // Application
-    implementation files("./libs/OpenTodayTelemetry-v2-v10.jar")
+    implementation files("./libs/OpenTodayTelemetry-v2-v11.jar")
+    implementation files("./libs/NeoSocket-1.0.jar")
     implementation files("./libs/JavaNeoUtil-1.0.jar")
     implementation 'com.github.martin-stone:hsv-alpha-color-picker-android:3.0.1'
     implementation 'androidx.appcompat:appcompat:1.5.0'

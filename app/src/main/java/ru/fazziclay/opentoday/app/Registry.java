@@ -1,6 +1,6 @@
 package ru.fazziclay.opentoday.app;
 
-import com.fazziclay.neosocket.packet.PacketDynamicRegistry;
+import com.fazziclay.neosocket.packet.PacketsRegistry;
 
 import ru.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import ru.fazziclay.opentoday.app.items.tab.TabsRegistry;
@@ -11,5 +11,5 @@ public class Registry {
     public static final TabsRegistry TABS = TabsRegistry.REGISTRY;
     public static final ItemsRegistry ITEMS = ItemsRegistry.REGISTRY;
     public static final ItemNotificationsRegistry ITEM_NOTIFICATIONS = ItemNotificationsRegistry.REGISTRY;
-    public static final PacketDynamicRegistry TELEMETRY_PACKETS = new TelemetryPackets();
+    public static final PacketsRegistry TELEMETRY_PACKETS = new TelemetryPackets();
 }

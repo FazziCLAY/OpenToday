@@ -16,13 +16,13 @@ import java.util.GregorianCalendar;
 
 import ru.fazziclay.javaneoutil.FileUtil;
 import ru.fazziclay.opentoday.telemetry.TelemetryPackets;
-import ru.fazziclay.opentoday.telemetry.packet.PacketCrashReport;
-import ru.fazziclay.opentoday.telemetry.packet.PacketDataFixerLogs;
-import ru.fazziclay.opentoday.telemetry.packet.PacketHandshake;
-import ru.fazziclay.opentoday.telemetry.packet.PacketLogin;
+import ru.fazziclay.opentoday.telemetry.packet.Packet20006CrashReport;
+import ru.fazziclay.opentoday.telemetry.packet.Packet20007DataFixerLogs;
+import ru.fazziclay.opentoday.telemetry.packet.Packet20005Handshake;
+import ru.fazziclay.opentoday.telemetry.packet.Packet20004Login;
 import ru.fazziclay.opentoday.telemetry.packet.PacketSetVersion;
-import ru.fazziclay.opentoday.telemetry.packet.PacketUIClosed;
-import ru.fazziclay.opentoday.telemetry.packet.PacketUIOpen;
+import ru.fazziclay.opentoday.telemetry.packet.Packet20009UIClosed;
+import ru.fazziclay.opentoday.telemetry.packet.Packet20008UIOpen;
 import ru.fazziclay.opentoday.util.L;
 import ru.fazziclay.opentoday.util.NetworkUtil;
 
@@ -151,8 +151,8 @@ public class Telemetry {
                         public void setup(Client client) {
                             try {
                                 client.send(new PacketSetVersion(2));
-                                client.send(new PacketLogin(app.getInstanceId()));
-                                client.send(new PacketHandshake(App.VERSION_CODE));
+                                client.send(new Packet20004Login(app.getInstanceId()));
+                                client.send(new Packet20005Handshake(App.VERSION_CODE));
                                 client.send(packet);
 
                                 Thread.sleep(1000);
@@ -161,6 +161,16 @@ public class Telemetry {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                        }
+
+                        @Override
+                        public void preDisconnect(Client client) {
+                            L.o("Telemetry", "preDisconnect");
+                        }
+
+                        @Override
+                        public void fatalException(Client client, Exception e) {
+                            L.o("Telemetry", "fatalException", e);
                         }
                     });
                     new Thread(() -> {
@@ -220,25 +230,25 @@ public class Telemetry {
 
     public static class UiOpenLPacket extends LPacket {
         public UiOpenLPacket() {
-            super(true, false, new PacketUIOpen());
+            super(true, false, new Packet20008UIOpen());
         }
     }
 
     public static class UiClosedLPacket extends LPacket {
         public UiClosedLPacket() {
-            super(true, false, new PacketUIClosed());
+            super(true, false, new Packet20009UIClosed());
         }
     }
 
     public static class CrashReportLPacket extends LPacket {
         public CrashReportLPacket(CrashReport crashReport) {
-            super(false, true, new PacketCrashReport(crashReport.getID(), crashReport.getThrowable().toString(), crashReport.convertToText()));
+            super(false, true, new Packet20006CrashReport(crashReport.getID(), crashReport.getThrowable().toString(), crashReport.convertToText()));
         }
     }
 
     public static class DataFixerLogsLPacket extends LPacket {
         public DataFixerLogsLPacket(int dataVersion, String logs) {
-            super(false, false, new PacketDataFixerLogs(dataVersion, logs));
+            super(false, false, new Packet20007DataFixerLogs(dataVersion, logs));
         }
     }
 
