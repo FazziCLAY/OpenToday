@@ -2,6 +2,7 @@
 Android application for the organization of life
 
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/fazziclay/opentoday?style=plastic)
+![IzzyOnDroid](https://img.shields.io/endpoint?style=plastic&url=https://apt.izzysoft.de/fdroid/api/v1/shield/ru.fazziclay.opentoday)
 
 # Other Development Docs
 "/docs" folder
