@@ -51,7 +51,7 @@ public class SettingsFragment extends Fragment {
         });
 
 
-        binding.minimizeGrayColor.setChecked(settingsManager.isParseTimeFromQuickNote());
+        binding.minimizeGrayColor.setChecked(settingsManager.isMinimizeGrayColor());
         binding.minimizeGrayColor.setOnClickListener(v -> {
             settingsManager.setMinimizeGrayColor(binding.minimizeGrayColor.isChecked());
             settingsManager.save();
