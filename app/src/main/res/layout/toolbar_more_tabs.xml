@@ -5,12 +5,12 @@
     android:background="#333333"
     android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="30sp"
-            android:textColor="#aaaaaa"
-            android:text="@string/edit_tabs" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="23sp"
+        android:textColor="#aaaaaa"
+        android:text="@string/toolbar_tabs_title" />
 
 
     <RelativeLayout

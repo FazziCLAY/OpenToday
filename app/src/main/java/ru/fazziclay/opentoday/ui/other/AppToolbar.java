@@ -250,7 +250,11 @@ public class AppToolbar {
             TextView textView = (TextView) itemView;
             textView.setTextSize(20);
             textView.setTextColor(Color.WHITE);
-            textView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            p.setMargins(0, 5, 0, 5);
+            textView.setBackgroundResource(R.drawable.shape);
+            textView.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#555555")));
+            textView.setLayoutParams(p);
         }
 
         public void setText(String text) {
@@ -271,35 +275,33 @@ public class AppToolbar {
 
             @Override
             public void onBindViewHolder(@NonNull TabHolder holder, int position) {
-                String s = itemManager.getTabs().get(position).getName();
+                Tab tab = itemManager.getTabs().get(position);
+                String s = tab.getName();
                 holder.setText(s);
                 holder.itemView.setOnClickListener(v -> {
                     EditText editText = new EditText(activity);
-
-                    CurrentItemsTab r = (CurrentItemsTab) navigationHost;
-                    editText.setText(r.getCurrentTab().getName());
+                    editText.setHint(R.string.toolbar_tabs_edit_name_hint);
+                    editText.setText(tab.getName());
 
                     new AlertDialog.Builder(activity)
+                            .setTitle(activity.getString(R.string.toolbar_tabs_edit_dialog_title, tab.getName()))
                             .setView(editText)
                             .setPositiveButton(R.string.toolbar_more_items_tab_rename, (dialog, which) -> {
                                 String text = editText.getText().toString();
                                 if (!text.trim().isEmpty()) {
-                                    r.getCurrentTab().setName(text);
+                                    tab.setName(text);
                                 } else {
                                     Toast.makeText(activity, R.string.tab_noEmptyName, Toast.LENGTH_SHORT).show();
                                 }
                             })
                             .setNegativeButton(R.string.abc_cancel, null)
                             .setNeutralButton(R.string.toolbar_more_items_tab_delete, (dialog, w) -> {
-
-                                Tab del = r.getCurrentTab();
-
                                 new AlertDialog.Builder(activity)
-                                        .setTitle(activity.getString(R.string.dialog_previewDeleteItems_delete_title, String.valueOf(del.size())))
+                                        .setTitle(activity.getString(R.string.dialog_previewDeleteItems_delete_title, String.valueOf(tab.size())))
                                         .setNegativeButton(R.string.dialog_previewDeleteItems_delete_cancel, null)
                                         .setPositiveButton(R.string.dialog_previewDeleteItems_delete_apply, ((dialog1, which) -> {
                                             try {
-                                                itemManager.deleteTab(del);
+                                                itemManager.deleteTab(tab);
                                             } catch (Exception e) {
                                                 Toast.makeText(activity, e.toString(), Toast.LENGTH_SHORT).show();
                                             }
@@ -359,7 +361,9 @@ public class AppToolbar {
 
         b.addTab.setOnClickListener(v -> {
             EditText editText = new EditText(activity);
+            editText.setHint(R.string.toolbar_tabs_addNew_name_hint);
             new AlertDialog.Builder(activity)
+                    .setTitle(R.string.toolbar_tabs_addNew_dialog_title)
                     .setView(editText)
                     .setPositiveButton(R.string.toolbar_more_items_tab_add, (dialog, which) -> {
                         String text = editText.getText().toString();

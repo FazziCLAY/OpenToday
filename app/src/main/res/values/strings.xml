@@ -186,7 +186,7 @@
     <string name="dialog_item_module_item_notifications_empty">Notifications none!</string>
     <string name="dialog_editItemFilter_disable">Disable</string>
     <string name="toolbar_tabs">Tabs</string>
-    <string name="edit_tabs">Edit tabs</string>
+    <string name="toolbar_tabs_title">Tabs list:</string>
     <string name="add_new_tab">Add new tab</string>
     <string name="settings_minimizeGrayColor">Minimize gray color</string>
     <string name="settings_parseTimeFromQuickNote">Parse time from quick note</string>
@@ -197,4 +197,8 @@
     <string name="openSouceLicense_cantStart_assesPath">Can\'t start this activity: assesPath is null!</string>
     <string name="openSouceLicense_cantStart_exception">Exception: %s</string>
     <string name="openSouceLicenses_telemetry_warn">For automatically send crashes</string>
+    <string name="toolbar_tabs_addNew_dialog_title">Add new tab</string>
+    <string name="toolbar_tabs_addNew_name_hint">Enter tab name…</string>
+    <string name="toolbar_tabs_edit_dialog_title">Edit tab \'%s\'</string>
+    <string name="toolbar_tabs_edit_name_hint">Enter new tab name...</string>
 </resources>
