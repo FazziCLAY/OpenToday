@@ -13,15 +13,14 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.fazziclay.neosocket.NeoSocket;
+
 import ru.fazziclay.javaneoutil.JavaNeoUtil;
 import ru.fazziclay.opentoday.R;
+import ru.fazziclay.opentoday.telemetry.OpenTodayTelemetry;
 
 public class OpenSourceLicensesActivity extends AppCompatActivity {
-    private final Licence[] licences = new Licence[] {
-            new Licence("LICENSE_OpenToday", "OpenToday (this app)", "fazziclay@gmail.com\nhttps://fazziclay.github.io/opentoday"),
-            new Licence("LICENSE_JavaNeoUtil", "JavaNeoUtil v" + JavaNeoUtil.VERSION_NAME, "https://github.com/fazziclay/javaneoutil"),
-            new Licence("LICENSE_hsv-alpha-color-picker-android", "hsv-alpha-color-picker-android", "https://github.com/martin-stone/hsv-alpha-color-picker-android")
-    };
+    private Licence[] licences = null;
 
     public static Intent createLaunchIntent(Context context) {
         return new Intent(context, OpenSourceLicensesActivity.class);
@@ -30,6 +29,14 @@ public class OpenSourceLicensesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // TODO: 19.10.2022 add v prefix to version to telemetry
+        licences = new Licence[] {
+                new Licence("LICENSE_OpenToday", "OpenToday (this app)", "fazziclay@gmail.com\nhttps://fazziclay.github.io/opentoday"),
+                new Licence("LICENSE_JavaNeoUtil", "JavaNeoUtil v" + JavaNeoUtil.VERSION_NAME, "https://github.com/fazziclay/javaneoutil"),
+                new Licence("LICENSE_NeoSocket", "NeoSocket v" + NeoSocket.VERSION_NAME, "https://github.com/fazziclay/neosocket"),
+                new Licence("LICENSE_OpenTodayTelemetry", "OpenTodayTelemetry " + OpenTodayTelemetry.VERSION_NAME, getString(R.string.openSouceLicenses_telemetry_warn) + "\nhttps://github.com/fazziclay/opentodaytelemetry"),
+        };
 
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setOrientation(LinearLayout.VERTICAL);

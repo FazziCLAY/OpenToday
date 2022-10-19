@@ -188,4 +188,8 @@
     <string name="aboutapp_text_sourceCode">Исходный код:</string>
     <string name="aboutapp_text_issues">Баги/идеи</string>
     <string name="temporarly_unavailable">Эта функция временно недоступна; Воспользутесь кнопкой рядом</string>
+    <string name="openSouceLicense_cantStart">Невозможно запустить активити</string>
+    <string name="openSouceLicense_cantStart_assesPath" translatable="false">Невозможно запустить активити: assesPath is null</string>
+    <string name="openSouceLicense_cantStart_exception">Ошибка: %s</string>
+    <string name="openSouceLicenses_telemetry_warn">Для автоматической отправки ошибок приложения</string>
 </resources>

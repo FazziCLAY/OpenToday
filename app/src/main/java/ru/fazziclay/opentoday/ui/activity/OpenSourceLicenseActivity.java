@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
@@ -30,11 +31,14 @@ public class OpenSourceLicenseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (getIntent() == null || getIntent().getExtras() == null) {
+            Toast.makeText(this, R.string.openSouceLicense_cantStart, Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
         String assetPath = getIntent().getExtras().getString("assetPath");
         if (assetPath == null) {
-            String error = "Error: assetPath is not provided";
-            Toast.makeText(this, error, Toast.LENGTH_LONG).show();
-            Log.e("LicenceActivity", error);
+            Toast.makeText(this, R.string.openSouceLicense_cantStart_assesPath, Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -58,22 +62,27 @@ public class OpenSourceLicenseActivity extends AppCompatActivity {
 
         AssetManager assetManager = getAssets();
         try {
-            Reader reader = new InputStreamReader(assetManager.open(assetPath));
-            final StringBuilder result = new StringBuilder();
-
-            final char[] buff = new char[1024];
-            int i;
-            while ((i = reader.read(buff)) > 0) {
-                result.append(new String(buff, 0, i));
-            }
-            reader.close();
-            textView.setText(result.toString());
+            String result = read(assetManager.open(assetPath));
+            textView.setText(result);
 
         } catch (IOException e) {
-            String error = "Error: " + e;
-            Toast.makeText(this, error, Toast.LENGTH_LONG).show();
-            Log.e("LicenceActivity", error, e);
+            Toast.makeText(this, getString(R.string.openSouceLicense_cantStart_exception, e.toString()), Toast.LENGTH_SHORT).show();
+            Log.e("LicenceActivity", "Exception", e);
             finish();
         }
+    }
+
+    // IDEA: move to JavaNeoUtil as `readString(InputStream is)`
+    private String read(InputStream inputStream) throws IOException {
+        Reader reader = new InputStreamReader(inputStream);
+        final StringBuilder result = new StringBuilder();
+
+        final char[] buff = new char[1024];
+        int i;
+        while ((i = reader.read(buff)) > 0) {
+            result.append(new String(buff, 0, i));
+        }
+        reader.close();
+        return result.toString();
     }
 }
