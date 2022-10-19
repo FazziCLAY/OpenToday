@@ -148,7 +148,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
 
         tabsViewPagerAdapter = new LocalViewPagerAdapter();
         binding.viewPager.setAdapter(tabsViewPagerAdapter);
-        selectViewPager(getCurrentTabId());
+        selectViewPager(getCurrentTabId(), false);
     }
 
     private void setupQuickNote() {
@@ -322,7 +322,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
             tabsViewPagerAdapter = new LocalViewPagerAdapter();
             binding.viewPager.setAdapter(tabsViewPagerAdapter);
 
-            ItemsTabIncludeFragment.this.selectViewPager(id);
+            ItemsTabIncludeFragment.this.selectViewPager(id, false);
             ItemsTabIncludeFragment.this.setItemStorageInContext(itemManager.getTab(id));
             return Status.NONE;
         }
