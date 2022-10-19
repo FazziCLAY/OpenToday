@@ -32,13 +32,13 @@ public class OpenSourceLicenseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         if (getIntent() == null || getIntent().getExtras() == null) {
-            Toast.makeText(this, R.string.openSouceLicense_cantStart, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.openSourceLicense_cantStart, Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
         String assetPath = getIntent().getExtras().getString("assetPath");
         if (assetPath == null) {
-            Toast.makeText(this, R.string.openSouceLicense_cantStart_assesPath, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.openSourceLicense_cantStart_assesPath, Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -66,7 +66,7 @@ public class OpenSourceLicenseActivity extends AppCompatActivity {
             textView.setText(result);
 
         } catch (IOException e) {
-            Toast.makeText(this, getString(R.string.openSouceLicense_cantStart_exception, e.toString()), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.openSourceLicense_cantStart_exception, e.toString()), Toast.LENGTH_SHORT).show();
             Log.e("LicenceActivity", "Exception", e);
             finish();
         }

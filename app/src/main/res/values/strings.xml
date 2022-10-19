@@ -193,10 +193,10 @@
     <string name="aboutapp_text_sourceCode">Source Code:</string>
     <string name="aboutapp_text_issues">Issues</string>
     <string name="temporarly_unavailable">This function temporarily unavailable; use other button</string>
-    <string name="openSouceLicense_cantStart">Can\'t start this activity</string>
-    <string name="openSouceLicense_cantStart_assesPath">Can\'t start this activity: assesPath is null!</string>
-    <string name="openSouceLicense_cantStart_exception">Exception: %s</string>
-    <string name="openSouceLicenses_telemetry_warn">For automatically send crashes</string>
+    <string name="openSourceLicense_cantStart">Can\'t start this activity</string>
+    <string name="openSourceLicense_cantStart_assesPath">Can\'t start this activity: assesPath is null!</string>
+    <string name="openSourceLicense_cantStart_exception">Exception: %s</string>
+    <string name="openSourceLicenses_telemetry_warn">For automatically send crashes</string>
     <string name="toolbar_tabs_addNew_dialog_title">Add new tab</string>
     <string name="toolbar_tabs_addNew_name_hint">Enter tab name…</string>
     <string name="toolbar_tabs_edit_dialog_title">Edit tab \'%s\'</string>
