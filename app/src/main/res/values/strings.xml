@@ -200,5 +200,5 @@
     <string name="toolbar_tabs_addNew_dialog_title">Add new tab</string>
     <string name="toolbar_tabs_addNew_name_hint">Enter tab name…</string>
     <string name="toolbar_tabs_edit_dialog_title">Edit tab \'%s\'</string>
-    <string name="toolbar_tabs_edit_name_hint">Enter new tab name...</string>
+    <string name="toolbar_tabs_edit_name_hint">Enter new tab name…</string>
 </resources>
