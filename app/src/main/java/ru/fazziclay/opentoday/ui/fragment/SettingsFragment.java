@@ -56,6 +56,12 @@ public class SettingsFragment extends Fragment {
             settingsManager.setMinimizeGrayColor(binding.minimizeGrayColor.isChecked());
             settingsManager.save();
         });
+
+        binding.trimItemNamesOnEdit.setChecked(settingsManager.isTrimItemNamesOnEdit());
+        binding.trimItemNamesOnEdit.setOnClickListener(v -> {
+            settingsManager.setTrimItemNamesOnEdit(binding.trimItemNamesOnEdit.isChecked());
+            settingsManager.save();
+        });
     }
 
     @Nullable

@@ -29,6 +29,7 @@ public class SettingsManager {
     private static final String KEY_QUICK_NOTE_NOTIFICATION = "quickNote"; // TODO: 14.10.2022 rename & add to DataFixer
     private static final String KEY_PARSETIMEFROMQUICKNOTE = "parseTimeFromQuickNote"; // TODO: 14.10.2022 add to datafixer
     private static final String KEY_ISMINIMIZEGRAYCOLOR = "isMinimizeGrayColor"; // TODO: 14.10.2022 add to datafixer
+    private static final String KEY_TRIMITEMNAMESONEDIT = "trimItemNamesOnEdit";
 
     // local
     private final File saveFile;
@@ -38,6 +39,7 @@ public class SettingsManager {
     private boolean quickNoteNotification = true;
     private boolean parseTimeFromQuickNote = true;
     private boolean isMinimizeGrayColor = false;
+    private boolean trimItemNamesOnEdit = true;
 
     public SettingsManager(File saveFile) {
         this.saveFile = saveFile;
@@ -54,7 +56,8 @@ public class SettingsManager {
     @Getter public boolean isMinimizeGrayColor() { return isMinimizeGrayColor; }
     @Setter public void setParseTimeFromQuickNote(boolean parseTimeFromQuickNote) {this.parseTimeFromQuickNote = parseTimeFromQuickNote;}
     @Getter public boolean isParseTimeFromQuickNote() { return parseTimeFromQuickNote; }
-
+    @Getter public boolean isTrimItemNamesOnEdit() {return trimItemNamesOnEdit;}
+    @Setter public void setTrimItemNamesOnEdit(boolean trimItemNamesOnEdit) {this.trimItemNamesOnEdit = trimItemNamesOnEdit;}
 
     private void load() {
         if (!FileUtil.isExist(saveFile)) {
@@ -84,6 +87,7 @@ public class SettingsManager {
             this.quickNoteNotification = j.optBoolean(KEY_QUICK_NOTE_NOTIFICATION, this.quickNoteNotification);
             this.parseTimeFromQuickNote = j.optBoolean(KEY_PARSETIMEFROMQUICKNOTE, this.parseTimeFromQuickNote);
             this.isMinimizeGrayColor = j.optBoolean(KEY_ISMINIMIZEGRAYCOLOR, this.isMinimizeGrayColor);
+            this.trimItemNamesOnEdit = j.optBoolean(KEY_TRIMITEMNAMESONEDIT, this.trimItemNamesOnEdit);
 
         } catch (Exception e) {
             Log.e("SettingsManager", "load", e);
@@ -105,6 +109,7 @@ public class SettingsManager {
             j.put(KEY_QUICK_NOTE_NOTIFICATION, this.quickNoteNotification);
             j.put(KEY_PARSETIMEFROMQUICKNOTE, this.parseTimeFromQuickNote);
             j.put(KEY_ISMINIMIZEGRAYCOLOR, this.isMinimizeGrayColor);
+            j.put(KEY_TRIMITEMNAMESONEDIT, this.trimItemNamesOnEdit);
 
             FileUtil.setText(saveFile, j.toString(2));
         } catch (Exception e) {

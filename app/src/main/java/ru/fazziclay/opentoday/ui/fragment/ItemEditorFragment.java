@@ -32,9 +32,9 @@ import java.util.UUID;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
+import ru.fazziclay.opentoday.app.settings.SettingsManager;
 import ru.fazziclay.opentoday.app.items.ItemManager;
 import ru.fazziclay.opentoday.app.items.ItemsStorage;
-import ru.fazziclay.opentoday.app.items.tab.LocalItemsTab;
 import ru.fazziclay.opentoday.app.items.item.CheckboxItem;
 import ru.fazziclay.opentoday.app.items.item.CounterItem;
 import ru.fazziclay.opentoday.app.items.item.CycleListItem;
@@ -85,6 +85,7 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
         return d;
     }
 
+    private SettingsManager settingsManager;
     private ItemManager itemManager;
     private Item item;
     private OnEditDone onEditDone;
@@ -99,6 +100,7 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
         super.onCreate(savedInstanceState);
 
         itemManager = App.get(requireContext()).getItemManager();
+        settingsManager = App.get(requireContext()).getSettingsManager();
 
         String mode = getArguments().getString("mode");
         if ("create".equals(mode)) {
@@ -363,7 +365,7 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
         }
     }
 
-    public static class TextItemEditModule extends BaseEditUiModule {
+    public class TextItemEditModule extends BaseEditUiModule {
         private DialogItemModuleTextBinding binding;
         private Runnable onEditStart;
 
@@ -432,7 +434,11 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
         public void commit(Item item) {
             TextItem textItem = (TextItem) item;
 
-            textItem.setText(binding.text.getText().toString());
+            String userInput = binding.text.getText().toString();
+            if (settingsManager.isTrimItemNamesOnEdit()) {
+                userInput = userInput.trim();
+            }
+            textItem.setText(userInput);
             textItem.setTextColor(temp_textColor);
             textItem.setCustomTextColor(!binding.defaultTextColor.isChecked());
             textItem.setClickableUrls(binding.clickableUrls.isChecked());

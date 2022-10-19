@@ -38,4 +38,10 @@
         android:layout_height="wrap_content"
         android:text="@string/settings_minimizeGrayColor" />
 
+    <CheckBox
+        android:id="@+id/trimItemNamesOnEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_trimItemNamesOnEdit" />
+
 </LinearLayout>

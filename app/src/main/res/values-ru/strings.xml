@@ -196,4 +196,5 @@
     <string name="toolbar_tabs_addNew_name_hint">Введите имя вкладки…</string>
     <string name="toolbar_tabs_edit_dialog_title">Редактирование \'%s\'</string>
     <string name="toolbar_tabs_edit_name_hint">Введите новое имя…</string>
+    <string name="settings_trimItemNamesOnEdit">Обрезать лишнее в имени при редактровании айтема</string>
 </resources>
