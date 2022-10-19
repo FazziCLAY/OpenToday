@@ -171,6 +171,18 @@ public class AppToolbar {
         }
     }
 
+    public boolean isMoreViewVisible() {
+        return currentToolbarButton != null;
+    }
+
+    public void closeMoreView() {
+        resetMoreView();
+        currentToolbarButton = null;
+        if (onMoreVisibleChangedListener != null) {
+            onMoreVisibleChangedListener.onChange(false);
+        }
+    }
+
     private void onFileClick() {
         ToolbarMoreFileBinding b = ToolbarMoreFileBinding.inflate(activity.getLayoutInflater(), toolbarMoreView, false);
 

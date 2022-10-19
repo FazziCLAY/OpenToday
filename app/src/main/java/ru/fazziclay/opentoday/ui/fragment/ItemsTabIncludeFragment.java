@@ -245,7 +245,14 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
             L.o(TAG, "popBackStack: current fragment null: -> false");
             return false;
         }
-        return fragment.popBackStack();
+        boolean isPop = fragment.popBackStack();
+        if (isPop == false) {
+            if (toolbar.isMoreViewVisible()) {
+                toolbar.closeMoreView();
+                isPop = true;
+            }
+        }
+        return isPop;
     }
 
     @Override
