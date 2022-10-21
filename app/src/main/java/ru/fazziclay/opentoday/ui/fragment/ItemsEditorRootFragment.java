@@ -80,14 +80,19 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
         return l;
     }
 
-    private void updatePath() {
-        StringBuilder s = new StringBuilder("/");
+    private String getPath() {
+        final String PATH_SEPARATOR = " / ";
+        StringBuilder s = new StringBuilder(PATH_SEPARATOR);
         int i = 0;
         while (i < getChildFragmentManager().getBackStackEntryCount()) {
-            s.append(getChildFragmentManager().getBackStackEntryAt(i).getName()).append("/");
+            s.append(getChildFragmentManager().getBackStackEntryAt(i).getName()).append(PATH_SEPARATOR);
             i++;
         }
-        path.setText(s.toString());
+        return s.toString().trim();
+    }
+
+    private void updatePath() {
+        path.setText(getPath());
     }
 
     @Override
