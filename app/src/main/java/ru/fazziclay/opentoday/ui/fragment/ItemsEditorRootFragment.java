@@ -66,7 +66,7 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         L.o(TAG, "onCreateView", L.nn(savedInstanceState));
         path = new TextView(requireContext());
-        path.setText("/");
+        updatePath();
 
         FrameLayout frameLayout = new FrameLayout(requireContext());
         frameLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
