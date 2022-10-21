@@ -144,6 +144,7 @@ public class ItemManager {
     public void moveTabs(int positionFrom, int positionTo) {
         Collections.swap(this.tabs, positionFrom, positionTo);
         internalOnTabChanged();
+        save();
     }
 
     private void internalOnTabChanged() {
@@ -158,6 +159,7 @@ public class ItemManager {
         @Override
         public void nameChanged(Tab tab) {
             ItemManager.this.internalOnTabChanged();
+            ItemManager.this.save();
         }
     }
 
