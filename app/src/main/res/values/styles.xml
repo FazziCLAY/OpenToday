@@ -30,4 +30,10 @@
     <style name="OpenToday.Base.About.Title" />
     <style name="OpenToday.Base.About.RowTitle" />
     <style name="OpenToday.Base.About.RowValue" />
+
+    <!-- Settings -->
+    <style name="OpenToday.Base.Settings" />
+    <style name="OpenToday.Base.Settings.Root">
+        <item name="android:padding">5sp</item>
+    </style>
 </resources>

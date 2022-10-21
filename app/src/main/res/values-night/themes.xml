@@ -80,4 +80,8 @@
         <item name="android:textColor">#BEBEBE</item>
         <item name="android:textSize">17sp</item>
     </style>
+
+    <!-- Settings -->
+    <style name="Theme.OpenToday.Settings" parent="OpenToday.Base.Settings" />
+    <style name="Theme.OpenToday.Settings.Root" parent="OpenToday.Base.Settings.Root" />
 </resources>

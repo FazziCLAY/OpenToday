@@ -15,7 +15,7 @@ import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import ru.fazziclay.opentoday.app.settings.SettingsManager;
-import ru.fazziclay.opentoday.databinding.DialogAppSettingsBinding;
+import ru.fazziclay.opentoday.databinding.FragmentSettingsBinding;
 import ru.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 
 public class SettingsFragment extends Fragment {
@@ -23,13 +23,13 @@ public class SettingsFragment extends Fragment {
         return new SettingsFragment();
     }
 
-    private DialogAppSettingsBinding binding;
+    private FragmentSettingsBinding binding;
     private SettingsManager settingsManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.binding = DialogAppSettingsBinding.inflate(getLayoutInflater());
+        this.binding = FragmentSettingsBinding.inflate(getLayoutInflater());
         this.settingsManager = App.get(requireContext()).getSettingsManager();
         setupThemeSpinner();
 
