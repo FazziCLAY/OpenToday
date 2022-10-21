@@ -95,6 +95,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
 
         this.toolbar = new AppToolbar(requireActivity(), itemManager, getCurrentTab(), (NavigationHost) UI.findFragmentInParents(this, MainRootFragment.class), this);
         /*Tabs*/ this.setItemStorageInContext(itemManager.getTab(extraTab.getId()));
+        /*Tabs*/ toolbar.setTab(extraTab);
 
 
 
@@ -234,6 +235,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     @Override
     public void setCurrentTab(UUID id) {
         currentTab = id;
+        if (toolbar != null) toolbar.setTab(itemManager.getTab(id));
         if (currentTab != null) FileUtil.setText(latestTabCacheFile, currentTab.toString());
     }
 

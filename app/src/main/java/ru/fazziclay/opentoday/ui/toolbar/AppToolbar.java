@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
@@ -49,6 +50,7 @@ import ru.fazziclay.opentoday.databinding.ToolbarMoreOpentodayBinding;
 import ru.fazziclay.opentoday.databinding.ToolbarMoreSelectionBinding;
 import ru.fazziclay.opentoday.databinding.ToolbarMoreTabsBinding;
 import ru.fazziclay.opentoday.ui.activity.MainActivity;
+import ru.fazziclay.opentoday.ui.fragment.ItemEditorFragment;
 import ru.fazziclay.opentoday.ui.fragment.ItemsTabIncludeFragment;
 import ru.fazziclay.opentoday.ui.fragment.AboutFragment;
 import ru.fazziclay.opentoday.ui.fragment.SettingsFragment;
@@ -67,6 +69,7 @@ public class AppToolbar {
     private boolean destroyed = false;
     private final ItemManager itemManager;
     private ItemsStorage itemsStorage; // For context toolbar work
+    private Tab tab; // For context toolbar work
     private View currentToolbarButton = null; // Current active button. If none: null
     private OnSelectionChanged onSelectionChanged = null; // (Selection TAB) On selection changed. For runtime update selection information
     private OnTabsChanged onTabsChanged = null;
@@ -413,12 +416,16 @@ public class AppToolbar {
             fcu_viewOnClick(itemBinding.create, () -> {
                 Item item = ItemsRegistry.REGISTRY.getItemInfoByClass(value).create();
                 itemsStorage.addItem(item);
+                UUID id = item.getId();
+                if (id == null || tab == null) {
+                    Toast.makeText(activity, activity.getString(R.string.toolbar_more_items_add_exception, "NULL! itemId=" + id + "; tab=" + tab), Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-                //rootNavigationHost.navigate(ItemEditorFragment.create(itemStorage, nul value), true);
-                //ItemEditorFragment dialogItem = new ItemEditorFragment(activity, itemManager);
-                //dialogItem.create(value, itemStorage::addItem);
-                // TODO: 10.10.2022 fix
-                Toast.makeText(activity, R.string.temporarly_unavailable, Toast.LENGTH_SHORT).show();
+                rootNavigationHost.navigate(ItemEditorFragment.edit(tab.getId(), id), true);
+
+                final boolean UNAVAILABLE_WARN = false;
+                if (UNAVAILABLE_WARN) Toast.makeText(activity, R.string.temporarly_unavailable, Toast.LENGTH_SHORT).show();
             });
             // Add button (!)
             fcu_viewOnClick(itemBinding.add, () -> itemsStorage.addItem(ItemsRegistry.REGISTRY.getItemInfoByClass(value).create()));
@@ -535,6 +542,10 @@ public class AppToolbar {
 
     public void setItemStorage(ItemsStorage itemsStorage) {
         this.itemsStorage = itemsStorage;
+    }
+
+    public void setTab(Tab tab) {
+        this.tab = tab;
     }
 
     public void setOnMoreVisibleChangedListener(OnMoreVisibleChanged l) {

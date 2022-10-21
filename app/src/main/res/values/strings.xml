@@ -202,4 +202,5 @@
     <string name="toolbar_tabs_edit_dialog_title">Edit tab \'%s\'</string>
     <string name="toolbar_tabs_edit_name_hint">Enter new tab name…</string>
     <string name="settings_trimItemNamesOnEdit">Trim item names on item editor</string>
+    <string name="toolbar_more_items_add_exception">Error: %s</string>
 </resources>
