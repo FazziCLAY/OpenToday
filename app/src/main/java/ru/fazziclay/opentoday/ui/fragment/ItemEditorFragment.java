@@ -241,6 +241,7 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
     }
 
     private void cancel() {
+        unsavedChanges = false;
         UI.back(this);
     }
 

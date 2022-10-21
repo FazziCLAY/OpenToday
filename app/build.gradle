@@ -9,8 +9,8 @@ android {
         applicationId "ru.fazziclay.opentoday"
         minSdk 26
         targetSdk 32
-        versionCode 64
-        versionName "0.9.7.1 (build 64)"
+        versionCode 66
+        versionName "0.9.7.2 (build 66)"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
