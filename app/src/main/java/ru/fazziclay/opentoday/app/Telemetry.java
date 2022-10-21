@@ -55,10 +55,10 @@ public class Telemetry {
         }).start();
     }
 
-    public void send(LPacket LPacket) {
+    public void send(LPacket lPacket) {
         L.o("Telemetry send");
-        if (LPacket.isDelay() && !NO_DELAY) {
-            long last = getLastSend(LPacket.getClass().getName());
+        if (lPacket.isDelay() && !NO_DELAY) {
+            long last = getLastSend(lPacket.getClass().getName());
             long curr = System.currentTimeMillis();
             L.o("Telemetry last=", last, "curr=", curr);
             boolean hoursNoDelayed = curr - last < 24*60*60*1000;
@@ -76,14 +76,14 @@ public class Telemetry {
             }
         }
 
-        SendThread thread = new SendThread(LPacket.getPacket());
+        SendThread thread = new SendThread(lPacket.getPacket());
         thread.start();
         L.o("Telemetry send: wait");
-        while (thread.isBusy() && LPacket.isBlocking()) {
+        while (thread.isBusy() && lPacket.isBlocking()) {
             thread.tick();
         }
         L.o("Telemetry send: wait: done");
-        setLastSend(LPacket.getClass().getName());
+        setLastSend(lPacket.getClass().getName());
     }
 
     @NonNull
