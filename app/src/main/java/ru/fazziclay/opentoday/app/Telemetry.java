@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.fazziclay.neosocket.Client;
 import com.fazziclay.neosocket.PacketHandler;
 import com.fazziclay.neosocket.packet.Packet;
+import com.fazziclay.neosocket.packet.PacketsRegistry;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,6 +28,7 @@ import ru.fazziclay.opentoday.util.L;
 import ru.fazziclay.opentoday.util.NetworkUtil;
 
 public class Telemetry {
+    public static final PacketsRegistry REGISTRY = new TelemetryPackets();
     private static final boolean NO_DELAY = (App.DEBUG && true);
     private static final String URL = "https://fazziclay.github.io/api/project_3/v1/telemetry/telemetry_v2.json";
 
@@ -141,7 +143,7 @@ public class Telemetry {
                 }
                 if (telemetryStatus.isEnabled()) {
                     L.o("Telemetry SaveThread: enabled! client new");
-                    Client client = new Client(telemetryStatus.getHost(), telemetryStatus.getPort(), new TelemetryPackets(), new PacketHandler() {
+                    Client client = new Client(telemetryStatus.getHost(), telemetryStatus.getPort(), REGISTRY, new PacketHandler() {
                         @Override
                         public void received(Client client, Packet packet) {
                             L.o("Telemetry", "Received: ", packet.toString());

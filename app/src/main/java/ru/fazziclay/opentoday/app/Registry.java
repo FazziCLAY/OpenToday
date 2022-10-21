@@ -11,5 +11,5 @@ public class Registry {
     public static final TabsRegistry TABS = TabsRegistry.REGISTRY;
     public static final ItemsRegistry ITEMS = ItemsRegistry.REGISTRY;
     public static final ItemNotificationsRegistry ITEM_NOTIFICATIONS = ItemNotificationsRegistry.REGISTRY;
-    public static final PacketsRegistry TELEMETRY_PACKETS = new TelemetryPackets();
+    public static final PacketsRegistry TELEMETRY_PACKETS = Telemetry.REGISTRY;
 }
