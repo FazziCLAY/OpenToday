@@ -1,4 +1,4 @@
-package ru.fazziclay.opentoday.ui.other.item;
+package ru.fazziclay.opentoday.ui.item;
 
 import static ru.fazziclay.opentoday.util.InlineUtil.fcu_viewOnClick;
 
@@ -23,7 +23,6 @@ import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.annotation.ForItem;
 import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.items.ItemManager;
-import ru.fazziclay.opentoday.app.items.callback.OnCurrentItemStorageUpdate;
 import ru.fazziclay.opentoday.app.items.item.CheckboxItem;
 import ru.fazziclay.opentoday.app.items.item.CounterItem;
 import ru.fazziclay.opentoday.app.items.item.CycleListItem;
@@ -43,7 +42,7 @@ import ru.fazziclay.opentoday.databinding.ItemGroupBinding;
 import ru.fazziclay.opentoday.databinding.ItemTextBinding;
 import ru.fazziclay.opentoday.ui.interfaces.ContentInterface;
 import ru.fazziclay.opentoday.ui.interfaces.IVGEditButtonInterface;
-import ru.fazziclay.opentoday.ui.other.ItemViewHolder;
+import ru.fazziclay.opentoday.ui.interfaces.OnItemClick;
 import ru.fazziclay.opentoday.util.DebugUtil;
 import ru.fazziclay.opentoday.util.ResUtil;
 

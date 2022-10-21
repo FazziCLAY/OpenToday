@@ -17,8 +17,8 @@ import ru.fazziclay.opentoday.app.items.item.CycleListItem;
 import ru.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import ru.fazziclay.opentoday.app.items.item.GroupItem;
 import ru.fazziclay.opentoday.ui.interfaces.IVGEditButtonInterface;
-import ru.fazziclay.opentoday.ui.other.item.ItemStorageDrawer;
-import ru.fazziclay.opentoday.ui.other.item.OnItemClick;
+import ru.fazziclay.opentoday.ui.item.ItemStorageDrawer;
+import ru.fazziclay.opentoday.ui.interfaces.OnItemClick;
 
 public class TestItemStorageDrawer extends Activity {
     @Override

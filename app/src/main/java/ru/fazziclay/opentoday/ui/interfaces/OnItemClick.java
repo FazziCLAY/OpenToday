@@ -1,4 +1,4 @@
-package ru.fazziclay.opentoday.ui.other.item;
+package ru.fazziclay.opentoday.ui.interfaces;
 
 import ru.fazziclay.opentoday.app.items.item.Item;
 

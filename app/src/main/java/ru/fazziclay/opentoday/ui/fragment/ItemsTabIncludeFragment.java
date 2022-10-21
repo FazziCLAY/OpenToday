@@ -33,7 +33,7 @@ import ru.fazziclay.opentoday.databinding.FragmentItemsTabIncludeBinding;
 import ru.fazziclay.opentoday.ui.UI;
 import ru.fazziclay.opentoday.ui.interfaces.CurrentItemsTab;
 import ru.fazziclay.opentoday.ui.interfaces.NavigationHost;
-import ru.fazziclay.opentoday.ui.other.AppToolbar;
+import ru.fazziclay.opentoday.ui.toolbar.AppToolbar;
 import ru.fazziclay.opentoday.util.L;
 
 public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab, NavigationHost {

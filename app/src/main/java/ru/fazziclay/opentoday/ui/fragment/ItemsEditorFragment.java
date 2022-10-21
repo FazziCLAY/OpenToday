@@ -18,7 +18,6 @@ import java.util.UUID;
 import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.items.ItemManager;
 import ru.fazziclay.opentoday.app.items.ItemsStorage;
-import ru.fazziclay.opentoday.app.items.tab.LocalItemsTab;
 import ru.fazziclay.opentoday.app.items.item.CycleListItem;
 import ru.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import ru.fazziclay.opentoday.app.items.item.GroupItem;
@@ -29,7 +28,7 @@ import ru.fazziclay.opentoday.ui.activity.MainActivity;
 import ru.fazziclay.opentoday.ui.dialog.DialogEditItemFilter;
 import ru.fazziclay.opentoday.ui.interfaces.IVGEditButtonInterface;
 import ru.fazziclay.opentoday.ui.interfaces.NavigationHost;
-import ru.fazziclay.opentoday.ui.other.item.ItemStorageDrawer;
+import ru.fazziclay.opentoday.ui.item.ItemStorageDrawer;
 import ru.fazziclay.opentoday.util.L;
 
 public class ItemsEditorFragment extends Fragment {

@@ -1,4 +1,4 @@
-package ru.fazziclay.opentoday.ui.other.item;
+package ru.fazziclay.opentoday.ui.item;
 
 import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
@@ -32,7 +32,7 @@ import ru.fazziclay.opentoday.ui.fragment.ItemEditorFragment;
 import ru.fazziclay.opentoday.ui.dialog.DialogTextItemEditText;
 import ru.fazziclay.opentoday.ui.interfaces.IVGEditButtonInterface;
 import ru.fazziclay.opentoday.ui.interfaces.NavigationHost;
-import ru.fazziclay.opentoday.ui.other.ItemViewHolder;
+import ru.fazziclay.opentoday.ui.interfaces.OnItemClick;
 import ru.fazziclay.opentoday.util.ResUtil;
 
 public class ItemStorageDrawer {

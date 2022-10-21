@@ -13,8 +13,8 @@ import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.items.ItemManager;
 import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.databinding.DialogPreviewDeleteItemsBinding;
-import ru.fazziclay.opentoday.ui.other.ItemViewHolder;
-import ru.fazziclay.opentoday.ui.other.item.ItemViewGenerator;
+import ru.fazziclay.opentoday.ui.item.ItemViewHolder;
+import ru.fazziclay.opentoday.ui.item.ItemViewGenerator;
 import ru.fazziclay.opentoday.util.MinBaseAdapter;
 
 public class DeleteItemsFragment extends Fragment {

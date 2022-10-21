@@ -1,4 +1,4 @@
-package ru.fazziclay.opentoday.ui.other;
+package ru.fazziclay.opentoday.ui.toolbar;
 
 import static ru.fazziclay.opentoday.util.InlineUtil.fcu_viewOnClick;
 
@@ -13,7 +13,6 @@ import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -50,9 +49,7 @@ import ru.fazziclay.opentoday.databinding.ToolbarMoreOpentodayBinding;
 import ru.fazziclay.opentoday.databinding.ToolbarMoreSelectionBinding;
 import ru.fazziclay.opentoday.databinding.ToolbarMoreTabsBinding;
 import ru.fazziclay.opentoday.ui.activity.MainActivity;
-import ru.fazziclay.opentoday.ui.fragment.ItemEditorFragment;
 import ru.fazziclay.opentoday.ui.fragment.ItemsTabIncludeFragment;
-import ru.fazziclay.opentoday.ui.interfaces.CurrentItemsTab;
 import ru.fazziclay.opentoday.ui.fragment.AboutFragment;
 import ru.fazziclay.opentoday.ui.fragment.SettingsFragment;
 import ru.fazziclay.opentoday.ui.dialog.DeleteItemsFragment;

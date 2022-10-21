@@ -1,15 +1,11 @@
-package ru.fazziclay.opentoday.ui.other.item;
+package ru.fazziclay.opentoday.ui.item;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
@@ -20,6 +16,7 @@ import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.callback.CallbackImportance;
 import ru.fazziclay.opentoday.callback.Status;
 import ru.fazziclay.opentoday.ui.interfaces.IVGEditButtonInterface;
+import ru.fazziclay.opentoday.ui.interfaces.OnItemClick;
 import ru.fazziclay.opentoday.util.ResUtil;
 
 public class CurrentItemStorageDrawer {

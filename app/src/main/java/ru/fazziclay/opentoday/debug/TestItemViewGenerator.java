@@ -16,8 +16,8 @@ import ru.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import ru.fazziclay.opentoday.app.items.item.GroupItem;
 import ru.fazziclay.opentoday.app.items.item.TextItem;
 import ru.fazziclay.opentoday.ui.interfaces.IVGEditButtonInterface;
-import ru.fazziclay.opentoday.ui.other.item.ItemViewGenerator;
-import ru.fazziclay.opentoday.ui.other.item.OnItemClick;
+import ru.fazziclay.opentoday.ui.item.ItemViewGenerator;
+import ru.fazziclay.opentoday.ui.interfaces.OnItemClick;
 
 public class TestItemViewGenerator extends Activity {
     @Override

@@ -1,4 +1,4 @@
-package ru.fazziclay.opentoday.ui.other;
+package ru.fazziclay.opentoday.ui.item;
 
 import android.content.Context;
 import android.widget.LinearLayout;
