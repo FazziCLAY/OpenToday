@@ -210,6 +210,7 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
         }
         item.visibleChanged();
         item.save();
+        unsavedChanges = false;
 
         if (onEditDone != null) onEditDone.run(item);
         cancel();
