@@ -51,6 +51,7 @@ import ru.fazziclay.opentoday.databinding.DialogItemModuleCyclelistBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleDayrepeatablecheckboxBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleItemBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleTextBinding;
+import ru.fazziclay.opentoday.ui.UI;
 import ru.fazziclay.opentoday.ui.dialog.DialogItemNotificationsEditor;
 import ru.fazziclay.opentoday.ui.interfaces.ContainBackStack;
 import ru.fazziclay.opentoday.util.MinTextWatcher;
@@ -239,7 +240,7 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
     }
 
     private void cancel() {
-        getParentFragmentManager().popBackStack();
+        UI.back(this);
     }
 
     @Override
