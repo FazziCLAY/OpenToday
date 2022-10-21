@@ -185,7 +185,7 @@
     <string name="add_new_tab">Добавить новую вкладку</string>
     <string name="settings_minimizeGrayColor">Засеривать уменьшенные айтемы</string>
     <string name="settings_parseTimeFromQuickNote">Парсить время из быстрых заметок</string>
-    <string name="aboutapp_text_sourceCode">Исходный код:</string>
+    <string name="aboutapp_text_sourceCode">Исходный код</string>
     <string name="aboutapp_text_issues">Баги/идеи</string>
     <string name="temporarly_unavailable">Эта функция временно недоступна; Воспользутесь кнопкой рядом</string>
     <string name="openSourceLicense_cantStart">Невозможно запустить активити</string>

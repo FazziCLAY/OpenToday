@@ -190,7 +190,7 @@
     <string name="add_new_tab">Add new tab</string>
     <string name="settings_minimizeGrayColor">Minimize gray color</string>
     <string name="settings_parseTimeFromQuickNote">Parse time from quick note</string>
-    <string name="aboutapp_text_sourceCode">Source Code:</string>
+    <string name="aboutapp_text_sourceCode">Source Code</string>
     <string name="aboutapp_text_issues">Issues</string>
     <string name="temporarly_unavailable">This function temporarily unavailable; use other button</string>
     <string name="openSourceLicense_cantStart">Can\'t start this activity</string>
