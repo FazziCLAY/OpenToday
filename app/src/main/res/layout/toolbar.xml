@@ -11,62 +11,26 @@
         <Button
             android:id="@+id/toolbar_file"
             android:text="@string/toolbar_file"
-            android:textAllCaps="false"
-            android:layout_marginLeft="1sp"
-            android:layout_marginRight="1sp"
-            android:minHeight="50sp"
-            android:minWidth="0sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             style="@style/Theme.OpenToday.Toolbar.Button" />
 
         <Button
             android:id="@+id/toolbar_items"
             android:text="@string/toolbar_items"
-            android:textAllCaps="false"
-            android:layout_marginLeft="1sp"
-            android:layout_marginRight="1sp"
-            android:minHeight="50sp"
-            android:minWidth="0sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             style="@style/Theme.OpenToday.Toolbar.Button" />
 
         <Button
             android:id="@+id/toolbar_selection"
             android:text="@string/toolbar_selection"
-            android:textAllCaps="false"
-            android:layout_marginLeft="1sp"
-            android:layout_marginRight="1sp"
-            android:minHeight="50sp"
-            android:minWidth="0sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             style="@style/Theme.OpenToday.Toolbar.Button" />
-
 
         <Button
             android:id="@+id/toolbar_tabs"
             android:text="@string/toolbar_tabs"
-            android:textAllCaps="false"
-            android:layout_marginLeft="1sp"
-            android:layout_marginRight="1sp"
-            android:minHeight="50sp"
-            android:minWidth="0sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             style="@style/Theme.OpenToday.Toolbar.Button" />
 
         <Button
             android:id="@+id/toolbar_opentoday"
             android:text="@string/toolbar_opentoday"
-            android:textAllCaps="false"
-            android:layout_marginLeft="1sp"
-            android:layout_marginRight="1sp"
-            android:minHeight="50sp"
-            android:minWidth="0sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             style="@style/Theme.OpenToday.Toolbar.Button" />
     </LinearLayout>
 </HorizontalScrollView>

@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Base application theme. -->
     <style name="Theme.OpenToday" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
@@ -10,14 +10,8 @@
         <item name="colorSecondaryVariant">#247001</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
-
-
-        <!-- About -->
-        <item name="aboutapp_title_color">#1C7B8E</item>
-        <item name="aboutapp_text_color_title">#000000</item>
-        <item name="aboutapp_text_color_value">#676767</item>
 
         <!-- Main Activity -->
         <item name="main_currentDate_color">#008466</item>
@@ -63,11 +57,10 @@
     </style>
 
 
-    <style name="Theme.OpenToday.Toolbar">
 
-    </style>
-
-    <style name="Theme.OpenToday.Toolbar.Button" parent="Widget.AppCompat.ButtonBar">
+    <!-- Toolbar -->
+    <style name="Theme.OpenToday.Toolbar" />
+    <style name="Theme.OpenToday.Toolbar.Button" parent="OpenToday.Base.Toolbar">
         <item name="android:backgroundTint">#585858</item>
         <item name="android:textColor">#F5F5F5</item>
     </style>
@@ -75,5 +68,21 @@
     <style name="Theme.OpenToday.Toolbar.Button.Selected" parent="Theme.OpenToday.Toolbar.Button">
         <item name="android:backgroundTint">#2046B8</item>
         <item name="android:textColor">#F5F5F5</item>
+    </style>
+
+    <!-- About -->
+    <style name="Theme.OpenToday.About" parent="OpenToday.Base.About" />
+    <style name="Theme.OpenToday.About.Root" parent="OpenToday.Base.About.Root" />
+    <style name="Theme.OpenToday.About.Title" parent="OpenToday.Base.About.Title">
+        <item name="android:textColor">#1C7B8E</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+    <style name="Theme.OpenToday.About.RowTitle">
+        <item name="android:textColor">#000000</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+    <style name="Theme.OpenToday.About.RowValue">
+        <item name="android:textColor">#676767</item>
+        <item name="android:textSize">17sp</item>
     </style>
 </resources>

@@ -4,9 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import ru.fazziclay.opentoday.ui.fragment.MainRootFragment;
+
 public class UI {
     @Nullable
-    public static Fragment findFragmentInParents(@NonNull Fragment fragment, Class<? extends Fragment> find) {
+    public static Fragment findFragmentInParents(@NonNull androidx.fragment.app.Fragment fragment, Class<? extends androidx.fragment.app.Fragment> find) {
         if (fragment.getParentFragment() == null) {
             return null;
         }
@@ -15,5 +17,10 @@ public class UI {
         } else {
             return findFragmentInParents(fragment.getParentFragment(), find);
         }
+    }
+
+    public static void back(Fragment fragment) {
+        MainRootFragment host = (MainRootFragment) UI.findFragmentInParents(fragment, MainRootFragment.class);
+        host.popBackStack();
     }
 }
