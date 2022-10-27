@@ -27,6 +27,7 @@ import ru.fazziclay.opentoday.app.items.callback.OnTabsChanged;
 import ru.fazziclay.opentoday.app.items.item.TextItem;
 import ru.fazziclay.opentoday.app.items.notification.ItemNotification;
 import ru.fazziclay.opentoday.app.items.tab.Tab;
+import ru.fazziclay.opentoday.app.settings.SettingsManager;
 import ru.fazziclay.opentoday.callback.CallbackImportance;
 import ru.fazziclay.opentoday.callback.Status;
 import ru.fazziclay.opentoday.databinding.FragmentItemsTabIncludeBinding;
@@ -47,6 +48,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     private FragmentItemsTabIncludeBinding binding;
     private App app;
     private ItemManager itemManager;
+    private SettingsManager settingsManager;
     private AppToolbar toolbar;
     private ItemsStorage currentItemsStorage;
 
@@ -65,6 +67,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         L.o(TAG, "onCreate", L.nn(savedInstanceState));
         this.app = App.get(requireContext());
         this.itemManager = app.getItemManager();
+        this.settingsManager = app.getSettingsManager();
         binding = FragmentItemsTabIncludeBinding.inflate(getLayoutInflater());
 
         // Tabs
@@ -93,7 +96,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         selectViewPager(extraTab.getId(), false);
         // Tabs end
 
-        this.toolbar = new AppToolbar(requireActivity(), itemManager, getCurrentTab(), (NavigationHost) UI.findFragmentInParents(this, MainRootFragment.class), this);
+        this.toolbar = new AppToolbar(requireActivity(), itemManager, settingsManager, getCurrentTab(), (NavigationHost) UI.findFragmentInParents(this, MainRootFragment.class), this);
         /*Tabs*/ this.setItemStorageInContext(itemManager.getTab(extraTab.getId()));
         /*Tabs*/ toolbar.setTab(extraTab);
 

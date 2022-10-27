@@ -1,7 +1,6 @@
 package ru.fazziclay.opentoday.app.settings;
 
-import android.util.Log;
-
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import org.json.JSONObject;
@@ -10,9 +9,11 @@ import java.io.File;
 import java.util.Calendar;
 
 import ru.fazziclay.javaneoutil.FileUtil;
+import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.annotation.Getter;
 import ru.fazziclay.opentoday.annotation.Setter;
 import ru.fazziclay.opentoday.app.App;
+import ru.fazziclay.opentoday.util.L;
 
 public class SettingsManager {
     // Theme
@@ -40,6 +41,10 @@ public class SettingsManager {
     private boolean parseTimeFromQuickNote = true;
     private boolean isMinimizeGrayColor = false;
     private boolean trimItemNamesOnEdit = true;
+    private ItemAction itemOnClickAction = ItemAction.OPEN_EDITOR;
+    private ItemAction itemOnLeftAction = ItemAction.MINIMIZE_REVERT;
+
+
 
     public SettingsManager(File saveFile) {
         this.saveFile = saveFile;
@@ -58,6 +63,10 @@ public class SettingsManager {
     @Getter public boolean isParseTimeFromQuickNote() { return parseTimeFromQuickNote; }
     @Getter public boolean isTrimItemNamesOnEdit() {return trimItemNamesOnEdit;}
     @Setter public void setTrimItemNamesOnEdit(boolean trimItemNamesOnEdit) {this.trimItemNamesOnEdit = trimItemNamesOnEdit;}
+    @Getter public ItemAction getItemOnClickAction() {return itemOnClickAction;}
+    @Setter public void setItemOnClickAction(ItemAction itemOnClickAction) {this.itemOnClickAction = itemOnClickAction;}
+    @Getter public ItemAction getItemOnLeftAction() {return itemOnLeftAction;}
+    @Setter public void setItemOnLeftAction(ItemAction itemOnLeftAction) {this.itemOnLeftAction = itemOnLeftAction;}
 
     private void load() {
         if (!FileUtil.isExist(saveFile)) {
@@ -88,9 +97,15 @@ public class SettingsManager {
             this.parseTimeFromQuickNote = j.optBoolean(KEY_PARSETIMEFROMQUICKNOTE, this.parseTimeFromQuickNote);
             this.isMinimizeGrayColor = j.optBoolean(KEY_ISMINIMIZEGRAYCOLOR, this.isMinimizeGrayColor);
             this.trimItemNamesOnEdit = j.optBoolean(KEY_TRIMITEMNAMESONEDIT, this.trimItemNamesOnEdit);
+            try {
+                this.itemOnClickAction = ItemAction.valueOf(j.optString("itemOnClickAction"));
+            } catch (Exception ignored) {}
+            try {
+                this.itemOnLeftAction = ItemAction.valueOf(j.optString("itemOnLeftAction"));
+            } catch (Exception ignored) {}
 
         } catch (Exception e) {
-            Log.e("SettingsManager", "load", e);
+            L.o("SettingsManager", "load", e);
             App.exception(null, e);
         }
     }
@@ -110,11 +125,36 @@ public class SettingsManager {
             j.put(KEY_PARSETIMEFROMQUICKNOTE, this.parseTimeFromQuickNote);
             j.put(KEY_ISMINIMIZEGRAYCOLOR, this.isMinimizeGrayColor);
             j.put(KEY_TRIMITEMNAMESONEDIT, this.trimItemNamesOnEdit);
+            j.put("itemOnClickAction", itemOnClickAction.name());
+            j.put("itemOnLeftAction", itemOnLeftAction.name());
 
             FileUtil.setText(saveFile, j.toString(2));
         } catch (Exception e) {
-            Log.e("SettingsManager", "save", e);
+            L.o("SettingsManager", "save", e);
             App.exception(null, e);
+        }
+    }
+
+
+    public enum ItemAction {
+        OPEN_EDITOR(R.string.itemAction_OPEN_EDIT_DIALOG),
+        SELECT_REVERT(R.string.itemAction_SELECT_REVERT),
+        SELECT_ON(R.string.itemAction_SELECT_ON),
+        SELECT_OFF(R.string.itemAction_SELECT_OFF),
+        DELETE_REQUEST(R.string.itemAction_DELETE_REQUEST),
+        MINIMIZE_REVERT(R.string.itemAction_MINIMIZE_REVERT),
+        MINIMIZE_ON(R.string.itemAction_MINIMIZE_ON),
+        MINIMIZE_OFF(R.string.itemAction_MINIMIZE_OFF);
+
+        @StringRes
+        private final int resId;
+
+        ItemAction(@StringRes int resId) {
+            this.resId = resId;
+        }
+
+        public int nameResId() {
+            return resId;
         }
     }
 }

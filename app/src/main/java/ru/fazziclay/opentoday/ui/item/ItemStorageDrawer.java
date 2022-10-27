@@ -26,6 +26,7 @@ import ru.fazziclay.opentoday.app.items.callback.OnItemStorageUpdate;
 import ru.fazziclay.opentoday.app.items.callback.OnSelectionChanged;
 import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.app.items.item.TextItem;
+import ru.fazziclay.opentoday.app.settings.SettingsManager;
 import ru.fazziclay.opentoday.callback.CallbackImportance;
 import ru.fazziclay.opentoday.callback.Status;
 import ru.fazziclay.opentoday.ui.fragment.ItemEditorFragment;
@@ -38,6 +39,7 @@ import ru.fazziclay.opentoday.util.ResUtil;
 public class ItemStorageDrawer {
     private final Activity activity;
     private final ItemManager itemManager;
+    private final SettingsManager settingsManager;
     private final ItemsStorage itemsStorage;
     private final RecyclerView view;
     private IVGEditButtonInterface storageEdits;
@@ -102,9 +104,10 @@ public class ItemStorageDrawer {
     private NavigationHost navigationHost;
 
     // Public
-    public ItemStorageDrawer(Activity activity, ItemManager itemManager, ItemsStorage itemsStorage, OnItemClick onItemClick, boolean previewMode, IVGEditButtonInterface storageEdits) {
+    public ItemStorageDrawer(Activity activity, ItemManager itemManager, SettingsManager settingsManager, ItemsStorage itemsStorage, OnItemClick onItemClick, boolean previewMode, IVGEditButtonInterface storageEdits) {
         this.activity = activity;
         this.itemManager = itemManager;
+        this.settingsManager = settingsManager;
         this.itemsStorage = itemsStorage;
         this.originalThread = Thread.currentThread();
         this.view = new RecyclerView(activity);
@@ -117,7 +120,7 @@ public class ItemStorageDrawer {
         this.dialogItem = new ItemEditorFragment(this.activity, this.itemManager);
         this.itemViewGenerator = new ItemViewGenerator(this.activity, this.itemManager, (item) -> {
             if (this.onItemClick == null) {
-                if (!previewMode) actionItem(item, itemManager.getItemOnClickAction());
+                if (!previewMode) actionItem(item, settingsManager.getItemOnClickAction());
             } else {
                 this.onItemClick.run(item);
             }
@@ -260,7 +263,7 @@ public class ItemStorageDrawer {
                 int positionFrom = viewHolder.getAdapterPosition();
                 Item item = ItemStorageDrawer.this.itemsStorage.getAllItems()[positionFrom];
                 item.visibleChanged();
-                actionItem(item, itemManager.getItemOnLeftAction());
+                actionItem(item, settingsManager.getItemOnLeftAction());
 
             } else if (direction == ItemTouchHelper.RIGHT) {
                 int position = viewHolder.getAdapterPosition();
@@ -272,10 +275,10 @@ public class ItemStorageDrawer {
         }
     }
 
-    private void actionItem(Item item, ItemManager.ItemAction action) {
+    private void actionItem(Item item, SettingsManager.ItemAction action) {
         switch (action) {
-            case OPEN_EDIT_DIALOG:
-
+            case OPEN_EDITOR:
+                // TODO: 27.10.2022 owo
                 dialogItem.edit(item);
                 break;
 
@@ -342,18 +345,18 @@ public class ItemStorageDrawer {
         }
         menu.setOnMenuItemClickListener(menuItem -> {
             boolean save = false;
-            ItemManager.ItemAction itemAction = null;
+            SettingsManager.ItemAction itemAction = null;
             switch (menuItem.getItemId()) {
                 case R.id.edit:
-                    itemAction = ItemManager.ItemAction.OPEN_EDIT_DIALOG;
+                    itemAction = SettingsManager.ItemAction.OPEN_EDITOR;
                     break;
 
                 case R.id.minimize:
-                    itemAction = ItemManager.ItemAction.MINIMIZE_REVERT;
+                    itemAction = SettingsManager.ItemAction.MINIMIZE_REVERT;
                     break;
 
                 case R.id.selected:
-                    itemAction = ItemManager.ItemAction.SELECT_REVERT;
+                    itemAction = SettingsManager.ItemAction.SELECT_REVERT;
                     break;
 
                 case R.id.copy:
@@ -368,6 +371,8 @@ public class ItemStorageDrawer {
 
                     ItemEditorFragment dialogItem = new ItemEditorFragment(activity, itemManager);
                     dialogItem.edit(copyItem);
+                    // TODO: 27.10.2022  owo
+
 
                     int createPos = itemsStorage.getItemPosition(copyItem);
                     if (createPos != (currPos + 1)) itemsStorage.move(createPos, currPos + 1);

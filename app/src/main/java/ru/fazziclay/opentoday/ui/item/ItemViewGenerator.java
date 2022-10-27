@@ -98,7 +98,7 @@ public class ItemViewGenerator {
 
         } else if (type == GroupItem.class) {
             ret = generateGroupItemView((GroupItem) item, view, v -> storageEdits.onGroupEdit((GroupItem) item), linearLayout -> {
-                ItemStorageDrawer itemStorageDrawer = new ItemStorageDrawer(activity, itemManager, ((GroupItem) item).getItemStorage(), onItemClick, previewMode, storageEdits);
+                ItemStorageDrawer itemStorageDrawer = new ItemStorageDrawer(activity, itemManager, settingsManager, ((GroupItem) item).getItemStorage(), onItemClick, previewMode, storageEdits);
                 itemStorageDrawer.create();
                 linearLayout.addView(itemStorageDrawer.getView());
             });

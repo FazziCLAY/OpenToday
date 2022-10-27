@@ -16,6 +16,7 @@ import ru.fazziclay.opentoday.app.items.ItemManager;
 import ru.fazziclay.opentoday.app.items.item.CycleListItem;
 import ru.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import ru.fazziclay.opentoday.app.items.item.GroupItem;
+import ru.fazziclay.opentoday.app.settings.SettingsManager;
 import ru.fazziclay.opentoday.ui.interfaces.IVGEditButtonInterface;
 import ru.fazziclay.opentoday.ui.item.ItemStorageDrawer;
 import ru.fazziclay.opentoday.ui.interfaces.OnItemClick;
@@ -47,6 +48,7 @@ public class TestItemStorageDrawer extends Activity {
 
         ItemStorageDrawer itemStorageDrawer = new ItemStorageDrawer(this,
                 itemManager,
+                new SettingsManager(null),
                 itemManager.getTab(new UUID(0, 0)),
                 onItemClick,
                 previewMode,

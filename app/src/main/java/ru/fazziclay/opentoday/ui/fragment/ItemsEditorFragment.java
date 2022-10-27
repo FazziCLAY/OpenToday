@@ -23,6 +23,7 @@ import ru.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import ru.fazziclay.opentoday.app.items.item.GroupItem;
 import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.app.items.tab.Tab;
+import ru.fazziclay.opentoday.app.settings.SettingsManager;
 import ru.fazziclay.opentoday.ui.UI;
 import ru.fazziclay.opentoday.ui.activity.MainActivity;
 import ru.fazziclay.opentoday.ui.dialog.DialogEditItemFilter;
@@ -42,6 +43,7 @@ public class ItemsEditorFragment extends Fragment {
     private NavigationHost navigationHost;
     private NavigationHost rootNavigationHost;
     private ItemManager itemManager;
+    private SettingsManager settingsManager;
     private ItemsStorage itemsStorage;
     private boolean previewMode;
     private ItemStorageDrawer itemStorageDrawer;
@@ -80,6 +82,7 @@ public class ItemsEditorFragment extends Fragment {
         navigationHost = (NavigationHost) getParentFragment();
         rootNavigationHost = (NavigationHost) UI.findFragmentInParents(this, MainRootFragment.class);
         itemManager = App.get(requireContext()).getItemManager();
+        settingsManager = App.get(requireContext()).getSettingsManager();
 
         Bundle args = getArguments();
         previewMode = args.getBoolean(EXTRA_PREVIEW_MODE);
@@ -101,7 +104,7 @@ public class ItemsEditorFragment extends Fragment {
             }
         }
 
-        this.itemStorageDrawer = new ItemStorageDrawer(activity, itemManager, itemsStorage, item -> rootNavigationHost.navigate(ItemEditorFragment.edit(tabId, item.getId()), true), previewMode, new IVGEditButtonInterface() {
+        this.itemStorageDrawer = new ItemStorageDrawer(activity, itemManager, settingsManager, itemsStorage, item -> rootNavigationHost.navigate(ItemEditorFragment.edit(tabId, item.getId()), true), previewMode, new IVGEditButtonInterface() {
             @Override
             public void onGroupEdit(GroupItem groupItem) {
                 navigationHost.navigate(createItem(tabId, groupItem.getId()), true);

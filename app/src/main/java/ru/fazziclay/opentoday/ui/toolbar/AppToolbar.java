@@ -39,6 +39,7 @@ import ru.fazziclay.opentoday.app.items.Selection;
 import ru.fazziclay.opentoday.app.items.callback.OnSelectionChanged;
 import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.app.items.tab.Tab;
+import ru.fazziclay.opentoday.app.settings.SettingsManager;
 import ru.fazziclay.opentoday.callback.CallbackImportance;
 import ru.fazziclay.opentoday.callback.Status;
 import ru.fazziclay.opentoday.databinding.DialogImportBinding;
@@ -68,6 +69,7 @@ public class AppToolbar {
     private final LinearLayout toolbarMoreView;
     private boolean destroyed = false;
     private final ItemManager itemManager;
+    private final SettingsManager settingsManager;
     private ItemsStorage itemsStorage; // For context toolbar work
     private Tab tab; // For context toolbar work
     private View currentToolbarButton = null; // Current active button. If none: null
@@ -82,11 +84,12 @@ public class AppToolbar {
     private long lastTabReorder;
 
 
-    public AppToolbar(Activity activity, ItemManager itemManager, ItemsStorage itemsStorage, NavigationHost rootNavigationHost, ItemsTabIncludeFragment itemsTabIncludeFragment) {
+    public AppToolbar(Activity activity, ItemManager itemManager, SettingsManager settingsManager, ItemsStorage itemsStorage, NavigationHost rootNavigationHost, ItemsTabIncludeFragment itemsTabIncludeFragment) {
         this.activity = activity;
         this.toolbarMoreView = new LinearLayout(activity);
         this.toolbarView = new LinearLayout(activity);
         this.itemManager = itemManager;
+        this.settingsManager = settingsManager;
         this.itemsStorage = itemsStorage;
         this.rootNavigationHost = rootNavigationHost;
         this.navigationHost = itemsTabIncludeFragment;
@@ -438,9 +441,15 @@ public class AppToolbar {
         }
 
         // Action: On click
-        fcu_viewOnClick(b.changeOnClick, () -> new DialogSelectItemAction(activity, itemManager.getItemOnClickAction(), itemManager::setItemOnClickAction, activity.getString(R.string.toolbar_more_items_action_click)).show());
+        fcu_viewOnClick(b.changeOnClick, new DialogSelectItemAction(activity, settingsManager.getItemOnClickAction(), itemOnClickAction -> {
+            settingsManager.setItemOnClickAction(itemOnClickAction);
+            settingsManager.save();
+        }, activity.getString(R.string.toolbar_more_items_action_click))::show);
         // Action: On left swipe
-        fcu_viewOnClick(b.changeOnLeftSwipe, () -> new DialogSelectItemAction(activity, itemManager.getItemOnLeftAction(), itemManager::setItemOnLeftAction, activity.getString(R.string.toolbar_more_items_action_leftSwipe)).show());
+        fcu_viewOnClick(b.changeOnLeftSwipe, () -> new DialogSelectItemAction(activity, settingsManager.getItemOnLeftAction(), itemOnLeftAction -> {
+            settingsManager.setItemOnLeftAction(itemOnLeftAction);
+            settingsManager.save();
+        }, activity.getString(R.string.toolbar_more_items_action_leftSwipe)).show());
 
         // Cache view & show
         toolbarMoreView.addView(itemsSectionCacheView = b.getRoot());

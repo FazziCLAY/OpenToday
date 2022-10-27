@@ -32,13 +32,11 @@ import ru.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem;
 import ru.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import ru.fazziclay.opentoday.app.items.item.GroupItem;
 import ru.fazziclay.opentoday.app.items.item.Item;
-import ru.fazziclay.opentoday.app.items.item.ItemIEUtil;
 import ru.fazziclay.opentoday.app.items.item.TextItem;
 import ru.fazziclay.opentoday.app.items.tab.LocalItemsTab;
 import ru.fazziclay.opentoday.app.items.tab.ItemsTabController;
 import ru.fazziclay.opentoday.app.items.tab.Tab;
 import ru.fazziclay.opentoday.app.items.tab.TabIEUtil;
-import ru.fazziclay.opentoday.app.items.tab.TabsRegistry;
 import ru.fazziclay.opentoday.callback.CallbackStorage;
 import ru.fazziclay.opentoday.callback.Status;
 import ru.fazziclay.opentoday.util.Profiler;
@@ -49,11 +47,6 @@ public class ItemManager {
     // Selection
     private final List<Selection> selections = new ArrayList<>();
     private final CallbackStorage<OnSelectionChanged> onSelectionUpdated = new CallbackStorage<>();
-
-    // TODO: 13.10.2022 move to settings
-    private ItemAction itemOnClickAction = ItemAction.OPEN_EDIT_DIALOG;
-    private ItemAction itemOnLeftAction = ItemAction.MINIMIZE_REVERT;
-
 
     @NonNull private final File dataFile;
     @NonNull private final SaveThread saveThread = new SaveThread();
@@ -344,43 +337,5 @@ public class ItemManager {
         List<Tab> tabs = new ArrayList<>();
         addTab(new LocalItemsTab(UUID.randomUUID(), "Debug1"));
         return tabs;
-    }
-
-    public ItemAction getItemOnClickAction() {
-        return itemOnClickAction;
-    }
-
-    public ItemAction getItemOnLeftAction() {
-        return itemOnLeftAction;
-    }
-
-    public void setItemOnClickAction(ItemAction itemOnClickAction) {
-        this.itemOnClickAction = itemOnClickAction;
-    }
-
-    public void setItemOnLeftAction(ItemAction itemOnLeftAction) {
-        this.itemOnLeftAction = itemOnLeftAction;
-    }
-
-    public enum ItemAction {
-        OPEN_EDIT_DIALOG(R.string.itemAction_OPEN_EDIT_DIALOG),
-        SELECT_REVERT(R.string.itemAction_SELECT_REVERT),
-        SELECT_ON(R.string.itemAction_SELECT_ON),
-        SELECT_OFF(R.string.itemAction_SELECT_OFF),
-        DELETE_REQUEST(R.string.itemAction_DELETE_REQUEST),
-        MINIMIZE_REVERT(R.string.itemAction_MINIMIZE_REVERT),
-        MINIMIZE_ON(R.string.itemAction_MINIMIZE_ON),
-        MINIMIZE_OFF(R.string.itemAction_MINIMIZE_OFF);
-
-        @StringRes
-        private final int n;
-
-        ItemAction(@StringRes int n) {
-            this.n = n;
-        }
-
-        public int nameResId() {
-            return n;
-        }
     }
 }

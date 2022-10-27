@@ -13,22 +13,22 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 
 import ru.fazziclay.opentoday.R;
-import ru.fazziclay.opentoday.app.items.ItemManager;
+import ru.fazziclay.opentoday.app.settings.SettingsManager;
 import ru.fazziclay.opentoday.util.MinBaseAdapter;
 
 public class DialogSelectItemAction {
     private final Activity activity;
-    private final ItemManager.ItemAction selected;
+    private final SettingsManager.ItemAction selected;
     private final OnSelected onSelected;
     private final String message;
     private Dialog dialog;
     private final View view;
 
-    public DialogSelectItemAction(Activity activity, ItemManager.ItemAction selected, OnSelected onSelected) {
+    public DialogSelectItemAction(Activity activity, SettingsManager.ItemAction selected, OnSelected onSelected) {
         this(activity, selected, onSelected, null);
     }
 
-    public DialogSelectItemAction(Activity activity, ItemManager.ItemAction selected, OnSelected onSelected, String message) {
+    public DialogSelectItemAction(Activity activity, SettingsManager.ItemAction selected, OnSelected onSelected, String message) {
         this.activity = activity;
         this.selected = selected;
         this.onSelected = onSelected;
@@ -45,13 +45,13 @@ public class DialogSelectItemAction {
         listView.setAdapter(new MinBaseAdapter() {
             @Override
             public int getCount() {
-                return ItemManager.ItemAction.values().length;
+                return SettingsManager.ItemAction.values().length;
             }
 
             @SuppressLint("SetTextI18n")
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                ItemManager.ItemAction itemAction = ItemManager.ItemAction.values()[position];
+                SettingsManager.ItemAction itemAction = SettingsManager.ItemAction.values()[position];
 
                 TextView textView = new TextView(DialogSelectItemAction.this.activity);
                 textView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -62,7 +62,7 @@ public class DialogSelectItemAction {
             }
         });
         listView.setOnItemClickListener((parent, view, position, id) -> {
-            ItemManager.ItemAction itemAction = ItemManager.ItemAction.values()[position];
+            SettingsManager.ItemAction itemAction = SettingsManager.ItemAction.values()[position];
             DialogSelectItemAction.this.onSelected.run(itemAction);
             dialog.cancel();
         });
@@ -79,6 +79,6 @@ public class DialogSelectItemAction {
     }
 
     public interface OnSelected {
-        void run(ItemManager.ItemAction itemAction);
+        void run(SettingsManager.ItemAction itemAction);
     }
 }
