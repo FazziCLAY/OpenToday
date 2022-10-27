@@ -8,7 +8,7 @@ import ru.fazziclay.opentoday.ui.fragment.MainRootFragment;
 
 public class UI {
     @Nullable
-    public static Fragment findFragmentInParents(@NonNull androidx.fragment.app.Fragment fragment, Class<? extends androidx.fragment.app.Fragment> find) {
+    public static Fragment findFragmentInParents(@NonNull Fragment fragment, Class<? extends Fragment> find) {
         if (fragment.getParentFragment() == null) {
             return null;
         }
