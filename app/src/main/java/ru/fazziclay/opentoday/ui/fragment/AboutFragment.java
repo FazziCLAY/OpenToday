@@ -42,7 +42,7 @@ public class AboutFragment extends Fragment {
         fcu_viewOnClick(binding.title, this::manuallyCrashInteract);
         fcu_viewOnClick(binding.sourceCode, () -> NetworkUtil.openBrowser(requireActivity(), "https://github.com/fazziclay/opentoday"));
         fcu_viewOnClick(binding.issues, () -> NetworkUtil.openBrowser(requireActivity(), "https://github.com/fazziclay/opentoday/issues"));
-        fcu_viewOnClick(binding.licence, () -> requireActivity().startActivity(OpenSourceLicensesActivity.createLaunchIntent(requireContext())));
+        fcu_viewOnClick(binding.licenses, () -> requireActivity().startActivity(OpenSourceLicensesActivity.createLaunchIntent(requireContext())));
         fcu_viewOnClick(binding.ok, () -> UI.back(this));
 
         return binding.getRoot();
