@@ -3,7 +3,7 @@
     <string name="app_name" translatable="false">OpenToday</string>
     <string name="aboutapp_title">About OpenToday:</string>
     <string name="aboutapp_ok">OK</string>
-    <string name="licence">OpenSource licences</string>
+    <string name="about_licenses">OpenSource licences</string>
     <string name="unknown_item">Error: Unknown \'%s\'</string>
     <string name="dialog_item_module_item_minHeight_hint">Minimal height</string>
     <string name="dialog_item_module_item_backgroundColor_hint">Background Color</string>

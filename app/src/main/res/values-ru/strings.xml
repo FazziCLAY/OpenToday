@@ -2,7 +2,7 @@
 <resources>
     <string name="aboutapp_title">О программе OpenToday:</string>
     <string name="aboutapp_ok">ОК</string>
-    <string name="licence">OpenSource лицензии</string>
+    <string name="about_licenses">OpenSource лицензии</string>
     <string name="unknown_item">Ошибка: Неизвестный \'%s\'</string>
     <string name="dialog_item_module_item_minHeight_hint">Минимальная высота</string>
     <string name="dialog_item_module_item_backgroundColor_hint">Фоновый цвет</string>
