@@ -13,14 +13,12 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.fazziclay.neosocket.NeoSocket;
-
-import ru.fazziclay.javaneoutil.JavaNeoUtil;
 import ru.fazziclay.opentoday.R;
-import ru.fazziclay.opentoday.telemetry.OpenTodayTelemetry;
+import ru.fazziclay.opentoday.app.App;
+import ru.fazziclay.opentoday.app.License;
 
 public class OpenSourceLicensesActivity extends AppCompatActivity {
-    private Licence[] licences = null;
+    private License[] licenses;
 
     public static Intent createLaunchIntent(Context context) {
         return new Intent(context, OpenSourceLicensesActivity.class);
@@ -30,64 +28,46 @@ public class OpenSourceLicensesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TODO: 19.10.2022 add v prefix to version to telemetry
-        licences = new Licence[] {
-                new Licence("LICENSE_OpenToday", "OpenToday (this app)", "fazziclay@gmail.com\nhttps://fazziclay.github.io/opentoday"),
-                new Licence("LICENSE_JavaNeoUtil", "JavaNeoUtil v" + JavaNeoUtil.VERSION_NAME, "https://github.com/fazziclay/javaneoutil"),
-                new Licence("LICENSE_NeoSocket", "NeoSocket v" + NeoSocket.VERSION_NAME, "https://github.com/fazziclay/neosocket"),
-                new Licence("LICENSE_OpenTodayTelemetry", "OpenTodayTelemetry " + OpenTodayTelemetry.VERSION_NAME, getString(R.string.openSourceLicenses_telemetry_warn) + "\nhttps://github.com/fazziclay/opentodaytelemetry"),
-        };
-
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
 
-        for (Licence licence : licences) {
-            linearLayout.addView(licence.toView(this));
+        licenses = App.get(this).getOpenSourcesLicenses();
+        for (License license : licenses) {
+            linearLayout.addView(toView(this, license));
         }
+
         ScrollView scrollView = new ScrollView(this);
         scrollView.addView(linearLayout);
         setContentView(scrollView);
         setTitle(getString(R.string.openSouceLicenses_title));
     }
 
-    private static class Licence {
-        public String assetPath;
-        public String title;
-        public String url;
+    private View toView(Context context, License license) {
+        LinearLayout linearLayout = new LinearLayout(context);
+        linearLayout.setPadding(3, 3, 3, 3);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        linearLayout.setBackgroundColor(Color.parseColor("#33888888"));
+        LinearLayout.LayoutParams l = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        l.setMargins(10, 10, 10, 10);
+        linearLayout.setLayoutParams(l);
 
-        public Licence(String assetPath, String title, String url) {
-            this.assetPath = assetPath;
-            this.title = title;
-            this.url = url;
+        // Title
+        TextView title = new TextView(context);
+        title.setPadding(0, 10, 0, 10);
+        title.setTextSize(20);
+        title.setText(license.getTitle());
+        linearLayout.addView(title);
+
+        // URL
+        if (license.getUrl() != null) {
+            TextView url = new TextView(context);
+            url.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            url.setText(license.getUrl());
+            Linkify.addLinks(url, Linkify.ALL);
+            linearLayout.addView(url);
         }
 
-        public View toView(Context context) {
-            LinearLayout linearLayout = new LinearLayout(context);
-            linearLayout.setPadding(3, 3, 3, 3);
-            linearLayout.setOrientation(LinearLayout.VERTICAL);
-            linearLayout.setBackgroundColor(Color.parseColor("#33888888"));
-            LinearLayout.LayoutParams l = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            l.setMargins(10, 10, 10, 10);
-            linearLayout.setLayoutParams(l);
-
-            // Title
-            TextView title = new TextView(context);
-            title.setPadding(0, 10, 0, 10);
-            title.setTextSize(20);
-            title.setText(this.title);
-            linearLayout.addView(title);
-
-            // URL
-            if (this.url != null) {
-                TextView url = new TextView(context);
-                url.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                url.setText(this.url);
-                Linkify.addLinks(url, Linkify.ALL);
-                linearLayout.addView(url);
-            }
-
-            linearLayout.setOnClickListener(v -> context.startActivity(OpenSourceLicenseActivity.createLaunchIntent(context, this.assetPath, this.title)));
-            return linearLayout;
-        }
+        linearLayout.setOnClickListener(v -> context.startActivity(OpenSourceLicenseActivity.createLaunchIntent(context, license.getAssetPath(), license.getTitle())));
+        return linearLayout;
     }
 }

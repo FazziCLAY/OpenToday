@@ -13,6 +13,8 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.NotificationCompat;
 
+import com.fazziclay.neosocket.NeoSocket;
+
 import org.json.JSONObject;
 
 import java.io.File;
@@ -22,6 +24,7 @@ import java.util.Random;
 import java.util.UUID;
 
 import ru.fazziclay.javaneoutil.FileUtil;
+import ru.fazziclay.javaneoutil.JavaNeoUtil;
 import ru.fazziclay.opentoday.BuildConfig;
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.datafixer.DataFixer;
@@ -32,6 +35,7 @@ import ru.fazziclay.opentoday.app.receiver.ItemsTickReceiver;
 import ru.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import ru.fazziclay.opentoday.app.settings.SettingsManager;
 import ru.fazziclay.opentoday.debug.TestActivityFragment;
+import ru.fazziclay.opentoday.telemetry.OpenTodayTelemetry;
 import ru.fazziclay.opentoday.ui.activity.CrashReportActivity;
 import ru.fazziclay.opentoday.ui.fragment.ItemsTabIncludeFragment;
 import ru.fazziclay.opentoday.util.DebugUtil;
@@ -76,6 +80,7 @@ public class App extends Application {
     private Telemetry telemetry;
     private JSONObject versionData;
     private boolean appInForeground = false;
+    private License[] openSourceLicenses;
 
     public static final ItemsTabIncludeFragment.QuickNoteInterface QUICK_NOTE = s -> {
         List<ItemNotification> notifys = new ArrayList<>();
@@ -147,6 +152,7 @@ public class App extends Application {
             itemManager = new ItemManager(new File(getExternalFilesDir(""), "item_data.json"));
             settingsManager = new SettingsManager(new File(getExternalFilesDir(""), "settings.json"));
 
+            initOpenSourceLicences();
             sendBroadcast(new Intent(this, ItemsTickReceiver.class));
 
             AppCompatDelegate.setDefaultNightMode(settingsManager.getTheme());
@@ -162,6 +168,17 @@ public class App extends Application {
         } catch (Exception e) {
             crash(this, CrashReport.create(Thread.currentThread(), new RuntimeException("opentoday.app.App initialization exception", e), System.currentTimeMillis(), System.nanoTime(), Thread.getAllStackTraces()), false);
         }
+    }
+
+    private void initOpenSourceLicences() {
+        // TODO: 19.10.2022 add v prefix to version to telemetry
+        this.openSourceLicenses = new License[]{
+                new License("LICENSE_OpenToday", "OpenToday (this app)", "fazziclay@gmail.com\nhttps://fazziclay.github.io/opentoday"),
+                new License("LICENSE_hsv-alpha-color-picker-android", "hsv-alpha-color-picker-android", "https://github.com/martin-stone/hsv-alpha-color-picker-android"),
+                new License("LICENSE_JavaNeoUtil", "JavaNeoUtil v" + JavaNeoUtil.VERSION_NAME, "https://github.com/fazziclay/javaneoutil"),
+                new License("LICENSE_NeoSocket", "NeoSocket v" + NeoSocket.VERSION_NAME, "https://github.com/fazziclay/neosocket"),
+                new License("LICENSE_OpenTodayTelemetry", "OpenTodayTelemetry " + OpenTodayTelemetry.VERSION_NAME, getString(R.string.openSourceLicenses_telemetry_warn) + "\nhttps://github.com/fazziclay/opentodaytelemetry"),
+        };
     }
 
     private void setupCrashReporter() {
@@ -236,9 +253,7 @@ public class App extends Application {
     public void setAppInForeground(boolean appInForeground) { this.appInForeground = appInForeground; }
     public Telemetry getTelemetry() { return telemetry; }
     public JSONObject getVersionData() { return versionData; }
-
-    public UUID getInstanceId() {
-        return instanceId;
-    }
+    public UUID getInstanceId() { return instanceId; }
+    public License[] getOpenSourcesLicenses() { return this.openSourceLicenses; }
     // not getters & setters :)
 }
