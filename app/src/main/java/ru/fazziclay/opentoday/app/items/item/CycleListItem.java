@@ -16,7 +16,6 @@ import ru.fazziclay.opentoday.annotation.RequireSave;
 import ru.fazziclay.opentoday.annotation.Setter;
 import ru.fazziclay.opentoday.app.TickSession;
 import ru.fazziclay.opentoday.app.items.CurrentItemStorage;
-import ru.fazziclay.opentoday.app.items.DataTransferPacket;
 import ru.fazziclay.opentoday.app.items.ItemsStorage;
 import ru.fazziclay.opentoday.app.items.ItemsUtils;
 import ru.fazziclay.opentoday.app.items.SimpleItemsStorage;
