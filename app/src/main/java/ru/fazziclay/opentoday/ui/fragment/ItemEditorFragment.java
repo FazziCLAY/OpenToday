@@ -5,6 +5,8 @@ import static ru.fazziclay.opentoday.util.InlineUtil.fcu_viewOnClick;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
@@ -312,6 +314,11 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
                         .show();
             });
             binding.minimize.setChecked(item.isMinimize());
+            binding.copyItemId.setVisibility(App.ADVANCED_MODE ? View.VISIBLE : View.GONE);
+            binding.copyItemId.setOnClickListener(v -> {
+                ClipboardManager clipboardManager = activity.getSystemService(ClipboardManager.class);
+                clipboardManager.setPrimaryClip(ClipData.newPlainText("Item id", item.getId() == null ? "null" : item.getId().toString()));
+            });
 
             // On edit start
             binding.viewMinHeight.addTextChangedListener(new MinTextWatcher() {

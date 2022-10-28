@@ -55,6 +55,7 @@ public class App extends Application {
 
     // DEBUG
     public static final boolean DEBUG = BuildConfig.DEBUG;
+    public static final boolean ADVANCED_MODE = (DEBUG & true);
     public static final boolean DEBUG_TICK_NOTIFICATION = (DEBUG & false);
     public static final int DEBUG_MAIN_ACTIVITY_START_SLEEP = (DEBUG & false) ? 6000 : 0;
     public static final int DEBUG_APP_START_SLEEP = (DEBUG & false) ? 8000 : 0;
