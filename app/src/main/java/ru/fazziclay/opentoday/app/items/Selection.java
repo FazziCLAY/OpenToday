@@ -1,6 +1,7 @@
 package ru.fazziclay.opentoday.app.items;
 
 import ru.fazziclay.opentoday.app.items.item.Item;
+import ru.fazziclay.opentoday.app.items.item.ItemsRegistry;
 
 public class Selection {
     private ItemsStorage itemsStorage;
@@ -23,5 +24,9 @@ public class Selection {
         this.itemsStorage.deleteItem(this.item);
         this.itemsStorage = l;
         this.itemsStorage.addItem(this.item);
+    }
+
+    public void copyToStorage(ItemsStorage l) {
+        l.addItem(item.copy());
     }
 }

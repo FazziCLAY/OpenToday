@@ -158,6 +158,10 @@ public abstract class Item {
         return this;
     }
 
+    public Item copy() {
+        return ItemsRegistry.REGISTRY.getItemInfoByClass(this.getClass()).copy(this);
+    }
+
     // For fast get text (no cast to TextItem)
     public String getText() {
         return "{Item}";
