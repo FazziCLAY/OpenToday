@@ -36,11 +36,18 @@ public class DialogSelectItemAction {
             message = activity.getString(R.string.dialog_selectItemAction_message);
         }
         this.message = message;
-        this.dialog = new Dialog(activity);
+
 
         ListView listView = new ListView(activity);
         listView.setPadding(10, 10, 10, 10);
         this.view = listView;
+
+        dialog = new AlertDialog.Builder(activity)
+                .setTitle(R.string.dialog_selectItemAction_title)
+                .setMessage(message)
+                .setPositiveButton(R.string.dialog_selectItemAction_cancel, null)
+                .setView(view)
+                .create();
 
         listView.setAdapter(new MinBaseAdapter() {
             @Override
@@ -69,12 +76,6 @@ public class DialogSelectItemAction {
     }
 
     public void show() {
-        dialog = new AlertDialog.Builder(activity)
-                .setTitle(R.string.dialog_selectItemAction_title)
-                .setMessage(message)
-                .setPositiveButton(R.string.dialog_selectItemAction_cancel, null)
-                .setView(view)
-                .create();
         dialog.show();
     }
 
