@@ -9,9 +9,10 @@ import java.util.UUID;
 
 import ru.fazziclay.opentoday.annotation.RequireSave;
 import ru.fazziclay.opentoday.annotation.SaveKey;
+import ru.fazziclay.opentoday.app.items.ID;
 import ru.fazziclay.opentoday.app.items.ItemsStorage;
 
-public abstract class Tab implements ItemsStorage {
+public abstract class Tab implements ItemsStorage, ID {
     public static final TabIETool IE_TOOL = new TabIETool();
     protected static class TabIETool extends TabImportExportTool {
         @NonNull
@@ -48,12 +49,13 @@ public abstract class Tab implements ItemsStorage {
 
     }
 
+    @Override
     public UUID getId() {
         return id;
     }
 
-    public void setId(UUID randomUUID) {
-        id = randomUUID;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getName() {

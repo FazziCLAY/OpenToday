@@ -17,6 +17,7 @@ import ru.fazziclay.opentoday.annotation.RequireSave;
 import ru.fazziclay.opentoday.annotation.SaveKey;
 import ru.fazziclay.opentoday.annotation.Setter;
 import ru.fazziclay.opentoday.app.TickSession;
+import ru.fazziclay.opentoday.app.items.ID;
 import ru.fazziclay.opentoday.app.items.notification.ItemNotification;
 import ru.fazziclay.opentoday.app.items.notification.ItemNotificationIETool;
 import ru.fazziclay.opentoday.app.items.notification.ItemNotificationsRegistry;
@@ -24,7 +25,7 @@ import ru.fazziclay.opentoday.app.items.notification.ItemNotificationsRegistry;
 /**
  * Main app count (contain information) todo add javadoc to Item :)
  */
-public abstract class Item {
+public abstract class Item implements ID {
     private static final String DEFAULT_BACKGROUND_COLOR = "#99999999";
     // START - Save
     public static class ItemIETool extends ItemImportExportTool {
@@ -176,6 +177,7 @@ public abstract class Item {
     }
 
     // Getters & Setters
+    @Override
     @Getter @NonNull public UUID getId() { return id; }
 
     @Getter public int getViewMinHeight() { return viewMinHeight; }
