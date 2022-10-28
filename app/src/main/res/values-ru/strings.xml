@@ -80,7 +80,7 @@
     <string name="toolbar_more_opentoday_settings">Настройки</string>
     <string name="toolbar_more_opentoday_about">О приложении</string>
     <string name="toolbar_more_selection_deselectAll">Убрать выделение</string>
-    <string name="toolbar_more_selection_moveSelectedToRoot">Переместить выбранные в корень</string>
+    <string name="toolbar_more_selection_moveSelectedHere">Переместить выбранные сюда</string>
     <string name="toolbar_items">Айтемы</string>
     <string name="move_selected_here">Переместить выбранный сюда</string>
     <string name="open_in_external_editor">Открыть в внешнем редакторе</string>
@@ -198,4 +198,7 @@
     <string name="toolbar_tabs_edit_name_hint">Введите новое имя…</string>
     <string name="settings_trimItemNamesOnEdit">Обрезать лишнее в имени при редактровании айтема</string>
     <string name="toolbar_more_items_add_exception">Ошибка: %s</string>
+    <string name="dialog_item_module_item_copyItemId">Копировать АйДи айдема</string>
+    <string name="debug_app">Эта версия приложения предназначена только для разработки! Скачайте последкий оффициальный релиз</string>
+    <string name="toolbar_more_selection_copySelectedHere">Копировать выбранное сюда</string>
 </resources>

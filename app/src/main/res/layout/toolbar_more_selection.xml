@@ -72,7 +72,7 @@
 
 
         <Button
-            android:id="@+id/move_selected_to_root"
+            android:id="@+id/move_selected_here"
             android:backgroundTint="#1C919C"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -81,7 +81,19 @@
             android:minHeight="45sp"
             android:minWidth="0sp"
             android:textAllCaps="false"
-            android:text="@string/toolbar_more_selection_moveSelectedToRoot" />
+            android:text="@string/toolbar_more_selection_moveSelectedHere" />
+
+        <Button
+            android:id="@+id/copy_selected_here"
+            android:backgroundTint="#25529A"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1sp"
+            android:layout_marginRight="1sp"
+            android:minHeight="45sp"
+            android:minWidth="0sp"
+            android:textAllCaps="false"
+            android:text="@string/toolbar_more_selection_copySelectedHere" />
 
         <TextView
             android:id="@+id/selectedInfo"

@@ -500,7 +500,7 @@ public class AppToolbar {
         fcu_viewOnClick(b.deselectAll, itemManager::deselectAll);
 
         // Move selected to this
-        fcu_viewOnClick(b.moveSelectedToRoot, () -> {
+        fcu_viewOnClick(b.moveSelectedHere, () -> {
             // If nothing selected
             if (itemManager.getSelections().length == 0) {
                 Toast.makeText(activity, R.string.toolbar_more_selection_nothingSelected, Toast.LENGTH_SHORT).show();
@@ -509,6 +509,20 @@ public class AppToolbar {
 
             for (Selection selection : itemManager.getSelections()) {
                 selection.moveToStorage(itemsStorage);
+                itemManager.deselectItem(selection);
+            }
+        });
+
+        // copy
+        fcu_viewOnClick(b.copySelectedHere, () -> {
+            // If nothing selected
+            if (itemManager.getSelections().length == 0) {
+                Toast.makeText(activity, R.string.toolbar_more_selection_nothingSelected, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            for (Selection selection : itemManager.getSelections()) {
+                selection.copyToStorage(itemsStorage);
                 itemManager.deselectItem(selection);
             }
         });
