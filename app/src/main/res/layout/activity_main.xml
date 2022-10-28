@@ -51,6 +51,28 @@
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/debug_app"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5sp"
+                android:layout_marginStart="2sp"
+                android:layout_marginEnd="2sp"
+                android:background="@drawable/shape"
+                android:backgroundTint="#ff0000"
+                android:orientation="vertical"
+                android:padding="5sp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/debug_app"
+                    android:textColor="#000000"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/update_available"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

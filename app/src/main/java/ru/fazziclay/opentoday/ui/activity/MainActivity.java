@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         }
 
+        binding.debugApp.setVisibility(App.DEBUG ? View.VISIBLE : View.GONE);
         setupUpdateAvailableNotify();
         setupCurrentDate();
 
