@@ -167,7 +167,7 @@ public abstract class Item {
         return controller != null;
     }
 
-    public void setId(UUID randomUUID) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
