@@ -102,21 +102,8 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
     }
 
     public void importData(List<Item> items) {
-        this.items.clear();
-        Profiler profiler = new Profiler("SimpleItemStorage importData");
-
-        profiler.point("check repeated UUIDs");
-        Item[] allImportItems = ItemsUtils.getAllItemsInTree(items.toArray(new Item[0]));
-        for (Item check1 : allImportItems) {
-            for (Item check2 : allImportItems) {
-                if (check1.getId() == null) {
-                    check1.setId(UUID.randomUUID());
-                }
-
-                if (check1.getId().equals(check2.getId())) {
-                    check2.setId(UUID.randomUUID());
-                }
-            }
+        for (Item item : items) {
+            addItem(item);
         }
 
         profiler.point("add & setupController");
