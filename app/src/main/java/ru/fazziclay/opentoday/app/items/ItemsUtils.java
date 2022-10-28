@@ -13,6 +13,7 @@ import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.app.items.item.ItemIEUtil;
 
 public class ItemsUtils {
+    @NonNull
     public static List<Item> copy(Item[] items) {
         try {
             return ItemIEUtil.importItemList(ItemIEUtil.exportItemList(items));
