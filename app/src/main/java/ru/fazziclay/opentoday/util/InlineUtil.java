@@ -12,7 +12,7 @@ public class InlineUtil {
     /**
      * Print message to System.in stream (System.out.println(o))
      * **/
-    public static void fcu_debugPrint(Object o) {
+    public static void l(Object o) {
         System.out.println(o);
     }
 
