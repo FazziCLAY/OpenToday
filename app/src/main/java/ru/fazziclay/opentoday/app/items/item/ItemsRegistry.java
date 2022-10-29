@@ -7,8 +7,10 @@ import androidx.annotation.StringRes;
 import ru.fazziclay.opentoday.R;
 
 public class ItemsRegistry {
+    @NonNull
     public static final ItemsRegistry REGISTRY = new ItemsRegistry();
 
+    @NonNull
     private static final ItemInfo[] ITEMS = new ItemInfo[]{
             new ItemInfo(TextItem.class,                           "TextItem",                      TextItem.IE_TOOL,                      TextItem::createEmpty,                    (i) -> new TextItem((TextItem) i).regenerateId(),                                    R.string.item_text),
             new ItemInfo(CheckboxItem.class,                       "CheckboxItem",                  CheckboxItem.IE_TOOL,                  CheckboxItem::createEmpty,                (i) -> new CheckboxItem((CheckboxItem) i).regenerateId(),                            R.string.item_checkbox),
@@ -27,17 +29,17 @@ public class ItemsRegistry {
     }
 
     @Nullable
-    public ItemInfo getItemInfoByStringName(@NonNull String s) {
+    public ItemInfo get(@NonNull String stringType) {
         for (ItemInfo item : ITEMS) {
-            if (s.equals(item.stringType)) return item;
+            if (stringType.equals(item.stringType)) return item;
         }
         return null;
     }
 
     @Nullable
-    public ItemInfo getItemInfoByClass(Class<? extends Item> s) {
+    public ItemInfo get(@NonNull Class<? extends Item> classType) {
         for (ItemInfo item : ITEMS) {
-            if (s == item.classType) return item;
+            if (classType == item.classType) return item;
         }
         return null;
     }
@@ -50,32 +52,37 @@ public class ItemsRegistry {
         private final ItemCopyInterface copyInterface;
         private final int nameResId;
 
-        public ItemInfo(Class<? extends Item> c, String v, ItemImportExportTool t, ItemCreateInterface ici, ItemCopyInterface icopi, @StringRes int nameResID) {
-            this.classType = c;
-            this.stringType = v;
-            this.itemImportExportTool = t;
-            this.createInterface = ici;
-            this.copyInterface = icopi;
-            this.nameResId = nameResID;
+        public ItemInfo(@NonNull Class<? extends Item> classType, @NonNull String stringType, @NonNull ItemImportExportTool itemImportExportTool, @NonNull ItemCreateInterface createInterface, @NonNull ItemCopyInterface copyInterface, @StringRes int nameResId) {
+            this.classType = classType;
+            this.stringType = stringType;
+            this.itemImportExportTool = itemImportExportTool;
+            this.createInterface = createInterface;
+            this.copyInterface = copyInterface;
+            this.nameResId = nameResId;
         }
 
+        @NonNull
         public Class<? extends Item> getClassType() {
             return classType;
         }
 
+        @NonNull
         public String getStringType() {
             return stringType;
         }
 
+        @NonNull
         public ItemImportExportTool getItemIETool() {
             return itemImportExportTool;
         }
 
+        @NonNull
         public Item create() {
             return createInterface.create();
         }
 
-        public Item copy(Item item) {
+        @NonNull
+        public Item copy(@NonNull Item item) {
             return copyInterface.copy(item);
         }
 
@@ -86,10 +93,12 @@ public class ItemsRegistry {
     }
 
     private interface ItemCopyInterface {
-        Item copy(Item item);
+        @NonNull
+        Item copy(@NonNull Item item);
     }
 
     private interface ItemCreateInterface {
+        @NonNull
         Item create();
     }
 }

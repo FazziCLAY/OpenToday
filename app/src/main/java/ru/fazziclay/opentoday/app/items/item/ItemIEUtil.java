@@ -34,16 +34,16 @@ public class ItemIEUtil {
     // import item (JSON -> Item)
     public static Item importItem(JSONObject jsonItem) throws Exception {
         /*get itemType form json*/String itemType = jsonItem.optString(KEY_ITEMTYPE);
-        /*get class by itemType*/Class<? extends Item> itemClass = ItemsRegistry.REGISTRY.getItemInfoByStringName(itemType).getClassType();
-        /*get IETool by class*/ItemImportExportTool ieTool = ItemsRegistry.REGISTRY.getItemInfoByClass(itemClass).getItemIETool();
+        /*get class by itemType*/Class<? extends Item> itemClass = ItemsRegistry.REGISTRY.get(itemType).getClassType();
+        /*get IETool by class*/ItemImportExportTool ieTool = ItemsRegistry.REGISTRY.get(itemClass).getItemIETool();
         return ieTool.importItem(jsonItem, null);
     }
 
     // export item (Item -> JSON)
     public static JSONObject exportItem(Item item) throws Exception {
-        /*IETool from itemClass*/ItemImportExportTool itemIETool = ItemsRegistry.REGISTRY.getItemInfoByClass(item.getClass()).getItemIETool();
+        /*IETool from itemClass*/ItemImportExportTool itemIETool = ItemsRegistry.REGISTRY.get(item.getClass()).getItemIETool();
         /*Export from IETool*/JSONObject jsonItem = itemIETool.exportItem(item);
-        /*Put itemType to json*/jsonItem.put(KEY_ITEMTYPE, ItemsRegistry.REGISTRY.getItemInfoByClass(item.getClass()).getStringType());
+        /*Put itemType to json*/jsonItem.put(KEY_ITEMTYPE, ItemsRegistry.REGISTRY.get(item.getClass()).getStringType());
         return jsonItem;
     }
 }
