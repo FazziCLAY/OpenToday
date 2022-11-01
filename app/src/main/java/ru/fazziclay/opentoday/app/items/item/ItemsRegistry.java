@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
+import java.util.List;
+
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.FeatureFlag;
 
@@ -102,6 +104,10 @@ public class ItemsRegistry {
         public ItemInfo requiredFeatureFlag(FeatureFlag flag) {
             this.requiredFeatureFlag = flag;
             return this;
+        }
+
+        public boolean isCompatibility(List<FeatureFlag> flags) {
+            return isCompatibility(flags.toArray(new FeatureFlag[0]));
         }
 
         public boolean isCompatibility(FeatureFlag[] flags) {

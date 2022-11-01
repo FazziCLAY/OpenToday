@@ -134,7 +134,7 @@ public class CrashReport {
 
         String featureFlags;
         try {
-            featureFlags = Arrays.toString(App.get().getFeatureFlags());
+            featureFlags = Arrays.toString(App.get().getFeatureFlags().toArray());
         } catch (Exception e) {
             featureFlags = "(Unknown: "+e+")";
         }

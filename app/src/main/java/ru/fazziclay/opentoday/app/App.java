@@ -19,6 +19,9 @@ import com.fazziclay.neosocket.NeoSocket;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -79,11 +82,11 @@ public class App extends Application {
     private JSONObject versionData;
     private boolean appInForeground = false;
     private License[] openSourceLicenses;
-    private final FeatureFlag[] featureFlags = new FeatureFlag[]{
+    private final List<FeatureFlag> featureFlags = new ArrayList<>(Arrays.asList(
             FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
             FeatureFlag.ITEM_EDITOR_SHOW_COPY_ID_BUTTON,
             FeatureFlag.AVAILABLE_LOGS_OVERLAY
-    };
+    ));
 
     @Override
     public void onCreate() {
@@ -256,6 +259,6 @@ public class App extends Application {
     public License[] getOpenSourcesLicenses() { return this.openSourceLicenses; }
     public boolean isAppInForeground() { return appInForeground; }
     public void setAppInForeground(boolean appInForeground) { this.appInForeground = appInForeground; }
-    public FeatureFlag[] getFeatureFlags() {return featureFlags;}
+    public List<FeatureFlag> getFeatureFlags() {return featureFlags;}
     // not getters & setters :)
 }
