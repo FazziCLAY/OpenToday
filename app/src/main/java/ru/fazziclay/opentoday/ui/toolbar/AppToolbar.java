@@ -400,6 +400,9 @@ public class AppToolbar {
             @Override
             public void onBindViewHolder(@NonNull H holder, int position) {
                 ItemsRegistry.ItemInfo itemInfo = ItemsRegistry.REGISTRY.getAllItems()[position];
+
+                viewVisible(holder.itemView, itemInfo.isCompatibility(app.getFeatureFlags()), View.GONE);
+
                 holder.name.setText(itemInfo.getNameResId());
                 viewClick(holder.create, () -> rootNavigationHost.navigate(ItemEditorFragment.create(tab.getId(), itemInfo.getClassType()), true));
                 viewClick(holder.add, () -> itemsStorage.addItem(ItemsRegistry.REGISTRY.get(itemInfo.getClassType()).create()));

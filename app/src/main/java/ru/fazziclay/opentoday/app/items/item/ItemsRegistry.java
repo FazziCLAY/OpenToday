@@ -15,6 +15,7 @@ public class ItemsRegistry {
 
     @NonNull
     private static final ItemInfo[] ITEMS = new ItemInfo[]{
+            new ItemInfo(DebugTickCounterItem.class,               "DebugTickCounterItem",          DebugTickCounterItem.IE_TOOL,          DebugTickCounterItem::createEmpty,        (i) -> new DebugTickCounterItem((DebugTickCounterItem) i).regenerateId(),            R.string.item_debugTickCounter).requiredFeatureFlag(FeatureFlag.ITEM_DEBUG_TICK_COUNTER),
             new ItemInfo(TextItem.class,                           "TextItem",                      TextItem.IE_TOOL,                      TextItem::createEmpty,                    (i) -> new TextItem((TextItem) i).regenerateId(),                                    R.string.item_text),
             new ItemInfo(CheckboxItem.class,                       "CheckboxItem",                  CheckboxItem.IE_TOOL,                  CheckboxItem::createEmpty,                (i) -> new CheckboxItem((CheckboxItem) i).regenerateId(),                            R.string.item_checkbox),
             new ItemInfo(DayRepeatableCheckboxItem.class,          "DayRepeatableCheckboxItem",     DayRepeatableCheckboxItem.IE_TOOL,     DayRepeatableCheckboxItem::createEmpty,   (i) -> new DayRepeatableCheckboxItem((DayRepeatableCheckboxItem) i).regenerateId(),  R.string.item_checkboxDayRepeatable),
@@ -23,7 +24,6 @@ public class ItemsRegistry {
             new ItemInfo(GroupItem.class,                          "GroupItem",                     GroupItem.IE_TOOL,                     GroupItem::createEmpty,                   (i) -> new GroupItem((GroupItem) i).regenerateId(),                                  R.string.item_group),
             new ItemInfo(FilterGroupItem.class,                    "FilterGroupItem",               FilterGroupItem.IE_TOOL,               FilterGroupItem::createEmpty,             (i) -> new FilterGroupItem((FilterGroupItem) i).regenerateId(),                      R.string.item_filterGroup),
             new ItemInfo(LongTextItem.class,                       "LongTextItem",                  LongTextItem.IE_TOOL,                  LongTextItem::createEmpty,                (i) -> new LongTextItem((LongTextItem) i).regenerateId(),                            R.string.item_longTextItem),
-            new ItemInfo(DebugTickCounterItem.class,               "DebugTickCounterItem",          DebugTickCounterItem.IE_TOOL,          DebugTickCounterItem::createEmpty,        (i) -> new DebugTickCounterItem((DebugTickCounterItem) i).regenerateId(),            R.string.item_debugTickCounter).requiredFeatureFlag(FeatureFlag.ITEM_DEBUG_TICK_COUNTER)
     };
 
     private ItemsRegistry() {}
