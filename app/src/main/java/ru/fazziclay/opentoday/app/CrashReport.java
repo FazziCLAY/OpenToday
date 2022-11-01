@@ -5,11 +5,14 @@ import android.os.Build;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
+import ru.fazziclay.javaneoutil.NonNull;
 import ru.fazziclay.opentoday.util.L;
 
 public class CrashReport {
@@ -20,6 +23,10 @@ public class CrashReport {
     private final long crashTimeNano;
     private final Map<Thread, StackTraceElement[]> allStackTraces;
     private FatalEnum fatal = FatalEnum.UNKNOWN;
+
+    public static CrashReport create(Throwable throwable) {
+        return create(Thread.currentThread(), throwable, System.currentTimeMillis(), System.nanoTime(), Thread.getAllStackTraces());
+    }
 
     public static CrashReport create(Thread thread, Throwable throwable, long crashTimeMillis, long crashTimeNano, Map<Thread, StackTraceElement[]> allStackTraces) {
         return new CrashReport(thread, throwable, crashTimeMillis, crashTimeNano, allStackTraces);
@@ -40,6 +47,7 @@ public class CrashReport {
 
     public String convertToText() {
         String text = "=== OpenToday Crash ===\n" +
+                "// %_RANDOM_COMMENT_%\n" +
                 "CrashID: %_CRASH_ID_%\n" +
                 "Fatal: %_FATAL_%\n" +
                 "Application: (%_APPLICATION_PACKAGE_%)\n" +
@@ -55,6 +63,7 @@ public class CrashReport {
                 " * DEBUG_APP_START_SLEEP: %_APPLICATION_DEBUG_APP_START_SLEEP_%\n" +
                 " * DEBUG_MAIN_ACTIVITY: %_APPLICATION_DEBUG_MAIN_ACTIVITY_%\n" +
                 " * DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY: %_APPLICATION_DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY_%\n" +
+                " * featureFlags: %_FEATURE_FLAGS_%\n" +
                 "\n" +
                 "Device:\n" +
                 " * SDK_INT: %_DEVICE_ANDROID_SDK_INT_%\n" +
@@ -123,7 +132,16 @@ public class CrashReport {
             instanceId = App.get().getInstanceId();
         } catch (Exception ignored) {}
 
+        String featureFlags;
+        try {
+            featureFlags = Arrays.toString(App.get().getFeatureFlags());
+        } catch (Exception e) {
+            featureFlags = "(Unknown: "+e+")";
+        }
+
         text = text.replace("%_INSTANCE_ID_%", (instanceId == null ? "null" : instanceId.toString()));
+        text = text.replace("%_RANDOM_COMMENT_%", generateRandomComment());
+        text = text.replace("%_FEATURE_FLAGS_%", featureFlags);
         text = text.replace("%_CRASH_ID_%", (this.id == null ? "null" : this.id.toString()));
         text = text.replace("%_FATAL_%", (this.fatal == null ? "null" : this.fatal.name()));
         text = text.replace("%_APPLICATION_PACKAGE_%", App.APPLICATION_ID);
@@ -140,7 +158,6 @@ public class CrashReport {
         text = text.replace("%_TIME_FORMATTED_%", timeFormatted);
         text = text.replace("%_TIME_MILLIS_%", String.valueOf(this.crashTimeMillis));
         text = text.replace("%_TIME_NANO_%", String.valueOf(this.crashTimeNano));
-        ;
         text = text.replace("%_THREAD_%", this.thread != null ? this.thread.toString() : "null");
         text = text.replace("%_THROWABLE_%", throwableText);
         text = text.replace("%_DEVICE_ANDROID_SDK_INT_%", String.valueOf(Build.VERSION.SDK_INT));
@@ -163,6 +180,53 @@ public class CrashReport {
         return text;
     }
 
+    @NonNull
+    private String generateRandomComment() {
+        String result = "HelloWorld";
+
+        String[] comments = new String[] {
+                // 2022.10.29
+                "FazziCLAY genius",
+                "@FazziCLAY",
+                "Marvel cool",
+                "this is 2022.10.29?????",
+                "truban skyblock",
+                "Minecraft feature this random comment: noooo :)",
+                "v0.9.7.3 added this feature",
+                "allStackTraces?????????????????????????????????",
+                "Sorry please",
+
+                // 2022.10.30
+                "FeatureFlags from mc1.20????????// :)",
+
+                // 2022.11.01
+                "Big changes 2022.11.01: The world big commit :)",
+        };
+        Random random = new Random();
+        int max = comments.length;
+        int pos = random.nextInt(max);
+        if (pos < 0) {
+            pos = pos * -1;
+        }
+        try {
+            result = comments[pos];
+        } catch (Exception ignored) {}
+
+        if (random.nextBoolean()) {
+            if (random.nextBoolean()) {
+                result = result + " :)";
+            } else {
+                if (random.nextBoolean()) {
+                    result = result + " :(";
+                } else {
+                    result = result + " :/";
+                }
+            }
+        }
+
+        return result;
+    }
+
     public Throwable getThrowable() {
         return throwable;
     }
@@ -182,6 +246,11 @@ public class CrashReport {
     public enum FatalEnum {
         UNKNOWN,
         YES,
-        NO
+        NO;
+
+        @NonNull
+        public static FatalEnum fromBoolean(boolean b) {
+            return b ? YES : NO;
+        }
     }
 }

@@ -13,7 +13,7 @@
 
     <CheckBox
         android:id="@+id/isChecked"
-        android:text="@string/uidialog_edit_checkboxentry_checked"
+        android:text="@string/fragment_itemEditor_checkbox_isChecked"
         android:minHeight="0sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

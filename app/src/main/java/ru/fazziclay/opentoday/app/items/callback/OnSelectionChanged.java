@@ -7,5 +7,5 @@ import ru.fazziclay.opentoday.callback.Callback;
 
 @FunctionalInterface
 public interface OnSelectionChanged extends Callback {
-    void run(List<Selection> selections);
+    void onSelectionChanged(List<Selection> selections);
 }

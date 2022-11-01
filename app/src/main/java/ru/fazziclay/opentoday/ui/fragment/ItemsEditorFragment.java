@@ -27,8 +27,8 @@ import ru.fazziclay.opentoday.app.settings.SettingsManager;
 import ru.fazziclay.opentoday.ui.UI;
 import ru.fazziclay.opentoday.ui.activity.MainActivity;
 import ru.fazziclay.opentoday.ui.dialog.DialogEditItemFilter;
-import ru.fazziclay.opentoday.ui.interfaces.IVGEditButtonInterface;
 import ru.fazziclay.opentoday.ui.interfaces.NavigationHost;
+import ru.fazziclay.opentoday.ui.interfaces.StorageEditsActions;
 import ru.fazziclay.opentoday.ui.item.ItemStorageDrawer;
 import ru.fazziclay.opentoday.util.L;
 
@@ -104,22 +104,31 @@ public class ItemsEditorFragment extends Fragment {
             }
         }
 
-        this.itemStorageDrawer = new ItemStorageDrawer(activity, itemManager, settingsManager, itemsStorage, item -> rootNavigationHost.navigate(ItemEditorFragment.edit(tabId, item.getId()), true), previewMode, new IVGEditButtonInterface() {
-            @Override
-            public void onGroupEdit(GroupItem groupItem) {
-                navigationHost.navigate(createItem(tabId, groupItem.getId()), true);
-            }
+        if (previewMode) {
+            this.itemStorageDrawer = ItemStorageDrawer.builder(activity, itemManager, settingsManager, itemsStorage)
+                    .setPreviewMode()
+                    .build();
+        } else {
+            this.itemStorageDrawer = ItemStorageDrawer.builder(activity, itemManager, settingsManager, itemsStorage)
+                    .setOnItemOpenEditor((item) -> rootNavigationHost.navigate(ItemEditorFragment.edit(item.getId()), true))
+                    .setStorageEditsActions(new StorageEditsActions() {
+                        @Override
+                        public void onGroupEdit(GroupItem groupItem) {
+                            navigationHost.navigate(createItem(tabId, groupItem.getId()), true);
+                        }
 
-            @Override
-            public void onCycleListEdit(CycleListItem cycleListItem) {
-                navigationHost.navigate(createItem(tabId, cycleListItem.getId()), true);
-            }
+                        @Override
+                        public void onCycleListEdit(CycleListItem cycleListItem) {
+                            navigationHost.navigate(createItem(tabId, cycleListItem.getId()), true);
+                        }
 
-            @Override
-            public void onFilterGroupEdit(FilterGroupItem filterGroupItem) {
-                navigationHost.navigate(createItem(tabId, filterGroupItem.getId()), true);
-            }
-        });
+                        @Override
+                        public void onFilterGroupEdit(FilterGroupItem filterGroupItem) {
+                            navigationHost.navigate(createItem(tabId, filterGroupItem.getId()), true);
+                        }
+                    })
+                    .build();
+        }
 
         if (item instanceof FilterGroupItem) {
             applyFilterGroupViewPatch((FilterGroupItem) item);

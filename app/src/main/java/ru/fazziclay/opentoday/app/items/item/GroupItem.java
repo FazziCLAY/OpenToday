@@ -15,7 +15,7 @@ import ru.fazziclay.opentoday.app.TickSession;
 import ru.fazziclay.opentoday.app.items.ItemsStorage;
 import ru.fazziclay.opentoday.app.items.ItemsUtils;
 import ru.fazziclay.opentoday.app.items.SimpleItemsStorage;
-import ru.fazziclay.opentoday.app.items.callback.OnItemStorageUpdate;
+import ru.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import ru.fazziclay.opentoday.callback.CallbackStorage;
 
 public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
@@ -39,18 +39,19 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
             // Items
             JSONArray jsonItems = json.optJSONArray("items");
             if (jsonItems == null) jsonItems = new JSONArray();
-            groupItem.itemStorage.importData(ItemIEUtil.importItemList(jsonItems));
+            groupItem.itemsStorage.importData(ItemIEUtil.importItemList(jsonItems));
 
             return groupItem;
         }
     }
     // END - Save
 
+    @NonNull
     public static GroupItem createEmpty() {
         return new GroupItem("");
     }
 
-    @SaveKey(key = "items") @RequireSave private final SimpleItemsStorage itemStorage = new GroupItemsStorage();
+    @SaveKey(key = "items") @RequireSave private final SimpleItemsStorage itemsStorage = new GroupItemsStorage();
 
     protected GroupItem() {
         super();
@@ -68,13 +69,13 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
     // Copy
     public GroupItem(GroupItem copy) {
         super(copy);
-        this.itemStorage.importData(ItemsUtils.copy(copy.getAllItems()));
+        this.itemsStorage.importData(ItemsUtils.copy(copy.getAllItems()));
     }
 
     @Override
     public void tick(TickSession tickSession) {
         super.tick(tickSession);
-        itemStorage.tick(tickSession);
+        itemsStorage.tick(tickSession);
     }
 
     @Override
@@ -88,53 +89,57 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
 
     @Override
     public int getItemPosition(Item item) {
-        return itemStorage.getItemPosition(item);
+        return itemsStorage.getItemPosition(item);
     }
 
     @NonNull
     @Override
-    public CallbackStorage<OnItemStorageUpdate> getOnUpdateCallbacks() {
-        return itemStorage.getOnUpdateCallbacks();
+    public CallbackStorage<OnItemsStorageUpdate> getOnUpdateCallbacks() {
+        return itemsStorage.getOnUpdateCallbacks();
     }
 
     @Override
     public Item getItemById(UUID itemId) {
-        return itemStorage.getItemById(itemId);
+        return itemsStorage.getItemById(itemId);
     }
 
     @NonNull
     @Override
     public Item[] getAllItems() {
-        return itemStorage.getAllItems();
+        return itemsStorage.getAllItems();
     }
 
     @Override
     public int size() {
-        return itemStorage.size();
+        return itemsStorage.size();
     }
 
     @Override
     public void addItem(Item item) {
-        itemStorage.addItem(item);
+        itemsStorage.addItem(item);
+    }
+
+    @Override
+    public void addItem(Item item, int position) {
+        itemsStorage.addItem(item, position);
     }
 
     @Override
     public void deleteItem(Item item) {
-        itemStorage.deleteItem(item);
+        itemsStorage.deleteItem(item);
     }
 
     @NonNull
     @Override
     public Item copyItem(Item item) {
-        return itemStorage.copyItem(item);
+        return itemsStorage.copyItem(item);
     }
 
     @Override
     public void move(int positionFrom, int positionTo) {
-        itemStorage.move(positionFrom, positionTo);
+        itemsStorage.move(positionFrom, positionTo);
     }
 
-    @Getter public ItemsStorage getItemStorage() { return itemStorage; }
 
     private class GroupItemsStorage extends SimpleItemsStorage {
         @Override

@@ -11,6 +11,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentManagerNonConfig;
+import androidx.fragment.app.FragmentOnAttachListener;
 import androidx.fragment.app.FragmentTransaction;
 
 import java.util.UUID;
@@ -57,7 +60,12 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
                     .replace(ROOT_CONTAINER_ID, ItemsEditorFragment.createRoot(tabId))
                     .commit();
 
-            getChildFragmentManager().addOnBackStackChangedListener(this::updatePath);
+            getChildFragmentManager().addOnBackStackChangedListener(() -> {
+                updatePath();
+                triggerUpdateISToCurrent();
+            });
+            getChildFragmentManager().addFragmentOnAttachListener((fragmentManager, fragment) -> triggerUpdateISToCurrent());
+            updateItemStorageContext(tab);
         }
     }
 
@@ -85,7 +93,7 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
         StringBuilder s = new StringBuilder(PATH_SEPARATOR);
         int i = 0;
         while (i < getChildFragmentManager().getBackStackEntryCount()) {
-            s.append(getChildFragmentManager().getBackStackEntryAt(i).getName()).append(PATH_SEPARATOR);
+            s.append(getChildFragmentManager().getBackStackEntryAt(i).getName().split("\n")[0]).append(PATH_SEPARATOR);
             i++;
         }
         return s.toString().trim();
@@ -109,7 +117,7 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
         UUID itemId = ief.getItemIdFromExtra();
         Item item = tab.getItemById(itemId);
         if (item != null) {
-            backStackName = item.getText();
+            backStackName = item.getText().split("\n")[0];
             updateItemStorageContext((ItemsStorage) item);
         }
 
@@ -123,11 +131,16 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
 
         if (getChildFragmentManager().getBackStackEntryCount() > 0) {
             getChildFragmentManager().popBackStackImmediate();
-            ItemsEditorFragment fragment = (ItemsEditorFragment) getChildFragmentManager().findFragmentById(ROOT_CONTAINER_ID);
-            updateItemStorageContext(fragment.getItemStorage());
+            updateItemStorageContext(getCurrentItemsStorage());
             return true;
         }
         return false;
+    }
+
+    public ItemsStorage getCurrentItemsStorage() {
+        ItemsEditorFragment fragment = (ItemsEditorFragment) getChildFragmentManager().findFragmentById(ROOT_CONTAINER_ID);
+        if (fragment == null) return null;
+        return fragment.getItemStorage();
     }
 
     private void updateItemStorageContext(ItemsStorage itemsStorage) {
@@ -137,5 +150,16 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
             return;
         }
         f.setItemStorageInContext(itemsStorage);
+    }
+
+    public void triggerUpdateISToCurrent() {
+        if (getCurrentItemsStorage() != null) updateItemStorageContext(getCurrentItemsStorage());
+    }
+
+    public void toRoot() {
+        FragmentManager fm = getChildFragmentManager();
+        for (int i = 0; i < fm.getBackStackEntryCount(); i++) {
+            fm.popBackStack();
+        }
     }
 }

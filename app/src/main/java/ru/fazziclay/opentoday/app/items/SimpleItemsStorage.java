@@ -3,22 +3,20 @@ package ru.fazziclay.opentoday.app.items;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 import ru.fazziclay.opentoday.app.TickSession;
-import ru.fazziclay.opentoday.app.items.callback.OnItemStorageUpdate;
+import ru.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.app.items.item.ItemController;
 import ru.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import ru.fazziclay.opentoday.callback.CallbackStorage;
-import ru.fazziclay.opentoday.util.Profiler;
 
 public abstract class SimpleItemsStorage implements ItemsStorage {
     private final List<Item> items;
     private final ItemController simpleItemController;
-    private final CallbackStorage<OnItemStorageUpdate> onUpdateCallbacks = new CallbackStorage<>();
+    private final CallbackStorage<OnItemsStorageUpdate> onUpdateCallbacks = new CallbackStorage<>();
 
     public SimpleItemsStorage(List<Item> items) {
         this.items = items;
@@ -42,13 +40,16 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
 
     @Override
     public void addItem(Item item) {
-        if (item.getClass() == Item.class) {
-            throw new RuntimeException("'Item' not allowed to add (add Item parents)");
-        }
-        item.regenerateId();
-        item.setController(simpleItemController);
-        items.add(item);
-        onUpdateCallbacks.run((callbackStorage, callback) -> callback.onAdded(item));
+        addItem(item, items.size());
+    }
+
+    @Override
+    public void addItem(Item item, int position) {
+        ItemsUtils.checkAllowedItems(item);
+        ItemsUtils.checkAttached(item);
+        item.attach(simpleItemController);
+        items.add(position, item);
+        onUpdateCallbacks.run((callbackStorage, callback) -> callback.onAdded(item, getItemPosition(item)));
         save();
     }
 
@@ -59,24 +60,23 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
 
     @Override
     public void deleteItem(Item item) {
-        onUpdateCallbacks.run((callbackStorage, callback) -> callback.onDeleted(item));
-        item.setController(null);
+        onUpdateCallbacks.run((callbackStorage, callback) -> callback.onDeleted(item, getItemPosition(item)));
         items.remove(item);
+        item.detach();
         save();
     }
 
     @NonNull
     @Override
     public Item copyItem(Item item) {
-        Item copy = ItemsRegistry.REGISTRY.getItemInfoByClass(item.getClass()).copy(item);
-        addItem(copy);
+        Item copy = ItemsRegistry.REGISTRY.get(item.getClass()).copy(item);
+        addItem(copy, getItemPosition(item) + 1);
         return copy;
     }
 
     @Override
     public void move(int positionFrom, int positionTo) {
-        onUpdateCallbacks.run((callbackStorage, callback) -> callback.onMoved(getAllItems()[positionFrom], positionTo));
-        Collections.swap(this.items, positionFrom, positionTo);
+        ItemsUtils.moveItems(this.items, positionFrom, positionTo, onUpdateCallbacks);
         save();
     }
 
@@ -97,21 +97,34 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
 
     @NonNull
     @Override
-    public CallbackStorage<OnItemStorageUpdate> getOnUpdateCallbacks() {
+    public CallbackStorage<OnItemsStorageUpdate> getOnUpdateCallbacks() {
         return onUpdateCallbacks;
     }
 
     public void importData(List<Item> items) {
-        for (Item item : items) {
-            addItem(item);
+        Item[] allImportItems = ItemsUtils.getAllItemsInTree(items.toArray(new Item[0]));
+        for (Item check1 : allImportItems) {
+            if (check1.getId() == null) {
+                check1.regenerateId();
+            }
+            for (Item check2 : allImportItems) {
+                if (check1.getId().equals(check2.getId())) {
+                    check2.regenerateId();
+                }
+            }
         }
 
-        profiler.point("add & setupController");
-        this.items.addAll(items);
-        for (Item item : this.items) {
-            item.setController(simpleItemController);
+        for (Item item : items) {
+            try {
+                ItemsUtils.checkAllowedItems(item);
+                ItemsUtils.checkAttached(item);
+                item.setController(simpleItemController);
+                if (item.getId() == null) {
+                    item.regenerateId();
+                }
+                this.items.add(item);
+            } catch (Exception ignored) {}
         }
-        profiler.end();
     }
 
     private class SimpleItemController extends ItemController {
@@ -127,7 +140,7 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
 
         @Override
         public void updateUi(Item item) {
-            SimpleItemsStorage.this.onUpdateCallbacks.run((callbackStorage, callback) -> callback.onUpdated(item));
+            SimpleItemsStorage.this.onUpdateCallbacks.run((callbackStorage, callback) -> callback.onUpdated(item, getItemPosition(item)));
         }
     }
 }

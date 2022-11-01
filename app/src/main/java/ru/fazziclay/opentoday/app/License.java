@@ -6,12 +6,12 @@ package ru.fazziclay.opentoday.app;
 public class License {
     private final String assetPath;
     private final String title;
-    private final String url;
+    private final String description;
 
-    public License(String assetPath, String title, String url) {
+    public License(String assetPath, String title, String description) {
         this.assetPath = assetPath;
         this.title = title;
-        this.url = url;
+        this.description = description;
     }
 
     public String getAssetPath() {
@@ -22,7 +22,7 @@ public class License {
         return title;
     }
 
-    public String getUrl() {
-        return url;
+    public String getDescription() {
+        return description;
     }
 }

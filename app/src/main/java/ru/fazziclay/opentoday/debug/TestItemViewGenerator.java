@@ -15,19 +15,21 @@ import ru.fazziclay.opentoday.app.items.item.CycleListItem;
 import ru.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import ru.fazziclay.opentoday.app.items.item.GroupItem;
 import ru.fazziclay.opentoday.app.items.item.TextItem;
-import ru.fazziclay.opentoday.ui.interfaces.IVGEditButtonInterface;
+import ru.fazziclay.opentoday.app.settings.SettingsManager;
+import ru.fazziclay.opentoday.ui.interfaces.StorageEditsActions;
 import ru.fazziclay.opentoday.ui.item.ItemViewGenerator;
-import ru.fazziclay.opentoday.ui.interfaces.OnItemClick;
+import ru.fazziclay.opentoday.ui.interfaces.ItemInterface;
 
 public class TestItemViewGenerator extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ItemManager itemManager = new ItemManager(new File(getExternalCacheDir(), "/tests/testItemViewGenerator.json"));
-        OnItemClick onItemClick = item -> Toast.makeText(TestItemViewGenerator.this, "Click: " + item.toString(), Toast.LENGTH_SHORT).show();
-        boolean previewMode = false;
-        IVGEditButtonInterface edits = new IVGEditButtonInterface() {
+        ItemManager itemManager = new ItemManager(new File(getExternalCacheDir(), "/tests/testItemViewGenerator.json"), new File(getExternalCacheDir(), "/tests/testItemViewGenerator.gz"));
+        SettingsManager settingsManager = new SettingsManager(new File(getExternalCacheDir(), "/tests/settings.json"));
+        ItemInterface itemClick = item -> Toast.makeText(TestItemViewGenerator.this, "Click: " + item.toString(), Toast.LENGTH_SHORT).show();
+        ItemInterface itemEditor = item -> Toast.makeText(TestItemViewGenerator.this, "Editor: " + item.toString(), Toast.LENGTH_SHORT).show();
+        StorageEditsActions edits = new StorageEditsActions() {
             @Override
             public void onGroupEdit(GroupItem groupItem) {
                 Toast.makeText(TestItemViewGenerator.this, "Edit: Group: " + groupItem.toString(), Toast.LENGTH_SHORT).show();
@@ -44,12 +46,11 @@ public class TestItemViewGenerator extends Activity {
             }
         };
 
-        ItemViewGenerator itemViewGenerator = new ItemViewGenerator(
-                this,
-                itemManager,
-                onItemClick,
-                previewMode,
-                edits);
+        ItemViewGenerator itemViewGenerator = ItemViewGenerator.builder(this, itemManager, settingsManager)
+                .setOnItemClick(itemClick)
+                .setStorageEditsActions(edits)
+                .setOnItemOpenEditor(itemEditor)
+                .build();
 
         CycleListItem r = new CycleListItem("1232134r34");
         r.addItem(TextItem.createEmpty());

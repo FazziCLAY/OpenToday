@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:background="@drawable/shape"
+    android:paddingEnd="1sp"
     android:backgroundTint="?attr/item_group_backgroundColor">
 
     <LinearLayout
@@ -23,10 +24,10 @@
             android:layout_height="wrap_content" />
 
         <Button
-            android:layout_marginStart="2sp"
             android:id="@+id/externalEditor"
             android:layout_width="53sp"
             android:layout_height="35sp"
+            android:layout_marginStart="2sp"
             android:layout_weight="0"
             android:gravity="center"
             android:text="Ed"

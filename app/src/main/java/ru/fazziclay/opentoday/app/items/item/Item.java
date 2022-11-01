@@ -19,14 +19,13 @@ import ru.fazziclay.opentoday.annotation.Setter;
 import ru.fazziclay.opentoday.app.TickSession;
 import ru.fazziclay.opentoday.app.items.ID;
 import ru.fazziclay.opentoday.app.items.notification.ItemNotification;
-import ru.fazziclay.opentoday.app.items.notification.ItemNotificationIETool;
-import ru.fazziclay.opentoday.app.items.notification.ItemNotificationsRegistry;
+import ru.fazziclay.opentoday.app.items.notification.ItemNotificationIEUtil;
+import ru.fazziclay.opentoday.app.items.notification.ItemNotificationUtil;
 
 /**
  * Main app count (contain information) todo add javadoc to Item :)
  */
 public abstract class Item implements ID {
-    private static final String DEFAULT_BACKGROUND_COLOR = "#99999999";
     // START - Save
     public static class ItemIETool extends ItemImportExportTool {
         @NonNull
@@ -38,7 +37,7 @@ public abstract class Item implements ID {
                     .put("viewBackgroundColor", item.viewBackgroundColor)
                     .put("viewCustomBackgroundColor", item.viewCustomBackgroundColor)
                     .put("minimize", item.minimize)
-                    .put("notifications", exportNotifications(item.notifications));
+                    .put("notifications", ItemNotificationIEUtil.exportNotifications(item.notifications));
         }
 
         private final Item defaultValues = new Item(){};
@@ -51,7 +50,7 @@ public abstract class Item implements ID {
             item.viewCustomBackgroundColor = json.optBoolean("viewCustomBackgroundColor", defaultValues.viewCustomBackgroundColor);
             item.minimize = json.optBoolean("minimize", defaultValues.minimize);
             JSONArray jsonArray = json.optJSONArray("notifications");
-            item.notifications = importNotifications(jsonArray != null ? jsonArray : new JSONArray());
+            item.notifications = ItemNotificationIEUtil.importNotifications(jsonArray != null ? jsonArray : new JSONArray());
             return item;
         }
 
@@ -67,68 +66,32 @@ public abstract class Item implements ID {
                 }
             }
         }
-
-        private JSONArray exportNotifications(List<ItemNotification> notifications) throws Exception {
-            final JSONArray jsonArray = new JSONArray();
-            for (ItemNotification notification : notifications) {
-                ItemNotificationsRegistry.ItemNotificationInfo itemNotificationInfo = ItemNotificationsRegistry.REGISTRY.getByClass(notification.getClass());
-                jsonArray.put(itemNotificationInfo.getIeTool().exportNotification(notification)
-                        .put("type", itemNotificationInfo.getStringType()));
-            }
-            return jsonArray;
-        }
-
-        private List<ItemNotification> importNotifications(JSONArray json) throws Exception {
-            final List<ItemNotification> result = new ArrayList<>();
-
-            int i = 0;
-            while (i < json.length()) {
-                JSONObject jsonNotification = json.getJSONObject(i);
-                String type = jsonNotification.getString("type");
-                ItemNotificationIETool ieTool = ItemNotificationsRegistry.REGISTRY.getByStringType(type).getIeTool();
-                result.add(ieTool.importNotification(jsonNotification));
-                i++;
-            }
-
-            return result;
-        }
     }
     // END - Save
 
-    @RequireSave @SaveKey(key = "id")
-    private UUID id;
+    private static final String DEFAULT_BACKGROUND_COLOR = "#99999999";
 
-    @Nullable private ItemController controller = null;
-
-    @SaveKey(key = "viewMinHeight") @RequireSave
-    private int viewMinHeight = 0; // минимальная высота
-
-    @SaveKey(key = "viewBackgroundColor") @RequireSave
-    private int viewBackgroundColor = Color.parseColor(DEFAULT_BACKGROUND_COLOR); // фоновый цвет
-
-    @SaveKey(key = "viewCustomBackgroundColor") @RequireSave
-    private boolean viewCustomBackgroundColor = false; // юзаем ли фоновый цвет
-
-    @SaveKey(key = "minimize") @RequireSave
-    private boolean minimize = false;
-
-    @NonNull @SaveKey(key = "notifications") @RequireSave
-    private List<ItemNotification> notifications = new ArrayList<>();
+    @Nullable @RequireSave @SaveKey(key = "id") private UUID id;
+    @Nullable private ItemController controller;
+    @SaveKey(key = "viewMinHeight") @RequireSave private int viewMinHeight = 0; // минимальная высота
+    @SaveKey(key = "viewBackgroundColor") @RequireSave private int viewBackgroundColor = Color.parseColor(DEFAULT_BACKGROUND_COLOR); // фоновый цвет
+    @SaveKey(key = "viewCustomBackgroundColor") @RequireSave private boolean viewCustomBackgroundColor = false; // юзаем ли фоновый цвет
+    @SaveKey(key = "minimize") @RequireSave private boolean minimize = false;
+    @NonNull @SaveKey(key = "notifications") @RequireSave private List<ItemNotification> notifications = new ArrayList<>();
 
     // Copy constructor
     public Item(@Nullable Item copy) {
+        // unattached
         this.id = null;
         this.controller = null;
+
+        // copy
         if (copy != null) {
             this.viewMinHeight = copy.viewMinHeight;
             this.viewBackgroundColor = copy.viewBackgroundColor;
             this.viewCustomBackgroundColor = copy.viewCustomBackgroundColor;
             this.minimize = copy.minimize;
-            this.notifications = new ArrayList<>();
-            for (ItemNotification copyNotify : copy.notifications) {
-                ItemNotification newNotify = copyNotify.clone();
-                this.notifications.add(newNotify);
-            }
+            this.notifications = ItemNotificationUtil.copy(copy.notifications);
         }
     }
 
@@ -136,22 +99,43 @@ public abstract class Item implements ID {
         this(null);
     }
 
+    // For fast get text (no cast to TextItem)
+    public String getText() {
+        return "{Item}";
+    }
+
     public void delete() {
-        if (controller != null) controller.delete(this);
+        if (isAttached()) controller.delete(this);
     }
 
     public void save() {
-        if (controller != null) controller.save(this);
+        if (isAttached()) controller.save(this);
     }
 
     public void visibleChanged() {
-        if (controller != null) controller.updateUi(this);
+        if (isAttached()) controller.updateUi(this);
+    }
+
+    public boolean isAttached() {
+        return controller != null;
+    }
+
+    /**
+     * set controller and regenerate ids
+     * @param itemController controller
+     */
+    public void attach(ItemController itemController) {
+        this.controller = itemController;
+        regenerateId();
+    }
+
+    public void detach() {
+        this.controller = null;
+        this.id = null;
     }
 
     public void tick(TickSession tickSession) {
-        for (ItemNotification notification : notifications) {
-            notification.tick(tickSession, this);
-        }
+        ItemNotificationUtil.tick(tickSession, notifications, this);
     }
 
     public Item regenerateId() {
@@ -159,26 +143,20 @@ public abstract class Item implements ID {
         return this;
     }
 
+    /**
+     * Copy this item
+     * @return copy
+     */
     public Item copy() {
-        return ItemsRegistry.REGISTRY.getItemInfoByClass(this.getClass()).copy(this);
-    }
-
-    // For fast get text (no cast to TextItem)
-    public String getText() {
-        return "{Item}";
-    }
-
-    public boolean isAttached() {
-        return controller != null;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
+        return ItemsRegistry.REGISTRY.get(this.getClass()).copy(this);
     }
 
     // Getters & Setters
-    @Override
-    @Getter @NonNull public UUID getId() { return id; }
+    @Nullable @Override @Getter public UUID getId() { return id; }
+
+    public void setController(@Nullable ItemController controller) {
+        this.controller = controller;
+    }
 
     @Getter public int getViewMinHeight() { return viewMinHeight; }
     @Setter public void setViewMinHeight(int v) { this.viewMinHeight = v; }
@@ -191,10 +169,6 @@ public abstract class Item implements ID {
 
     @Getter public boolean isMinimize() { return minimize; }
     @Setter public void setMinimize(boolean minimize) { this.minimize = minimize; }
-
-    public void setController(@Nullable ItemController controller) {
-        this.controller = controller;
-    }
 
     @Getter @NonNull public List<ItemNotification> getNotifications() { return notifications; }
 }

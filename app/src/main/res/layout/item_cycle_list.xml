@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:backgroundTint="?attr/item_cycleList_backgroundColor"
-    android:background="@drawable/shape">
+    android:background="@drawable/shape"
+    android:paddingEnd="1sp">
 
     <LinearLayout
         android:orientation="horizontal"

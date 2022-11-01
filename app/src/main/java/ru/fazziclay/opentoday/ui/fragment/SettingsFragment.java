@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
+import ru.fazziclay.opentoday.app.ColorHistoryManager;
 import ru.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import ru.fazziclay.opentoday.app.settings.SettingsManager;
 import ru.fazziclay.opentoday.databinding.FragmentSettingsBinding;
@@ -27,14 +28,28 @@ public class SettingsFragment extends Fragment {
 
     private FragmentSettingsBinding binding;
     private SettingsManager settingsManager;
+    private ColorHistoryManager colorHistoryManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.binding = FragmentSettingsBinding.inflate(getLayoutInflater());
-        this.settingsManager = App.get(requireContext()).getSettingsManager();
+        App app = App.get(requireContext());
+        settingsManager = app.getSettingsManager();
+        colorHistoryManager = app.getColorHistoryManager();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = FragmentSettingsBinding.inflate(inflater);
+        setupView();
+        return binding.getRoot();
+    }
+
+    private void setupView() {
         setupThemeSpinner();
 
+        // QuickNote
         binding.quickNoteCheckbox.setChecked(settingsManager.isQuickNoteNotification());
         viewClick(binding.quickNoteCheckbox, () -> {
             settingsManager.setQuickNoteNotification(binding.quickNoteCheckbox.isChecked());
@@ -46,30 +61,33 @@ public class SettingsFragment extends Fragment {
             settingsManager.save();
         });
 
+        // Parse time from quick note
         binding.parseTimeFromQuickNote.setChecked(settingsManager.isParseTimeFromQuickNote());
         viewClick(binding.parseTimeFromQuickNote, () -> {
             settingsManager.setParseTimeFromQuickNote(binding.parseTimeFromQuickNote.isChecked());
             settingsManager.save();
         });
 
-
+        // Minimize gray color
         binding.minimizeGrayColor.setChecked(settingsManager.isMinimizeGrayColor());
         viewClick(binding.minimizeGrayColor, () -> {
             settingsManager.setMinimizeGrayColor(binding.minimizeGrayColor.isChecked());
             settingsManager.save();
         });
 
+        // Trim item names in Editor
         binding.trimItemNamesOnEdit.setChecked(settingsManager.isTrimItemNamesOnEdit());
         viewClick(binding.trimItemNamesOnEdit, () -> {
             settingsManager.setTrimItemNamesOnEdit(binding.trimItemNamesOnEdit.isChecked());
             settingsManager.save();
         });
-    }
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return binding.getRoot();
+        // Lock color history
+        binding.colorHistoryLocked.setChecked(colorHistoryManager.isLocked());
+        viewClick(binding.colorHistoryLocked, () -> {
+            colorHistoryManager.setLocked(binding.colorHistoryLocked.isChecked());
+            colorHistoryManager.save();
+        });
     }
 
     private void setupThemeSpinner() {

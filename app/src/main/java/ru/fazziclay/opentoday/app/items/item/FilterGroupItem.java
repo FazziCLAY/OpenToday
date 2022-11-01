@@ -20,7 +20,7 @@ import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.TickSession;
 import ru.fazziclay.opentoday.app.items.ItemsStorage;
 import ru.fazziclay.opentoday.app.items.ItemsUtils;
-import ru.fazziclay.opentoday.app.items.callback.OnItemStorageUpdate;
+import ru.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import ru.fazziclay.opentoday.callback.CallbackStorage;
 
 public class FilterGroupItem extends TextItem implements ContainerItem, ItemsStorage {
@@ -64,6 +64,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     }
     // END - Save
 
+    @NonNull
     public static FilterGroupItem createEmpty() {
         return new FilterGroupItem("");
     }
@@ -71,7 +72,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     @NonNull @SaveKey(key = "items") @RequireSave private final List<ItemFilterWrapper> items = new ArrayList<>();
     @NonNull private final List<ItemFilterWrapper> activeItems = new ArrayList<>();
     @NonNull private final ItemController groupItemController = new FilterGroupItemController();
-    @NonNull private final CallbackStorage<OnItemStorageUpdate> itemStorageUpdateCallbacks = new CallbackStorage<>();
+    @NonNull private final CallbackStorage<OnItemsStorageUpdate> itemStorageUpdateCallbacks = new CallbackStorage<>();
 
     protected FilterGroupItem() {
         super();
@@ -139,13 +140,15 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     }
 
     private void addItem(ItemFilterWrapper item) {
-        if (item.item.getClass() == Item.class) {
-            throw new RuntimeException("'Item' not allowed to add (add Item parents)");
-        }
-        item.item.setController(groupItemController);
-        item.item.regenerateId();
-        items.add(item);
-        itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onAdded(item.item));
+        addItem(item, items.size());
+    }
+
+    private void addItem(ItemFilterWrapper item, int position) {
+        ItemsUtils.checkAllowedItems(item.item);
+        ItemsUtils.checkAttached(item.item);
+        item.item.attach(groupItemController);
+        items.add(position, item);
+        itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onAdded(item.item, getItemPosition(item.item)));
         if (!recalculate(new GregorianCalendar())) {
             visibleChanged();
         }
@@ -158,15 +161,21 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     }
 
     @Override
+    public void addItem(Item item, int position) {
+        addItem(new ItemFilterWrapper(item, new ItemFilter()), position);
+    }
+
+    @Override
     public void deleteItem(Item item) {
         App.get().getItemManager().deselectItem(item); // TODO: 31.08.2022 other fix??  !!BUGFIX!!
-        itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onDeleted(item));
+        itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onDeleted(item, getItemPosition(item)));
 
         ItemFilterWrapper toDel = null;
         for (ItemFilterWrapper wrapper : items) {
             if (wrapper.item == item) toDel = wrapper;
         }
 
+        item.detach();
         items.remove(toDel);
 
         if (!recalculate(new GregorianCalendar())) {
@@ -180,22 +189,25 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     public Item copyItem(Item item) {
         ItemFilter filter = getItemFilter(item);
 
-        Item copy = ItemsRegistry.REGISTRY.getItemInfoByClass(item.getClass()).copy(item);
+        Item copy = ItemsRegistry.REGISTRY.get(item.getClass()).copy(item);
         ItemFilter copyFilter;
         try {
             copyFilter = filter.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException("Copy error", e);
         }
-        addItem(new ItemFilterWrapper(copy, copyFilter));
+        addItem(new ItemFilterWrapper(copy, copyFilter), getItemPosition(item) + 1);
         return copy;
     }
 
     @Override
     public void move(int positionFrom, int positionTo) {
-        Item item = getAllItems()[positionFrom];
-        Collections.swap(items, positionFrom, positionTo);
-        itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onMoved(item, positionFrom));
+        ItemFilterWrapper item = items.get(positionFrom);
+        items.remove(item);
+        items.add(positionTo, item);
+        // TODO: 27.10.2022 EXPERIMENTAL CHANGES
+        //Collections.swap(items, positionFrom, positionTo);
+        itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onMoved(item.item, positionFrom, positionTo));
 
         if (!recalculate(new GregorianCalendar())) {
             visibleChanged();
@@ -217,7 +229,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
 
     @NonNull
     @Override
-    public CallbackStorage<OnItemStorageUpdate> getOnUpdateCallbacks() {
+    public CallbackStorage<OnItemsStorageUpdate> getOnUpdateCallbacks() {
         return itemStorageUpdateCallbacks;
     }
 
@@ -241,27 +253,36 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     }
 
     public boolean recalculate(GregorianCalendar gregorianCalendar) {
-        boolean isUpdated = false;
+        List<ItemFilterWrapper> temps = new ArrayList<>();
+
         for (ItemFilterWrapper wrapper : items) {
             boolean fit = wrapper.filter.isFit(gregorianCalendar);
             if (fit) {
-                if (!activeItems.contains(wrapper)) {
-                    activeItems.add(wrapper);
-                    isUpdated = true;
-                }
-            } else {
-                if (activeItems.contains(wrapper)) {
-                    activeItems.remove(wrapper);
-                    isUpdated = true;
-                }
+                temps.add(wrapper);
             }
         }
 
-        if (isUpdated) {
-            visibleChanged();
-            return true;
+        boolean isUpdated = false;
+        int i = 0;
+        for (ItemFilterWrapper temp : temps) {
+            if (i >= activeItems.size()) {
+                isUpdated = true;
+                break;
+            }
+            ItemFilterWrapper active = activeItems.get(i);
+            if (temp != active) {
+                isUpdated = true;
+                break;
+            }
+            i++;
         }
-        return false;
+
+        if (isUpdated) {
+            activeItems.clear();
+            activeItems.addAll(temps);
+            visibleChanged();
+        }
+        return isUpdated;
     }
 
     public static class ItemFilterWrapper {
@@ -559,7 +580,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         public void delete(Item item) {
             App.get().getItemManager().deselectItem(item); // TODO: 31.08.2022 other fix??  !!BUGFIX!!
 
-            itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onDeleted(item));
+            itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onDeleted(item, getItemPosition(item)));
 
 
             ItemFilterWrapper toDelete = null;
@@ -584,7 +605,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
 
         @Override
         public void updateUi(Item item) {
-            itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onUpdated(item));
+            itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onUpdated(item, getItemPosition(item)));
             FilterGroupItem.this.visibleChanged();
         }
     }

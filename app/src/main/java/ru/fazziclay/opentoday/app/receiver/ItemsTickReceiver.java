@@ -18,6 +18,7 @@ import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.TickSession;
 import ru.fazziclay.opentoday.app.items.ItemManager;
+import ru.fazziclay.opentoday.util.L;
 
 public class ItemsTickReceiver extends BroadcastReceiver {
     public static final String EXTRA_PERSONAL_TICK = "personalTick";
@@ -26,12 +27,13 @@ public class ItemsTickReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         App app = App.get(context);
         if (app == null) return;
+
         ItemManager itemManager = app.getItemManager();
         if (itemManager == null) return;
 
         if (intent != null && intent.getExtras() != null && intent.getExtras().containsKey("debugMessage")) {
             String s = intent.getExtras().getString("debugMessage", "none");
-            Log.d("ItemsTickReceiver", "DebugMessage! " + s);
+            L.o("ItemsTickReceiver", "DebugMessage! " + s);
         }
 
         debugNotification(context);

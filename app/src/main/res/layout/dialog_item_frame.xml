@@ -12,10 +12,24 @@
         android:layout_weight="1">
 
         <LinearLayout
-            android:id="@+id/canvas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/itemTypeName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Filter Group"
+                android:textSize="17sp"
+                android:gravity="center" />
+
+            <LinearLayout
+                android:id="@+id/canvas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </LinearLayout>
     </ScrollView>
 
     <LinearLayout

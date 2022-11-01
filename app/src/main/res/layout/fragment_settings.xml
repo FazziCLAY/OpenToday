@@ -44,4 +44,17 @@
         android:layout_height="wrap_content"
         android:text="@string/settings_trimItemNamesOnEdit" />
 
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_colorHistory_title"
+        android:textSize="18sp" />
+
+    <CheckBox
+        android:id="@+id/colorHistoryLocked"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_сolorHistoryLocked" />
+
 </LinearLayout>

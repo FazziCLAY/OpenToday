@@ -76,9 +76,12 @@ public class DayRepeatableCheckboxItem extends CheckboxItem {
         super.tick(tickSession);
         int dayOfYear = tickSession.getGregorianCalendar().get(Calendar.DAY_OF_YEAR);
         if (dayOfYear != latestDayOfYear) {
-            latestDayOfYear = dayOfYear;
-            setChecked(startValue);
-            visibleChanged();
+            if (isChecked() != startValue) {
+                latestDayOfYear = dayOfYear;
+                setChecked(startValue);
+                visibleChanged();
+                tickSession.saveNeeded();
+            }
         }
     }
 

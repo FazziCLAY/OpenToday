@@ -1,47 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:clickable="false"
-    android:paddingStart="5sp"
-    android:paddingEnd="5sp">
+    style="@style/Theme.OpenToday.Toolbar.Section.Root.Items">
 
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/items"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-    </LinearLayout>
-
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/changeOnLeftSwipe"
             android:text="@string/toolbar_more_items_changeOnLeftSwipe"
-            android:backgroundTint="#0B9287"
-            android:layout_marginLeft="1sp"
-            android:layout_marginRight="1sp"
-            android:minHeight="45sp"
-            android:minWidth="0sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
+            style="@style/Theme.OpenToday.Toolbar.Section.Button.Items.ChangeOnLeftSwipe" />
 
         <Button
             android:id="@+id/changeOnClick"
             android:text="@string/toolbar_more_items_changeOnClick"
-            android:backgroundTint="#0B9287"
-            android:layout_marginLeft="1sp"
-            android:layout_marginRight="1sp"
-            android:minHeight="45sp"
-            android:minWidth="0sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
+            style="@style/Theme.OpenToday.Toolbar.Section.Button.Items.ChangeOnClick" />
     </LinearLayout>
 </LinearLayout>

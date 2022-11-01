@@ -12,6 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minWidth="35sp"
+        tools:checked="true"
         android:minHeight="0sp" />
 
     <TextView

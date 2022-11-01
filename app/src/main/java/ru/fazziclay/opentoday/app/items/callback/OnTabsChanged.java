@@ -1,9 +1,15 @@
 package ru.fazziclay.opentoday.app.items.callback;
 
+import ru.fazziclay.opentoday.app.items.ItemManager;
 import ru.fazziclay.opentoday.app.items.tab.Tab;
 import ru.fazziclay.opentoday.callback.Callback;
 import ru.fazziclay.opentoday.callback.Status;
 
+/**
+ * @see ItemManager#getOnTabsChanged()
+ * @see ru.fazziclay.opentoday.callback.Callback
+ */
+@FunctionalInterface
 public interface OnTabsChanged extends Callback {
-    Status run(Tab[] tabs);
+    Status onTabsChanged(Tab[] tabs);
 }

@@ -1,41 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="wrap_content"
-    android:layout_width="wrap_content"
-    android:background="@drawable/shape"
-    android:backgroundTint="#aa000000"
-    android:paddingStart="3sp"
-    android:paddingEnd="3sp"
-    android:orientation="horizontal">
+    style="@style/Theme.OpenToday.Toolbar.Section.Root.Items.ItemRow">
 
     <Button
         android:id="@+id/create"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minHeight="0sp"
-        android:minWidth="0sp"
-        android:layout_marginLeft="1sp"
-        android:layout_marginRight="1sp"
         android:text="+"
-        tools:ignore="HardcodedText" />
+        tools:ignore="HardcodedText"
+        style="@style/Theme.OpenToday.Toolbar.Section.Button.Items.ItemRow.AddAndEdit" />
 
     <Button
         android:id="@+id/add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minHeight="0sp"
-        android:minWidth="0sp"
-        android:layout_marginLeft="1sp"
-        android:layout_marginRight="1sp"
         android:text="!"
-        tools:ignore="HardcodedText" />
+        tools:ignore="HardcodedText"
+        style="@style/Theme.OpenToday.Toolbar.Section.Button.Items.ItemRow.AddOnly" />
 
     <TextView
         android:id="@+id/name"
-        android:layout_width="match_parent"
-        android:textSize="18sp"
-        android:textColor="?attr/toolbar_more_items_item_textColor"
-        android:layout_height="wrap_content"/>
+        tools:text="Checkbox"
+        style="@style/Theme.OpenToday.Toolbar.Section.Text.Items.ItemRow" />
 
 </LinearLayout>

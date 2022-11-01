@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.Calendar;
+import java.util.UUID;
 
 import ru.fazziclay.javaneoutil.FileUtil;
 import ru.fazziclay.opentoday.R;
@@ -43,7 +44,7 @@ public class SettingsManager {
     private boolean trimItemNamesOnEdit = true;
     private ItemAction itemOnClickAction = ItemAction.OPEN_EDITOR;
     private ItemAction itemOnLeftAction = ItemAction.MINIMIZE_REVERT;
-
+    private UUID quickNoteNotificationItemsStorageId = null;
 
 
     public SettingsManager(File saveFile) {
@@ -57,16 +58,18 @@ public class SettingsManager {
     @Setter public void setTheme(int theme) { this.theme = theme; }
     @Getter public boolean isQuickNoteNotification() { return quickNoteNotification; }
     @Setter public void setQuickNoteNotification(boolean quickNoteNotification) { this.quickNoteNotification = quickNoteNotification; }
-    @Setter public void setMinimizeGrayColor(boolean minimizeGrayColor) {isMinimizeGrayColor = minimizeGrayColor;}
     @Getter public boolean isMinimizeGrayColor() { return isMinimizeGrayColor; }
-    @Setter public void setParseTimeFromQuickNote(boolean parseTimeFromQuickNote) {this.parseTimeFromQuickNote = parseTimeFromQuickNote;}
+    @Setter public void setMinimizeGrayColor(boolean minimizeGrayColor) {isMinimizeGrayColor = minimizeGrayColor;}
     @Getter public boolean isParseTimeFromQuickNote() { return parseTimeFromQuickNote; }
+    @Setter public void setParseTimeFromQuickNote(boolean parseTimeFromQuickNote) {this.parseTimeFromQuickNote = parseTimeFromQuickNote;}
     @Getter public boolean isTrimItemNamesOnEdit() {return trimItemNamesOnEdit;}
     @Setter public void setTrimItemNamesOnEdit(boolean trimItemNamesOnEdit) {this.trimItemNamesOnEdit = trimItemNamesOnEdit;}
     @Getter public ItemAction getItemOnClickAction() {return itemOnClickAction;}
     @Setter public void setItemOnClickAction(ItemAction itemOnClickAction) {this.itemOnClickAction = itemOnClickAction;}
     @Getter public ItemAction getItemOnLeftAction() {return itemOnLeftAction;}
     @Setter public void setItemOnLeftAction(ItemAction itemOnLeftAction) {this.itemOnLeftAction = itemOnLeftAction;}
+    @Getter public UUID getQuickNoteNotificationItemsStorageId() {return quickNoteNotificationItemsStorageId;}
+    @Setter public void setQuickNoteNotificationItemsStorageId(UUID quickNoteNotificationItemsStorageId) {this.quickNoteNotificationItemsStorageId = quickNoteNotificationItemsStorageId;}
 
     private void load() {
         if (!FileUtil.isExist(saveFile)) {
@@ -103,6 +106,9 @@ public class SettingsManager {
             try {
                 this.itemOnLeftAction = ItemAction.valueOf(j.optString("itemOnLeftAction"));
             } catch (Exception ignored) {}
+            try {
+                this.quickNoteNotificationItemsStorageId = UUID.fromString(j.optString("quickNoteNotificationItemsStorageId"));
+            } catch (Exception ignored) {}
 
         } catch (Exception e) {
             L.o("SettingsManager", "load", e);
@@ -127,6 +133,7 @@ public class SettingsManager {
             j.put(KEY_TRIMITEMNAMESONEDIT, this.trimItemNamesOnEdit);
             j.put("itemOnClickAction", itemOnClickAction.name());
             j.put("itemOnLeftAction", itemOnLeftAction.name());
+            j.put("quickNoteNotificationItemsStorageId", quickNoteNotificationItemsStorageId != null ? quickNoteNotificationItemsStorageId.toString() : null);
 
             FileUtil.setText(saveFile, j.toString(2));
         } catch (Exception e) {
@@ -137,7 +144,7 @@ public class SettingsManager {
 
 
     public enum ItemAction {
-        OPEN_EDITOR(R.string.itemAction_OPEN_EDIT_DIALOG),
+        OPEN_EDITOR(R.string.itemAction_OPEN_EDITOR),
         SELECT_REVERT(R.string.itemAction_SELECT_REVERT),
         SELECT_ON(R.string.itemAction_SELECT_ON),
         SELECT_OFF(R.string.itemAction_SELECT_OFF),

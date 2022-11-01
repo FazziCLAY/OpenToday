@@ -1,33 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:clickable="false"
-    android:paddingStart="5sp"
-    android:paddingEnd="5sp"
-    android:orientation="vertical">
+    style="@style/Theme.OpenToday.Toolbar.Section.Root.OpenToday">
 
     <LinearLayout
         android:id="@+id/debug"
         android:visibility="gone"
+        tools:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
         <Button
             android:id="@+id/debug_toggleDebugOverlayText"
-            android:text="Toggle over..Logs"
-            android:textAllCaps="false"
-            android:backgroundTint="#C400FF"
-            android:layout_marginLeft="1sp"
-            android:layout_marginRight="1sp"
-            android:minHeight="45sp"
-            android:minWidth="0sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="HardcodedText" />
+            android:text="@string/toolbar_more_opentoday_toggleLogsOverlay"
+            style="@style/Theme.OpenToday.Toolbar.Section.Button.OpenToday.ToggleLogsOverlay" />
+    </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
+        <Button
+            android:id="@+id/calendar"
+            android:text="@string/toolbar_more_opentoday_calendar"
+            style="@style/Theme.OpenToday.Toolbar.Section.Button.OpenToday.Calendar" />
     </LinearLayout>
 
     <LinearLayout
@@ -38,24 +34,11 @@
         <Button
             android:id="@+id/settings"
             android:text="@string/toolbar_more_opentoday_settings"
-            android:backgroundTint="#1455DE"
-            android:layout_marginLeft="1sp"
-            android:layout_marginRight="1sp"
-            android:minHeight="45sp"
-            android:minWidth="0sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
+            style="@style/Theme.OpenToday.Toolbar.Section.Button.OpenToday.Settings" />
 
         <Button
             android:id="@+id/about"
             android:text="@string/toolbar_more_opentoday_about"
-            android:backgroundTint="#1455DE"
-            android:layout_marginLeft="1sp"
-            android:layout_marginRight="1sp"
-            android:minHeight="45sp"
-            android:minWidth="0sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            style="@style/Theme.OpenToday.Toolbar.Section.Button.OpenToday.About" />
     </LinearLayout>
 </LinearLayout>

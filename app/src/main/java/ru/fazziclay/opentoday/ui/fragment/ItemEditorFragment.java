@@ -1,7 +1,9 @@
 package ru.fazziclay.opentoday.ui.fragment;
 
 
-import static ru.fazziclay.opentoday.util.InlineUtil.fcu_viewOnClick;
+import static ru.fazziclay.opentoday.util.InlineUtil.viewClick;
+import static ru.fazziclay.opentoday.util.InlineUtil.viewLong;
+import static ru.fazziclay.opentoday.util.InlineUtil.viewVisible;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -14,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -22,6 +25,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.rarepebble.colorpicker.ColorPickerView;
 
 import java.text.SimpleDateFormat;
@@ -34,7 +39,8 @@ import java.util.UUID;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
-import ru.fazziclay.opentoday.app.settings.SettingsManager;
+import ru.fazziclay.opentoday.app.ColorHistoryManager;
+import ru.fazziclay.opentoday.app.FeatureFlag;
 import ru.fazziclay.opentoday.app.items.ItemManager;
 import ru.fazziclay.opentoday.app.items.ItemsStorage;
 import ru.fazziclay.opentoday.app.items.item.CheckboxItem;
@@ -42,10 +48,13 @@ import ru.fazziclay.opentoday.app.items.item.CounterItem;
 import ru.fazziclay.opentoday.app.items.item.CycleListItem;
 import ru.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem;
 import ru.fazziclay.opentoday.app.items.item.Item;
+import ru.fazziclay.opentoday.app.items.item.ItemsRegistry;
+import ru.fazziclay.opentoday.app.items.item.LongTextItem;
 import ru.fazziclay.opentoday.app.items.item.TextItem;
 import ru.fazziclay.opentoday.app.items.notification.DayItemNotification;
 import ru.fazziclay.opentoday.app.items.notification.ItemNotification;
 import ru.fazziclay.opentoday.app.items.tab.Tab;
+import ru.fazziclay.opentoday.app.settings.SettingsManager;
 import ru.fazziclay.opentoday.databinding.DialogItemFrameBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleCheckboxBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleCounterBinding;
@@ -53,6 +62,7 @@ import ru.fazziclay.opentoday.databinding.DialogItemModuleCyclelistBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleDayrepeatablecheckboxBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleItemBinding;
 import ru.fazziclay.opentoday.databinding.DialogItemModuleTextBinding;
+import ru.fazziclay.opentoday.databinding.FragmentItemEditorModuleLongtextBinding;
 import ru.fazziclay.opentoday.ui.UI;
 import ru.fazziclay.opentoday.ui.dialog.DialogItemNotificationsEditor;
 import ru.fazziclay.opentoday.ui.interfaces.ContainBackStack;
@@ -63,73 +73,99 @@ import ru.fazziclay.opentoday.util.time.ConvertMode;
 import ru.fazziclay.opentoday.util.time.TimeUtil;
 
 public class ItemEditorFragment extends Fragment implements ContainBackStack {
-    public static ItemEditorFragment create(UUID tabId, UUID subItem, Class<? extends Item> itemType) {
-        ItemEditorFragment d = new ItemEditorFragment();
+    private static final int MODE_UNKNOWN = 0x00;
+    private static final int MODE_CREATE = 0x02;
+    private static final int MODE_EDIT = 0x04;
+    private static final String KEY_MODE = "mode";
+    private static final String KEY_EDIT_TAB_ID = "edit:tabId";
+    private static final String KEY_EDIT_ITEM_ID = "edit:itemId";
+    private static final String KEY_CREATE_ITEM_STORAGE_ID = "create:itemStorageId";
+    private static final String KEY_CREATE_ITEM_TYPE = "create:itemType";
 
+    public static ItemEditorFragment create(UUID itemStorageId, Class<? extends Item> itemType) {
+        ItemEditorFragment result = new ItemEditorFragment();
         Bundle a = new Bundle();
-        a.putString("mode", "create");
-        a.putString("tabId", tabId.toString());
-        if (subItem != null) a.putString("subItem", subItem.toString());
-        a.putString("itemType", itemType.getName());
-        d.setArguments(a);
 
-        return d;
+        a.putInt(KEY_MODE, MODE_CREATE);
+        a.putString(KEY_CREATE_ITEM_STORAGE_ID, itemStorageId.toString());
+        a.putString(KEY_CREATE_ITEM_TYPE, ItemsRegistry.REGISTRY.get(itemType).getStringType());
+
+        result.setArguments(a);
+        return result;
     }
 
     public static ItemEditorFragment edit(UUID tabId, UUID itemId) {
-        ItemEditorFragment d = new ItemEditorFragment();
-
+        ItemEditorFragment result = new ItemEditorFragment();
         Bundle a = new Bundle();
-        a.putString("mode", "edit");
-        a.putString("tabId", tabId.toString());
-        a.putString("itemId", itemId.toString());
-        d.setArguments(a);
 
-        return d;
+        a.putInt(KEY_MODE, MODE_EDIT);
+        a.putString(KEY_EDIT_TAB_ID, tabId.toString());
+        a.putString(KEY_EDIT_ITEM_ID, itemId.toString());
+
+        result.setArguments(a);
+        return result;
     }
 
-    private SettingsManager settingsManager;
-    private ItemManager itemManager;
-    private Item item;
-    private OnEditDone onEditDone;
-    private boolean unsavedChanges = false;
-    private boolean create;
+    public static ItemEditorFragment edit(UUID itemId) {
+        ItemEditorFragment result = new ItemEditorFragment();
+        Bundle a = new Bundle();
 
+        a.putInt(KEY_MODE, MODE_EDIT);
+        a.putString(KEY_EDIT_ITEM_ID, itemId.toString());
+
+        result.setArguments(a);
+        return result;
+    }
+
+    private App app;
+    private ItemManager itemManager;
+    private SettingsManager settingsManager;
+    private ColorHistoryManager colorHistoryManager;
+    private boolean unsavedChanges = false;
+    private Item item;
+
+    private int mode;
+    
     // Edit
+    // Create
+    private ItemsStorage itemsStorage; // for create
+
+    // Internal
     private final List<BaseEditUiModule> editModules = new ArrayList<>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        itemManager = App.get(requireContext()).getItemManager();
-        settingsManager = App.get(requireContext()).getSettingsManager();
+        if (getArguments() == null) {
+            throw new NullPointerException("Arguments is null");
+        }
 
-        String mode = getArguments().getString("mode");
-        if ("create".equals(mode)) {
-            Tab tab = itemManager.getTab(UUID.fromString(getArguments().getString("tabId")));
-            ItemsStorage itemsStorage;
-            if (getArguments().containsKey("subItem")) {
-                itemsStorage = (ItemsStorage) tab.getItemById(UUID.fromString(getArguments().getString("subItem")));
-
+        app = App.get(requireContext());
+        itemManager = app.getItemManager();
+        settingsManager = app.getSettingsManager();
+        colorHistoryManager = app.getColorHistoryManager();
+        mode = getArguments().getInt("mode", MODE_UNKNOWN);
+        
+        if (mode == MODE_EDIT) {
+            if (getArguments().containsKey(KEY_EDIT_TAB_ID)) {
+                Tab tab = itemManager.getTab(getArgTabId());
+                item = tab.getItemById(getArgItemId());
             } else {
-                itemsStorage = tab;
+                item = itemManager.getItemById(getArgItemId());
             }
 
-            create = true;
-            item = itemsStorage.getItemById(UUID.fromString(getArguments().getString("itemId")));
+        } else if (mode == MODE_CREATE) {
+            itemsStorage = itemManager.getItemStorageById(getArgItemStorageId());
+            ItemsRegistry.ItemInfo itemInfo = ItemsRegistry.REGISTRY.get(getArgItemType());
+            item = itemInfo.create();
+            
         } else {
-            Tab tab = itemManager.getTab(UUID.fromString(getArguments().getString("tabId")));
-            ItemsStorage itemsStorage;
-            if (getArguments().containsKey("subItem")) {
-                itemsStorage = (ItemsStorage) tab.getItemById(UUID.fromString(getArguments().getString("subItem")));
+            throw new RuntimeException("Unknown mode: " + mode);
+        }
 
-            } else {
-                itemsStorage = tab;
-            }
-
-            create = false;
-            item = itemsStorage.getItemById(UUID.fromString(getArguments().getString("itemId")));
+        if (item == null) {
+            throw new RuntimeException("Item is null!");
         }
     }
 
@@ -144,6 +180,9 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
         if (item instanceof TextItem) {
             binding.canvas.addView(addEditModule(new TextItemEditModule()));
         }
+        if (item instanceof LongTextItem) {
+            binding.canvas.addView(addEditModule(new LongTextItemEditModule()));
+        }
         if (item instanceof CheckboxItem) {
             binding.canvas.addView(addEditModule(new CheckboxItemEditModule()));
         }
@@ -157,27 +196,32 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
             binding.canvas.addView(addEditModule(new CounterItemEditModule()));
         }
 
-        fcu_viewOnClick(binding.applyButton, this::applyRequest);
-        fcu_viewOnClick(binding.cancelButton, this::cancelRequest);
-        fcu_viewOnClick(binding.deleteButton, this::deleteRequest);
+        viewClick(binding.applyButton, this::applyRequest);
+        viewClick(binding.cancelButton, this::cancelRequest);
+        viewClick(binding.deleteButton, this::deleteRequest);
+        viewVisible(binding.deleteButton, item.isAttached(), View.GONE);
+        binding.itemTypeName.setText(ItemsRegistry.REGISTRY.get(item.getClass()).getNameResId());
 
         return binding.getRoot();
     }
 
+    public UUID getArgTabId() {
+        return UUID.fromString(getArguments().getString(KEY_EDIT_TAB_ID));
+    }
+
+    public UUID getArgItemId() {
+        return UUID.fromString(getArguments().getString(KEY_EDIT_ITEM_ID));
+    }
+
+    public UUID getArgItemStorageId() {
+        return UUID.fromString(getArguments().getString(KEY_CREATE_ITEM_STORAGE_ID));
+    }
+
+    public String getArgItemType() {
+        return getArguments().getString(KEY_CREATE_ITEM_TYPE);
+    }
+
     public ItemEditorFragment() {
-
-    }
-
-    @Deprecated
-    public ItemEditorFragment(Activity activity, ItemManager itemManager) {
-    }
-
-    @Deprecated
-    public void create(Class<? extends Item> type, OnEditDone onEditDone) {
-    }
-
-    @Deprecated
-    public void edit(Item item) {
     }
 
     private View addEditModule(BaseEditUiModule editUiModule) {
@@ -190,7 +234,7 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
 
         View view = editUiModule.getView();
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(0, 5, 0, 5);
+        layoutParams.setMargins(0, 10, 0, 10);
         view.setLayoutParams(layoutParams);
 
         return view;
@@ -210,11 +254,14 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
                 return;
             }
         }
+        if (mode == MODE_CREATE) {
+            itemsStorage.addItem(item);
+        }
+
         item.visibleChanged();
         item.save();
         unsavedChanges = false;
 
-        if (onEditDone != null) onEditDone.run(item);
         cancel();
     }
 
@@ -294,17 +341,35 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
             binding.defaultBackgroundColor.setChecked(!item.isViewCustomBackgroundColor());
             temp_backgroundColor = item.getViewBackgroundColor();
             updateTextColorIndicator(activity);
-            binding.viewBackgroundColorEdit.setOnClickListener(v -> {
+            viewClick(binding.viewBackgroundColorEdit, () -> {
                 ColorPickerView cp = new ColorPickerView(activity);
                 cp.setCurrentColor(temp_backgroundColor);
                 cp.showHex(true); cp.showPreview(true); cp.showAlpha(true);
                 cp.setOriginalColor(temp_backgroundColor); cp.setCurrentColor(temp_backgroundColor);
 
+                ChipGroup history = new ChipGroup(requireContext());
+                Integer[] colors = colorHistoryManager.getHistory(5);
+                for (int color : colors) {
+                    Chip chip = new Chip(requireContext());
+                    chip.setChipBackgroundColor(ColorStateList.valueOf(color));
+                    chip.setOnClickListener(v -> cp.setCurrentColor(color));
+                    chip.setText(String.format("#%08x", color));
+                    history.addView(chip);
+                }
+                HorizontalScrollView historyHorizontal = new HorizontalScrollView(requireContext());
+                historyHorizontal.addView(history);
+
+                LinearLayout dialogLayout = new LinearLayout(activity);
+                dialogLayout.setOrientation(LinearLayout.VERTICAL);
+                dialogLayout.addView(cp);
+                dialogLayout.addView(historyHorizontal);
+
                 new AlertDialog.Builder(activity)
                         .setTitle(R.string.dialogItem_module_item_backgroundColor_dialog_title)
-                        .setView(cp)
+                        .setView(dialogLayout)
                         .setNegativeButton(R.string.dialogItem_module_item_backgroundColor_dialog_cancel, null)
                         .setPositiveButton(R.string.dialogItem_module_item_backgroundColor_dialog_apply, ((dialog1, which) -> {
+                            colorHistoryManager.addColor(cp.getColor());
                             temp_backgroundColor = cp.getColor();
                             binding.defaultBackgroundColor.setChecked(false);
                             updateTextColorIndicator(activity);
@@ -314,8 +379,8 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
                         .show();
             });
             binding.minimize.setChecked(item.isMinimize());
-            binding.copyItemId.setVisibility(App.ADVANCED_MODE ? View.VISIBLE : View.GONE);
-            binding.copyItemId.setOnClickListener(v -> {
+            viewVisible(binding.copyItemId, app.isFeatureFlag(FeatureFlag.ITEM_EDITOR_SHOW_COPY_ID_BUTTON), View.GONE);
+            viewClick(binding.copyItemId, () -> {
                 ClipboardManager clipboardManager = activity.getSystemService(ClipboardManager.class);
                 clipboardManager.setPrimaryClip(ClipData.newPlainText("Item id", item.getId() == null ? "null" : item.getId().toString()));
             });
@@ -327,14 +392,14 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
                     onEditStart.run();
                 }
             });
-            binding.defaultBackgroundColor.setOnClickListener(v -> {
+            viewClick(binding.defaultBackgroundColor, () -> {
                 updateTextColorIndicator(activity);
                 onEditStart.run();
             });
-            binding.minimize.setOnClickListener(v -> onEditStart.run());
+            viewClick(binding.minimize, onEditStart);
             //
 
-            binding.editNotifications.setOnClickListener(v -> new DialogItemNotificationsEditor(activity, item, () -> updateNotificationPreview(item, activity)).show());
+            viewClick(binding.editNotifications, () -> new DialogItemNotificationsEditor(activity, item, () -> updateNotificationPreview(item, activity)).show());
             updateNotificationPreview(item, activity);
         }
 
@@ -392,6 +457,11 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
             binding = DialogItemModuleTextBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
 
             // equip
+            viewLong(binding.titleOfText, () -> {
+                ClipboardManager clipboardManager = activity.getSystemService(ClipboardManager.class);
+                clipboardManager.setPrimaryClip(ClipData.newPlainText("Item text", item.getText()));
+                Toast.makeText(activity, R.string.abc_coped, Toast.LENGTH_SHORT).show();
+            });
             binding.text.setText(textItem.getText());
             binding.defaultTextColor.setChecked(!textItem.isCustomTextColor());
             temp_textColor = textItem.getTextColor();
@@ -402,11 +472,29 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
                 cp.showHex(true); cp.showPreview(true); cp.showAlpha(true);
                 cp.setOriginalColor(temp_textColor); cp.setCurrentColor(temp_textColor);
 
+                ChipGroup history = new ChipGroup(requireContext());
+                Integer[] colors = colorHistoryManager.getHistory(5);
+                for (int color : colors) {
+                    Chip chip = new Chip(requireContext());
+                    chip.setChipBackgroundColor(ColorStateList.valueOf(color));
+                    chip.setOnClickListener(vvv -> cp.setCurrentColor(color));
+                    chip.setText(String.format("#%08x", color));
+                    history.addView(chip);
+                }
+                HorizontalScrollView historyHorizontal = new HorizontalScrollView(requireContext());
+                historyHorizontal.addView(history);
+
+                LinearLayout dialogLayout = new LinearLayout(activity);
+                dialogLayout.setOrientation(LinearLayout.VERTICAL);
+                dialogLayout.addView(cp);
+                dialogLayout.addView(historyHorizontal);
+
                 new AlertDialog.Builder(activity)
                         .setTitle(R.string.dialogItem_module_text_textColor_dialog_title)
-                        .setView(cp)
+                        .setView(dialogLayout)
                         .setNegativeButton(R.string.dialogItem_module_text_textColor_dialog_cancel, null)
                         .setPositiveButton(R.string.dialogItem_module_text_textColor_dialog_apply, ((dialog1, which) -> {
+                            colorHistoryManager.addColor(cp.getColor());
                             temp_textColor = cp.getColor();
                             binding.defaultTextColor.setChecked(false);
                             updateTextColorIndicator(activity);
@@ -452,6 +540,121 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
             textItem.setTextColor(temp_textColor);
             textItem.setCustomTextColor(!binding.defaultTextColor.isChecked());
             textItem.setClickableUrls(binding.clickableUrls.isChecked());
+        }
+
+        @Override
+        public void setOnStartEditListener(Runnable o) {
+            onEditStart = o;
+        }
+    }
+
+    public class LongTextItemEditModule extends BaseEditUiModule {
+        private FragmentItemEditorModuleLongtextBinding binding;
+        private Runnable onEditStart;
+
+        private int temp_textColor;
+
+        @Override
+        public View getView() {
+            return binding.getRoot();
+        }
+
+        @Override
+        public void setup(Item item, Activity activity, View view) {
+            LongTextItem longTextItem = (LongTextItem) item;
+            binding = FragmentItemEditorModuleLongtextBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
+
+            // equip
+            viewLong(binding.titleOfText, () -> {
+                ClipboardManager clipboardManager = activity.getSystemService(ClipboardManager.class);
+                clipboardManager.setPrimaryClip(ClipData.newPlainText("Item long text", ((LongTextItem) item).getLongText()));
+                Toast.makeText(activity, R.string.abc_coped, Toast.LENGTH_SHORT).show();
+            });
+            binding.text.setText(longTextItem.getLongText());
+            binding.defaultTextColor.setChecked(!longTextItem.isCustomLongTextColor());
+            temp_textColor = longTextItem.getLongTextColor();
+            updateTextColorIndicator(activity);
+            binding.textColorEdit.setOnClickListener(v -> {
+                ColorPickerView cp = new ColorPickerView(activity);
+                cp.setCurrentColor(temp_textColor);
+                cp.showHex(true); cp.showPreview(true); cp.showAlpha(true);
+                cp.setOriginalColor(temp_textColor); cp.setCurrentColor(temp_textColor);
+
+                ChipGroup history = new ChipGroup(requireContext());
+                Integer[] colors = colorHistoryManager.getHistory(5);
+                for (int color : colors) {
+                    Chip chip = new Chip(requireContext());
+                    chip.setChipBackgroundColor(ColorStateList.valueOf(color));
+                    chip.setOnClickListener(vvv -> cp.setCurrentColor(color));
+                    chip.setText(String.format("#%08x", color));
+                    history.addView(chip);
+                }
+                HorizontalScrollView historyHorizontal = new HorizontalScrollView(requireContext());
+                historyHorizontal.addView(history);
+
+                LinearLayout dialogLayout = new LinearLayout(activity);
+                dialogLayout.setOrientation(LinearLayout.VERTICAL);
+                dialogLayout.addView(cp);
+                dialogLayout.addView(historyHorizontal);
+
+                new AlertDialog.Builder(activity)
+                        .setTitle(R.string.dialogItem_module_text_textColor_dialog_title)
+                        .setView(dialogLayout)
+                        .setNegativeButton(R.string.dialogItem_module_text_textColor_dialog_cancel, null)
+                        .setPositiveButton(R.string.dialogItem_module_text_textColor_dialog_apply, ((dialog1, which) -> {
+                            colorHistoryManager.addColor(cp.getColor());
+                            temp_textColor = cp.getColor();
+                            binding.defaultTextColor.setChecked(false);
+                            updateTextColorIndicator(activity);
+                            onEditStart.run();
+                        }))
+                        .show();
+            });
+
+            binding.clickableUrls.setChecked(longTextItem.isLongTextClickableUrls());
+
+            // On edit start
+            binding.text.addTextChangedListener(new MinTextWatcher() {
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    onEditStart.run();
+                }
+            });
+            binding.defaultTextColor.setOnClickListener(v -> {
+                updateTextColorIndicator(activity);
+                onEditStart.run();
+            });
+            binding.clickableUrls.setOnClickListener(v -> onEditStart.run());
+
+            binding.defaultSize.setChecked(!longTextItem.isCustomLongTextSize());
+            binding.size.setMax(30);
+            binding.size.setMin(1);
+            binding.size.setProgress(longTextItem.getLongTextSize());
+            //
+        }
+
+        private void updateTextColorIndicator(Activity activity) {
+            if (binding.defaultTextColor.isChecked()) {
+                binding.textColorIndicator.setBackgroundTintList(ColorStateList.valueOf(ResUtil.getAttrColor(activity, R.attr.item_textColor)));
+            } else {
+                binding.textColorIndicator.setBackgroundTintList(ColorStateList.valueOf(temp_textColor));
+            }
+        }
+
+        @Override
+        public void commit(Item item) {
+            LongTextItem longTextItem = (LongTextItem) item;
+
+            String userInput = binding.text.getText().toString();
+            if (settingsManager.isTrimItemNamesOnEdit()) {
+                userInput = userInput.trim();
+            }
+            longTextItem.setLongText(userInput);
+            longTextItem.setLongTextSize(binding.size.getProgress());
+            longTextItem.setLongTextColor(temp_textColor);
+            longTextItem.setCustomLongTextColor(!binding.defaultTextColor.isChecked());
+            longTextItem.setCustomLongTextSize(!binding.defaultSize.isChecked());
+            longTextItem.setLongTextClickableUrls(binding.clickableUrls.isChecked());
         }
 
         @Override

@@ -41,7 +41,7 @@ public class OpenSourceLicensesActivity extends AppCompatActivity {
         ScrollView scrollView = new ScrollView(this);
         scrollView.addView(linearLayout);
         setContentView(scrollView);
-        setTitle(getString(R.string.openSouceLicenses_title));
+        setTitle(getString(R.string.openSourceLicenses_title));
     }
 
     private View toView(Context context, License license) {
@@ -60,13 +60,13 @@ public class OpenSourceLicensesActivity extends AppCompatActivity {
         title.setText(license.getTitle());
         linearLayout.addView(title);
 
-        // URL
-        if (license.getUrl() != null) {
-            TextView url = new TextView(context);
-            url.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            url.setText(license.getUrl());
-            Linkify.addLinks(url, Linkify.ALL);
-            linearLayout.addView(url);
+        // Description
+        if (license.getDescription() != null) {
+            TextView descriptionView = new TextView(context);
+            descriptionView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            descriptionView.setText(license.getDescription());
+            Linkify.addLinks(descriptionView, Linkify.ALL);
+            linearLayout.addView(descriptionView);
         }
 
         viewClick(linearLayout, () -> context.startActivity(OpenSourceLicenseActivity.createLaunchIntent(context, license.getAssetPath(), license.getTitle())));

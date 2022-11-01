@@ -20,7 +20,7 @@ import ru.fazziclay.opentoday.app.items.ItemsStorage;
 import ru.fazziclay.opentoday.app.items.ItemsUtils;
 import ru.fazziclay.opentoday.app.items.SimpleItemsStorage;
 import ru.fazziclay.opentoday.app.items.callback.OnCurrentItemStorageUpdate;
-import ru.fazziclay.opentoday.app.items.callback.OnItemStorageUpdate;
+import ru.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import ru.fazziclay.opentoday.callback.CallbackImportance;
 import ru.fazziclay.opentoday.callback.CallbackStorage;
 import ru.fazziclay.opentoday.callback.Status;
@@ -167,7 +167,7 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
 
     @NonNull
     @Override
-    public CallbackStorage<OnItemStorageUpdate> getOnUpdateCallbacks() {
+    public CallbackStorage<OnItemsStorageUpdate> getOnUpdateCallbacks() {
         return itemsCycleStorage.getOnUpdateCallbacks();
     }
 
@@ -195,6 +195,13 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
     }
 
     @Override
+    public void addItem(Item item, int position) {
+        Item p = getCurrentItem();
+        itemsCycleStorage.addItem(item, position);
+        if (p != getCurrentItem()) onCurrentItemStorageUpdateCallback.run((callbackStorage, callback) -> callback.onCurrentChanged(getCurrentItem()));
+    }
+
+    @Override
     public void deleteItem(Item item) {
         Item p = getCurrentItem();
         itemsCycleStorage.deleteItem(item);
@@ -214,21 +221,21 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
         if (p != getCurrentItem()) onCurrentItemStorageUpdateCallback.run((callbackStorage, callback) -> callback.onCurrentChanged(getCurrentItem()));
     }
 
-    @Getter public ItemsStorage getItemsCycleStorage() { return itemsCycleStorage; }
     @Getter public TickBehavior getTickBehavior() { return tickBehavior; }
     @Setter public void setTickBehavior(TickBehavior tickBehavior) { this.tickBehavior = tickBehavior; }
 
     private class CycleItemsStorage extends SimpleItemsStorage {
         public CycleItemsStorage() {
-            getOnUpdateCallbacks().addCallback(CallbackImportance.DEFAULT, new OnItemStorageUpdate() {
+            getOnUpdateCallbacks().addCallback(CallbackImportance.DEFAULT, new OnItemsStorageUpdate() {
                 @Override
-                public Status onAdded(Item item) {
+                public Status onAdded(Item item, int pos) {
                     onCurrentItemStorageUpdateCallback.run((callbackStorage, callback) -> callback.onCurrentChanged(getCurrentItem()));
                     return Status.NONE;
                 }
 
                 @Override
-                public Status onDeleted(Item item) {
+                public Status onDeleted(Item item, int pos) {
+                    // TODO: 01.11.2022 WTF This?
                     new Handler(Looper.getMainLooper()).postDelayed(() -> {
                         onCurrentItemStorageUpdateCallback.run((callbackStorage, callback) -> callback.onCurrentChanged(getCurrentItem()));
                     }, 250);
@@ -236,13 +243,13 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
                 }
 
                 @Override
-                public Status onMoved(Item item, int from) {
+                public Status onMoved(Item item, int from, int pos) {
                     onCurrentItemStorageUpdateCallback.run((callbackStorage, callback) -> callback.onCurrentChanged(getCurrentItem()));
                     return Status.NONE;
                 }
 
                 @Override
-                public Status onUpdated(Item item) {
+                public Status onUpdated(Item item, int pos) {
                     if (item == getCurrentItem()) onCurrentItemStorageUpdateCallback.run((callbackStorage, callback) -> callback.onCurrentChanged(getCurrentItem()));
                     return Status.NONE;
                 }

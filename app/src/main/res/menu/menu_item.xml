@@ -27,6 +27,4 @@
         android:visible="false"
         android:id="@+id/delete"
         android:title="@string/menuItem_delete" />
-
-
 </menu>

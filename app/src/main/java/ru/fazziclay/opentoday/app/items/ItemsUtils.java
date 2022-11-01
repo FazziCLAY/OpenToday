@@ -8,9 +8,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import ru.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import ru.fazziclay.opentoday.app.items.item.ContainerItem;
 import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.app.items.item.ItemIEUtil;
+import ru.fazziclay.opentoday.callback.CallbackStorage;
 
 public class ItemsUtils {
     @NonNull
@@ -53,5 +55,26 @@ public class ItemsUtils {
             }
         }
         return null;
+    }
+
+    public static void moveItems(List<Item> items, int positionFrom, int positionTo, CallbackStorage<OnItemsStorageUpdate> onUpdateCallbacks) {
+        Item from = items.get(positionFrom);
+        items.remove(from);
+        items.add(positionTo, from);
+        onUpdateCallbacks.run((callbackStorage, callback) -> callback.onMoved(from, positionFrom, positionTo));
+        // TODO: 27.10.2022 EXPERIMENTAL CHANGES
+        //Collections.swap(this.items, positionFrom, positionTo);
+    }
+
+    public static void checkAllowedItems(Item item) {
+        if (item.getClass() == Item.class) {
+            throw new RuntimeException("'Item' not allowed to add (add Item parents)");
+        }
+    }
+
+    public static void checkAttached(Item item) {
+        if (item.isAttached()) {
+            throw new RuntimeException("items already attached. Use item.delete() to detach");
+        }
     }
 }

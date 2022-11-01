@@ -32,47 +32,69 @@ public class ImportWrapper {
     }
 
     public String finalExport() throws Exception {
+        byte[] bytes = finalExportBytes();
+        return "--OPENTODAY-IMPORT-START--\n" +
+                importVersion + "\n" +
+                Base64.getEncoder().encodeToString(bytes) + "\n" +
+                "--OPENTODAY-IMPORT-END--";
+    }
+
+    public byte[] finalExportBytes() throws Exception {
         JSONObject jsonObject = new JSONObject()
-                .put("importVersion", importVersion);
-
-
-        jsonObject.put("items", ItemIEUtil.exportItemList(items));
+                .put("importVersion", importVersion)
+                .put("items", ItemIEUtil.exportItemList(items));
 
         String data = jsonObject.toString();
-        byte[] bytes = toGzip(data);
-        return "--OPENTODAY-IMPORT-START--\n" + importVersion + "\n" + Base64.getEncoder().encodeToString(bytes) + "\n--OPENTODAY-IMPORT-END--";
+        return toGzip(data);
     }
 
     public static ImportWrapper finalImport(String content) throws Exception {
         content = content.trim();
         if (!content.startsWith("--OPENTODAY-IMPORT-START--")) {
-            throw new Exception("Error");
+            throw new Exception("startsWith not header");
         }
         if (!content.endsWith("--OPENTODAY-IMPORT-END--")) {
-            throw new Exception("Error");
+            throw new Exception("endsWith");
         }
 
         int version = Integer.parseInt(content.split("\n")[1]);
-        if (version != 0 && version != 1) throw new Exception("Version not compatible");
-
+        if (!isVersionSupport(version)) throw new Exception("Version not compatible");
         byte[] bytes = Base64.getDecoder().decode(content.split("\n")[2].getBytes(StandardCharsets.UTF_8));
-        JSONObject jsonObject = null;
         if (version == 0) {
-            jsonObject = new JSONObject(new String(bytes, StandardCharsets.UTF_8));
+            return importV0(bytes);
+        } else if (version == 1) {
+            return importV1(bytes);
+        } else {
+            throw new RuntimeException("Version not compatible");
         }
-        if (version == 1) {
-            String data = fromGzip(bytes);
-            jsonObject = new JSONObject(data);
-        }
+    }
+
+    private static ImportWrapper importV0(byte[] bytes) throws Exception {
+        JSONObject jsonObject = new JSONObject(new String(bytes, StandardCharsets.UTF_8));
 
         int importVersion = jsonObject.getInt("importVersion");
-        if (importVersion != 0 && importVersion != 1) {
+        if (importVersion != 0) {
             throw new Exception("Version not compatible");
         }
 
         return new ImportWrapper(ItemIEUtil.importItemList(jsonObject.getJSONArray("items")));
     }
 
+    private static ImportWrapper importV1(byte[] bytes) throws Exception {
+        String data = fromGzip(bytes);
+        JSONObject jsonObject = new JSONObject(data);
+
+        int importVersion = jsonObject.getInt("importVersion");
+        if (importVersion != 1) {
+            throw new Exception("Version not compatible");
+        }
+
+        return new ImportWrapper(ItemIEUtil.importItemList(jsonObject.getJSONArray("items")));
+    }
+
+    private static boolean isVersionSupport(int v) {
+        return (v == 0 || v == 1);
+    }
 
     private static byte[] toGzip(String s) throws IOException {
         ByteArrayOutputStream oo = new ByteArrayOutputStream();

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import ru.fazziclay.opentoday.app.TickSession;
-import ru.fazziclay.opentoday.app.items.callback.OnItemStorageUpdate;
+import ru.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.callback.CallbackStorage;
 
@@ -33,6 +33,14 @@ public interface ItemsStorage {
      * @see Item
      */
     void addItem(Item item);
+
+    /**
+     * Add item to this ItemStorage
+     * @param item item to add
+     * @param position position to add
+     * @see Item
+     */
+    void addItem(Item item, int position);
 
     /**
      * Delete item from ItemStorage
@@ -103,8 +111,8 @@ public interface ItemsStorage {
     /**
      * Get OnItemStorageUpdate CallbackStorage
      * @return callbackStorage
-     * @see OnItemStorageUpdate
+     * @see OnItemsStorageUpdate
      * @see CallbackStorage
      */
-    @NonNull CallbackStorage<OnItemStorageUpdate> getOnUpdateCallbacks();
+    @NonNull CallbackStorage<OnItemsStorageUpdate> getOnUpdateCallbacks();
 }

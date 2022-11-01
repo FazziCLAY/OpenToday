@@ -5,20 +5,26 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
+import androidx.annotation.Nullable;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import ru.fazziclay.javaneoutil.FileUtil;
-import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.annotation.RequireSave;
 import ru.fazziclay.opentoday.annotation.SaveKey;
 import ru.fazziclay.opentoday.app.App;
@@ -33,13 +39,12 @@ import ru.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import ru.fazziclay.opentoday.app.items.item.GroupItem;
 import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.app.items.item.TextItem;
-import ru.fazziclay.opentoday.app.items.tab.LocalItemsTab;
 import ru.fazziclay.opentoday.app.items.tab.ItemsTabController;
+import ru.fazziclay.opentoday.app.items.tab.LocalItemsTab;
 import ru.fazziclay.opentoday.app.items.tab.Tab;
 import ru.fazziclay.opentoday.app.items.tab.TabIEUtil;
 import ru.fazziclay.opentoday.callback.CallbackStorage;
 import ru.fazziclay.opentoday.callback.Status;
-import ru.fazziclay.opentoday.util.Profiler;
 
 public class ItemManager {
     private static final boolean DEBUG_ITEMS_SET = (App.DEBUG && false);
@@ -48,45 +53,117 @@ public class ItemManager {
     private final List<Selection> selections = new ArrayList<>();
     private final CallbackStorage<OnSelectionChanged> onSelectionUpdated = new CallbackStorage<>();
 
-    @NonNull private final File dataFile;
+    @NonNull private final File dataOriginalFile;
+    @NonNull private final File dataCompressFile;
     @NonNull private final SaveThread saveThread = new SaveThread();
     @NonNull @RequireSave @SaveKey(key = "tabs") private final List<Tab> tabs = new ArrayList<>();
     @NonNull private final ItemsTabController itemsTabController = new LocalItemTabsController();
     @NonNull private final CallbackStorage<OnTabsChanged> onTabsChangedCallbacks = new CallbackStorage<>();
 
-    public ItemManager(@NonNull File dataFile) {
-        this.dataFile = dataFile;
+    public ItemManager(@NonNull File dataOriginalFile, @NonNull File dataCompressFile) {
+        this.dataOriginalFile = dataOriginalFile;
+        this.dataCompressFile = dataCompressFile;
         load();
         saveThread.start();
+        save();
     }
 
     private void load() {
-        Profiler profiler = new Profiler("ItemManager load");
         if (DEBUG_ITEMS_SET) {
             tabs.addAll(generateDebugDataSet());
 
         } else {
-            try {
-                JSONObject jsonRoot = new JSONObject(FileUtil.getText(dataFile, "{}"));
-                JSONArray jsonTabs;
-                if (jsonRoot.has("tabs")) {
-                    jsonTabs = jsonRoot.getJSONArray("tabs");
-                } else {
-                    jsonTabs = new JSONArray();
+            boolean isOriginal = FileUtil.isExist(dataOriginalFile);
+            boolean isCompress = FileUtil.isExist(dataCompressFile);
+            if (isCompress || isOriginal) {
+                try {
+                    JSONObject jsonRoot = null;
+                    try {
+                        FileInputStream fis = new FileInputStream(dataCompressFile);
+                        GZIPInputStream gz = new GZIPInputStream(fis);
+                        Reader reader = new InputStreamReader(gz);
+
+                        final StringBuilder result = new StringBuilder();
+
+                        final char[] buff = new char[1024];
+                        int i;
+                        while ((i = reader.read(buff)) > 0) {
+                            result.append(new String(buff, 0, i));
+                        }
+
+                        reader.close();
+                        jsonRoot  = new JSONObject(result.toString());
+
+                    } catch (Exception ignored) {}
+
+                    if (jsonRoot == null) {
+                        jsonRoot  = new JSONObject(FileUtil.getText(dataOriginalFile, "{}"));
+                    }
+
+                    JSONArray jsonTabs;
+                    if (jsonRoot.has("tabs")) {
+                        jsonTabs = jsonRoot.getJSONArray("tabs");
+                    } else {
+                        jsonTabs = new JSONArray();
+                    }
+                    List<Tab> tabs = TabIEUtil.importTabs(jsonTabs);
+                    for (Tab tab : tabs) {
+                        tab.setController(itemsTabController);
+                    }
+                    this.tabs.addAll(tabs);
+                } catch (Exception e) {
+                    throw new RuntimeException("Load error! Data is break", e);
                 }
-                List<Tab> tabs = TabIEUtil.importTabs(jsonTabs);
-                for (Tab tab : tabs) {
-                    tab.setController(itemsTabController);
-                }
-                this.tabs.addAll(tabs);
-            } catch (Exception e) {
-                throw new RuntimeException("Load error! Data is break", e);
             }
         }
         if (tabs.isEmpty()) {
             createTab("My Items");
         }
-        profiler.end();
+    }
+
+    @Nullable
+    public ItemsStorage getItemStorageById(UUID id) {
+        Tab tab = getTab(id);
+        if (tab != null) return tab;
+        Item item = null;
+        for (Tab t : tabs) {
+            Item i = t.getItemById(id);
+            if (i != null) {
+                item = i;
+                break;
+            }
+        }
+        if (item instanceof ItemsStorage) {
+            return (ItemsStorage) item;
+        }
+        return null;
+    }
+
+    // ==== Path ====
+    public Item getItemByPath(ItemPath itemPath) {
+        UUID tabId = itemPath.getTabId();
+        Tab tab = getTab(tabId);
+        if (tab == null) {
+            return null;
+        }
+
+        Object o = tab;
+        for (UUID item : itemPath.getItems()) {
+            if (o instanceof ItemsStorage) {
+                ItemsStorage itemsStorage = (ItemsStorage) o;
+                o = itemsStorage.getItemById(item);
+            } else {
+                break;
+            }
+        }
+        if (o == null) {
+            return null;
+        }
+        if (o instanceof Item) {
+            return (Item) o;
+        } else {
+            throw new RuntimeException("founded not extend Item object: " + o);
+        }
     }
 
     // ==== TABS ====
@@ -135,13 +212,30 @@ public class ItemManager {
     }
 
     public void moveTabs(int positionFrom, int positionTo) {
-        Collections.swap(this.tabs, positionFrom, positionTo);
+        Tab from = tabs.get(positionFrom);
+        tabs.remove(from);
+        tabs.add(positionTo, from);
+        //Collections.rotate(this.tabs, positionFrom, positionTo);
+        // TODO: 27.10.2022 EXPERIMENTAL CHANGES
         internalOnTabChanged();
         save();
     }
 
     private void internalOnTabChanged() {
-        onTabsChangedCallbacks.run((callbackStorage, callback) -> callback.run(this.tabs.toArray(new Tab[0])));
+        onTabsChangedCallbacks.run((callbackStorage, callback) -> callback.onTabsChanged(this.tabs.toArray(new Tab[0])));
+    }
+
+    public CallbackStorage<OnTabsChanged> getOnTabsChanged() {
+        return onTabsChangedCallbacks;
+    }
+
+    @Nullable
+    public Item getItemById(@NonNull UUID id) {
+        for (Tab tab : getTabs()) {
+            Item i = tab.getItemById(id);
+            if (i != null) return i;
+        }
+        return null;
     }
 
     private class LocalItemTabsController implements ItemsTabController {
@@ -179,10 +273,6 @@ public class ItemManager {
         return onSelectionUpdated;
     }
 
-    public CallbackStorage<OnTabsChanged> getOnTabsChanged() {
-        return onTabsChangedCallbacks;
-    }
-
     public Selection[] getSelections() {
         return selections.toArray(new Selection[0]);
     }
@@ -191,7 +281,7 @@ public class ItemManager {
         if (isSelected(selection.getItem())) return;
         this.selections.add(selection);
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
-            callback.run(this.selections);
+            callback.onSelectionChanged(this.selections);
             return new Status.Builder().build();
         });
     }
@@ -205,7 +295,7 @@ public class ItemManager {
         selections.remove(toDelete);
 
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
-            callback.run(this.selections);
+            callback.onSelectionChanged(this.selections);
             return new Status.Builder().build();
         });
     }
@@ -219,7 +309,7 @@ public class ItemManager {
         selections.remove(toDelete);
 
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
-            callback.run(this.selections);
+            callback.onSelectionChanged(this.selections);
             return new Status.Builder().build();
         });
     }
@@ -228,7 +318,7 @@ public class ItemManager {
         selections.clear();
 
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
-            callback.run(this.selections);
+            callback.onSelectionChanged(this.selections);
             return new Status.Builder().build();
         });
     }
@@ -245,19 +335,27 @@ public class ItemManager {
     }
 
     public boolean saveAllDirect() {
+        if (DEBUG_ITEMS_SET) return false;
         try {
             // Save
             {
                 JSONObject jRoot = new JSONObject();
                 JSONArray jTabs = TabIEUtil.exportTabs(this.tabs);
                 jRoot.put("tabs", jTabs);
+                String originalData = jRoot.toString();
 
-                FileUtil.setText(dataFile, jRoot.toString(2));
+                FileUtil.setText(dataOriginalFile, originalData);
+
+                GZIPOutputStream gz = new GZIPOutputStream(new FileOutputStream(dataCompressFile));
+                Writer writer = new OutputStreamWriter(gz);
+                writer.write(originalData);
+                writer.flush();
+                writer.close();
             }
             return true;
         } catch (Exception e) {
             Log.e("ItemManager", "SaveThread exception", e);
-            App.exception(App.get(), e);
+            App.exception(null, e);
             try {
                 new Handler(App.get().getMainLooper()).post(() -> Toast.makeText(App.get(), "Error: Save exception: " + e + "; cause: " + e.getCause(), Toast.LENGTH_LONG).show());
             } catch (Exception ignored) {}
@@ -317,25 +415,27 @@ public class ItemManager {
     }
 
     private List<Tab> generateDebugDataSet() {
-        List<Item> items = new ArrayList<>();
-        items.add(new TextItem("first TextItem"));
-        items.add(new CheckboxItem("first CheckboxItem", false));
-        items.add(new DayRepeatableCheckboxItem("first DayRepeatableCheckboxItem", false, false, 0));
-        items.add(new CycleListItem("first CycleListItem"));
-        items.add(new GroupItem("first GroupItem"));
-        items.add(new FilterGroupItem("first FilterGroupItem"));
-        items.add(new CounterItem("first CounterItem"));
+        List<Item> tab1items = new ArrayList<>();
+        tab1items.add(new TextItem("first TextItem"));
+        tab1items.add(new CheckboxItem("first CheckboxItem", false));
+        tab1items.add(new DayRepeatableCheckboxItem("first DayRepeatableCheckboxItem", false, false, 0));
+        tab1items.add(new CycleListItem("first CycleListItem"));
+        tab1items.add(new GroupItem("first GroupItem"));
+        tab1items.add(new FilterGroupItem("first FilterGroupItem"));
+        tab1items.add(new CounterItem("first CounterItem"));
 
+        List<Item> tab2items = new ArrayList<>();
         int i = 0;
         while (i < 50) {
             Random r = new Random(999);
-            if (r.nextBoolean()) items.add(new TextItem("i=" + i));
-            if (r.nextBoolean()) items.add(new CheckboxItem("i=" + i, (i % 2 == 0)));
+            if (r.nextBoolean()) tab2items.add(new TextItem("i=" + i));
+            if (r.nextBoolean()) tab2items.add(new CheckboxItem("i=" + i, (i % 2 == 0)));
             i++;
         }
 
         List<Tab> tabs = new ArrayList<>();
-        addTab(new LocalItemsTab(UUID.randomUUID(), "Debug1"));
+        addTab(new LocalItemsTab(UUID.randomUUID(), "Debug1", tab1items.toArray(new Item[0])));
+        addTab(new LocalItemsTab(UUID.randomUUID(), "Debug2", tab2items.toArray(new Item[0])));
         return tabs;
     }
 }

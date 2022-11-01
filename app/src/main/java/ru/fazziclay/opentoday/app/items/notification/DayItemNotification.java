@@ -1,11 +1,7 @@
 package ru.fazziclay.opentoday.app.items.notification;
 
-import android.app.AlarmManager;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -18,7 +14,6 @@ import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.TickSession;
 import ru.fazziclay.opentoday.app.items.item.Item;
-import ru.fazziclay.opentoday.app.receiver.ItemsTickReceiver;
 
 public class DayItemNotification implements ItemNotification {
     public static final ItemNotificationIETool IE_TOOL = new IeTool();
@@ -72,22 +67,14 @@ public class DayItemNotification implements ItemNotification {
 
     @Override
     public boolean tick(TickSession tickSession, Item item) {
-        int dayofy = tickSession.getGregorianCalendar().get(Calendar.DAY_OF_YEAR);
+        tickSession.setAlarmDayOfTimeInSeconds(time, item);
 
-        try {
-            long shift = tickSession.getDayTime() >= time ? (24*60*60*1000L) : 0;
-            AlarmManager alarmManager = tickSession.getContext().getSystemService(AlarmManager.class);
-            alarmManager.set(AlarmManager.RTC_WAKEUP, tickSession.getNoTimeCalendar().getTimeInMillis() + shift + (this.time * 1000L) - 5000, PendingIntent.getBroadcast(tickSession.getContext(), 0, new Intent(tickSession.getContext(), ItemsTickReceiver.class).putExtra(ItemsTickReceiver.EXTRA_PERSONAL_TICK, new String[]{item.getId().toString()}).putExtra("debugMessage", "dayItemNotification is work :)"), 0));
-        } catch (Exception e) {
-            Log.e("DayItemNotification", "AlarmManager in item experiment is not complete", e);
-        }
-
-        if (dayofy != latestDayOfYear) {
+        int dayOfYear = tickSession.getGregorianCalendar().get(Calendar.DAY_OF_YEAR);
+        if (dayOfYear != latestDayOfYear) {
             if (tickSession.getDayTime() >= time) {
                 sendNotify(tickSession.getContext(), item);
-                latestDayOfYear = dayofy;
+                latestDayOfYear = dayOfYear;
                 tickSession.saveNeeded();
-
                 return true;
             }
         }

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    style="@style/Theme.OpenToday.ItemEditModule">
+
+    <TextView
+        android:id="@+id/titleOfText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="23sp"
+        android:text="@string/dialog_item_module_longtext_text_title"/>
+
+    <EditText
+        android:id="@+id/text"
+        android:hint="@string/dialog_item_module_longtext_text_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:importantForAutofill="no"
+        android:inputType="textMultiLine" />
+
+    <CheckBox
+        android:id="@+id/clickableUrls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="0sp"
+        android:text="@string/uidialog_edit_textentry_clickableUrls" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/fragment_itemEditor_longtext_textColor" />
+
+    <LinearLayout
+        android:id="@+id/textColor_edit"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/textColor_indicator"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="45sp"
+            android:background="@drawable/shape_color_indicator"
+            android:backgroundTint="#ff000f"
+            android:orientation="horizontal">
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/default_text_color"
+            android:layout_weight="0"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:minHeight="0sp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/fragment_itemEditor_longtext_textSize" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <SeekBar
+            android:id="@+id/size"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+
+        <CheckBox
+            android:id="@+id/default_size"
+            android:layout_weight="0"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:minHeight="0sp" />
+
+    </LinearLayout>
+</LinearLayout>

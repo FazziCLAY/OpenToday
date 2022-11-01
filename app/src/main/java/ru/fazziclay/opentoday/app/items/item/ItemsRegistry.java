@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
 import ru.fazziclay.opentoday.R;
+import ru.fazziclay.opentoday.app.FeatureFlag;
 
 public class ItemsRegistry {
     @NonNull
@@ -18,7 +19,9 @@ public class ItemsRegistry {
             new ItemInfo(CycleListItem.class,                      "CycleListItem",                 CycleListItem.IE_TOOL,                 CycleListItem::createEmpty,               (i) -> new CycleListItem((CycleListItem) i).regenerateId(),                          R.string.item_cycleList),
             new ItemInfo(CounterItem.class,                        "CounterItem",                   CounterItem.IE_TOOL,                   CounterItem::createEmpty,                 (i) -> new CounterItem((CounterItem) i).regenerateId(),                              R.string.item_counter),
             new ItemInfo(GroupItem.class,                          "GroupItem",                     GroupItem.IE_TOOL,                     GroupItem::createEmpty,                   (i) -> new GroupItem((GroupItem) i).regenerateId(),                                  R.string.item_group),
-            new ItemInfo(FilterGroupItem.class,                    "FilterGroupItem",               FilterGroupItem.IE_TOOL,               FilterGroupItem::createEmpty,             (i) -> new FilterGroupItem((FilterGroupItem) i).regenerateId(),                      R.string.item_filterGroup)
+            new ItemInfo(FilterGroupItem.class,                    "FilterGroupItem",               FilterGroupItem.IE_TOOL,               FilterGroupItem::createEmpty,             (i) -> new FilterGroupItem((FilterGroupItem) i).regenerateId(),                      R.string.item_filterGroup),
+            new ItemInfo(LongTextItem.class,                       "LongTextItem",                  LongTextItem.IE_TOOL,                  LongTextItem::createEmpty,                (i) -> new LongTextItem((LongTextItem) i).regenerateId(),                            R.string.item_longTextItem),
+            new ItemInfo(DebugTickCounterItem.class,               "DebugTickCounterItem",          DebugTickCounterItem.IE_TOOL,          DebugTickCounterItem::createEmpty,        (i) -> new DebugTickCounterItem((DebugTickCounterItem) i).regenerateId(),            R.string.item_debugTickCounter).requiredFeatureFlag(FeatureFlag.ITEM_DEBUG_TICK_COUNTER)
     };
 
     private ItemsRegistry() {}
@@ -26,6 +29,10 @@ public class ItemsRegistry {
     @NonNull
     public ItemInfo[] getAllItems() {
         return ITEMS.clone();
+    }
+
+    public int count() {
+        return ITEMS.length;
     }
 
     @Nullable
@@ -51,6 +58,7 @@ public class ItemsRegistry {
         private final ItemCreateInterface createInterface;
         private final ItemCopyInterface copyInterface;
         private final int nameResId;
+        private FeatureFlag requiredFeatureFlag;
 
         public ItemInfo(@NonNull Class<? extends Item> classType, @NonNull String stringType, @NonNull ItemImportExportTool itemImportExportTool, @NonNull ItemCreateInterface createInterface, @NonNull ItemCopyInterface copyInterface, @StringRes int nameResId) {
             this.classType = classType;
@@ -89,6 +97,21 @@ public class ItemsRegistry {
         @StringRes
         public int getNameResId() {
             return nameResId;
+        }
+
+        public ItemInfo requiredFeatureFlag(FeatureFlag flag) {
+            this.requiredFeatureFlag = flag;
+            return this;
+        }
+
+        public boolean isCompatibility(FeatureFlag[] flags) {
+            if (requiredFeatureFlag == null) return true;
+            for (FeatureFlag f : flags) {
+                if (f == requiredFeatureFlag) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 

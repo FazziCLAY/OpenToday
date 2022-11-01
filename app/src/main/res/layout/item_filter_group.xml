@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:background="@drawable/shape"
+    android:paddingEnd="1sp"
     android:backgroundTint="?attr/item_filterGroup_backgroundColor">
 
     <LinearLayout

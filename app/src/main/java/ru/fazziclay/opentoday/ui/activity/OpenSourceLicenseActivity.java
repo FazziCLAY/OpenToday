@@ -45,7 +45,7 @@ public class OpenSourceLicenseActivity extends AppCompatActivity {
 
         String title = getIntent().getExtras().getString("title");
         if (title == null) {
-            title = getString(R.string.openSouceLicense_title);
+            title = getString(R.string.openSourceLicense_title);
         }
 
         TextView textView = new TextView(this);

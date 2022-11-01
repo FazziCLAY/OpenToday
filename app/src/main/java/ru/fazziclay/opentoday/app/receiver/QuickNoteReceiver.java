@@ -12,17 +12,23 @@ import androidx.core.app.RemoteInput;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
+import ru.fazziclay.opentoday.app.items.ItemManager;
+import ru.fazziclay.opentoday.app.items.ItemsStorage;
 import ru.fazziclay.opentoday.app.items.item.TextItem;
+import ru.fazziclay.opentoday.app.settings.SettingsManager;
+import ru.fazziclay.opentoday.ui.fragment.ItemsTabIncludeFragment;
 
 public class QuickNoteReceiver extends BroadcastReceiver {
     public static final String REMOTE_INPUT_KEY = "opentoday_quick_note_remote_input";
     public static final int NOTIFICATION_ID = 10;
     public static final String NOTIFICATION_CHANNEL = "quick_note";
 
-    public static void sendQuickNoteNotification(Context context) {
-        int flags = 0;
+    public static void sendQuickNoteNotification(final Context context) {
+        final int flags;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
             flags = PendingIntent.FLAG_MUTABLE;
+        } else {
+            flags = 0;
         }
         NotificationCompat.Action action = new NotificationCompat.Action.Builder(R.drawable.ic_launcher_foreground, context.getString(R.string.quickNote), PendingIntent.getBroadcast(context, 0, new Intent(context, QuickNoteReceiver.class), flags))
                 .addRemoteInput(new RemoteInput.Builder(QuickNoteReceiver.REMOTE_INPUT_KEY).setLabel(context.getString(R.string.quickNote)).build())
@@ -39,28 +45,40 @@ public class QuickNoteReceiver extends BroadcastReceiver {
                         .build());
     }
 
-    public static void cancelQuickNoteNotification(Context context) {
+    public static void cancelQuickNoteNotification(final Context context) {
         context.getSystemService(NotificationManager.class).cancel(QuickNoteReceiver.NOTIFICATION_ID);
     }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
-        App app = App.get(context);
-        boolean rawTextMode = false;
-        String rawText = null;
+    public void onReceive(final Context context, final Intent intent) {
+        final App app = App.get(context);
+        final SettingsManager settingsManager = app.getSettingsManager();
+        final ItemManager itemManager = app.getItemManager();
+        final boolean rawTextMode;
+        final String rawText;
+
         if (intent.getExtras() != null && intent.getExtras().containsKey("rawText")) {
             rawTextMode = true;
             rawText = intent.getExtras().getString("rawText");
+
         } else {
-            Bundle bundle = RemoteInput.getResultsFromIntent(intent);
+            rawTextMode = false;
+            final Bundle bundle = RemoteInput.getResultsFromIntent(intent);
             if (bundle != null) {
                 rawText = String.valueOf(bundle.getCharSequence(REMOTE_INPUT_KEY));
+            } else {
+                rawText = null;
             }
         }
         if (rawText != null) {
-            TextItem item = new TextItem(context.getString(R.string.quickNote) + ": " + rawText);
-            if (app.getSettingsManager().isParseTimeFromQuickNote()) item.getNotifications().addAll(App.QUICK_NOTE.run(rawText));
-            app.getItemManager().getMainTab().addItem(item);
+            final TextItem item = new TextItem(context.getString(R.string.quickNote_notificationPattern, rawText));
+            if (settingsManager.isParseTimeFromQuickNote()) item.getNotifications().addAll(ItemsTabIncludeFragment.QUICK_NOTE_NOTIFICATIONS_PARSE.run(rawText));
+            ItemsStorage itemsStorage = itemManager.getItemStorageById(settingsManager.getQuickNoteNotificationItemsStorageId());
+            if (itemsStorage == null) {
+                itemsStorage = itemManager.getMainTab();
+            }
+            itemsStorage.addItem(item);
+
             if (!rawTextMode) sendQuickNoteNotification(context);
         }
     }

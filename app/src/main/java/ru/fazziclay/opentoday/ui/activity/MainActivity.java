@@ -2,6 +2,7 @@ package ru.fazziclay.opentoday.ui.activity;
 
 import static ru.fazziclay.opentoday.util.InlineUtil.*;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         }
 
-        binding.debugApp.setVisibility(App.DEBUG ? View.VISIBLE : View.GONE);
+        setupAppDebugNotify();
         setupUpdateAvailableNotify();
         setupCurrentDate();
 
@@ -138,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         currentDateHandler.post(currentDateRunnable);
+        viewClick(binding.currentDate, () -> new DatePickerDialog(this).show());
     }
 
     private void setCurrentDate() {
@@ -164,8 +166,13 @@ public class MainActivity extends AppCompatActivity {
         }));
     }
 
-    public void toggleDebugOverLogs() {
-        binding.debugs.setVisibility(binding.debugs.getVisibility() == View.VISIBLE ? GONE : View.VISIBLE);
+    // App is DEBUG warning notify
+    private void setupAppDebugNotify() {
+        viewVisible(binding.debugApp, App.DEBUG, View.GONE);
+    }
+
+    public void toggleLogsOverlay() {
+        binding.debugs.setVisibility(binding.debugs.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
     }
 
     private class LocalOnDebugLog implements OnDebugLog {

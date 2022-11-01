@@ -17,19 +17,19 @@ import ru.fazziclay.opentoday.app.items.item.CycleListItem;
 import ru.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import ru.fazziclay.opentoday.app.items.item.GroupItem;
 import ru.fazziclay.opentoday.app.settings.SettingsManager;
-import ru.fazziclay.opentoday.ui.interfaces.IVGEditButtonInterface;
+import ru.fazziclay.opentoday.ui.interfaces.StorageEditsActions;
 import ru.fazziclay.opentoday.ui.item.ItemStorageDrawer;
-import ru.fazziclay.opentoday.ui.interfaces.OnItemClick;
+import ru.fazziclay.opentoday.ui.interfaces.ItemInterface;
 
 public class TestItemStorageDrawer extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ItemManager itemManager = new ItemManager(new File(getExternalCacheDir(), "/tests/testItemViewGenerator.json"));
-        OnItemClick onItemClick = item -> Toast.makeText(this, "item = " + item.toString(), Toast.LENGTH_SHORT).show();
+        ItemManager itemManager = new ItemManager(new File(getExternalCacheDir(), "/tests/testItemViewGenerator.json"), new File(getExternalCacheDir(), "/tests/testItemViewGenerator.gz"));
+        ItemInterface onClick = item -> Toast.makeText(this, "item = " + item.toString(), Toast.LENGTH_SHORT).show();
         boolean previewMode = false;
-        IVGEditButtonInterface edits = new IVGEditButtonInterface() {
+        StorageEditsActions edits = new StorageEditsActions() {
             @Override
             public void onGroupEdit(GroupItem groupItem) {
                 Toast.makeText(TestItemStorageDrawer.this, "Edit: Group: " + groupItem.toString(), Toast.LENGTH_SHORT).show();
@@ -50,7 +50,8 @@ public class TestItemStorageDrawer extends Activity {
                 itemManager,
                 new SettingsManager(null),
                 itemManager.getTab(new UUID(0, 0)),
-                onItemClick,
+                onClick,
+                item -> Toast.makeText(TestItemStorageDrawer.this, "unsupported", Toast.LENGTH_SHORT).show(),
                 previewMode,
                 edits);
 
@@ -67,8 +68,6 @@ public class TestItemStorageDrawer extends Activity {
 
         itemStorageDrawer.create();
 
-        add.setOnClickListener(v -> {
-            itemManager.getTab(new UUID(0, 0)).addItem(new CycleListItem("123132231213"));
-        });
+        add.setOnClickListener(v -> itemManager.getTab(new UUID(0, 0)).addItem(new CycleListItem("123132231213")));
     }
 }

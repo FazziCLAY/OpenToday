@@ -4,18 +4,22 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,7 +28,10 @@ import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.items.ItemManager;
 import ru.fazziclay.opentoday.app.items.ItemsStorage;
 import ru.fazziclay.opentoday.app.items.callback.OnTabsChanged;
+import ru.fazziclay.opentoday.app.items.item.Item;
+import ru.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import ru.fazziclay.opentoday.app.items.item.TextItem;
+import ru.fazziclay.opentoday.app.items.notification.DayItemNotification;
 import ru.fazziclay.opentoday.app.items.notification.ItemNotification;
 import ru.fazziclay.opentoday.app.items.tab.Tab;
 import ru.fazziclay.opentoday.app.settings.SettingsManager;
@@ -39,6 +46,33 @@ import ru.fazziclay.opentoday.util.L;
 
 public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab, NavigationHost {
     private static final String TAG = "ItemsTabIncludeFragment";
+
+    public static final QuickNoteInterface QUICK_NOTE_NOTIFICATIONS_PARSE = s -> {
+        List<ItemNotification> notifys = new ArrayList<>();
+        boolean parseTime = true;
+        if (parseTime) {
+            char[] chars = s.toCharArray();
+            int i = 0;
+            for (char aChar : chars) {
+                if (aChar == ':') {
+                    try {
+                        if (i >= 2 && chars.length >= 5) {
+                            int hours = Integer.parseInt(String.valueOf(chars[i - 2]) + chars[i - 1]);
+                            int minutes = Integer.parseInt(String.valueOf(chars[i + 1]) + chars[i + 2]);
+
+                            DayItemNotification noti = new DayItemNotification();
+                            noti.setTime((hours * 60 * 60) + (minutes * 60));
+                            noti.setNotifyTextFromItemText(true);
+                            notifys.add(noti);
+                        }
+                    } catch (Exception ignored) {
+                    }
+                }
+                i++;
+            }
+        }
+        return notifys;
+    };
 
     public static ItemsTabIncludeFragment create() {
         return new ItemsTabIncludeFragment();
@@ -107,6 +141,14 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         this.toolbar.setOnMoreVisibleChangedListener(visible -> binding.quickNote.setVisibility(!visible ? View.VISIBLE : View.INVISIBLE));
         this.toolbar.create();
         setupQuickNote();
+
+        binding.viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                ItemsEditorRootFragment r = getCurrentViewPagerFragment();
+                if (r != null) r.triggerUpdateISToCurrent();
+            }
+        });
     }
 
     private File getExternalCacheDir() {
@@ -137,6 +179,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     public void onDestroy() {
         super.onDestroy();
         itemManager.getOnTabsChanged().deleteCallback(onTabsChanged);
+        if (toolbar != null) toolbar.destroy();
     }
 
     @Override
@@ -153,6 +196,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         tabsViewPagerAdapter = new LocalViewPagerAdapter();
         binding.viewPager.setAdapter(tabsViewPagerAdapter);
         selectViewPager(getCurrentTabId(), false);
+        reloadTabs(getCurrentTabId());
     }
 
     private void setupQuickNote() {
@@ -162,18 +206,36 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
             binding.quickNoteText.setText("");
             if (currentItemsStorage != null) {
                 TextItem item = new TextItem(s);
-                if (app.getSettingsManager().isParseTimeFromQuickNote()) item.getNotifications().addAll(App.QUICK_NOTE.run(s));
+                if (app.getSettingsManager().isParseTimeFromQuickNote()) item.getNotifications().addAll(QUICK_NOTE_NOTIFICATIONS_PARSE.run(s));
                 currentItemsStorage.addItem(item);
             }
         });
 
         binding.quickNoteAdd.setOnLongClickListener(v -> {
-            String s = binding.quickNoteText.getText().toString();
-            if (currentItemsStorage != null) {
-                TextItem item = new TextItem(s);
-                if (app.getSettingsManager().isParseTimeFromQuickNote()) item.getNotifications().addAll(App.QUICK_NOTE.run(s));
-                currentItemsStorage.addItem(item);
+            PopupMenu popupMenu = new PopupMenu(requireContext(), binding.quickNoteAdd);
+
+            for (ItemsRegistry.ItemInfo registryItem : ItemsRegistry.REGISTRY.getAllItems()) {
+                if (!registryItem.isCompatibility(app.getFeatureFlags())) {
+                    continue;
+                }
+                MenuItem menuItem = popupMenu.getMenu().add(registryItem.getNameResId());
+                menuItem.setOnMenuItemClickListener(clicked -> {
+                    String s = binding.quickNoteText.getText().toString();
+                    if (currentItemsStorage != null) {
+                        Item item = registryItem.create();
+                        if (item instanceof TextItem) {
+                            TextItem textItem = (TextItem) item;
+                            textItem.setText(s);
+                        }
+                        if (settingsManager.isParseTimeFromQuickNote()) item.getNotifications().addAll(QUICK_NOTE_NOTIFICATIONS_PARSE.run(s));
+                        currentItemsStorage.addItem(item);
+                    }
+
+                    return true;
+                });
             }
+
+            popupMenu.show();
             return true;
         });
     }
@@ -288,7 +350,6 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
             UUID id = UUID.fromString(String.valueOf(tab.getTag()));
             setCurrentTab(id);
             ItemsTabIncludeFragment.this.selectViewPager(id);
-            ItemsTabIncludeFragment.this.setItemStorageInContext(itemManager.getTab(id));
         }
 
         @Override
@@ -298,7 +359,8 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
             UUID id = UUID.fromString(String.valueOf(tab.getTag()));
             setCurrentTab(id);
             ItemsTabIncludeFragment.this.selectViewPager(id);
-            ItemsTabIncludeFragment.this.setItemStorageInContext(itemManager.getTab(id));
+            ItemsEditorRootFragment r = getCurrentViewPagerFragment();
+            if (r != null) r.toRoot();
         }
 
         @Override
@@ -309,7 +371,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     private class LocalOnTabChanged implements OnTabsChanged {
         @SuppressLint("NotifyDataSetChanged")
         @Override
-        public Status run(Tab[] tabs) {
+        public Status onTabsChanged(Tab[] tabs) {
             d("on tabs changed");
             UUID id = null;
             for (Tab tab : tabs) {

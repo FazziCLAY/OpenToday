@@ -13,10 +13,11 @@ import ru.fazziclay.opentoday.app.items.CurrentItemStorage;
 import ru.fazziclay.opentoday.app.items.ItemManager;
 import ru.fazziclay.opentoday.app.items.callback.OnCurrentItemStorageUpdate;
 import ru.fazziclay.opentoday.app.items.item.Item;
+import ru.fazziclay.opentoday.app.settings.SettingsManager;
 import ru.fazziclay.opentoday.callback.CallbackImportance;
 import ru.fazziclay.opentoday.callback.Status;
-import ru.fazziclay.opentoday.ui.interfaces.IVGEditButtonInterface;
-import ru.fazziclay.opentoday.ui.interfaces.OnItemClick;
+import ru.fazziclay.opentoday.ui.interfaces.StorageEditsActions;
+import ru.fazziclay.opentoday.ui.interfaces.ItemInterface;
 import ru.fazziclay.opentoday.util.ResUtil;
 
 public class CurrentItemStorageDrawer {
@@ -28,13 +29,13 @@ public class CurrentItemStorageDrawer {
     private final OnUpdateListener listener = new OnUpdateListener();
     private OnCurrentItemStorageUpdate userListener = null;
 
-    public CurrentItemStorageDrawer(Activity activity, ItemManager itemManager, CurrentItemStorage currentItemStorage, boolean previewMode, OnItemClick onItemClick, IVGEditButtonInterface storageEdits) {
+    public CurrentItemStorageDrawer(Activity activity, ItemManager itemManager, SettingsManager settingsManager, CurrentItemStorage currentItemStorage, boolean previewMode, ItemInterface onItemClick, ItemInterface onItemEditor, StorageEditsActions storageEdits) {
         this.activity = activity;
         this.view = new LinearLayout(activity);
         this.itemManager = itemManager;
         this.view.setOrientation(LinearLayout.VERTICAL);
         this.currentItemStorage = currentItemStorage;
-        this.itemViewGenerator = new ItemViewGenerator(activity, App.get(activity).getItemManager(), onItemClick, previewMode, storageEdits);
+        this.itemViewGenerator = new ItemViewGenerator(activity, itemManager, settingsManager, previewMode, onItemClick, onItemEditor, storageEdits);
     }
 
     public void create() {
