@@ -77,7 +77,6 @@
     <!-- Items row -->
     <style name="Theme.OpenToday.Toolbar.Section.Root.Items.ItemRow" parent="OpenToday.Base.Toolbar.Section.Root.Items.ItemRow">
         <item name="android:backgroundTint">#B9000000</item>
-        <item name="android:layout_margin">1sp</item>
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Button.Items.ItemRow.AddAndEdit" parent="OpenToday.Base.Toolbar.Section.Button.Items.ItemRow">
         <item name="android:backgroundTint">#AA26C702</item>

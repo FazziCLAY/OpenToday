@@ -63,6 +63,7 @@
         <item name="android:backgroundTint">#aa000000</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">1sp</item>
     </style>
     <style name="OpenToday.Base.Toolbar.Section.Button.Items.ItemRow" parent="OpenToday.Base.Toolbar.Section.Button">
         <item name="android:minHeight">0sp</item>
