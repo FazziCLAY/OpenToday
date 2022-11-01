@@ -1,5 +1,7 @@
 package ru.fazziclay.opentoday.ui.fragment;
 
+import static ru.fazziclay.opentoday.util.InlineUtil.viewClick;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +36,7 @@ public class SettingsFragment extends Fragment {
         setupThemeSpinner();
 
         binding.quickNoteCheckbox.setChecked(settingsManager.isQuickNoteNotification());
-        binding.quickNoteCheckbox.setOnClickListener(v -> {
+        viewClick(binding.quickNoteCheckbox, () -> {
             settingsManager.setQuickNoteNotification(binding.quickNoteCheckbox.isChecked());
             if (settingsManager.isQuickNoteNotification()) {
                 QuickNoteReceiver.sendQuickNoteNotification(requireContext());
@@ -45,20 +47,20 @@ public class SettingsFragment extends Fragment {
         });
 
         binding.parseTimeFromQuickNote.setChecked(settingsManager.isParseTimeFromQuickNote());
-        binding.parseTimeFromQuickNote.setOnClickListener(v -> {
+        viewClick(binding.parseTimeFromQuickNote, () -> {
             settingsManager.setParseTimeFromQuickNote(binding.parseTimeFromQuickNote.isChecked());
             settingsManager.save();
         });
 
 
         binding.minimizeGrayColor.setChecked(settingsManager.isMinimizeGrayColor());
-        binding.minimizeGrayColor.setOnClickListener(v -> {
+        viewClick(binding.minimizeGrayColor, () -> {
             settingsManager.setMinimizeGrayColor(binding.minimizeGrayColor.isChecked());
             settingsManager.save();
         });
 
         binding.trimItemNamesOnEdit.setChecked(settingsManager.isTrimItemNamesOnEdit());
-        binding.trimItemNamesOnEdit.setOnClickListener(v -> {
+        viewClick(binding.trimItemNamesOnEdit, () -> {
             settingsManager.setTrimItemNamesOnEdit(binding.trimItemNamesOnEdit.isChecked());
             settingsManager.save();
         });

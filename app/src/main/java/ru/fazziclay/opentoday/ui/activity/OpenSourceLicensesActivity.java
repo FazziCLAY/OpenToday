@@ -1,5 +1,7 @@
 package ru.fazziclay.opentoday.ui.activity;
 
+import static ru.fazziclay.opentoday.util.InlineUtil.viewClick;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -67,7 +69,7 @@ public class OpenSourceLicensesActivity extends AppCompatActivity {
             linearLayout.addView(url);
         }
 
-        linearLayout.setOnClickListener(v -> context.startActivity(OpenSourceLicenseActivity.createLaunchIntent(context, license.getAssetPath(), license.getTitle())));
+        viewClick(linearLayout, () -> context.startActivity(OpenSourceLicenseActivity.createLaunchIntent(context, license.getAssetPath(), license.getTitle())));
         return linearLayout;
     }
 }

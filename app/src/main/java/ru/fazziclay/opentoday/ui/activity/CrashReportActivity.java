@@ -1,5 +1,7 @@
 package ru.fazziclay.opentoday.ui.activity;
 
+import static ru.fazziclay.opentoday.util.InlineUtil.viewClick;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -45,7 +47,7 @@ public class CrashReportActivity extends Activity {
         String string = FileUtil.getText(file);
 
         crashReportText.setText(string);
-        sendToDeveloper.setOnClickListener(v -> {
+        viewClick(sendToDeveloper, () -> {
             try {
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.putExtra(Intent.EXTRA_EMAIL, "fazziclay@gmail.com");

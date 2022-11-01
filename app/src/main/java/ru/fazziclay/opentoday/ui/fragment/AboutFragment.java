@@ -1,6 +1,6 @@
 package ru.fazziclay.opentoday.ui.fragment;
 
-import static ru.fazziclay.opentoday.util.InlineUtil.fcu_viewOnClick;
+import static ru.fazziclay.opentoday.util.InlineUtil.viewClick;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -39,11 +39,11 @@ public class AboutFragment extends Fragment {
         binding.textVersion.setText(App.VERSION_NAME);
         binding.textPackage.setText(App.APPLICATION_ID);
 
-        fcu_viewOnClick(binding.title, this::manuallyCrashInteract);
-        fcu_viewOnClick(binding.sourceCode, () -> NetworkUtil.openBrowser(requireActivity(), "https://github.com/fazziclay/opentoday"));
-        fcu_viewOnClick(binding.issues, () -> NetworkUtil.openBrowser(requireActivity(), "https://github.com/fazziclay/opentoday/issues"));
-        fcu_viewOnClick(binding.licenses, () -> requireActivity().startActivity(OpenSourceLicensesActivity.createLaunchIntent(requireContext())));
-        fcu_viewOnClick(binding.ok, () -> UI.back(this));
+        viewClick(binding.title, this::manuallyCrashInteract);
+        viewClick(binding.sourceCode, () -> NetworkUtil.openBrowser(requireActivity(), "https://github.com/fazziclay/opentoday"));
+        viewClick(binding.issues, () -> NetworkUtil.openBrowser(requireActivity(), "https://github.com/fazziclay/opentoday/issues"));
+        viewClick(binding.licenses, () -> requireActivity().startActivity(OpenSourceLicensesActivity.createLaunchIntent(requireContext())));
+        viewClick(binding.ok, () -> UI.back(this));
 
         return binding.getRoot();
     }

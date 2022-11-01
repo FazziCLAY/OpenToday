@@ -1,7 +1,6 @@
 package ru.fazziclay.opentoday.ui.activity;
 
-import static android.view.View.GONE;
-import static ru.fazziclay.opentoday.util.InlineUtil.fcu_viewOnClick;
+import static ru.fazziclay.opentoday.util.InlineUtil.*;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -60,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         this.uiTickService = new UITickService(this);
         this.binding = ActivityMainBinding.inflate(getLayoutInflater());
 
-        if (!App.DEBUG) binding.debugs.setVisibility(GONE);
+        viewVisible(binding.debugs, App.DEBUG, View.GONE);
         L.getCallbackStorage().addCallback(CallbackImportance.DEFAULT, onDebugLog);
 
         setContentView(binding.getRoot());
@@ -158,9 +157,9 @@ public class MainActivity extends AppCompatActivity {
     // Update checker
     private void setupUpdateAvailableNotify() {
         UpdateChecker.check(app, (available, url) -> runOnUiThread(() -> {
-            binding.updateAvailable.setVisibility(available ? View.VISIBLE : GONE);
+            viewVisible(binding.updateAvailable, available, View.GONE);
             if (url != null) {
-                binding.updateAvailable.setOnClickListener(v -> NetworkUtil.openBrowser(MainActivity.this, url));
+                viewClick(binding.updateAvailable, () -> NetworkUtil.openBrowser(MainActivity.this, url));
             }
         }));
     }

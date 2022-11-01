@@ -2,6 +2,10 @@ package ru.fazziclay.opentoday.util;
 
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
+import org.intellij.lang.annotations.MagicConstant;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.UUID;
@@ -12,21 +16,52 @@ public class InlineUtil {
     /**
      * Print message to System.in stream (System.out.println(o))
      * **/
-    public static void l(Object o) {
-        System.out.println(o);
+    public static void l(Object... o) {
+        L.o(o);
+    }
+
+    public static String nullStat(Object o) {
+        return o == null ? "null" : "notnull";
+    }
+
+    public static String str(Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString();
+    }
+    
+    public static void viewVisible(@NonNull View v, boolean b, @MagicConstant(intValues = {View.GONE, View.INVISIBLE}) int c) {
+        v.setVisibility(b ? View.VISIBLE : c);
+    }
+
+    public static void viewLong(View v, BooleanRunnable r) {
+        viewLong(v, ignore -> r.run());
+    }
+
+    public static void viewLong(View v, Runnable r) {
+        viewLong(v, ignore -> {
+            r.run();
+            return true;
+        });
+    }
+
+    public static void viewLong(View v, View.OnLongClickListener r) {
+        v.setOnLongClickListener(r);
+    }
+
+
+    /**
+     * Set onClickListener for view
+     * **/
+    public static void viewClick(View v, Runnable r) {
+        viewClick(v, ignore -> r.run());
     }
 
     /**
      * Set onClickListener for view
      * **/
-    public static void fcu_viewOnClick(View v, Runnable r) {
-        fcu_viewOnClick(v, ignore -> r.run());
-    }
-
-    /**
-     * Set onClickListener for view
-     * **/
-    public static void fcu_viewOnClick(View v, View.OnClickListener r) {
+    public static void viewClick(View v, View.OnClickListener r) {
         v.setOnClickListener(r);
     }
 
