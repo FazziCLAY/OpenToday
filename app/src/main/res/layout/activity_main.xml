@@ -104,6 +104,7 @@
     </LinearLayout>
     <TextView
         android:visibility="gone"
+        tools:visibility="visible"
         android:clickable="false"
         android:overScrollMode="always"
         android:contextClickable="false"

@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         this.uiTickService = new UITickService(this);
         this.binding = ActivityMainBinding.inflate(getLayoutInflater());
 
-        viewVisible(binding.debugs, App.DEBUG, View.GONE);
+        viewVisible(binding.debugs, false, View.GONE);
         L.getCallbackStorage().addCallback(CallbackImportance.DEFAULT, onDebugLog);
 
         setContentView(binding.getRoot());
