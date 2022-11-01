@@ -2,11 +2,15 @@ package ru.fazziclay.opentoday.ui.fragment;
 
 import static ru.fazziclay.opentoday.util.InlineUtil.viewClick;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
 import ru.fazziclay.opentoday.app.ColorHistoryManager;
+import ru.fazziclay.opentoday.app.FeatureFlag;
 import ru.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import ru.fazziclay.opentoday.app.settings.SettingsManager;
 import ru.fazziclay.opentoday.databinding.FragmentSettingsBinding;
@@ -27,13 +32,16 @@ public class SettingsFragment extends Fragment {
     }
 
     private FragmentSettingsBinding binding;
+    private App app;
     private SettingsManager settingsManager;
     private ColorHistoryManager colorHistoryManager;
+    private long easterEggLastClick = 0;
+    private int easterEggCounter = 0;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        App app = App.get(requireContext());
+        app = App.get(requireContext());
         settingsManager = app.getSettingsManager();
         colorHistoryManager = app.getColorHistoryManager();
     }
@@ -83,6 +91,7 @@ public class SettingsFragment extends Fragment {
         });
 
         // Lock color history
+        viewClick(binding.colorHistoryTitle, this::experimentalFeaturesInteract);
         binding.colorHistoryLocked.setChecked(colorHistoryManager.isLocked());
         viewClick(binding.colorHistoryLocked, () -> {
             colorHistoryManager.setLocked(binding.colorHistoryLocked.isChecked());
@@ -110,5 +119,46 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
+    }
+
+    private void experimentalFeaturesInteract() {
+        if (System.currentTimeMillis() - easterEggLastClick < 1000) {
+            easterEggCounter++;
+            if (easterEggCounter >= 6) {
+                easterEggCounter = 0;
+
+                LinearLayout view = new LinearLayout(requireContext());
+                view.setOrientation(LinearLayout.VERTICAL);
+
+                for (FeatureFlag featureFlag : FeatureFlag.values()) {
+                    CheckBox c = new CheckBox(requireContext());
+                    c.setText(featureFlag.name());
+                    c.setChecked(app.isFeatureFlag(featureFlag));
+                    viewClick(c, () -> {
+                        boolean is = c.isChecked();
+                        if (is) {
+                            if (!app.isFeatureFlag(featureFlag)) {
+                                app.getFeatureFlags().add(featureFlag);
+                            }
+                        } else {
+                            if (app.isFeatureFlag(featureFlag)) {
+                                app.getFeatureFlags().remove(featureFlag);
+                            }
+                        }
+                    });
+
+                    view.addView(c);
+                }
+
+                Dialog dialog = new AlertDialog.Builder(requireContext())
+                        .setView(view)
+                        .setNegativeButton(R.string.abc_cancel, null)
+                        .create();
+                dialog.show();
+            }
+        } else {
+            easterEggCounter = 0;
+        }
+        easterEggLastClick = System.currentTimeMillis();
     }
 }
