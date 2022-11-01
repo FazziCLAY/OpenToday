@@ -81,7 +81,8 @@ public class App extends Application {
     private License[] openSourceLicenses;
     private final FeatureFlag[] featureFlags = new FeatureFlag[]{
             FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
-            FeatureFlag.ITEM_EDITOR_SHOW_COPY_ID_BUTTON
+            FeatureFlag.ITEM_EDITOR_SHOW_COPY_ID_BUTTON,
+            FeatureFlag.AVAILABLE_LOGS_OVERLAY
     };
 
     @Override
