@@ -8,11 +8,11 @@ Android application for the organization of life
 "/docs" folder
 
 # Todo/Ideas:
-[ ] ItemsStorage for notification quick note
-[ ] Items transform (Text -> Group; Checkbox -> CheckboxDayRepeatable and etc...)
-[ ] Fix notifications in TickSession
-[ ] Toolbar -> Selection -> SelectALL & DeselectALL
-[ ] Settings -> minimize paddings (left, right, bottom, top)
+* [ ] ItemsStorage for notification quick note
+* [ ] Items transform (Text -> Group; Checkbox -> CheckboxDayRepeatable and etc...)
+* [ ] Fix notifications in TickSession
+* [ ] Toolbar -> Selection -> SelectALL & DeselectALL
+* [ ] Settings -> minimize paddings (left, right, bottom, top)
 Pull request feature -> added to contributors.json & made contributors screen in app
 
 # Screenshots
