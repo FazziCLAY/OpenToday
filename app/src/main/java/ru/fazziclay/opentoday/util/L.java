@@ -14,6 +14,7 @@ public class L {
 
     public static L getInstance() {
         return instance;
+
     }
 
     private String text = "=== FIRST LOG ===";
