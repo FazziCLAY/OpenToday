@@ -44,6 +44,7 @@ public class TextItem extends Item {
     }
     // END - Save
 
+    @NonNull
     public static TextItem createEmpty() {
         return new TextItem("");
     }

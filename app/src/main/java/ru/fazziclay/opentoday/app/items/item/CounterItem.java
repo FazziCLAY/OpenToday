@@ -35,6 +35,7 @@ public class CounterItem extends TextItem {
     }
     // END - Save
 
+    @NonNull
     public static CounterItem createEmpty() {
         return new CounterItem("");
     }

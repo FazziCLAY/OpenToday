@@ -38,6 +38,7 @@ public class DayRepeatableCheckboxItem extends CheckboxItem {
     }
     // END - Save
 
+    @NonNull
     public static DayRepeatableCheckboxItem createEmpty() {
         return new DayRepeatableCheckboxItem();
     }

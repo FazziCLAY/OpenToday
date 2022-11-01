@@ -33,6 +33,7 @@ public class CheckboxItem extends TextItem {
     }
     // END - Save
 
+    @NonNull
     public static CheckboxItem createEmpty() {
         return new CheckboxItem("", false);
     }

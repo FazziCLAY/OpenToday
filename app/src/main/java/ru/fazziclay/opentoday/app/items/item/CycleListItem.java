@@ -65,6 +65,7 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
     }
     // END - Save
 
+    @NonNull
     public static CycleListItem createEmpty() {
         return new CycleListItem("");
     }
