@@ -45,13 +45,15 @@ public class LongTextItem extends TextItem {
     }
     // END - Save
 
+    private static final String DEFAULT_LONG_TEXT_COLOR = "#00dd00";
+
     @NonNull
     public static LongTextItem createEmpty() {
         return new LongTextItem("", "");
     }
 
     @SaveKey(key = "longText") @RequireSave private String longText;
-    @SaveKey(key = "longTextColor") @RequireSave private int longTextColor;
+    @SaveKey(key = "longTextColor") @RequireSave private int longTextColor = Color.parseColor(DEFAULT_LONG_TEXT_COLOR);
     @SaveKey(key = "isCustomLongTextColor") @RequireSave private boolean isCustomLongTextColor = false;
     @SaveKey(key = "isLongTextClickableUrls") @RequireSave private boolean isLongTextClickableUrls = false;
     @SaveKey(key = "longTextSize") @RequireSave private int longTextSize = 20;

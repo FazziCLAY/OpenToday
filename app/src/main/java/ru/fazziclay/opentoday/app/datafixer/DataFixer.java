@@ -29,9 +29,10 @@ public class DataFixer {
     @NonNull
     public FixResult fixToCurrentVersion() {
         int dataVersion;
+        boolean isVersionFileExist = FileUtil.isExist(versionFile);
 
         // If version file NOT EXIST
-        if (FileUtil.isExist(versionFile)) {
+        if (isVersionFileExist) {
             try {
                 JSONObject versionData = new JSONObject(FileUtil.getText(versionFile));
                 dataVersion = versionData.getInt("data_version");
@@ -51,7 +52,7 @@ public class DataFixer {
             }
             // === DETECT 1 DATA VERSION
         }
-        if (dataVersion == 0) return FixResult.NO_FIX;
+        if (dataVersion == 0) return FixResult.NO_FIX.versionFileExist(isVersionFileExist);
 
         dataVersion = tryFix(dataVersion);
 
@@ -59,9 +60,9 @@ public class DataFixer {
         if (isUpdated) {
             File logFile = new File(context.getExternalCacheDir(), "data-fixer/logs/" + System.currentTimeMillis() + ".txt");
             FileUtil.setText(logFile, logs.toString());
-            return new FixResult(dataVersion, logFile, logs.toString());
+            return new FixResult(dataVersion, logFile, logs.toString()).versionFileExist(isVersionFileExist);
         }
-        return FixResult.NO_FIX;
+        return FixResult.NO_FIX.versionFileExist(isVersionFileExist);
     }
 
     // Logs
@@ -86,6 +87,7 @@ public class DataFixer {
         public static FixResult NO_FIX = new FixResult();
 
         private final boolean fixed;
+        private boolean versionFileExist = false;
         private int dataVersion;
         private File logFile;
         private String logs;
@@ -101,8 +103,17 @@ public class DataFixer {
             this.fixed = false;
         }
 
+        public FixResult versionFileExist(boolean b) {
+            this.versionFileExist = b;
+            return this;
+        }
+
         public boolean isFixed() {
             return fixed;
+        }
+
+        public boolean isVersionFileExist() {
+            return versionFileExist;
         }
 
         public int getDataVersion() {

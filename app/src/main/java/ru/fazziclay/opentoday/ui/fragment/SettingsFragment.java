@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -126,39 +128,52 @@ public class SettingsFragment extends Fragment {
             easterEggCounter++;
             if (easterEggCounter >= 6) {
                 easterEggCounter = 0;
-
-                LinearLayout view = new LinearLayout(requireContext());
-                view.setOrientation(LinearLayout.VERTICAL);
-
-                for (FeatureFlag featureFlag : FeatureFlag.values()) {
-                    CheckBox c = new CheckBox(requireContext());
-                    c.setText(featureFlag.name());
-                    c.setChecked(app.isFeatureFlag(featureFlag));
-                    viewClick(c, () -> {
-                        boolean is = c.isChecked();
-                        if (is) {
-                            if (!app.isFeatureFlag(featureFlag)) {
-                                app.getFeatureFlags().add(featureFlag);
-                            }
-                        } else {
-                            if (app.isFeatureFlag(featureFlag)) {
-                                app.getFeatureFlags().remove(featureFlag);
-                            }
-                        }
-                    });
-
-                    view.addView(c);
-                }
-
-                Dialog dialog = new AlertDialog.Builder(requireContext())
-                        .setView(view)
-                        .setNegativeButton(R.string.abc_cancel, null)
-                        .create();
-                dialog.show();
+                showFeatureFlagsDialog();
             }
         } else {
             easterEggCounter = 0;
         }
         easterEggLastClick = System.currentTimeMillis();
+    }
+
+    private void showFeatureFlagsDialog() {
+        LinearLayout view = new LinearLayout(requireContext());
+        view.setOrientation(LinearLayout.VERTICAL);
+
+        for (FeatureFlag featureFlag : FeatureFlag.values()) {
+            CheckBox c = new CheckBox(requireContext());
+            c.setText(featureFlag.name());
+            c.setChecked(app.isFeatureFlag(featureFlag));
+            viewClick(c, () -> {
+                boolean is = c.isChecked();
+                if (is) {
+                    if (!app.isFeatureFlag(featureFlag)) {
+                        app.getFeatureFlags().add(featureFlag);
+                    }
+                } else {
+                    if (app.isFeatureFlag(featureFlag)) {
+                        app.getFeatureFlags().remove(featureFlag);
+                    }
+                }
+            });
+
+            TextView textView = new TextView(requireContext());
+            textView.setText(featureFlag.getDescription());
+            textView.setTextSize(11);
+            textView.setPadding(60, 0, 0, 0);
+
+            view.addView(c);
+            view.addView(textView);
+        }
+
+        ScrollView scrollView = new ScrollView(requireContext());
+        scrollView.addView(view);
+
+        Dialog dialog = new AlertDialog.Builder(requireContext())
+                .setView(scrollView)
+                .setTitle("DEBUG: FeatureFlags")
+                .setNegativeButton(R.string.abc_cancel, null)
+                .create();
+        dialog.show();
     }
 }

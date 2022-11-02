@@ -212,4 +212,5 @@
     <string name="fragment_itemEditor_longtext_textColor">Long text color</string>
     <string name="fragment_itemEditor_longtext_textSize">Text size</string>
     <string name="toolbar_more_selection_editSelected">Edit selected</string>
+    <string name="toolbar_more_opentoday_debug_personalTick">DEBUG: Personal tick</string>
 </resources>

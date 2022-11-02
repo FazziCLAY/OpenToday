@@ -23,14 +23,21 @@ public class ColorHistoryManager {
         this.history = load();
     }
 
-    public Integer[] getHistory(int maxCount) {
+    public int[] getHistory(int maxCount) {
         if (history.size() == 0) {
-            return new Integer[0];
+            return new int[0];
         }
         if (maxCount > history.size()) {
             maxCount = history.size();
         }
-        return history.subList(0, maxCount).toArray(new Integer[0]);
+        Integer[] clazz = history.subList(0, maxCount).toArray(new Integer[0]);
+        int[] result = new int[clazz.length];
+        int i = 0;
+        while (i < result.length) {
+            result[i] = clazz[i];
+            i++;
+        }
+        return result;
     }
 
     public void addColor(int color) {

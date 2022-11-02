@@ -40,7 +40,7 @@ public class InlineUtil {
     }
 
     public static void viewLong(View v, Runnable r) {
-        viewLong(v, ignore -> {
+        viewLong(v, r == null ? null : ignore -> {
             r.run();
             return true;
         });
@@ -55,7 +55,7 @@ public class InlineUtil {
      * Set onClickListener for view
      * **/
     public static void viewClick(View v, Runnable r) {
-        viewClick(v, ignore -> r.run());
+        viewClick(v, r == null ? null : ignore -> r.run());
     }
 
     /**

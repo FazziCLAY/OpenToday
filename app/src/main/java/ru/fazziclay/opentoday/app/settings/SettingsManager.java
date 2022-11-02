@@ -135,7 +135,7 @@ public class SettingsManager {
             j.put("itemOnLeftAction", itemOnLeftAction.name());
             j.put("quickNoteNotificationItemsStorageId", quickNoteNotificationItemsStorageId != null ? quickNoteNotificationItemsStorageId.toString() : null);
 
-            FileUtil.setText(saveFile, j.toString(2));
+            FileUtil.setText(saveFile, j.toString());
         } catch (Exception e) {
             L.o("SettingsManager", "save", e);
             App.exception(null, e);

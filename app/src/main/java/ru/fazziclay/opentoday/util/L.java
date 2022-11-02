@@ -9,7 +9,7 @@ import ru.fazziclay.opentoday.callback.CallbackStorage;
 import ru.fazziclay.opentoday.callback.Status;
 
 public class L {
-    public static final boolean ENABLED = (App.DEBUG && false);
+    public static final boolean ENABLED = (App.DEBUG && true);
     private static final L instance = new L();
 
     public static L getInstance() {

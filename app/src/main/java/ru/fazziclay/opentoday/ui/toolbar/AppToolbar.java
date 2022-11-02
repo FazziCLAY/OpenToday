@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -41,6 +42,7 @@ import ru.fazziclay.opentoday.app.items.callback.OnTabsChanged;
 import ru.fazziclay.opentoday.app.items.item.Item;
 import ru.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import ru.fazziclay.opentoday.app.items.tab.Tab;
+import ru.fazziclay.opentoday.app.receiver.ItemsTickReceiver;
 import ru.fazziclay.opentoday.app.settings.SettingsManager;
 import ru.fazziclay.opentoday.callback.CallbackImportance;
 import ru.fazziclay.opentoday.callback.Status;
@@ -432,8 +434,25 @@ public class AppToolbar {
     private void onOpenTodayClick() {
         ToolbarMoreOpentodayBinding b = ToolbarMoreOpentodayBinding.inflate(activity.getLayoutInflater());
 
-        viewVisible(b.debug, app.isFeatureFlag(FeatureFlag.AVAILABLE_LOGS_OVERLAY), View.GONE);
+        Runnable showPersonalTickDebug = () -> {
+            EditText view = new EditText(activity);
+            new AlertDialog.Builder(activity)
+                    .setView(view)
+                    .setPositiveButton("TICK", (dfsd, fdsg) -> {
+                        try {
+                            UUID id = UUID.fromString(view.getText().toString());
+                            activity.sendBroadcast(new Intent(activity, ItemsTickReceiver.class).putExtra(ItemsTickReceiver.EXTRA_PERSONAL_TICK, new String[]{id.toString()}).putExtra("debugMessage", "Debug personal tick is work!"));
+                        } catch (Exception e) {
+                            Toast.makeText(activity, e.toString(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .show();
+        };
+
+        viewVisible(b.debugToggleDebugOverlayText, app.isFeatureFlag(FeatureFlag.AVAILABLE_LOGS_OVERLAY), View.GONE);
+        viewVisible(b.debugPersonalTick, app.isFeatureFlag(FeatureFlag.AVAILABLE_UI_PERSONAL_TICK), View.GONE);
         viewClick(b.debugToggleDebugOverlayText, () -> ((MainActivity) activity).toggleLogsOverlay());
+        viewClick(b.debugPersonalTick, showPersonalTickDebug);
         viewClick(b.about, () -> rootNavigationHost.navigate(AboutFragment.create(), true));
         viewClick(b.settings, () -> rootNavigationHost.navigate(SettingsFragment.create(), true));
         viewClick(b.calendar, () -> new DatePickerDialog(activity)

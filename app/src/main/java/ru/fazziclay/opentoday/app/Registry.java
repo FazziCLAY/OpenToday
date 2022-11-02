@@ -5,7 +5,6 @@ import com.fazziclay.neosocket.packet.PacketsRegistry;
 import ru.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import ru.fazziclay.opentoday.app.items.tab.TabsRegistry;
 import ru.fazziclay.opentoday.app.items.notification.ItemNotificationsRegistry;
-import ru.fazziclay.opentoday.telemetry.TelemetryPackets;
 
 public class Registry {
     public static final TabsRegistry TABS = TabsRegistry.REGISTRY;
