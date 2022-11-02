@@ -56,7 +56,7 @@ public class ItemManager {
     @NonNull private final File dataOriginalFile;
     @NonNull private final File dataCompressFile;
     private boolean debugPrintSaveStatusAlways = false;
-    private SaveThread saveThread;
+    private SaveThread saveThread = null;
     @NonNull @RequireSave @SaveKey(key = "tabs") private final List<Tab> tabs = new ArrayList<>();
     @NonNull private final ItemsTabController itemsTabController = new LocalItemTabsController();
     @NonNull private final CallbackStorage<OnTabsChanged> onTabsChangedCallbacks = new CallbackStorage<>();
