@@ -207,4 +207,5 @@
     <string name="fragment_itemEditor_longtext_textColor">Цвет большого текста</string>
     <string name="fragment_itemEditor_longtext_textSize">Размер большого текста</string>
     <string name="toolbar_more_selection_editSelected">Редактировать выбранный</string>
+    <string name="toolbar_more_opentoday_debug_personalTick">Отладка: VIP Tick :)</string>
 </resources>

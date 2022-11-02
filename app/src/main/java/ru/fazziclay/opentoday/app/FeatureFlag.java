@@ -7,7 +7,9 @@ public enum FeatureFlag {
     NONE("NONE flag"),
     SHOW_APP_STARTUP_TIME_IN_PREMAIN_ACTIVITY("PreMainActivity: show toast: App.getAppStartupTime"),
     SHOW_MAINACTIVITY_STARTUP_TIME("MainActivity: startup time show in Toast"),
-    ALWAYS_SHOW_SAVE_STATUS("ItemManager: always show save status in toast");
+    ALWAYS_SHOW_SAVE_STATUS("ItemManager: always show save status in toast"),
+    AVAILABLE_UI_PERSONAL_TICK("Toolbar -> OpenToday debug button"),
+    DISABLE_AUTOMATIC_TICK("DISABLE ALL AUTOMATIC TICK IN ItemManager caps :)");
 
     private final String description;
 

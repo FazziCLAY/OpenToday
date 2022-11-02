@@ -81,8 +81,10 @@ public class MainActivity extends AppCompatActivity {
         if (app.getSettingsManager().isQuickNoteNotification()) {
             QuickNoteReceiver.sendQuickNoteNotification(this);
         }
-        uiTickService.create();
-        uiTickService.tick();
+        if (!app.isFeatureFlag(FeatureFlag.DISABLE_AUTOMATIC_TICK)) {
+            uiTickService.create();
+            uiTickService.tick();
+        }
         if (app.isFeatureFlag(FeatureFlag.SHOW_MAINACTIVITY_STARTUP_TIME)) {
             long startupTime = System.currentTimeMillis() - start;
             StringBuilder text = new StringBuilder("MainActivity startup time:\n").append(startupTime).append("ms");
