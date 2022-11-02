@@ -6,12 +6,9 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.util.Log;
 
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.NotificationCompat;
 
 import com.fazziclay.neosocket.NeoSocket;
@@ -31,9 +28,9 @@ import ru.fazziclay.javaneoutil.JavaNeoUtil;
 import ru.fazziclay.javaneoutil.NonNull;
 import ru.fazziclay.opentoday.BuildConfig;
 import ru.fazziclay.opentoday.R;
+import ru.fazziclay.opentoday.annotation.AppInitIfNeed;
 import ru.fazziclay.opentoday.app.datafixer.DataFixer;
 import ru.fazziclay.opentoday.app.items.ItemManager;
-import ru.fazziclay.opentoday.app.receiver.ItemsTickReceiver;
 import ru.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import ru.fazziclay.opentoday.app.settings.SettingsManager;
 import ru.fazziclay.opentoday.debug.TestItemViewGenerator;
@@ -55,8 +52,8 @@ public class App extends Application {
     private static final String NOTIFICATION_CRASH_CHANNEL = "crash_report";
 
     // DEBUG
-    public static final boolean DEBUG = BuildConfig.DEBUG;
-    public static final boolean ADVANCED_MODE = (DEBUG & true);
+    public static final boolean SHADOW_RELEASE = false;
+    public static final boolean DEBUG = !SHADOW_RELEASE && BuildConfig.DEBUG;
     public static final boolean DEBUG_TICK_NOTIFICATION = (DEBUG & false);
     public static final int DEBUG_MAIN_ACTIVITY_START_SLEEP = (DEBUG & false) ? 6000 : 0;
     public static final int DEBUG_APP_START_SLEEP = (DEBUG & false) ? 8000 : 0;
@@ -75,22 +72,27 @@ public class App extends Application {
     }
 
     // Application
-    private UUID instanceId;
-    private ItemManager itemManager;
-    private SettingsManager settingsManager;
-    private ColorHistoryManager colorHistoryManager;
-    private Telemetry telemetry;
+    @AppInitIfNeed private UUID instanceId;
     private JSONObject versionData;
     private boolean appInForeground = false;
-    private License[] openSourceLicenses;
+    @AppInitIfNeed private ItemManager itemManager = null;
+    @AppInitIfNeed private SettingsManager settingsManager = null;
+    @AppInitIfNeed private ColorHistoryManager colorHistoryManager = null;
+    @AppInitIfNeed private Telemetry telemetry = null;
+    @AppInitIfNeed private License[] openSourceLicenses = null;
     private final List<FeatureFlag> featureFlags = new ArrayList<>(App.DEBUG ? Arrays.asList(
-            FeatureFlag.AVAILABLE_LOGS_OVERLAY,
             FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
-            FeatureFlag.ITEM_EDITOR_SHOW_COPY_ID_BUTTON
+            FeatureFlag.ITEM_EDITOR_SHOW_COPY_ID_BUTTON,
+            FeatureFlag.AVAILABLE_LOGS_OVERLAY,
+            FeatureFlag.NONE,
+            FeatureFlag.SHOW_APP_STARTUP_TIME_IN_PREMAIN_ACTIVITY,
+            FeatureFlag.ALWAYS_SHOW_SAVE_STATUS
     ) : Collections.emptyList());
+    private long appStartupTime = 0;
 
     @Override
     public void onCreate() {
+        long start = System.currentTimeMillis();
         try {
             super.onCreate();
             instance = this;
@@ -100,26 +102,16 @@ public class App extends Application {
             final DataFixer dataFixer = new DataFixer(this);
             final DataFixer.FixResult fixResult = dataFixer.fixToCurrentVersion();
 
-            updateVersionFile();
-            instanceId = parseInstanceId();
-            openSourceLicenses = getOpenSourceLicences();
-
-            final File externalFiles = getExternalFilesDir("");
-            telemetry = new Telemetry(this);
-            itemManager = new ItemManager(new File(externalFiles, "item_data.json"), new File(externalFiles, "item_data.gz"));
-            settingsManager = new SettingsManager(new File(externalFiles, "settings.json"));
-            colorHistoryManager = new ColorHistoryManager(new File(externalFiles, "color_history.json"), 10);
-
-            AppCompatDelegate.setDefaultNightMode(settingsManager.getTheme());
             registryNotificationsChannels();
-            sendBroadcast(new Intent(this, ItemsTickReceiver.class));
 
+            if (!fixResult.isVersionFileExist()) updateVersionFile();
             if (fixResult.isFixed()) {
-                telemetry.send(new Telemetry.DataFixerLogsLPacket(fixResult.getDataVersion(), fixResult.getLogs()));
+                getTelemetry().send(new Telemetry.DataFixerLogsLPacket(fixResult.getDataVersion(), fixResult.getLogs()));
             }
         } catch (Exception e) {
             crash(this, CrashReport.create(new RuntimeException(getClass().getName() + " onCreate exception: " + e, e)), false);
         }
+        this.appStartupTime = System.currentTimeMillis() - start;
     }
 
     private void registryNotificationsChannels() {
@@ -159,7 +151,7 @@ public class App extends Application {
                     .put("data_version", APPLICATION_DATA_VERSION)
                     .put("application_version", VERSION_CODE)
                     .put("latest_start", System.currentTimeMillis());
-            FileUtil.setText(new File(getExternalFilesDir(""), "version"), versionData.toString(4));
+            FileUtil.setText(new File(getExternalFilesDir(""), "version"), versionData.toString());
         } catch (Exception e) {
             throw new RuntimeException("Exception!", e);
         }
@@ -178,7 +170,7 @@ public class App extends Application {
 
     public boolean isFeatureFlag(FeatureFlag flag) {
         if (flag == null) return true;
-        for (FeatureFlag f : this.featureFlags) {
+        for (FeatureFlag f : this.getFeatureFlags()) {
             if (f == flag) {
                 return true;
             }
@@ -237,8 +229,8 @@ public class App extends Application {
 
         // Telemetry
         final App app = App.get(context);
-        if (app != null && app.telemetry != null) {
-            app.telemetry.send(new Telemetry.CrashReportLPacket(crashReport));
+        if (app != null && app.getTelemetry() != null) {
+            app.getTelemetry().send(new Telemetry.CrashReportLPacket(crashReport));
         }
 
         try {
@@ -250,14 +242,74 @@ public class App extends Application {
         }
     }
 
+    private void preCheckOpenSourceLicenses() {
+        if (openSourceLicenses == null) {
+            openSourceLicenses = getOpenSourceLicences();
+        }
+    }
+
+    private void preCheckTelemetry() {
+        if (telemetry == null) {
+            telemetry = new Telemetry(this);
+        }
+    }
+
+    private void preCheckItemManager() {
+        if (itemManager == null) {
+            final File externalFiles = getExternalFilesDir("");
+            itemManager = new ItemManager(new File(externalFiles, "item_data.json"), new File(externalFiles, "item_data.gz"));
+            itemManager.setDebugPrintSaveStatusAlways(isFeatureFlag(FeatureFlag.ALWAYS_SHOW_SAVE_STATUS));
+        }
+    }
+
+    private void preCheckSettingsManager() {
+        if (settingsManager == null) {
+            final File externalFiles = getExternalFilesDir("");
+            settingsManager = new SettingsManager(new File(externalFiles, "settings.json"));
+        }
+    }
+
+    private void preCheckColorHistoryManager() {
+        if (colorHistoryManager == null) {
+            final File externalFiles = getExternalFilesDir("");
+            colorHistoryManager = new ColorHistoryManager(new File(externalFiles, "color_history.json"), 10);
+        }
+    }
+
+    private void preCheckInstanceId() {
+        if (instanceId == null) {
+            instanceId = parseInstanceId();
+        }
+    }
+
     // getters & setters
-    public UUID getInstanceId() { return instanceId; }
     public JSONObject getVersionData() { return versionData; }
-    public Telemetry getTelemetry() { return telemetry; }
-    public ItemManager getItemManager() { return itemManager; }
-    public SettingsManager getSettingsManager() { return this.settingsManager; }
-    public ColorHistoryManager getColorHistoryManager() {return colorHistoryManager;}
-    public License[] getOpenSourcesLicenses() { return this.openSourceLicenses; }
+    public long getAppStartupTime() {return appStartupTime;}
+    public UUID getInstanceId() {
+        preCheckInstanceId();
+        return instanceId;
+    }
+
+    public Telemetry getTelemetry() {
+        preCheckTelemetry();
+        return telemetry;
+    }
+    public ItemManager getItemManager() {
+        preCheckItemManager();
+        return itemManager;
+    }
+    public SettingsManager getSettingsManager() {
+        preCheckSettingsManager();
+        return this.settingsManager;
+    }
+    public ColorHistoryManager getColorHistoryManager() {
+        preCheckColorHistoryManager();
+        return colorHistoryManager;
+    }
+    public License[] getOpenSourcesLicenses() {
+        preCheckOpenSourceLicenses();
+        return this.openSourceLicenses;
+    }
     public boolean isAppInForeground() { return appInForeground; }
     public void setAppInForeground(boolean appInForeground) { this.appInForeground = appInForeground; }
     public List<FeatureFlag> getFeatureFlags() {return featureFlags;}

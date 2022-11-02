@@ -55,6 +55,7 @@ public class ItemManager {
 
     @NonNull private final File dataOriginalFile;
     @NonNull private final File dataCompressFile;
+    private boolean debugPrintSaveStatusAlways = false;
     @NonNull private final SaveThread saveThread = new SaveThread();
     @NonNull @RequireSave @SaveKey(key = "tabs") private final List<Tab> tabs = new ArrayList<>();
     @NonNull private final ItemsTabController itemsTabController = new LocalItemTabsController();
@@ -66,6 +67,10 @@ public class ItemManager {
         load();
         saveThread.start();
         save();
+    }
+
+    public void setDebugPrintSaveStatusAlways(boolean b) {
+        debugPrintSaveStatusAlways = b;
     }
 
     private void load() {
@@ -352,6 +357,12 @@ public class ItemManager {
                 writer.flush();
                 writer.close();
             }
+
+            if (debugPrintSaveStatusAlways) {
+                try {
+                    new Handler(App.get().getMainLooper()).post(() -> Toast.makeText(App.get(), "Success save", Toast.LENGTH_SHORT).show());
+                } catch (Exception ignored) {}
+            }
             return true;
         } catch (Exception e) {
             Log.e("ItemManager", "SaveThread exception", e);
@@ -386,7 +397,9 @@ public class ItemManager {
                     internalSave();
                     Log.i("SaveThread", String.format("requestCount=%s\nfirstTime=%s\nlatestTime=%s", requestsCount, firstRequestTime, latestRequestTime));
                 }
-
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ignored) {}
             }
         }
 
