@@ -371,7 +371,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     private class LocalOnTabChanged implements OnTabsChanged {
         @SuppressLint("NotifyDataSetChanged")
         @Override
-        public Status onTabsChanged(Tab[] tabs) {
+        public Status onTabsChanged(@NonNull final Tab[] tabs) {
             d("on tabs changed");
             UUID id = null;
             for (Tab tab : tabs) {
