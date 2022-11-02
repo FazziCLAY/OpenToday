@@ -29,7 +29,7 @@ import ru.fazziclay.opentoday.util.NetworkUtil;
 
 public class Telemetry {
     public static final PacketsRegistry REGISTRY = new TelemetryPackets();
-    private static final boolean NO_DELAY = (App.DEBUG && true);
+    private static final boolean NO_DELAY = (App.DEBUG && false);
     private static final String URL = "https://fazziclay.github.io/api/project_3/v1/telemetry/telemetry_v2.json";
 
     private final App app;
