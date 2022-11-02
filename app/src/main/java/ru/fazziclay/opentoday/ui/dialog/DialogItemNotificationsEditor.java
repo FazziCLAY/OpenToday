@@ -114,6 +114,7 @@ public class DialogItemNotificationsEditor {
                                 } catch (Exception e) {
                                     Toast.makeText(activity, R.string.dialog_itemNotification_incorrectNotificationId, Toast.LENGTH_SHORT).show();
                                 }
+                                d.setLatestDayOfYear(0);
                                 notifyDataSetChanged();
                                 item.save();
                             })

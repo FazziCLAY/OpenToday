@@ -24,7 +24,9 @@ public class DayItemNotification implements ItemNotification {
             return new JSONObject()
                     .put("notificationId", d.notificationId)
                     .put("notifyTitle", d.notifyTitle)
+                    .put("notifyTitleFromItemText", d.notifyTitleFromItemText)
                     .put("notifyText", d.notifyText)
+                    .put("notifyTextFromItemText", d.notifyTextFromItemText)
                     .put("latestDayOfYear", d.latestDayOfYear)
                     .put("notifySubText", d.notifySubText)
                     .put("time", d.time);
@@ -35,7 +37,9 @@ public class DayItemNotification implements ItemNotification {
             DayItemNotification o = new DayItemNotification();
             o.notificationId = json.optInt("notificationId", 543);
             o.notifyTitle = json.optString("notifyTitle", "");
+            o.notifyTitleFromItemText = json.optBoolean("notifyTitleFromItemText", true);
             o.notifyText = json.optString("notifyText", "");
+            o.notifyTextFromItemText = json.optBoolean("notifyTextFromItemText", true);
             o.notifySubText = json.optString("notifySubText", "");
             o.latestDayOfYear = json.optInt("latestDayOfYear", 0);
             o.time = json.optInt("time", 0);
@@ -71,7 +75,12 @@ public class DayItemNotification implements ItemNotification {
 
         int dayOfYear = tickSession.getGregorianCalendar().get(Calendar.DAY_OF_YEAR);
         if (dayOfYear != latestDayOfYear) {
-            if (tickSession.getDayTime() >= time) {
+            boolean isTime = tickSession.getDayTime() >= time;
+            if (tickSession.isPersonalTick() && !isTime) {
+                isTime = time - tickSession.getDayTime() < 10;
+            }
+
+            if (isTime) {
                 sendNotify(tickSession.getContext(), item);
                 latestDayOfYear = dayOfYear;
                 tickSession.saveNeeded();
@@ -92,8 +101,8 @@ public class DayItemNotification implements ItemNotification {
     }
 
     public void sendNotify(Context context, Item item) {
-        String nTitle = notifyTitleFromItemText ? item.getText() : notifyTitle;
-        String nText = notifyTextFromItemText ? item.getText() : notifyText;
+        final String nTitle = notifyTitleFromItemText ? item.getText() : notifyTitle;
+        final String nText = notifyTextFromItemText ? item.getText() : notifyText;
 
         context.getSystemService(NotificationManager.class).notify(this.notificationId,
                 new NotificationCompat.Builder(context, App.NOTIFICATION_ITEMS_CHANNEL)

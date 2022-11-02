@@ -4,7 +4,6 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
@@ -38,8 +37,8 @@ public class ItemsTickReceiver extends BroadcastReceiver {
 
         debugNotification(context);
 
-        TickSession tickSession = createTickSession(context);
         boolean personalMode = (intent != null && (intent.getExtras() != null && intent.getExtras().containsKey(EXTRA_PERSONAL_TICK)));
+        final TickSession tickSession = createTickSession(context, personalMode);
         if (personalMode) {
             String[] temp = intent.getExtras().getStringArray(EXTRA_PERSONAL_TICK);
             List<UUID> uuids = new ArrayList<>();
@@ -70,7 +69,7 @@ public class ItemsTickReceiver extends BroadcastReceiver {
         }
     }
 
-    private TickSession createTickSession(Context context) {
+    private TickSession createTickSession(Context context, boolean personalMode) {
         GregorianCalendar gregorianCalendar = new GregorianCalendar();
 
         // START - day seconds
@@ -81,6 +80,6 @@ public class ItemsTickReceiver extends BroadcastReceiver {
         int daySeconds = (int) ((gregorianCalendar.getTimeInMillis() - noTimeCalendar.getTimeInMillis()) / 1000);
         // END - day seconds
 
-        return new TickSession(context, gregorianCalendar, noTimeCalendar, daySeconds);
+        return new TickSession(context, gregorianCalendar, noTimeCalendar, daySeconds, personalMode);
     }
 }

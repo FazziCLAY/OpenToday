@@ -88,8 +88,7 @@ public class App extends Application {
             FeatureFlag.SHOW_APP_STARTUP_TIME_IN_PREMAIN_ACTIVITY,
             FeatureFlag.ALWAYS_SHOW_SAVE_STATUS,
             FeatureFlag.SHOW_MAINACTIVITY_STARTUP_TIME,
-            FeatureFlag.AVAILABLE_UI_PERSONAL_TICK,
-            FeatureFlag.DISABLE_AUTOMATIC_TICK
+            FeatureFlag.AVAILABLE_UI_PERSONAL_TICK
     ) : Collections.emptyList());
     private long appStartupTime = 0;
 
