@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemNotificationIEUtil {
+    private static final String KEY_TYPE = "type";
 
     public static List<ItemNotification> importNotifications(JSONArray json) throws Exception {
         final List<ItemNotification> result = new ArrayList<>();
@@ -14,7 +15,7 @@ public class ItemNotificationIEUtil {
         int i = 0;
         while (i < json.length()) {
             JSONObject jsonNotification = json.getJSONObject(i);
-            String type = jsonNotification.getString("type");
+            String type = jsonNotification.getString(KEY_TYPE);
             ItemNotificationIETool ieTool = ItemNotificationsRegistry.REGISTRY.getByStringType(type).getIeTool();
             result.add(ieTool.importNotification(jsonNotification));
             i++;
@@ -28,7 +29,7 @@ public class ItemNotificationIEUtil {
         for (ItemNotification notification : notifications) {
             ItemNotificationsRegistry.ItemNotificationInfo itemNotificationInfo = ItemNotificationsRegistry.REGISTRY.getByClass(notification.getClass());
             jsonArray.put(itemNotificationInfo.getIeTool().exportNotification(notification)
-                    .put("type", itemNotificationInfo.getStringType()));
+                    .put(KEY_TYPE, itemNotificationInfo.getStringType()));
         }
         return jsonArray;
     }
