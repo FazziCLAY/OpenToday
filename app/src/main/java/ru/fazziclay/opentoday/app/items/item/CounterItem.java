@@ -22,7 +22,7 @@ public class CounterItem extends TextItem {
                     .put("step", counterItem.step);
         }
 
-        private final CounterItem defaultValues = new CounterItem("<import_error>");
+        private final CounterItem defaultValues = new CounterItem();
         @NonNull
         @Override
         public Item importItem(@NonNull JSONObject json, Item item) throws Exception {
@@ -61,14 +61,14 @@ public class CounterItem extends TextItem {
 
     public void up() {
         counter = counter + step;
-        save();
         visibleChanged();
+        save();
     }
 
     public void down() {
         counter = counter - step;
-        save();
         visibleChanged();
+        save();
     }
 
     @Getter public double getCounter() { return counter; }

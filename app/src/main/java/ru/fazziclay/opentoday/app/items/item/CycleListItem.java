@@ -118,8 +118,8 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
             currentItemPosition = 0;
         }
         onCurrentItemStorageUpdateCallback.run((callbackStorage, callback) -> callback.onCurrentChanged(getCurrentItem()));
-        save();
         visibleChanged();
+        save();
     }
 
     public void previous() {
@@ -131,8 +131,8 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
             currentItemPosition = size() - 1;
         }
         onCurrentItemStorageUpdateCallback.run((callbackStorage, callback) -> callback.onCurrentChanged(getCurrentItem()));
-        save();
         visibleChanged();
+        save();
     }
 
     @Override
