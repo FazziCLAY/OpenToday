@@ -1,6 +1,6 @@
-Take notes, move them easily
-Group, create reminders, share
-Use the checkboxes
-
-And a lot more (see screenshots)
-- OpenToday
+<p>Take notes, move them easily</p>
+<p>Group, create reminders, share</p>
+<p>Use the checkboxes</p>
+<br>
+<p>And a lot more (see screenshots)</p>
+<p>- OpenToday</p>
