@@ -52,6 +52,7 @@ public class CrashReport {
                 "Fatal: %_FATAL_%\n" +
                 "Application: (%_APPLICATION_PACKAGE_%)\n" +
                 " * instanceId: %_INSTANCE_ID_%\n" +
+                " * appStartupTime: %_APP_STARTUP_TIME_%\n" +
                 " * VERSION_BUILD: %_APPLICATION_VERSION_BUILD_%\n" +
                 " * VERSION_NAME: %_APPLICATION_VERSION_NAME_%\n" +
                 " * DATA_VERSION: %_APPLICATION_DATA_VERSION_%\n" +
@@ -86,6 +87,9 @@ public class CrashReport {
                 "Thread: %_THREAD_%\n" +
                 "Throwable:\n" +
                 "%_THROWABLE_%\n" +
+                "\n" +
+                "All stack traces & threads:\n" +
+                "%_ALL_STACK_TRACES_%\n" +
                 "--- OpenToday Crash ---\n";
 
         String timeFormatted;
@@ -139,7 +143,52 @@ public class CrashReport {
             featureFlags = "(Unknown: "+e+")";
         }
 
+        String appStartupTime;
+        try {
+            appStartupTime = App.get().getAppStartupTime() + "ms";
+        } catch (Exception e) {
+            appStartupTime = "(Unknown: " + e + ")";
+        }
+
+        String allStackTracesText;
+        try {
+            if (this.allStackTraces == null) {
+                allStackTracesText = "null";
+            } else {
+                StringBuilder result = new StringBuilder();
+                StringBuilder threads = new StringBuilder("Threads: ");
+                for (Thread t : allStackTraces.keySet()) {
+                    threads.append(t.toString()).append(", ");
+                }
+                threads.delete(threads.length()-2, threads.length()-1);
+                result.append(threads).append("\n");
+                for (Thread t : allStackTraces.keySet()) {
+                    StackTraceElement[] stackTrace = allStackTraces.get(t);
+                    StringBuilder stack = new StringBuilder("StackTrace ").append(t.toString()).append(":");
+                    if (stackTrace.length == 0) {
+                        stack.append(" <empty>\n");
+                    } else {
+                        stack.append("\n");
+                    }
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    for (StackTraceElement traceElement : stackTrace)
+                        pw.println("\tat " + traceElement);
+                    pw.flush();
+                    stack.append(sw);
+
+                    result.append(stack);
+                }
+
+                allStackTracesText = result.toString();
+            }
+        } catch (Exception e) {
+            allStackTracesText = "(Unknown: " + e + ")";
+        }
+
+        text = text.replace("%_ALL_STACK_TRACES_%", allStackTracesText);
         text = text.replace("%_INSTANCE_ID_%", (instanceId == null ? "null" : instanceId.toString()));
+        text = text.replace("%_APP_STARTUP_TIME_%", appStartupTime);
         text = text.replace("%_RANDOM_COMMENT_%", generateRandomComment());
         text = text.replace("%_FEATURE_FLAGS_%", featureFlags);
         text = text.replace("%_CRASH_ID_%", (this.id == null ? "null" : this.id.toString()));
@@ -201,6 +250,7 @@ public class CrashReport {
 
                 // 2022.11.01
                 "Big changes 2022.11.01: The world big commit :)",
+                /*2022.11.02*/ "feature/optimization",
         };
         Random random = new Random();
         int max = comments.length;
@@ -222,6 +272,10 @@ public class CrashReport {
                     result = result + " :/";
                 }
             }
+        }
+
+        if (random.nextInt(10000) == 6753) {
+            return "OooOOooOOOOOooo 10000 == 6753";
         }
 
         return result;
