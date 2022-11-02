@@ -348,7 +348,7 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
                 cp.setOriginalColor(temp_backgroundColor); cp.setCurrentColor(temp_backgroundColor);
 
                 ChipGroup history = new ChipGroup(requireContext());
-                Integer[] colors = colorHistoryManager.getHistory(5);
+                int[] colors = colorHistoryManager.getHistory(5);
                 for (int color : colors) {
                     Chip chip = new Chip(requireContext());
                     chip.setChipBackgroundColor(ColorStateList.valueOf(color));
@@ -473,7 +473,7 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
                 cp.setOriginalColor(temp_textColor); cp.setCurrentColor(temp_textColor);
 
                 ChipGroup history = new ChipGroup(requireContext());
-                Integer[] colors = colorHistoryManager.getHistory(5);
+                int[] colors = colorHistoryManager.getHistory(5);
                 for (int color : colors) {
                     Chip chip = new Chip(requireContext());
                     chip.setChipBackgroundColor(ColorStateList.valueOf(color));
@@ -581,7 +581,7 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
                 cp.setOriginalColor(temp_textColor); cp.setCurrentColor(temp_textColor);
 
                 ChipGroup history = new ChipGroup(requireContext());
-                Integer[] colors = colorHistoryManager.getHistory(5);
+                int[] colors = colorHistoryManager.getHistory(5);
                 for (int color : colors) {
                     Chip chip = new Chip(requireContext());
                     chip.setChipBackgroundColor(ColorStateList.valueOf(color));
