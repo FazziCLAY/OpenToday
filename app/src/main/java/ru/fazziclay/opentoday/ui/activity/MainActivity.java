@@ -18,6 +18,7 @@ import java.util.Locale;
 
 import ru.fazziclay.opentoday.R;
 import ru.fazziclay.opentoday.app.App;
+import ru.fazziclay.opentoday.app.FeatureFlag;
 import ru.fazziclay.opentoday.app.Telemetry;
 import ru.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import ru.fazziclay.opentoday.app.updatechecker.UpdateChecker;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        long start = System.currentTimeMillis();
         try {
             getSupportActionBar().hide();
         } catch (Exception ignored) {}
@@ -81,6 +83,11 @@ public class MainActivity extends AppCompatActivity {
         }
         uiTickService.create();
         uiTickService.tick();
+        if (app.isFeatureFlag(FeatureFlag.SHOW_MAINACTIVITY_STARTUP_TIME)) {
+            long startupTime = System.currentTimeMillis() - start;
+            StringBuilder text = new StringBuilder("MainActivity startup time:\n").append(startupTime).append("ms");
+            Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
