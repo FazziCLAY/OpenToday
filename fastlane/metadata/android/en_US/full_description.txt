@@ -1,2 +1,6 @@
-// todo: owo
-// max 4000
+Take notes, move them easily
+Group, create reminders, share
+Use the checkboxes
+
+And a lot more (see screenshots)
+- OpenToday
