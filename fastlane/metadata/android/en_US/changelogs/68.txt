@@ -1,0 +1,12 @@
+Added LongText & DebugTickCounter
+MainActivity: show calendar on date click
+Toolbar fixes and refactor
+Use GZip for import/export
+Use GZip for save (and original file)
+Added FeatureFlags
+Added ColorHistoryManager to ItemEditor
+New app icon for DEBUG version
+Fix bug: filter group position
+Fix bug: Copy UI break
+big renames
+ItemsStorage: add method addItem(Item item, int positionToAdd)

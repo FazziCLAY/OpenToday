@@ -13,10 +13,12 @@ Android application for the organization of life
 * [ ] Fix notifications in TickSession
 * [ ] Toolbar -> Selection -> SelectALL & DeselectALL
 * [ ] Settings -> minimize paddings (left, right, bottom, top)
+
 Pull request feature -> added to contributors.json & made contributors screen in app
 
 # Screenshots
-|                                                      Main Screen                                                      |                                                      About                                                      |                                               Selection Tab                                                |
-|:---------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------:|
-| ![Main_Screen](https://user-images.githubusercontent.com/68351787/185098605-6bead6c2-21ce-44ea-97c7-9e67deef40ed.jpg) | ![About](https://user-images.githubusercontent.com/68351787/185098572-6c71516b-c91f-4080-aacf-e2f8bbce6630.jpg) | ![](https://user-images.githubusercontent.com/68351787/185098557-19d2ebc9-bb21-4f88-93e6-287dd08f175c.jpg) |  ![](https://user-images.githubusercontent.com/68351787/185098567-ceec0258-bd42-4359-bab3-d6ed6d4b9723.jpg)
+|![1](https://user-images.githubusercontent.com/68351787/199270739-5e7491ed-f345-4347-ac8a-a6160090414e.jpg) | ![1](https://user-images.githubusercontent.com/68351787/199270753-53d74768-63e6-4564-a889-e2025ed78d19.jpg) | ![About app](https://user-images.githubusercontent.com/68351787/199270769-080177ea-5368-485a-aa23-3a75e87a0695.jpg) | ![Calendar](https://user-images.githubusercontent.com/68351787/199270761-d21b86d9-9059-4578-ae0a-f3aacb73e1c9.jpg)
+|:---:|:---:|:----:|:---:|
+|![1](https://user-images.githubusercontent.com/68351787/199270781-a832ca3e-0da1-4480-b1ff-9134c9c41751.jpg) | ![1](https://user-images.githubusercontent.com/68351787/199270788-c29d92ab-b585-440b-90b1-2e2c9bb001b5.jpg)
+
 ## Explore app!

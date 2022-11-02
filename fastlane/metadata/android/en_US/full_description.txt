@@ -1,0 +1,8 @@
+<p><i>OpenToday</i> is an application to organize your life. It offers text notes with lists, grouping and more.</p>
+<br>
+<p>Take notes, move them easily</p>
+<p>Group, create reminders, share</p>
+<p>Use the checkboxes</p>
+<br>
+<p>And a lot more (see screenshots)</p>
+<p>- OpenToday</p>
