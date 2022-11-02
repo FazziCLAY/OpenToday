@@ -254,10 +254,7 @@ public class CrashReport {
         };
         Random random = new Random();
         int max = comments.length;
-        int pos = random.nextInt(max);
-        if (pos < 0) {
-            pos = pos * -1;
-        }
+        int pos = Math.abs(random.nextInt(max));
         try {
             result = comments[pos];
         } catch (Exception ignored) {}
@@ -274,8 +271,8 @@ public class CrashReport {
             }
         }
 
-        if (random.nextInt(10000) == 6753) {
-            return "OooOOooOOOOOooo 10000 == 6753";
+        if (random.nextInt(1000) == 753) {
+            return "OooOOooOOOOOooo 1000 == 753";
         }
 
         return result;
