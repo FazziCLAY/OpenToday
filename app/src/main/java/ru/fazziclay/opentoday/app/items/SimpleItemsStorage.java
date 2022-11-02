@@ -108,7 +108,7 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
                 check1.regenerateId();
             }
             for (Item check2 : allImportItems) {
-                if (check1.getId().equals(check2.getId())) {
+                if (check1.getId().equals(check2.getId()) && check1 != check2) {
                     check2.regenerateId();
                 }
             }
