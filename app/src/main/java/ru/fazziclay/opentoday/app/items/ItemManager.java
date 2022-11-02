@@ -56,17 +56,15 @@ public class ItemManager {
     @NonNull private final File dataOriginalFile;
     @NonNull private final File dataCompressFile;
     private boolean debugPrintSaveStatusAlways = false;
-    @NonNull private final SaveThread saveThread = new SaveThread();
+    private SaveThread saveThread;
     @NonNull @RequireSave @SaveKey(key = "tabs") private final List<Tab> tabs = new ArrayList<>();
     @NonNull private final ItemsTabController itemsTabController = new LocalItemTabsController();
     @NonNull private final CallbackStorage<OnTabsChanged> onTabsChangedCallbacks = new CallbackStorage<>();
 
-    public ItemManager(@NonNull File dataOriginalFile, @NonNull File dataCompressFile) {
+    public ItemManager(@NonNull final File dataOriginalFile, @NonNull final File dataCompressFile) {
         this.dataOriginalFile = dataOriginalFile;
         this.dataCompressFile = dataCompressFile;
         load();
-        saveThread.start();
-        save();
     }
 
     public void setDebugPrintSaveStatusAlways(boolean b) {
@@ -186,25 +184,26 @@ public class ItemManager {
         return null;
     }
 
+    @NonNull
     public Tab getMainTab() {
         return getTabs().get(0);
     }
 
-    public void createTab(String name) {
+    public void createTab(@NonNull String name) {
         if (name.trim().isEmpty()) {
             throw new RuntimeException("Empty name for tab is not allowed!");
         }
         addTab(new LocalItemsTab(UUID.randomUUID(), name));
         internalOnTabChanged();
-        save();
+        queueSave();
     }
 
-    private void addTab(Tab tab) {
+    private void addTab(@NonNull Tab tab) {
         if (tab.getId() == null) tab.setId(UUID.randomUUID());
         tab.setController(itemsTabController);
         this.tabs.add(tab);
         internalOnTabChanged();
-        save();
+        queueSave();
     }
 
     public void deleteTab(Tab tab) {
@@ -213,7 +212,7 @@ public class ItemManager {
         }
         this.tabs.remove(tab);
         internalOnTabChanged();
-        save();
+        queueSave();
     }
 
     public void moveTabs(int positionFrom, int positionTo) {
@@ -223,7 +222,7 @@ public class ItemManager {
         //Collections.rotate(this.tabs, positionFrom, positionTo);
         // TODO: 27.10.2022 EXPERIMENTAL CHANGES
         internalOnTabChanged();
-        save();
+        queueSave();
     }
 
     private void internalOnTabChanged() {
@@ -245,13 +244,13 @@ public class ItemManager {
 
     private class LocalItemTabsController implements ItemsTabController {
         @Override
-        public void save(Tab tab) {
-            ItemManager.this.save();
+        public void save(@NonNull Tab tab) {
+            ItemManager.this.queueSave();
         }
         @Override
-        public void nameChanged(Tab tab) {
+        public void nameChanged(@NonNull final Tab tab) {
             ItemManager.this.internalOnTabChanged();
-            ItemManager.this.save();
+            ItemManager.this.queueSave();
         }
     }
 
@@ -335,7 +334,11 @@ public class ItemManager {
         return false;
     }
 
-    public void save() {
+    public void queueSave() {
+        if (saveThread == null) {
+            saveThread = new SaveThread();
+            saveThread.start();
+        }
         saveThread.request();
     }
 

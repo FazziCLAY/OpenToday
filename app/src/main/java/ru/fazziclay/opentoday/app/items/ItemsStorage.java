@@ -98,7 +98,7 @@ public interface ItemsStorage {
 
     /**
      * Save data (Call to up (to up, to up, to up)) -> call save to ItemManager => Save all
-     * @see ItemManager#save()
+     * @see ItemManager#queueSave()
      */
     void save();
 
