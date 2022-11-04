@@ -78,6 +78,18 @@ Data loaded from **.gz**, if the error is from **.json**
 * **color_history.json** - color history for ColorPickerDialogs in ItemEditor
 * **instanceId** - ID of your application instance. Used for sending crash reports anonymously
 
+## Import/Export
+Structure
+```js
+--OPENTODAY-IMPORT-START--
+<version>
+<data>
+--OPENTODAY-IMPORT-END--
+```
+* Version 0: <data> is a regular json converted to base64
+* Version 1: <data> is a json converted to base64 but previously passed through GZip compression
+
+
 ## Tree of code (show & not fully)
 ```css
 ru.fazziclay.opentoday
