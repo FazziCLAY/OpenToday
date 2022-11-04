@@ -7,16 +7,15 @@ Android application for the organization of life
 # Using
 Your main friends are Items
 There are different types of items that you can add:
-* **Text**
-* **CheckBox**
-* **Group**
-* **Filter Group** - a group with a filter (a very useful thing)
-
-and others...
+* **Text** - use it for simple text notes
+* **CheckBox** - in connection with GroupItem, use it as a grocery list to the store or a to-do list for today
+* **Group** - there are no restrictions in depth! Create your own hierarchy of storing items
+* **Filter Group** - use it to indicate current birthdays, tasks for today, various schedules (for example, school) or something more, up to the second
+and others... (very useful thing)
 
 
 ## Items tree
-```js
+```css
 Item - (minimal heigth, backgroud color)
 |
 | Text - (text, text color)
@@ -37,17 +36,20 @@ Item - (minimal heigth, backgroud color)
 |![1](https://user-images.githubusercontent.com/68351787/199270781-a832ca3e-0da1-4480-b1ff-9134c9c41751.jpg) | ![1](https://user-images.githubusercontent.com/68351787/199270788-c29d92ab-b585-440b-90b1-2e2c9bb001b5.jpg)
 
 
-# Other Development Docs
+# Explore app!
+
+# For developers
 "/docs" folder
 
-# Todo/Ideas:
+## Todo/Ideas:
 * [ ] ItemsStorage for notification quick note
 * [ ] Items transform (Text -> Group; Checkbox -> CheckboxDayRepeatable and etc...)
 * [ ] Fix notifications in TickSession
 * [ ] Toolbar -> Selection -> SelectALL & DeselectALL
 * [ ] Settings -> minimize paddings (left, right, bottom, top)
+* [ ] Replace checkboxItem to text item & add 'modules' to item and add Module 'checkbox'
 
-Pull request feature -> added to contributors.json & made contributors screen in app
+Make a pull request -> you will be added to contributors.json and also I will create the contributors screen in the application
 
+## 
 
-## Explore app!
