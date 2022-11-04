@@ -4,8 +4,7 @@ Android application for the organization of life, pro notes, reminders
 [![license](https://img.shields.io/github/license/fazziclay/opentoday?color=%2300bb00&style=plastic)](https://github.com/FazziCLAY/OpenToday/blob/main/LICENSE)
 
 
-[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/fazziclay/opentoday?style=plastic) ![Downloads](https://img.shields.io/github/downloads/fazziclay/opentoday/total?color=%2302a868&style=plastic)](https://github.com/FazziCLAY/OpenToday/releases)
-
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/fazziclay/opentoday?style=plastic) ](https://github.com/FazziCLAY/OpenToday/releases)
 [![IzzyOnDroid](https://img.shields.io/endpoint?style=plastic&url=https://apt.izzysoft.de/fdroid/api/v1/shield/ru.fazziclay.opentoday)](https://apt.izzysoft.de/fdroid/index/apk/ru.fazziclay.opentoday)
 
 # Using
