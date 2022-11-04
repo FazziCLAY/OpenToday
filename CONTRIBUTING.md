@@ -4,3 +4,8 @@
 * It is better to consult me, maybe I will give advice or reject this idea
 
 # Issues marked with the 'allow-to-fix' flag can be corrected without my request
+If you decide to fix issues, write in the comments to it
+```markdown
+# I'm fixing it
+* [ ] I have already created a fork and am trying to fix it; the fork is available at the link: <link here>
+```
