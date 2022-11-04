@@ -73,3 +73,31 @@ Data saved in **item_data.json** and **item_data.gz**
 Saving in other *Thread*
 
 Data loaded from **.gz**, if the error is from **.json**
+
+## Other files
+**color_history.json** - color history for ColorPickerDialogs in ItemEditor
+**instanceId** - ID of your application instance. Used for sending crash reports anonymously
+
+## Tree of code (show & not fully)
+```css
+ru.fazziclay.opentoday
+|
+| app - app logic
+  | App - main application class (used by AndroidManifest.xml)
+  |
+  | datafixer
+  | | DataFixer - it is launched at the very beginning of the app to correct the data of the old version (if the application has been updated)
+  |             used 'version' file in '.../Android/data/<...>/files/'
+  | settings
+  | | SettingsManager - manager of application settings (use in ui...SettingsFragment)
+  |             used 'settings.json' file
+  | updatechecker
+  | | UpdateChecker - checking for app updates
+                use api in 'https://fazziclay.github.io/api/project_3/...'
+                cached result if update not-available for '...cache/latest_update_check' (file contain unix MILLISeconds)
+| ui - ui logic
+  |
+  |
+  |
+| (the rest is for convenience and it doesn't matter)
+```
