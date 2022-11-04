@@ -75,8 +75,8 @@ Saving in other *Thread*
 Data loaded from **.gz**, if the error is from **.json**
 
 ## Other files
-**color_history.json** - color history for ColorPickerDialogs in ItemEditor
-**instanceId** - ID of your application instance. Used for sending crash reports anonymously
+* **color_history.json** - color history for ColorPickerDialogs in ItemEditor
+* **instanceId** - ID of your application instance. Used for sending crash reports anonymously
 
 ## Tree of code (show & not fully)
 ```css
