@@ -1,5 +1,8 @@
 # OpenToday
-Android application for the organization of life
+Android application for the organization of life, pro notes, reminders
+
+[![license](https://img.shields.io/github/license/fazziclay/opentoday?color=%2300bb00&style=plastic)](https://github.com/FazziCLAY/OpenToday/blob/main/LICENSE)
+
 
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/fazziclay/opentoday?style=plastic)](https://github.com/FazziCLAY/OpenToday/releases)
 [![IzzyOnDroid](https://img.shields.io/endpoint?style=plastic&url=https://apt.izzysoft.de/fdroid/api/v1/shield/ru.fazziclay.opentoday)](https://apt.izzysoft.de/fdroid/index/apk/ru.fazziclay.opentoday)
@@ -10,8 +13,9 @@ There are different types of items that you can add:
 * **Text** - use it for simple text notes
 * **CheckBox** - in connection with GroupItem, use it as a grocery list to the store or a to-do list for today
 * **Group** - there are no restrictions in depth! Create your own hierarchy of storing items
-* **Filter Group** - use it to indicate current birthdays, tasks for today, various schedules (for example, school) or something more, up to the second
-and others... (very useful thing)
+* **Filter Group** - use it to indicate current birthdays, tasks for today, various schedules (for example, school) or something more, up to the second (very useful thing)
+
+and others...
 
 
 ## Items tree
@@ -51,5 +55,9 @@ Item - (minimal heigth, backgroud color)
 
 Make a pull request -> you will be added to contributors.json and also I will create the contributors screen in the application
 
-## 
+## Save
+Data saved in **item_data.json** and **item_data.gz**
 
+Saving in other *Thread*
+
+Data loaded from **.gz**, if the error is from **.json**
