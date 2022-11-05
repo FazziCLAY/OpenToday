@@ -97,6 +97,28 @@ ru.fazziclay.opentoday
 | app - app logic
   | App - main application class (used by AndroidManifest.xml)
   |
+  | items
+  | |
+  | | item - (items)
+  | | |
+  | |
+  | | callback - (callbacks)
+  | | |
+  | |
+  | | notification - (item notifications)
+  | | |
+  | |
+  | | tab - (tabs)
+  | | |
+  | |
+  | | ItemManager - manager of items
+  | | ItemsUtils - utils for item managment
+  | | CurrentItemStorage - item storage for one item (CycleListItem...)
+  | | ItemsStorage - items storage interface
+  | | SimpleItemsStorage - simple implementation of ItemsStorage
+  | | Selection - selection of item (contain item and item itemsStorage)
+  | | ImportWrapper - for import/export
+  | 
   | datafixer
   | | DataFixer - it is launched at the very beginning of the app to correct the data of the old version (if the application has been updated)
   |             used 'version' file in '.../Android/data/<...>/files/'
