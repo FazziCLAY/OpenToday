@@ -1,5 +1,7 @@
 package com.fazziclay.opentoday.ui.activity;
 
+import static com.fazziclay.opentoday.util.InlineUtil.*;
+
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.os.Handler;
@@ -7,6 +9,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 
 import com.fazziclay.opentoday.R;
@@ -58,10 +61,11 @@ public class MainActivity extends AppCompatActivity {
         this.app = App.get(this);
         this.app.setAppInForeground(true);
         this.app.getTelemetry().send(new Telemetry.UiOpenLPacket());
+        AppCompatDelegate.setDefaultNightMode(this.app.getSettingsManager().getTheme());
         this.uiTickService = new UITickService(this);
         this.binding = ActivityMainBinding.inflate(getLayoutInflater());
 
-        InlineUtil.viewVisible(binding.debugs, false, View.GONE);
+        viewVisible(binding.debugs, false, View.GONE);
         L.getCallbackStorage().addCallback(CallbackImportance.DEFAULT, onDebugLog);
 
         setContentView(binding.getRoot());
@@ -147,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         currentDateHandler.post(currentDateRunnable);
-        InlineUtil.viewClick(binding.currentDate, () -> new DatePickerDialog(this).show());
+        viewClick(binding.currentDate, () -> new DatePickerDialog(this).show());
     }
 
     private void setCurrentDate() {
@@ -167,16 +171,16 @@ public class MainActivity extends AppCompatActivity {
     // Update checker
     private void setupUpdateAvailableNotify() {
         UpdateChecker.check(app, (available, url) -> runOnUiThread(() -> {
-            InlineUtil.viewVisible(binding.updateAvailable, available, View.GONE);
+            viewVisible(binding.updateAvailable, available, View.GONE);
             if (url != null) {
-                InlineUtil.viewClick(binding.updateAvailable, () -> NetworkUtil.openBrowser(MainActivity.this, url));
+                viewClick(binding.updateAvailable, () -> NetworkUtil.openBrowser(MainActivity.this, url));
             }
         }));
     }
 
     // App is DEBUG warning notify
     private void setupAppDebugNotify() {
-        InlineUtil.viewVisible(binding.debugApp, App.DEBUG, View.GONE);
+        viewVisible(binding.debugApp, App.DEBUG, View.GONE);
     }
 
     public void toggleLogsOverlay() {
