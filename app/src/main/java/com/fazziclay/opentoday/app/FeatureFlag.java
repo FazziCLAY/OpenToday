@@ -9,7 +9,8 @@ public enum FeatureFlag {
     SHOW_MAINACTIVITY_STARTUP_TIME("MainActivity: startup time show in Toast"),
     ALWAYS_SHOW_SAVE_STATUS("ItemManager: always show save status in toast"),
     AVAILABLE_UI_PERSONAL_TICK("Toolbar -> OpenToday debug button"),
-    DISABLE_AUTOMATIC_TICK("DISABLE ALL AUTOMATIC TICK IN ItemManager caps :)");
+    DISABLE_AUTOMATIC_TICK("DISABLE ALL AUTOMATIC TICK IN ItemManager caps :)"),
+    EXPERIMENTAL_TRANSFORM("Enable experimental transform items");
 
     private final String description;
 

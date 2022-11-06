@@ -16,16 +16,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.FeatureFlag;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Selection;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.callback.OnSelectionChanged;
+import com.fazziclay.opentoday.app.items.item.ExperimentalTransform;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.callback.CallbackImportance;
 import com.fazziclay.opentoday.callback.Status;
+import com.fazziclay.opentoday.ui.dialog.DialogSelectItemType;
 import com.fazziclay.opentoday.ui.dialog.DialogTextItemEditText;
 import com.fazziclay.opentoday.ui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.ui.interfaces.StorageEditsActions;
@@ -331,7 +334,8 @@ public class ItemStorageDrawer {
     }
 
     private void showRightMenu(Item item, View itemView) {
-        ItemManager itemManager = App.get(activity).getItemManager();
+        App app = App.get(activity);
+        ItemManager itemManager = app.getItemManager();
         PopupMenu menu = new PopupMenu(activity, itemView);
         menu.setForceShowIcon(true);
         menu.inflate(R.menu.menu_item);
@@ -342,6 +346,7 @@ public class ItemStorageDrawer {
             TextItem textItem = (TextItem) item;
             menu.getMenu().findItem(R.id.textItem_clickableUrls).setChecked(textItem.isClickableUrls());
         }
+        menu.getMenu().findItem(R.id.transform).setVisible(app.isFeatureFlag(FeatureFlag.EXPERIMENTAL_TRANSFORM));
         menu.setOnMenuItemClickListener(menuItem -> {
             boolean save = false;
             SettingsManager.ItemAction itemAction = null;
@@ -390,6 +395,19 @@ public class ItemStorageDrawer {
                         DialogTextItemEditText d = new DialogTextItemEditText(activity, textItem);
                         d.show();
                     }
+                    break;
+
+                case R.id.transform:
+                    new DialogSelectItemType(activity, type -> {
+                        ExperimentalTransform.Transform transform = ExperimentalTransform.transform(item, type);
+                        if (transform.isAllow()) {
+                            int pos = itemsStorage.getItemPosition(item);
+                            itemsStorage.addItem(transform.getResult(), pos + 1);
+
+                        } else {
+                            Toast.makeText(activity, R.string.transform_not_allowed, Toast.LENGTH_SHORT).show();
+                        }
+                    }).show();
                     break;
             }
 

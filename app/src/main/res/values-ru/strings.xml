@@ -208,4 +208,6 @@
     <string name="fragment_itemEditor_longtext_textSize">Размер большого текста</string>
     <string name="toolbar_more_selection_editSelected">Редактировать выбранный</string>
     <string name="toolbar_more_opentoday_debug_personalTick">Отладка: VIP Tick :)</string>
+    <string name="menuItem_transform">Трансформация</string>
+    <string name="transform_not_allowed">Трансформация не разрешена</string>
 </resources>

@@ -213,4 +213,6 @@
     <string name="fragment_itemEditor_longtext_textSize">Text size</string>
     <string name="toolbar_more_selection_editSelected">Edit selected</string>
     <string name="toolbar_more_opentoday_debug_personalTick">DEBUG: Personal tick</string>
+    <string name="menuItem_transform">Transform</string>
+    <string name="transform_not_allowed">Transform not allowed</string>
 </resources>

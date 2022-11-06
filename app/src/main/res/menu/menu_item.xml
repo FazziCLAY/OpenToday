@@ -24,6 +24,11 @@
         android:title="@string/menuItem_copy" />
 
     <item
+        android:id="@+id/transform"
+        android:visible="false"
+        android:title="@string/menuItem_transform" />
+
+    <item
         android:visible="false"
         android:id="@+id/delete"
         android:title="@string/menuItem_delete" />
