@@ -11,6 +11,7 @@ import com.fazziclay.opentoday.app.TickSession;
 import org.json.JSONObject;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class DayRepeatableCheckboxItem extends CheckboxItem {
     // START - Save
@@ -72,12 +73,18 @@ public class DayRepeatableCheckboxItem extends CheckboxItem {
     }
 
     @Override
+    public void setChecked(boolean s) {
+        latestDayOfYear = new GregorianCalendar().get(Calendar.DAY_OF_YEAR);
+        super.setChecked(s);
+    }
+
+    @Override
     public void tick(TickSession tickSession) {
         super.tick(tickSession);
         int dayOfYear = tickSession.getGregorianCalendar().get(Calendar.DAY_OF_YEAR);
         if (dayOfYear != latestDayOfYear) {
+            latestDayOfYear = dayOfYear;
             if (isChecked() != startValue) {
-                latestDayOfYear = dayOfYear;
                 setChecked(startValue);
                 visibleChanged();
                 tickSession.saveNeeded();
