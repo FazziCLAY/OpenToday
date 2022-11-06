@@ -92,7 +92,7 @@ Structure
 
 ## Tree of code (show & not fully)
 ```css
-ru.fazziclay.opentoday
+com.fazziclay.opentoday
 |
 | app - app logic
   | App - main application class (used by AndroidManifest.xml)

@@ -34,7 +34,7 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
-    namespace 'ru.fazziclay.opentoday'
+    namespace 'com.fazziclay.opentoday'
 }
 
 dependencies {
