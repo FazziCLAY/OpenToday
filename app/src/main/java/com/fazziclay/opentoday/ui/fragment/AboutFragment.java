@@ -37,7 +37,7 @@ public class AboutFragment extends Fragment {
         // View
         binding = FragmentAboutBinding.inflate(inflater);
         binding.textVersion.setText(App.VERSION_NAME);
-        binding.textPackage.setText(App.APPLICATION_ID);
+        binding.textPackage.setText(App.APPLICATION_ID.replace("ru.", "com.")); // oh :(
 
         viewClick(binding.title, this::manuallyCrashInteract);
         viewClick(binding.sourceCode, () -> NetworkUtil.openBrowser(requireActivity(), "https://github.com/fazziclay/opentoday"));
