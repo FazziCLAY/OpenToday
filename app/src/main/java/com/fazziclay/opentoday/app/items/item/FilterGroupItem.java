@@ -261,19 +261,17 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
             }
         }
 
-        boolean isUpdated = false;
-        int i = 0;
-        for (ItemFilterWrapper temp : temps) {
-            if (i >= activeItems.size()) {
-                isUpdated = true;
-                break;
+        boolean isUpdated = activeItems.size() != temps.size();
+        if (!isUpdated) {
+            int i = 0;
+            for (ItemFilterWrapper temp : temps) {
+                ItemFilterWrapper active = activeItems.get(i);
+                if (temp != active) {
+                    isUpdated = true;
+                    break;
+                }
+                i++;
             }
-            ItemFilterWrapper active = activeItems.get(i);
-            if (temp != active) {
-                isUpdated = true;
-                break;
-            }
-            i++;
         }
 
         if (isUpdated) {
