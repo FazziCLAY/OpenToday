@@ -101,6 +101,17 @@ com.fazziclay.opentoday
   | |
   | | item - (items)
   | | |
+  | | | ItemsRegistry - contain all items (Item.class, "Item", EmportExportTool, howToCreateEmpty, howToCopy, R.string.itemDisplayName)
+  | | | Item - the father of all aitems (see items tree in README.md)
+  | | | TextItem
+  | | | CheckboxItem
+  | | | DayRepeatableCheckboxItem
+  | | | CounterItem
+  | | | GroupItem
+  | | | FilterGroupItem
+  | | | CycleList
+  | | | DebugTickCounterItem - item contain (int: counter) and add +1 every tick
+  | | | ItemController - controller on item (set when attach to itemsStorage)
   | |
   | | callback - (callbacks)
   | | |
@@ -130,8 +141,30 @@ com.fazziclay.opentoday
                 use api in 'https://fazziclay.github.io/api/project_3/...'
                 cached result if update not-available for '...cache/latest_update_check' (file contain unix MILLISeconds)
 | ui - ui logic
+  | activity
+  | |
+  | | MainActivity - (see UI tree in README.md)
   |
+  | UI - ui utils
   |
   |
 | (the rest is for convenience and it doesn't matter)
+```
+
+# UI Tree
+```css
+| MainActivity - mainActivity (current date of top, notfications)
+| |
+| | MainRootFragment - container of fragments, ItemsTabIncludeFragment by default
+| | |
+| | | ItemsTabIncludeFragment - (contain Toolbar, Tabs+ViewPager2: ItemsEditorRootFragment)
+| | | |
+| | | | ItemsEditorRootFragment - Root for ItemsStorage tree
+| | | | |
+| | | | | ItemsEditorFragment - Contain ItemsStorage drawer
+| | |
+| | | AboutFragment - about this app
+| | | SettingsFragment - settings of app (see app.settings.SettingsManager)
+| | | ImportFragment - import from text
+| | | DeleteItemsFragment - delete items (calls delete() for all provided items)
 ```
