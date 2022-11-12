@@ -1,5 +1,7 @@
 package com.fazziclay.opentoday.app.items.item;
 
+import androidx.annotation.NonNull;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -9,7 +11,8 @@ import java.util.List;
 public class ItemIEUtil {
     private static final String KEY_ITEMTYPE = "itemType";
 
-    public static JSONArray exportItemList(List<Item> items) throws Exception {
+    @NonNull
+    public static JSONArray exportItemList(@NonNull List<Item> items) throws Exception {
         return exportItemList(items.toArray(new Item[0]));
     }
 
