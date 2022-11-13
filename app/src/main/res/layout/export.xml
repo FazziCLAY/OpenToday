@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="2sp">
+
+    <CheckBox
+        android:id="@+id/export_allItems"
+        android:checked="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/export_allItems" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:paddingStart="25sp"
+        android:layout_height="wrap_content"
+        android:text="@string/export_allItems_info" />
+
+
+
+    <Space
+        android:layout_width="0sp"
+        android:layout_height="11sp" />
+
+
+
+    <CheckBox
+        android:id="@+id/export_settings"
+        android:checked="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/export_settings" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:paddingStart="25sp"
+        android:layout_height="wrap_content"
+        android:text="@string/export_settings_info" />
+
+
+
+    <Space
+        android:layout_width="0sp"
+        android:layout_height="11sp" />
+
+
+
+    <CheckBox
+        android:id="@+id/export_colorHistory"
+        android:checked="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/export_colorHistory" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:paddingStart="25sp"
+        android:layout_height="wrap_content"
+        android:text="@string/export_colorHistory_info" />
+
+
+    <Space
+        android:layout_width="0sp"
+        android:layout_height="11sp" />
+
+
+
+    <EditText
+        android:id="@+id/export_dialogMessage"
+        android:inputType="textMultiLine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/export_dialogMessage_hint"
+        android:importantForAutofill="no" />
+
+</LinearLayout>

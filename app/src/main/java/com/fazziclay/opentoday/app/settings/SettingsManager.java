@@ -9,6 +9,7 @@ import com.fazziclay.opentoday.annotation.Setter;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.util.L;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -53,10 +54,8 @@ public class SettingsManager {
         load();
     }
 
-    @Getter
-    public int getFirstDayOfWeek() { return firstDayOfWeek; }
-    @Setter
-    public void setFirstDayOfWeek(int firstDayOfWeek) { this.firstDayOfWeek = firstDayOfWeek; }
+    @Getter public int getFirstDayOfWeek() { return firstDayOfWeek; }
+    @Setter public void setFirstDayOfWeek(int firstDayOfWeek) { this.firstDayOfWeek = firstDayOfWeek; }
     @Getter public int getTheme() { return theme; }
     @Setter public void setTheme(int theme) { this.theme = theme; }
     @Getter public boolean isQuickNoteNotification() { return quickNoteNotification; }
@@ -121,28 +120,37 @@ public class SettingsManager {
 
     public void save() {
         try {
-            JSONObject j = new JSONObject();
-
-            String temp_firstDayOfWeek = this.firstDayOfWeek == Calendar.MONDAY ? FIRST_DAY_OF_WEEK_MONDAY : FIRST_DAY_OF_WEEK_SATURDAY;
-            String temp_theme = THEME_SYSTEM;
-            if (this.theme == AppCompatDelegate.MODE_NIGHT_YES) temp_theme = THEME_NIGHT;
-            if (this.theme == AppCompatDelegate.MODE_NIGHT_NO) temp_theme = THEME_LIGHT;
-
-            j.put(KEY_THEME, temp_theme);
-            j.put(KEY_FIRST_DAY_OF_WEEK, temp_firstDayOfWeek);
-            j.put(KEY_QUICK_NOTE_NOTIFICATION, this.quickNoteNotification);
-            j.put(KEY_PARSETIMEFROMQUICKNOTE, this.parseTimeFromQuickNote);
-            j.put(KEY_ISMINIMIZEGRAYCOLOR, this.isMinimizeGrayColor);
-            j.put(KEY_TRIMITEMNAMESONEDIT, this.trimItemNamesOnEdit);
-            j.put("itemOnClickAction", itemOnClickAction.name());
-            j.put("itemOnLeftAction", itemOnLeftAction.name());
-            j.put("quickNoteNotificationItemsStorageId", quickNoteNotificationItemsStorageId != null ? quickNoteNotificationItemsStorageId.toString() : null);
-
+            JSONObject j = exportJSONSettings();
             FileUtil.setText(saveFile, j.toString());
         } catch (Exception e) {
             L.o("SettingsManager", "save", e);
             App.exception(null, e);
         }
+    }
+
+    public JSONObject exportJSONSettings() throws JSONException {
+        JSONObject j = new JSONObject();
+
+        String temp_firstDayOfWeek = this.firstDayOfWeek == Calendar.MONDAY ? FIRST_DAY_OF_WEEK_MONDAY : FIRST_DAY_OF_WEEK_SATURDAY;
+        String temp_theme = THEME_SYSTEM;
+        if (this.theme == AppCompatDelegate.MODE_NIGHT_YES) temp_theme = THEME_NIGHT;
+        if (this.theme == AppCompatDelegate.MODE_NIGHT_NO) temp_theme = THEME_LIGHT;
+
+        j.put(KEY_THEME, temp_theme);
+        j.put(KEY_FIRST_DAY_OF_WEEK, temp_firstDayOfWeek);
+        j.put(KEY_QUICK_NOTE_NOTIFICATION, this.quickNoteNotification);
+        j.put(KEY_PARSETIMEFROMQUICKNOTE, this.parseTimeFromQuickNote);
+        j.put(KEY_ISMINIMIZEGRAYCOLOR, this.isMinimizeGrayColor);
+        j.put(KEY_TRIMITEMNAMESONEDIT, this.trimItemNamesOnEdit);
+        j.put("itemOnClickAction", itemOnClickAction.name());
+        j.put("itemOnLeftAction", itemOnLeftAction.name());
+        j.put("quickNoteNotificationItemsStorageId", quickNoteNotificationItemsStorageId != null ? quickNoteNotificationItemsStorageId.toString() : null);
+        return j;
+    }
+
+    public void importData(JSONObject settings) {
+        FileUtil.setText(saveFile, settings.toString());
+        load();
     }
 
 

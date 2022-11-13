@@ -200,8 +200,8 @@ public class ItemManager {
         queueSave();
     }
 
-    private void addTab(@NonNull Tab tab) {
-        if (tab.getId() == null) tab.setId(UUID.randomUUID());
+    public void addTab(@NonNull Tab tab) {
+        tab.setId(UUID.randomUUID());
         tab.setController(itemsTabController);
         this.tabs.add(tab);
         internalOnTabChanged();

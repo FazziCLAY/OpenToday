@@ -84,16 +84,28 @@ public class ColorHistoryManager {
 
     public void save() {
         try {
-            JSONArray ja = new JSONArray();
-            for (Integer i : history) {
-                ja.put(i);
-            }
-            JSONObject j = new JSONObject();
-            j.put("history", ja);
-            j.put("locked", locked);
+            JSONObject j = exportJSONColorHistory();
             FileUtil.setText(dataFile, j.toString());
         } catch (JSONException e) {
             throw new RuntimeException("Save exception", e);
         }
+    }
+
+    public void importData(JSONObject colorHistory) {
+        FileUtil.setText(dataFile, colorHistory.toString());
+        List<Integer> r = load();
+        this.history.clear();
+        this.history.addAll(r);
+    }
+
+    public JSONObject exportJSONColorHistory() throws JSONException {
+        JSONArray ja = new JSONArray();
+        for (Integer i : history) {
+            ja.put(i);
+        }
+        JSONObject j = new JSONObject();
+        j.put("history", ja);
+        j.put("locked", locked);
+        return j;
     }
 }

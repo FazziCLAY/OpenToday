@@ -1,6 +1,7 @@
 package com.fazziclay.opentoday.ui.toolbar;
 
 import static com.fazziclay.opentoday.util.InlineUtil.viewClick;
+import static com.fazziclay.opentoday.util.InlineUtil.viewLong;
 import static com.fazziclay.opentoday.util.InlineUtil.viewVisible;
 
 import android.app.Activity;
@@ -29,7 +30,7 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.FeatureFlag;
 import com.fazziclay.opentoday.app.items.ID;
-import com.fazziclay.opentoday.app.items.ImportWrapper;
+import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Selection;
@@ -468,9 +469,9 @@ public class AppToolbar {
             b.notEmpty.setVisibility(View.GONE);
         }
 
-        viewClick(b.exportSelected, () -> {
+        Runnable export = () -> {
             try {
-                ImportWrapper.Builder builder = ImportWrapper.createImport();
+                ImportWrapper.Builder builder = ImportWrapper.createImport(ImportWrapper.Permission.ADD_ITEMS_TO_CURRENT);
                 for (Selection selection : itemManager.getSelections()) {
                     builder.addItem(selection.getItem());
                 }
@@ -482,6 +483,37 @@ public class AppToolbar {
             } catch (Exception e) {
                 Toast.makeText(activity, activity.getString(R.string.toolbar_more_selection_export_exception, e.toString()), Toast.LENGTH_SHORT).show();
             }
+        };
+
+        viewClick(b.exportSelected, export);
+        
+        viewLong(b.exportSelected, () -> {
+            EditText dialogMessage = new EditText(activity);
+
+            new AlertDialog.Builder(activity)
+                    .setTitle(R.string.toolbar_more_selection_export_setMessage_title)
+                    .setView(dialogMessage)
+                    .setNeutralButton(R.string.toolbar_more_selection_export_setMessage_nomsg, (ignore0, ignore1) -> export.run())
+                    .setPositiveButton(R.string.toolbar_more_selection_export_setMessage_export, (ignore2, ignore3) -> {
+                        String msg = dialogMessage.getText().toString();
+
+                        try {
+                            ImportWrapper.Builder builder = ImportWrapper.createImport(ImportWrapper.Permission.ADD_ITEMS_TO_CURRENT, ImportWrapper.Permission.PRE_IMPORT_SHOW_DIALOG);
+                            for (Selection selection : itemManager.getSelections()) {
+                                builder.addItem(selection.getItem());
+                            }
+                            builder.setDialogMessage(msg);
+                            ImportWrapper importWrapper = builder.build();
+                            ClipboardManager clipboardManager = activity.getSystemService(ClipboardManager.class);
+                            clipboardManager.setPrimaryClip(ClipData.newPlainText(activity.getString(R.string.toolbar_more_selection_export_clipdata_label), importWrapper.finalExport()));
+                            Toast.makeText(activity, R.string.toolbar_more_selection_export_success, Toast.LENGTH_SHORT).show();
+
+                        } catch (Exception e) {
+                            Toast.makeText(activity, activity.getString(R.string.toolbar_more_selection_export_exception, e.toString()), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setNegativeButton(R.string.toolbar_more_selection_export_setMessage_cancel, null)
+                    .show();
         });
 
         // Deselect all

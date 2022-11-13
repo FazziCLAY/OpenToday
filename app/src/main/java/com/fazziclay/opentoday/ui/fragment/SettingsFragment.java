@@ -1,7 +1,13 @@
 package com.fazziclay.opentoday.ui.fragment;
 
+import static com.fazziclay.opentoday.util.InlineUtil.*;
+
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,11 +28,19 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.ColorHistoryManager;
 import com.fazziclay.opentoday.app.FeatureFlag;
+import com.fazziclay.opentoday.app.ImportWrapper;
+import com.fazziclay.opentoday.app.items.ItemManager;
+import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
+import com.fazziclay.opentoday.databinding.ExportBinding;
 import com.fazziclay.opentoday.databinding.FragmentSettingsBinding;
-import com.fazziclay.opentoday.util.InlineUtil;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
+
+import org.json.JSONException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SettingsFragment extends Fragment {
     public static SettingsFragment create() {
@@ -60,7 +75,7 @@ public class SettingsFragment extends Fragment {
 
         // QuickNote
         binding.quickNoteCheckbox.setChecked(settingsManager.isQuickNoteNotification());
-        InlineUtil.viewClick(binding.quickNoteCheckbox, () -> {
+        viewClick(binding.quickNoteCheckbox, () -> {
             settingsManager.setQuickNoteNotification(binding.quickNoteCheckbox.isChecked());
             if (settingsManager.isQuickNoteNotification()) {
                 QuickNoteReceiver.sendQuickNoteNotification(requireContext());
@@ -72,32 +87,34 @@ public class SettingsFragment extends Fragment {
 
         // Parse time from quick note
         binding.parseTimeFromQuickNote.setChecked(settingsManager.isParseTimeFromQuickNote());
-        InlineUtil.viewClick(binding.parseTimeFromQuickNote, () -> {
+        viewClick(binding.parseTimeFromQuickNote, () -> {
             settingsManager.setParseTimeFromQuickNote(binding.parseTimeFromQuickNote.isChecked());
             settingsManager.save();
         });
 
         // Minimize gray color
         binding.minimizeGrayColor.setChecked(settingsManager.isMinimizeGrayColor());
-        InlineUtil.viewClick(binding.minimizeGrayColor, () -> {
+        viewClick(binding.minimizeGrayColor, () -> {
             settingsManager.setMinimizeGrayColor(binding.minimizeGrayColor.isChecked());
             settingsManager.save();
         });
 
         // Trim item names in Editor
         binding.trimItemNamesOnEdit.setChecked(settingsManager.isTrimItemNamesOnEdit());
-        InlineUtil.viewClick(binding.trimItemNamesOnEdit, () -> {
+        viewClick(binding.trimItemNamesOnEdit, () -> {
             settingsManager.setTrimItemNamesOnEdit(binding.trimItemNamesOnEdit.isChecked());
             settingsManager.save();
         });
 
         // Lock color history
-        InlineUtil.viewClick(binding.colorHistoryTitle, this::experimentalFeaturesInteract);
+        viewClick(binding.colorHistoryTitle, this::experimentalFeaturesInteract);
         binding.colorHistoryLocked.setChecked(colorHistoryManager.isLocked());
-        InlineUtil.viewClick(binding.colorHistoryLocked, () -> {
+        viewClick(binding.colorHistoryLocked, () -> {
             colorHistoryManager.setLocked(binding.colorHistoryLocked.isChecked());
             colorHistoryManager.save();
         });
+
+        viewClick(binding.export, () -> showExportDialog(requireActivity(), settingsManager, colorHistoryManager));
     }
 
     private void setupThemeSpinner() {
@@ -122,6 +139,64 @@ public class SettingsFragment extends Fragment {
         });
     }
 
+    public static void showExportDialog(Activity context, SettingsManager settingsManager, ColorHistoryManager colorHistoryManager) {
+        ExportBinding binding = ExportBinding.inflate(context.getLayoutInflater());
+        
+        new AlertDialog.Builder(context)
+                .setView(binding.getRoot())
+                .setTitle(R.string.settings_export_dialog_title)
+                .setNegativeButton(R.string.abc_cancel, null)
+                .setPositiveButton(R.string.settings_export_dialog_export, (ignore0, ignore1) -> {
+                    final ItemManager itemManager = App.get(context).getItemManager();
+                    List<ImportWrapper.Permission> perms = new ArrayList<>();
+                    final boolean isAllItems = binding.exportAllItems.isChecked();
+                    final boolean isSettings = binding.exportSettings.isChecked();
+                    final boolean isColorHistory = binding.exportColorHistory.isChecked();
+
+                    final String dialogMessage = binding.exportDialogMessage.getText().toString().trim();
+                    final boolean isDialogMessage = !dialogMessage.isEmpty();
+
+                    if (isAllItems) perms.add(ImportWrapper.Permission.ADD_TABS);
+                    if (isSettings) perms.add(ImportWrapper.Permission.OVERWRITE_SETTINGS);
+                    if (isColorHistory) perms.add(ImportWrapper.Permission.OVERWRITE_COLOR_HISTORY);
+                    if (isDialogMessage) perms.add(ImportWrapper.Permission.PRE_IMPORT_SHOW_DIALOG);
+
+
+                    ImportWrapper.Builder i = ImportWrapper.createImport(perms.toArray(new ImportWrapper.Permission[0]));
+                    if (isDialogMessage) i.setDialogMessage(dialogMessage);
+                    if (isAllItems) i.addTabAll(itemManager.getTabs().toArray(new Tab[0]));
+                    if (isSettings) {
+                        try {
+                            i.setSettings(settingsManager.exportJSONSettings());
+                        } catch (JSONException e) {
+                            Toast.makeText(context, context.getString(R.string.export_error, e.toString()), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+                    if (isColorHistory) {
+                        try {
+                            i.setColorHistory(colorHistoryManager.exportJSONColorHistory());
+                        } catch (JSONException e) {
+                            Toast.makeText(context, context.getString(R.string.export_error, e.toString()), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+
+                    try {
+                        String s = i.build().finalExport();
+
+                        ClipboardManager clipboardManager = context.getSystemService(ClipboardManager.class);
+                        clipboardManager.setPrimaryClip(ClipData.newPlainText(context.getString(R.string.export_clipdata_label), s));
+
+                        Toast.makeText(context, R.string.export_success, Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(context, context.getString(R.string.export_error, e.toString()), Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .show();
+    }
+
     private void experimentalFeaturesInteract() {
         if (System.currentTimeMillis() - easterEggLastClick < 1000) {
             easterEggCounter++;
@@ -143,7 +218,7 @@ public class SettingsFragment extends Fragment {
             CheckBox c = new CheckBox(requireContext());
             c.setText(featureFlag.name());
             c.setChecked(app.isFeatureFlag(featureFlag));
-            InlineUtil.viewClick(c, () -> {
+            viewClick(c, () -> {
                 boolean is = c.isChecked();
                 if (is) {
                     if (!app.isFeatureFlag(featureFlag)) {
