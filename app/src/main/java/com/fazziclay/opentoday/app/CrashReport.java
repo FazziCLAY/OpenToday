@@ -129,7 +129,7 @@ public class CrashReport {
             versionFileText = temp.substring(0, temp.length()-1);
 
         } catch (Exception e) {
-            versionFileText = "(Unknown " + e + ")";
+            versionFileText = "* * (Unknown " + e + ")";
         }
 
         UUID instanceId = null;
