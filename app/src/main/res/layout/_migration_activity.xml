@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="#000000"
+    android:padding="5sp"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ProgressBar
+            android:indeterminate="true"
+            android:id="@+id/loading"
+            android:layout_width="match_parent"
+            android:layout_height="100sp" />
+
+        <LinearLayout
+            android:id="@+id/loadedContent"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#dd44ff"
+                android:textSize="25sp"
+                android:text="@string/_migration_title" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="#ffffff"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/firstText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffff"
+                tools:text="Mega text\n*\n*\n*\n*\n*\n*\n*\n*\nThis is placeholdertext"
+                android:textSize="20sp" />
+
+
+
+            <Space
+                android:layout_width="0sp"
+                android:layout_height="20sp" />
+
+
+
+
+
+            <TextView
+                android:id="@+id/downloadTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffff"
+                tools:text="Download here"
+                android:textSize="22sp" />
+
+
+            <Button
+                android:id="@+id/downloadButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="66sp"
+                android:textAllCaps="false"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/downloadDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#DDDDDD"
+                tools:text="Download new apk"
+                android:text=""
+                android:textSize="18sp" />
+
+
+
+            <Space
+                android:layout_width="0sp"
+                android:layout_height="20sp" />
+
+
+            <TextView
+                android:id="@+id/exportTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffff"
+                tools:text="Export here"
+                android:textSize="22sp" />
+
+
+            <Button
+                android:id="@+id/exportButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="66sp"
+                android:textAllCaps="false"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/exportDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#DDDDDD"
+                tools:text="click text"
+                android:text=""
+                android:textSize="18sp" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

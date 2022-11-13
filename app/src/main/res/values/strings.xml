@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">OpenToday</string>
+    <!-- TODO: remove OLD -->
+    <string name="app_name" translatable="false">OpenToday (Old)</string>
     <string name="aboutapp_title">About OpenToday:</string>
     <string name="aboutapp_text_version">Version:</string>
     <string name="aboutapp_text_package">Package:</string>
@@ -18,10 +19,6 @@
     <string name="notification_foreground_text">For Android policy</string>
     <string name="openSourceLicenses_title">OpenSource licenses</string>
     <string name="openSourceLicense_title">License</string>
-    <string name="item_text">Text</string>
-    <string name="item_checkbox">Checkbox</string>
-    <string name="item_checkboxDayRepeatable">Checkbox (Everyday)</string>
-    <string name="item_cycleList">Cycle list</string>
     <string name="dialog_selectItemAction_cancel">Cancel</string>
     <string name="dialog_selectItemType_select">Select</string>
     <string name="dialogItem_apply">Save</string>
@@ -44,7 +41,6 @@
     <string name="abc_error_browserNotFound">Please install web-browser</string>
     <string name="dayRepeatable_startValue">Start value</string>
     <string name="dialog_item_module_cyclelist_warninigApply">Important: The changes are applied immediately here! And it will be impossible to cancel them</string>
-    <string name="item_counter">Counter</string>
     <string name="empty"><![CDATA[<Empty>]]></string>
     <string name="counter_value">Counter value</string>
     <string name="counter_step">Counter step</string>
@@ -54,9 +50,7 @@
     <string name="cycleListItem_tick_all">All items</string>
     <string name="cycleListItem_tick_current">Current</string>
     <string name="dayRepeatable_latestRegenerate">Latest regenerate: %s</string>
-    <string name="item_text_editText">Edit text</string>
     <string name="selectItemTypeDialog_create">Create</string>
-    <string name="item_group">Group</string>
     <string name="dialog_item_module_cyclelist_tickMode">Tick mode</string>
     <string name="menuItem_copy">Copy</string>
     <string name="menuItem_selected">Selected</string>
@@ -65,8 +59,14 @@
     <string name="toolbar_opentoday" translatable="false">OpenToday</string>
     <string name="toolbar_more_opentoday_about">About</string>
     <string name="toolbar_more_opentoday_settings">Settings</string>
+
     <string name="toolbar_more_selection_deselectAll">Deselect all</string>
     <string name="toolbar_more_selection_moveSelectedHere">Move selected here</string>
+    <string name="toolbar_more_selection_export_setMessage_cancel">Cancel</string>
+    <string name="toolbar_more_selection_export_setMessage_export">Export</string>
+    <string name="toolbar_more_selection_export_setMessage_nomsg">No message</string>
+    <string name="toolbar_more_selection_export_setMessage_title">Export with message</string>
+
     <string name="toolbar_items">Items</string>
     <string name="toolbar_file">File</string>
     <string name="toolbar_more_file_saveAll">Save all</string>
@@ -112,7 +112,6 @@
     <string name="dialog_itemNotification_apply">Apply</string>
     <string name="dialog_itemNotification_cancel">Cancel</string>
     <string name="dialog_itemNotification_incorrectNotificationId">Incorrect notification id field</string>
-    <string name="item_filterGroup">Filter group</string>
     <string name="toolbar_more_file_import">Import</string>
     <string name="toolbar_more_file_export">Export</string>
     <string name="toolbar_more_selection_export">Export selected</string>
@@ -185,7 +184,6 @@
     <string name="toolbar_more_selection_copySelectedHere">Copy selected here</string>
     <string name="toolbar_more_file_import_unsupported">Unsupported</string>
     <string name="abc_coped">Coped!</string>
-    <string name="item_debugTickCounter">Debug Tick Counter</string>
     <string name="quickNote">Quick note</string>
     <string name="toolbar_more_opentoday_calendar">Calendar</string>
     <string name="toolbar_more_opentoday_toggleLogsOverlay">DEBUG: Toggle logs overlay</string>
@@ -202,9 +200,55 @@
     <string name="settings_theme_system">System follow</string>
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_night">Night</string>
+    <string name="settings_export">Export</string>
+    <string name="settings_export_dialog_title">Export</string>
+    <string name="settings_export_dialog_export">Export</string>
+
+    <!-- Import -->
+    <string name="importFragment_dialog_main_title">Import</string>
+    <string name="importFragment_dialog_main_message">This import permissions:\n%s\n\nInfo:\n%s</string>
+    <string name="importFragment_dialog_main_cancel">Cancel</string>
+    <string name="importFragment_dialog_main_import">Import</string>
+    <string name="importFragment_dialog_importMessage_title">Message from import</string>
+    <string name="importFragment_dialog_importMessage_import">Import</string>
+    <string name="import_permission_ADD_ITEMS_TO_CURRENT">Add items to current open container</string>
+    <string name="import_permission_ADD_TABS">Add tabs</string>
+    <string name="import_permission_PRE_IMPORT_SHOW_DIALOG">Show custom message on pre import</string>
+    <string name="import_permission_OVERWRITE_SETTINGS">Overwrite app settings</string>
+    <string name="import_permission_OVERWRITE_COLOR_HISTORY">Overwrite app color history</string>
+    <string name="importFragment_dialog_main_info_items">* Items: %s</string>
+    <string name="importFragment_dialog_main_info_tabs">* Tabs: %s</string>
+    <string name="importFragment_dialog_main_info_overwriteColorHistory">* Change color history</string>
+    <string name="importFragment_dialog_main_info_overwriteSettings">* Change app settings</string>
 
 
+    <!-- Items -->
+    <string name="item_text">Text</string>
     <string name="item_longTextItem">Long text</string>
+    <string name="item_checkbox">Checkbox</string>
+    <string name="item_checkboxDayRepeatable">Checkbox (Everyday)</string>
+    <string name="item_counter">Counter</string>
+    <string name="item_cycleList">Cycle list</string>
+    <string name="item_group">Group</string>
+    <string name="item_filterGroup">Filter group</string>
+    <string name="item_debugTickCounter">Debug Tick Counter</string>
+
+
+    <!-- Export -->
+    <string name="export_allItems">All items</string>
+    <string name="export_allItems_info">Export all tabs of items</string>
+    <string name="export_settings">Settings</string>
+    <string name="export_settings_info">Export settings of app</string>
+    <string name="export_colorHistory_info">Color history</string>
+    <string name="export_colorHistory">Color history of color pickers</string>
+    <string name="export_dialogMessage_hint">Enter text for import (optional)</string>
+    <string name="export_clipdata_label">OpenToday export</string>
+    <string name="export_error">Error: %s</string>
+    <string name="export_success">Export success: Coped to clipboard</string>
+
+
+    <!-- Other... (Trash) -->
+    <string name="item_text_editText">Edit text</string>
     <string name="fragment_itemEditor_checkbox_isChecked">Is checked</string>
     <string name="fragment_itemEditor_text_textColor">Text color</string>
     <string name="dialog_item_module_longtext_text_title">Long text</string>
@@ -215,4 +259,11 @@
     <string name="toolbar_more_opentoday_debug_personalTick">DEBUG: Personal tick</string>
     <string name="menuItem_transform">Transform</string>
     <string name="transform_not_allowed">Transform not allowed</string>
+    <string name="abc_success">Successfully</string>
+
+
+    <string name="_migration_title">Time To Migration!</string>
+    <string name="_migration_shortDescription">It\'s time to update the app to the release version!\nThis means that you need to go through some steps to update the application.</string>
+    <string name="_migration_clickToDetails">Click to details</string>
+    <string name="_migration_dialogStart">Start</string>
 </resources>

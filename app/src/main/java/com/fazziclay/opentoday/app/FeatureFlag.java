@@ -10,7 +10,8 @@ public enum FeatureFlag {
     ALWAYS_SHOW_SAVE_STATUS("ItemManager: always show save status in toast"),
     AVAILABLE_UI_PERSONAL_TICK("Toolbar -> OpenToday debug button"),
     DISABLE_AUTOMATIC_TICK("DISABLE ALL AUTOMATIC TICK IN ItemManager caps :)"),
-    EXPERIMENTAL_TRANSFORM("Enable experimental transform items");
+    EXPERIMENTAL_TRANSFORM("Enable experimental transform items"),
+    PREVIEW_MIGRATION("Allow migration on 'previewMode' in m.json");
 
     private final String description;
 

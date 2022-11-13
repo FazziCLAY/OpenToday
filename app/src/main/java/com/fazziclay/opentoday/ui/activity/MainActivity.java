@@ -1,8 +1,11 @@
 package com.fazziclay.opentoday.ui.activity;
 
-import static com.fazziclay.opentoday.util.InlineUtil.*;
+import static com.fazziclay.opentoday.util.InlineUtil.viewClick;
+import static com.fazziclay.opentoday.util.InlineUtil.viewVisible;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -16,6 +19,8 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.FeatureFlag;
 import com.fazziclay.opentoday.app.Telemetry;
+import com.fazziclay.opentoday.app.migration.Migration;
+import com.fazziclay.opentoday.app.migration.MigrationActivity;
 import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.updatechecker.UpdateChecker;
 import com.fazziclay.opentoday.callback.CallbackImportance;
@@ -23,7 +28,6 @@ import com.fazziclay.opentoday.databinding.ActivityMainBinding;
 import com.fazziclay.opentoday.ui.UITickService;
 import com.fazziclay.opentoday.ui.fragment.MainRootFragment;
 import com.fazziclay.opentoday.ui.interfaces.ContainBackStack;
-import com.fazziclay.opentoday.util.InlineUtil;
 import com.fazziclay.opentoday.util.L;
 import com.fazziclay.opentoday.util.NetworkUtil;
 import com.fazziclay.opentoday.util.OnDebugLog;
@@ -79,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
         setupAppDebugNotify();
         setupUpdateAvailableNotify();
+        setupMigrationNotify();
         setupCurrentDate();
 
         if (app.getSettingsManager().isQuickNoteNotification()) {
@@ -93,6 +98,27 @@ public class MainActivity extends AppCompatActivity {
             StringBuilder text = new StringBuilder("MainActivity startup time:\n").append(startupTime).append("ms");
             Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void setupMigrationNotify() {
+        Migration.is((isTime, m, e) -> runOnUiThread(() -> {
+            if (isTime && m != null) {
+                if (m.isTimeForMe(app)) {
+                    viewVisible(binding.migrationNotification.getRoot(), true, View.GONE);
+                    viewClick(binding.migrationNotification.getRoot(), () -> {
+                        startActivity(new Intent(this, MigrationActivity.class));
+                    });
+
+                    new AlertDialog.Builder(this)
+                            .setTitle(R.string._migration_title)
+                            .setMessage(R.string._migration_shortDescription)
+                            .setPositiveButton(R.string._migration_dialogStart, (gfd, gf56) -> {
+                                startActivity(new Intent(this, MigrationActivity.class));
+                            })
+                            .show();
+                }
+            }
+        }));
     }
 
     @Override

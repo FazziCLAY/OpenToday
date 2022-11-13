@@ -10,43 +10,60 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
+        android:usesCleartextTraffic="true"
         android:theme="@style/Theme.OpenToday">
+        <!-- TODO: delete cleartext -->
 
         <!-- Activities -->
-        <activity android:name="com.fazziclay.opentoday.ui.activity.PreMainActivity"
+        <activity
+            android:name="com.fazziclay.opentoday.ui.activity.PreMainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.fazziclay.opentoday.ui.activity.OpenSourceLicensesActivity"
+        <activity
+            android:name="com.fazziclay.opentoday.ui.activity.OpenSourceLicensesActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <activity android:name="com.fazziclay.opentoday.ui.activity.OpenSourceLicenseActivity" android:exported="false" />
-        <activity android:name="com.fazziclay.opentoday.ui.activity.MainActivity" android:exported="false" />
-
-        <activity android:name="com.fazziclay.opentoday.debug.TestItemViewGenerator" android:exported="false" />
-        <activity android:name="com.fazziclay.opentoday.debug.TestItemStorageDrawer" android:exported="false" />
-        <activity android:name="com.fazziclay.opentoday.debug.TestActivityFragment" android:exported="false" />
-        <activity android:name="com.fazziclay.opentoday.debug.TestItemManager" android:exported="false" />
-        <activity android:name="com.fazziclay.opentoday.ui.activity.CrashReportActivity" android:exported="true">
+        <activity
+            android:name="com.fazziclay.opentoday.ui.activity.OpenSourceLicenseActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.fazziclay.opentoday.ui.activity.MainActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.fazziclay.opentoday.debug.TestItemViewGenerator"
+            android:exported="false" />
+        <activity
+            android:name="com.fazziclay.opentoday.debug.TestItemStorageDrawer"
+            android:exported="false" />
+        <activity
+            android:name="com.fazziclay.opentoday.debug.TestActivityFragment"
+            android:exported="false" />
+        <activity
+            android:name="com.fazziclay.opentoday.debug.TestItemManager"
+            android:exported="false" />
+        <activity
+            android:name="com.fazziclay.opentoday.app.migration.MigrationActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.fazziclay.opentoday.ui.activity.CrashReportActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
-        </activity>
-
-        <!-- Services -->
-
+        </activity> <!-- Services -->
         <!-- Receivers -->
         <receiver
             android:name="com.fazziclay.opentoday.app.receiver.ItemsTickReceiver"
             android:enabled="true"
             android:exported="false" />
-
         <receiver
             android:name="com.fazziclay.opentoday.app.receiver.QuickNoteReceiver"
             android:enabled="true"

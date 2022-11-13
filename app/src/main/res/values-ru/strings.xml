@@ -20,10 +20,6 @@
     <string name="notification_foreground_text">Для политики Android</string>
     <string name="openSourceLicenses_title">OpenSource лицензии</string>
     <string name="openSourceLicense_title">Лицензия</string>
-    <string name="item_text">Текст</string>
-    <string name="item_checkbox">Галочка</string>
-    <string name="item_checkboxDayRepeatable">Галочка (Ежедневная)</string>
-    <string name="item_cycleList">Зацикленный список</string>
     <string name="dialog_selectItemAction_cancel">Отмена</string>
     <string name="dialog_selectItemType_select">Выбрать</string>
     <string name="dialogItem_apply">Сохранить</string>
@@ -45,7 +41,7 @@
     <string name="update_available">Доступно обновление! Нажмите для скачивания</string>
     <string name="dayRepeatable_startValue">Начальное значение</string>
     <string name="dialog_item_module_cyclelist_warninigApply">Важно: Изменения тут применяются сразу! И их невозможно будет отменить</string>
-    <string name="item_counter">Счётчик</string>
+
     <string name="empty"><![CDATA[<Пусто>]]></string>
     <string name="counter_value">Значение счётчика</string>
     <string name="counter_step">Шаг счётчика</string>
@@ -55,25 +51,62 @@
     <string name="dayRepeatable_latestRegenerate">Последний сброс: %s</string>
     <string name="cycleListItem_tick_all">Все айтемы</string>
     <string name="cycleListItem_tick_current">Текущий выбранный</string>
-    <string name="item_text_editText">Редактировать текст</string>
     <string name="selectItemTypeDialog_create">Создать</string>
-    <string name="item_group">Группа</string>
     <string name="dialog_item_module_cyclelist_tickMode">Поведение тика</string>
-    <string name="menuItem_copy">Копировать</string>
     <string name="menuItem_selected">Выделенный</string>
     <string name="nothing_selected">Ничего не выделенно</string>
+
     <string name="toolbar_selection">Выделение</string>
     <string name="toolbar_more_opentoday_settings">Настройки</string>
     <string name="toolbar_more_opentoday_about">О приложении</string>
     <string name="toolbar_more_selection_deselectAll">Убрать выделение</string>
     <string name="toolbar_more_selection_moveSelectedHere">Переместить выбранные сюда</string>
+    <string name="toolbar_more_selection_export_setMessage_cancel">Отмена</string>
+    <string name="toolbar_more_selection_export_setMessage_export">Экспорт</string>
+    <string name="toolbar_more_selection_export_setMessage_nomsg">Без сообщения</string>
+    <string name="toolbar_more_selection_export_setMessage_title">Экспорт с сообщением</string>
+    <string name="toolbar_more_selection_editSelected">Редактировать выбранный</string>
+    <string name="toolbar_more_opentoday_debug_personalTick">Отладка: VIP Tick :)</string>
+    <string name="toolbar_more_opentoday_toggleLogsOverlay">ОТЛАДКА: Переключить показ логов</string>
+    <string name="toolbar_more_opentoday_calendar">Календарь</string>
+    <string name="toolbar_more_selection_copySelectedHere">Копировать выбранное сюда</string>
+    <string name="toolbar_more_file_import_unsupported">Не поддерживается</string>
+    <string name="toolbar_tabs_edit_name_hint">Введите новое имя…</string>
+    <string name="toolbar_more_items_add_exception">Ошибка: %s</string>
+    <string name="toolbar_tabs_addNew_name_hint">Введите имя вкладки…</string>
+    <string name="toolbar_tabs_edit_dialog_title">Редактирование \'%s\'</string>
+    <string name="toolbar_tabs_addNew_dialog_title">Добавить новую вкладку</string>
+    <string name="toolbar_tabs">Вкладки</string>
+    <string name="toolbar_tabs_title">Список вкладок:</string>
+    <string name="toolbar_more_items_tab_rename">Переименовать</string>
+    <string name="toolbar_more_items_tab_add">Создать</string>
+    <string name="toolbar_more_items_tab_delete">Удалить</string>
+    <string name="toolbar_more_file_import_success">Успешно</string>
+    <string name="toolbar_more_file_import_hint">Вставте экспортированный текст или ссылку</string>
+    <string name="toolbar_more_file_import_textHint">Введите сюда текст импорта или ссылку</string>
+    <string name="toolbar_more_file_import_cancel">Отмена</string>
+    <string name="toolbar_more_selection_export_success">Успешно</string>
+    <string name="toolbar_more_selection_export_clipdata_label">OpenToday экспорт</string>
     <string name="toolbar_items">Айтемы</string>
     <string name="toolbar_file">Файл</string>
     <string name="toolbar_more_file_saveAll">Сохранить всё</string>
     <string name="toolbar_more_file_saveAll_success">Успешно</string>
-    <string name="menuItem_delete">Удалить</string>
     <string name="toolbar_more_items_changeOnLeftSwipe">Свайп влево</string>
     <string name="toolbar_more_items_changeOnClick">Нажатие на айтем</string>
+    <string name="toolbar_more_selection_delete">Удалить выбранные</string>
+    <string name="toolbar_more_selection_info">Количество: %s</string>
+    <string name="toolbar_more_items_action_click">Нажмите что бы выбрать действие при нажатии</string>
+    <string name="toolbar_more_file_export">Экспорт</string>
+    <string name="toolbar_more_selection_export">Экспорт выбранного</string>
+    <string name="toolbar_more_file_import">Импорт</string>
+    <string name="toolbar_more_file_import_import">Импортировать!</string>
+    <string name="toolbar_more_file_import_exception">Ошибка:\n%s</string>
+    <string name="toolbar_more_selection_export_exception">Ошибка:\n%s</string>
+    <string name="toolbar_more_selection_nothingSelected">Ничего не выделенно</string>
+    <string name="toolbar_more_selection_empty">Ничего не выделенно!\nВыделите айтемы для использования этого меню</string>
+    <string name="toolbar_more_items_action_leftSwipe">Нажмите что бы выбрать действие при свайпе влево</string>
+
+    <string name="menuItem_delete">Удалить</string>
     <string name="itemAction_OPEN_EDITOR">Редактировать</string>
     <string name="itemAction_SELECT_REVERT">Выделение: Инвертировать</string>
     <string name="itemAction_SELECT_ON">Выделение: ВКЛ</string>
@@ -83,21 +116,19 @@
     <string name="itemAction_MINIMIZE_ON">Уменьшить: ВКЛ</string>
     <string name="itemAction_MINIMIZE_OFF">Уменьшить: ВЫКЛ</string>
     <string name="menuItem_openEditDialog">Редактировать</string>
-    <string name="toolbar_more_selection_delete">Удалить выбранные</string>
     <string name="dialog_previewDeleteItems_delete_cancel">Отмена</string>
     <string name="dialog_previewDeleteItems_delete_apply">УДАЛИТЬ</string>
     <string name="dialog_previewDeleteItems_delete_title">Удалить %s айтемов?</string>
-    <string name="toolbar_more_selection_info">Количество: %s</string>
     <string name="dialog_item_module_item_export">Экспорт</string>
     <string name="quickNote_notificationPattern">Быстрая заметка: %s</string>
     <string name="notification_quickNote_title">Быстрая заметка</string>
     <string name="selectItemTypeDialog_message">Нажмите что бы выбрать</string>
     <string name="dialog_selectItemAction_message">Нажмите что бы выбрать</string>
     <string name="dialog_selectItemAction_title">Выберите действие</string>
-    <string name="toolbar_more_items_action_click">Нажмите что бы выбрать действие при нажатии</string>
-    <string name="toolbar_more_items_action_leftSwipe">Нажмите что бы выбрать действие при свайпе влево</string>
     <string name="notification_items_title">Айтемы</string>
     <string name="dialog_item_module_item_notifications">Уведомления</string>
+
+    <string name="menuItem_copy">Копировать</string>
     <string name="dialog_item_module_item_editNotifications">Редактировать</string>
     <string name="itemNotification_day">Основано на Дне</string>
     <string name="itemNotification_add">Добавить</string>
@@ -105,22 +136,14 @@
     <string name="dialog_itemNotification_text">Текст уведомления</string>
     <string name="dialog_itemNotification_title">Заголовок уведомления</string>
     <string name="dialog_itemNotification_notifyid">АЙДИ Уведомления</string>
-    <string name="toolbar_more_selection_nothingSelected">Ничего не выделенно</string>
-    <string name="toolbar_more_selection_empty">Ничего не выделенно!\nВыделите айтемы для использования этого меню</string>
     <string name="dialog_itemNotification_subtext">Доп. текст</string>
     <string name="dialog_itemNotification_testNotify">Отправить тестовое уведомление</string>
     <string name="dialog_itemNotification_apply">Применить</string>
     <string name="dialog_itemNotification_cancel">Отменить</string>
     <string name="dialog_itemNotification_incorrectNotificationId">Не корректное поле \'АЙДИ Уведомления\'</string>
-    <string name="item_filterGroup">Фильтрованная группа</string>
-    <string name="toolbar_more_file_import">Импорт</string>
-    <string name="toolbar_more_file_export">Экспорт</string>
-    <string name="toolbar_more_selection_export">Экспорт выбранного</string>
-    <string name="toolbar_more_file_import_import">Импортировать!</string>
+
     <string name="dialog_editItemFilter_title_shift">Сдвиг</string>
     <string name="menuItem_copy_exception">Ошибка:\n%s</string>
-    <string name="toolbar_more_file_import_exception">Ошибка:\n%s</string>
-    <string name="toolbar_more_selection_export_exception">Ошибка:\n%s</string>
     <string name="dialog_editItemFilter_dayOfYear">День года</string>
     <string name="dialog_editItemFilter_second">Секунда</string>
     <string name="dialog_editItemFilter_minute">Минута</string>
@@ -134,22 +157,13 @@
     <string name="dialog_editItemFilter_title_value">Значение</string>
     <string name="dialog_editItemFilter_title_mode">Режим</string>
     <string name="dialog_editItemFilter_title_field">Поле</string>
-    <string name="toolbar_more_selection_export_clipdata_label">OpenToday экспорт</string>
-    <string name="toolbar_more_selection_export_success">Успешно</string>
-    <string name="toolbar_more_file_import_cancel">Отмена</string>
     <string name="notification_crash_title">Ошибки</string>
     <string name="crash_notification_title">Ошбка приложения</string>
     <string name="crash_notification_text">Нажмите для деталей</string>
     <string name="crash_notification_big_title">OpenToday завершился с ошибкой</string>
     <string name="crash_activity_sendToDeveloper">Отправить разработчику</string>
-    <string name="toolbar_more_file_import_success">Успешно</string>
-    <string name="toolbar_more_file_import_hint">Вставте экспортированный текст или ссылку</string>
-    <string name="toolbar_more_file_import_textHint">Введите сюда текст импорта или ссылку</string>
     <string name="quickNote_hint">Введите текст</string>
     <string name="quickNote_add">Добавить быструю заметку</string>
-    <string name="toolbar_more_items_tab_rename">Переименовать</string>
-    <string name="toolbar_more_items_tab_add">Создать</string>
-    <string name="toolbar_more_items_tab_delete">Удалить</string>
     <string name="tab_noEmptyName">Пустое имя недопустимо</string>
     <string name="exit_tab_2_count">Нажмите еще раз чтобы выйти</string>
 
@@ -162,28 +176,16 @@
     <string name="manuallyCrash_dialog_inputHint">Введите послание разработчику</string>
     <string name="dialog_item_module_item_notifications_empty">Уведомления отсутствуют!</string>
     <string name="dialog_editItemFilter_disable">Отключено</string>
-    <string name="toolbar_tabs">Вкладки</string>
-    <string name="toolbar_tabs_title">Список вкладок:</string>
     <string name="add_new_tab">Добавить новую вкладку</string>
     <string name="aboutapp_text_sourceCode">Исходный код</string>
     <string name="aboutapp_text_issues">Баги/идеи</string>
     <string name="openSourceLicense_cantStart">Невозможно запустить активити</string>
     <string name="openSourceLicense_cantStart_assesPath">Невозможно запустить активити: assesPath is null</string>
-    <string name="toolbar_tabs_addNew_dialog_title">Добавить новую вкладку</string>
     <string name="openSourceLicense_cantStart_exception">Ошибка: %s</string>
     <string name="openSourceLicenses_telemetry_warn">Для автоматической отправки ошибок приложения</string>
-    <string name="toolbar_tabs_addNew_name_hint">Введите имя вкладки…</string>
-    <string name="toolbar_tabs_edit_dialog_title">Редактирование \'%s\'</string>
-    <string name="toolbar_tabs_edit_name_hint">Введите новое имя…</string>
-    <string name="toolbar_more_items_add_exception">Ошибка: %s</string>
     <string name="dialog_item_module_item_copyItemId">Копировать АйДи айдема</string>
     <string name="debug_app">Эта версия приложения предназначена только для разработки! Скачайте последкий оффициальный релиз</string>
-    <string name="toolbar_more_selection_copySelectedHere">Копировать выбранное сюда</string>
-    <string name="toolbar_more_file_import_unsupported">Не поддерживается</string>
-    <string name="item_debugTickCounter">Отладка: Счётчик тиков</string>
     <string name="quickNote">Быстрая заметка</string>
-    <string name="toolbar_more_opentoday_calendar">Календарь</string>
-    <string name="toolbar_more_opentoday_toggleLogsOverlay">ОТЛАДКА: Переключить показ логов</string>
 
     <!-- Settings -->
     <string name="settings_сolorHistoryLocked">Заблокировать историю цветов</string>
@@ -197,17 +199,68 @@
     <string name="settings_theme_system">Как в системе</string>
     <string name="settings_theme_light">Светлая</string>
     <string name="settings_theme_night">Тёмная</string>
+    <string name="settings_export">Экспорт</string>
+    <string name="settings_export_dialog_title">Экспорт</string>
+    <string name="settings_export_dialog_export">Экспорт</string>
 
 
+    <!-- Import -->
+    <string name="importFragment_dialog_main_title">Импорт</string>
+    <string name="importFragment_dialog_main_message">Этот импорт содержит разрешения:\n%s\n\nИнформация:\n%s</string>
+    <string name="importFragment_dialog_main_cancel">Отмена</string>
+    <string name="importFragment_dialog_main_import">Импорт</string>
+    <string name="importFragment_dialog_importMessage_title">Сообщение от импорта</string>
+    <string name="importFragment_dialog_importMessage_import">Импорт</string>
+    <string name="import_permission_ADD_ITEMS_TO_CURRENT">Добавлять айтемы в текущей открытый контейнер</string>
+    <string name="import_permission_ADD_TABS">Добавлять вкладки</string>
+    <string name="import_permission_PRE_IMPORT_SHOW_DIALOG">Показовать сообщение перед импортом</string>
+    <string name="import_permission_OVERWRITE_SETTINGS">Перезаписать ваши настройки</string>
+    <string name="import_permission_OVERWRITE_COLOR_HISTORY">Перезаписать вашу историю цветов</string>
+    <string name="importFragment_dialog_main_info_items">* Айтемов: %s</string>
+    <string name="importFragment_dialog_main_info_tabs">* Вкладок: %s</string>
+    <string name="importFragment_dialog_main_info_overwriteColorHistory">* Изменение истории цвета</string>
+    <string name="importFragment_dialog_main_info_overwriteSettings">* Изменение настроек приложения</string>
+
+    <!-- Items -->
+    <string name="item_text">Текст</string>
     <string name="item_longTextItem">Большой текст</string>
+    <string name="item_checkbox">Галочка</string>
+    <string name="item_checkboxDayRepeatable">Галочка (Ежедневная)</string>
+    <string name="item_counter">Счётчик</string>
+    <string name="item_cycleList">Зацикленный список</string>
+    <string name="item_group">Группа</string>
+    <string name="item_filterGroup">Фильтрованная группа</string>
+    <string name="item_debugTickCounter">Отладка: Счётчик тиков</string>
+
+
+    <!-- Export -->
+    <string name="export_allItems">Все айтемы</string>
+    <string name="export_allItems_info">Экспортировать все вкладки и айтемы внутри</string>
+    <string name="export_settings">Настройки</string>
+    <string name="export_settings_info">Экспортировать настройки приложения</string>
+    <string name="export_colorHistory_info">История цветов</string>
+    <string name="export_colorHistory">Экспортировать историю цветов</string>
+    <string name="export_dialogMessage_hint">Введите текст для импорта (опционально)</string>
+    <string name="export_clipdata_label">OpenToday экспорт</string>
+    <string name="export_error">Ошибка: %s</string>
+    <string name="export_success">Успешно! Скопировано в буфер обмена</string>
+
+
+    <!-- Other... (Trash) -->
+    <string name="item_text_editText">Редактировать текст</string>
     <string name="fragment_itemEditor_checkbox_isChecked">Выполнено</string>
     <string name="fragment_itemEditor_text_textColor">Цвет текста</string>
     <string name="dialog_item_module_longtext_text_title">Большой текст</string>
     <string name="dialog_item_module_longtext_text_hint">Введите большой текст</string>
     <string name="fragment_itemEditor_longtext_textColor">Цвет большого текста</string>
     <string name="fragment_itemEditor_longtext_textSize">Размер большого текста</string>
-    <string name="toolbar_more_selection_editSelected">Редактировать выбранный</string>
-    <string name="toolbar_more_opentoday_debug_personalTick">Отладка: VIP Tick :)</string>
     <string name="menuItem_transform">Трансформация</string>
     <string name="transform_not_allowed">Трансформация не разрешена</string>
+    <string name="abc_success">Успешно!</string>
+
+
+    <string name="_migration_title">Время для миграции!</string>
+    <string name="_migration_shortDescription">Пришло время обновить приложение до релизной версии!\nЭто означает что вам нужно проделать некоторые шаги для обновления приложения.</string>
+    <string name="_migration_clickToDetails">Нажмите для деталей</string>
+    <string name="_migration_dialogStart">Начать</string>
 </resources>

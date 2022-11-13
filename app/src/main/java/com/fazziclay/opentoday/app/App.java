@@ -19,7 +19,7 @@ import com.fazziclay.opentoday.app.datafixer.DataFixer;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
-import com.fazziclay.opentoday.debug.TestItemViewGenerator;
+import com.fazziclay.opentoday.app.migration.MigrationActivity;
 import com.fazziclay.opentoday.ui.activity.CrashReportActivity;
 import com.fazziclay.opentoday.util.DebugUtil;
 
@@ -45,6 +45,7 @@ public class App extends Application {
     public static final String VERSION_NAME = BuildConfig.VERSION_NAME;
     public static final int VERSION_CODE = BuildConfig.VERSION_CODE;
     public static final String APPLICATION_ID = BuildConfig.APPLICATION_ID;
+    public static final AppType APP_TYPE = AppType.parse(APPLICATION_ID); // TODO: 13.11.2022 delete after migration
 
     // Notifications
     public static final String NOTIFICATION_QUCIKNOTE_CHANNEL = QuickNoteReceiver.NOTIFICATION_CHANNEL;
@@ -57,7 +58,7 @@ public class App extends Application {
     public static final boolean DEBUG_TICK_NOTIFICATION = (DEBUG & false);
     public static final int DEBUG_MAIN_ACTIVITY_START_SLEEP = (DEBUG & false) ? 6000 : 0;
     public static final int DEBUG_APP_START_SLEEP = (DEBUG & false) ? 8000 : 0;
-    public static Class<? extends Activity> DEBUG_MAIN_ACTIVITY = (DEBUG & false) ? TestItemViewGenerator.class : null;
+    public static Class<? extends Activity> DEBUG_MAIN_ACTIVITY = (DEBUG & false) ? MigrationActivity.class : null;
     public static final boolean DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY = (DEBUG && false);
 
     private static Thread.UncaughtExceptionHandler defaultHandler;
@@ -89,7 +90,8 @@ public class App extends Application {
             FeatureFlag.ALWAYS_SHOW_SAVE_STATUS,
             FeatureFlag.SHOW_MAINACTIVITY_STARTUP_TIME,
             FeatureFlag.AVAILABLE_UI_PERSONAL_TICK,
-            FeatureFlag.EXPERIMENTAL_TRANSFORM
+            FeatureFlag.EXPERIMENTAL_TRANSFORM,
+            FeatureFlag.PREVIEW_MIGRATION
     ) : Collections.emptyList());
     private long appStartupTime = 0;
 

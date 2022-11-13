@@ -94,6 +94,8 @@
                     android:textSize="20sp"
                     app:drawableLeftCompat="@drawable/update_available" />
             </LinearLayout>
+
+            <include tools:visibility="visible" android:visibility="gone" android:id="@+id/migrationNotification" layout="@layout/_migration_notification" />
         </LinearLayout>
 
         <FrameLayout
