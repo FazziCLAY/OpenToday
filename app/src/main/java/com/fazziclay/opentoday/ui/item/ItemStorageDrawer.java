@@ -2,6 +2,7 @@ package com.fazziclay.opentoday.ui.item;
 
 import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -16,13 +17,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.FeatureFlag;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Selection;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.callback.OnSelectionChanged;
-import com.fazziclay.opentoday.app.items.item.ExperimentalTransform;
+import com.fazziclay.opentoday.app.items.item.Transform;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
@@ -30,6 +30,7 @@ import com.fazziclay.opentoday.callback.CallbackImportance;
 import com.fazziclay.opentoday.callback.Status;
 import com.fazziclay.opentoday.ui.dialog.DialogSelectItemType;
 import com.fazziclay.opentoday.ui.dialog.DialogTextItemEditText;
+import com.fazziclay.opentoday.ui.fragment.ItemEditorFragment;
 import com.fazziclay.opentoday.ui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.ui.interfaces.StorageEditsActions;
 import com.fazziclay.opentoday.util.ResUtil;
@@ -346,11 +347,15 @@ public class ItemStorageDrawer {
             TextItem textItem = (TextItem) item;
             menu.getMenu().findItem(R.id.textItem_clickableUrls).setChecked(textItem.isClickableUrls());
         }
-        menu.getMenu().findItem(R.id.transform).setVisible(app.isFeatureFlag(FeatureFlag.EXPERIMENTAL_TRANSFORM));
+        menu.getMenu().findItem(R.id.transform).setVisible(true);
         menu.setOnMenuItemClickListener(menuItem -> {
             boolean save = false;
             SettingsManager.ItemAction itemAction = null;
             switch (menuItem.getItemId()) {
+                case R.id.delete:
+                    ItemEditorFragment.deleteRequest(activity, item, null);
+                    break;
+
                 case R.id.edit:
                     itemAction = SettingsManager.ItemAction.OPEN_EDITOR;
                     break;
@@ -364,21 +369,13 @@ public class ItemStorageDrawer {
                     break;
 
                 case R.id.copy:
-                    int currPos = itemsStorage.getItemPosition(item);
-                    Item copyItem;
                     try {
-                        copyItem = itemsStorage.copyItem(item);
+                        Item copyItem = itemsStorage.copyItem(item);
+                        onItemEditor.run(copyItem);
                     } catch (Exception e) {
                         Toast.makeText(activity, activity.getString(R.string.menuItem_copy_exception, e.toString()), Toast.LENGTH_SHORT).show();
                         return false;
                     }
-                    onItemEditor.run(copyItem);
-
-                    //int createPos = itemsStorage.getItemPosition(copyItem);
-                    //new Handler(activity.getMainLooper())
-                    //        .postDelayed(() -> {
-                    //            if (createPos != (currPos + 1)) itemsStorage.move(createPos, currPos + 1);
-                    //        }, 100);
                     break;
 
                 case R.id.textItem_clickableUrls:
@@ -399,10 +396,10 @@ public class ItemStorageDrawer {
 
                 case R.id.transform:
                     new DialogSelectItemType(activity, type -> {
-                        ExperimentalTransform.Transform transform = ExperimentalTransform.transform(item, type);
-                        if (transform.isAllow()) {
+                        Transform.Result result = Transform.transform(item, type);
+                        if (result.isAllow()) {
                             int pos = itemsStorage.getItemPosition(item);
-                            itemsStorage.addItem(transform.getResult(), pos + 1);
+                            itemsStorage.addItem(result.getResult(), pos + 1);
 
                         } else {
                             Toast.makeText(activity, R.string.transform_not_allowed, Toast.LENGTH_SHORT).show();
@@ -417,6 +414,7 @@ public class ItemStorageDrawer {
             item.visibleChanged();
             return true;
         });
+        menu.setGravity(Gravity.END);
         menu.show();
     }
 

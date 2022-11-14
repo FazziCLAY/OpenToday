@@ -14,22 +14,21 @@
         android:checkable="true"
         android:title="@string/menuItem_minimize" />
 
-    <group android:id="@+id/textItem">
-        <item android:checkable="true" android:id="@+id/textItem_clickableUrls" android:title="@string/uidialog_edit_textentry_clickableUrls" />
-        <item android:id="@+id/textItem_editText" android:title="@string/item_text_editText" />
-    </group>
-
     <item
         android:id="@+id/copy"
         android:title="@string/menuItem_copy" />
 
     <item
         android:id="@+id/transform"
-        android:visible="false"
         android:title="@string/menuItem_transform" />
 
     <item
-        android:visible="false"
         android:id="@+id/delete"
         android:title="@string/menuItem_delete" />
+
+
+    <group android:id="@+id/textItem">
+        <item android:checkable="true" android:id="@+id/textItem_clickableUrls" android:title="@string/uidialog_edit_textentry_clickableUrls" />
+        <item android:id="@+id/textItem_editText" android:title="@string/item_text_editText" />
+    </group>
 </menu>
