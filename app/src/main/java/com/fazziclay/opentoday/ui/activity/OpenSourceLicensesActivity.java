@@ -1,5 +1,7 @@
 package com.fazziclay.opentoday.ui.activity;
 
+import static com.fazziclay.opentoday.util.InlineUtil.viewClick;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.License;
-import com.fazziclay.opentoday.util.InlineUtil;
 
 public class OpenSourceLicensesActivity extends AppCompatActivity {
     private License[] licenses;
@@ -68,7 +69,7 @@ public class OpenSourceLicensesActivity extends AppCompatActivity {
             linearLayout.addView(descriptionView);
         }
 
-        InlineUtil.viewClick(linearLayout, () -> context.startActivity(OpenSourceLicenseActivity.createLaunchIntent(context, license.getAssetPath(), license.getTitle())));
+        viewClick(linearLayout, () -> context.startActivity(OpenSourceLicenseActivity.createLaunchIntent(context, license.getAssetPath(), license.getTitle())));
         return linearLayout;
     }
 }

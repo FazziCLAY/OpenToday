@@ -1,5 +1,7 @@
 package com.fazziclay.opentoday.ui.item;
 
+import static com.fazziclay.opentoday.util.InlineUtil.*;
+
 import android.app.Activity;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -98,7 +100,7 @@ public class ItemViewGenerator {
                         final CurrentItemStorageDrawer currentItemStorageDrawer = new CurrentItemStorageDrawer(this.activity, itemManager, settingsManager, cycleListItem, previewMode, itemOnClick, onItemEditor, storageEdits);
                         linearLayout.addView(currentItemStorageDrawer.getView());
                         currentItemStorageDrawer.setOnUpdateListener(currentItem -> {
-                            InlineUtil.viewVisible(empty, currentItem == null, View.GONE);
+                            viewVisible(empty, currentItem == null, View.GONE);
                             return Status.NONE;
                         });
                         currentItemStorageDrawer.create();
@@ -159,7 +161,7 @@ public class ItemViewGenerator {
             layoutParams.setMargins(0, 0, 15, 0);
             resultView.setLayoutParams(layoutParams);
         }
-        if (itemOnClick != null) InlineUtil.viewClick(resultView, () -> itemOnClick.run(item));
+        if (itemOnClick != null) viewClick(resultView, () -> itemOnClick.run(item));
         return resultView;
     }
 
@@ -182,8 +184,8 @@ public class ItemViewGenerator {
         applyTextItemToTextView(item, binding.title);
 
         // Counter
-        InlineUtil.viewVisible(binding.up, false, View.GONE);
-        InlineUtil.viewVisible(binding.down, false, View.GONE);
+        viewVisible(binding.up, false, View.GONE);
+        viewVisible(binding.down, false, View.GONE);
         binding.counter.setText(String.valueOf(item.getCounter()));
 
         return binding.getRoot();
@@ -232,8 +234,8 @@ public class ItemViewGenerator {
         applyTextItemToTextView(item, binding.title);
 
         // Counter
-        InlineUtil.viewClick(binding.up, item::up);
-        InlineUtil.viewClick(binding.down, item::down);
+        viewClick(binding.up, item::up);
+        viewClick(binding.down, item::down);
         binding.up.setEnabled(!previewMode);
         binding.down.setEnabled(!previewMode);
 
@@ -338,7 +340,7 @@ public class ItemViewGenerator {
     private void applyCheckItemToCheckBoxView(final CheckboxItem item, final CheckBox view) {
         view.setChecked(item.isChecked());
         view.setEnabled(!previewMode);
-        InlineUtil.viewClick(view, () -> {
+        viewClick(view, () -> {
             item.setChecked(view.isChecked());
             item.visibleChanged();
             item.save();
