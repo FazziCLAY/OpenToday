@@ -23,6 +23,9 @@ import com.fazziclay.opentoday.ui.activity.OpenSourceLicensesActivity;
 import com.fazziclay.opentoday.util.NetworkUtil;
 
 public class AboutFragment extends Fragment {
+    public static final String LINK_OPENSOURCE = "https://github.com/fazziclay/opentoday";
+    public static final String LINK_ISSUES = "https://github.com/fazziclay/opentoday/issues";
+
     public static Fragment create() {
         return new AboutFragment();
     }
@@ -37,11 +40,11 @@ public class AboutFragment extends Fragment {
         // View
         binding = FragmentAboutBinding.inflate(inflater);
         binding.textVersion.setText(App.VERSION_NAME);
-        binding.textPackage.setText(App.APPLICATION_ID.replace("ru.", "com.")); // oh :(
+        binding.textPackage.setText(App.APPLICATION_ID);
 
         viewClick(binding.title, this::manuallyCrashInteract);
-        viewClick(binding.sourceCode, () -> NetworkUtil.openBrowser(requireActivity(), "https://github.com/fazziclay/opentoday"));
-        viewClick(binding.issues, () -> NetworkUtil.openBrowser(requireActivity(), "https://github.com/fazziclay/opentoday/issues"));
+        viewClick(binding.sourceCode, () -> NetworkUtil.openBrowser(requireActivity(), LINK_OPENSOURCE));
+        viewClick(binding.issues, () -> NetworkUtil.openBrowser(requireActivity(), LINK_ISSUES));
         viewClick(binding.licenses, () -> requireActivity().startActivity(OpenSourceLicensesActivity.createLaunchIntent(requireContext())));
         viewClick(binding.ok, () -> UI.back(this));
 
