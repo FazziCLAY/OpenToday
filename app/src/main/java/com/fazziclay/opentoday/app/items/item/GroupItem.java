@@ -65,6 +65,12 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
         super(textItem);
     }
 
+    // Append
+    public GroupItem(TextItem textItem, ContainerItem containerItem) {
+        super(textItem);
+        if (containerItem != null) this.itemsStorage.importData(ItemsUtils.copy(containerItem.getAllItems()));
+    }
+
     // Copy
     public GroupItem(GroupItem copy) {
         super(copy);

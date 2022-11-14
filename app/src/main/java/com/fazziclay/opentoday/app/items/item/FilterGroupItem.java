@@ -82,13 +82,30 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         super(text);
     }
 
+    // append
+    public FilterGroupItem(TextItem textItem) {
+        super(textItem);
+    }
+
+    // append
+    public FilterGroupItem(TextItem textItem, ContainerItem containerItem) {
+        super(textItem);
+        if (containerItem != null) {
+            for (Item item : containerItem.getAllItems()) {
+                ItemFilterWrapper newWrapper = new ItemFilterWrapper(item, new ItemFilter());
+                newWrapper.item.attach(this.groupItemController);
+                this.items.add(newWrapper);
+            }
+        }
+    }
+
     // Copy
     public FilterGroupItem(FilterGroupItem copy) {
         super(copy);
         for (ItemFilterWrapper copyWrapper : copy.items) {
             try {
                 ItemFilterWrapper newWrapper = ItemFilterWrapper.importWrapper(copyWrapper.exportWrapper());
-                newWrapper.item.setController(this.groupItemController);
+                newWrapper.item.attach(this.groupItemController);
                 this.items.add(newWrapper);
             } catch (Exception e) {
                 throw new RuntimeException("Copy exception", e);

@@ -85,6 +85,11 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
         super(textItem);
     }
 
+    public CycleListItem(TextItem textItem, ContainerItem containerItem) {
+        super(textItem);
+        if (containerItem != null) this.itemsCycleStorage.importData(ItemsUtils.copy(containerItem.getAllItems()));
+    }
+
     public CycleListItem(CycleListItem copy) {
         super(copy);
         this.itemsCycleStorage.importData(ItemsUtils.copy(copy.getAllItems()));
@@ -236,9 +241,7 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
                 @Override
                 public Status onDeleted(Item item, int pos) {
                     // TODO: 01.11.2022 WTF This?
-                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                        onCurrentItemStorageUpdateCallback.run((callbackStorage, callback) -> callback.onCurrentChanged(getCurrentItem()));
-                    }, 250);
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> onCurrentItemStorageUpdateCallback.run((callbackStorage, callback) -> callback.onCurrentChanged(getCurrentItem())), 250);
                     return Status.NONE;
                 }
 
