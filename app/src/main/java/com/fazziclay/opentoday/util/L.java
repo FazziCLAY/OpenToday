@@ -29,7 +29,7 @@ public class L {
     }
 
     public static Object nn(Object o) {
-        return o == null ? null : "non-null";
+        return InlineUtil.nullStat(o);
     }
 
     public CallbackStorage<OnDebugLog> getCallbackStorage_() {
