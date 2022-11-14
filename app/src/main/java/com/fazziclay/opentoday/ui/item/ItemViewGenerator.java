@@ -1,6 +1,7 @@
 package com.fazziclay.opentoday.ui.item;
 
-import static com.fazziclay.opentoday.util.InlineUtil.*;
+import static com.fazziclay.opentoday.util.InlineUtil.viewClick;
+import static com.fazziclay.opentoday.util.InlineUtil.viewVisible;
 
 import android.app.Activity;
 import android.content.res.ColorStateList;
@@ -46,7 +47,6 @@ import com.fazziclay.opentoday.ui.interfaces.ContentInterface;
 import com.fazziclay.opentoday.ui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.ui.interfaces.StorageEditsActions;
 import com.fazziclay.opentoday.util.DebugUtil;
-import com.fazziclay.opentoday.util.InlineUtil;
 import com.fazziclay.opentoday.util.ResUtil;
 
 public class ItemViewGenerator {
