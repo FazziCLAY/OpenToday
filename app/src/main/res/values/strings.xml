@@ -3,6 +3,7 @@
     <!-- TODO: remove OLD -->
     <string name="app_name" translatable="false">OpenToday (Old)</string>
     <string name="aboutapp_title">About OpenToday:</string>
+    <string name="toolbar_more_opentoday_debug_restartActivity">DEBUG: Restart acvitvity</string>
     <string name="aboutapp_text_version">Version:</string>
     <string name="aboutapp_text_package">Package:</string>
     <string name="aboutapp_text_license">License:</string>

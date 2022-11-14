@@ -3,6 +3,12 @@
     style="@style/Theme.OpenToday.Toolbar.Section.Root.OpenToday">
 
     <Button
+        android:id="@+id/debug_restartActivity"
+        android:text="@string/toolbar_more_opentoday_debug_restartActivity"
+        style="@style/Theme.OpenToday.Toolbar.Section.Button.OpenToday.ToggleLogsOverlay" />
+
+
+    <Button
         android:id="@+id/debug_personalTick"
         android:text="@string/toolbar_more_opentoday_debug_personalTick"
         style="@style/Theme.OpenToday.Toolbar.Section.Button.OpenToday.ToggleLogsOverlay" />

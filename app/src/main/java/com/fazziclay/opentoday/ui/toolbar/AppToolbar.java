@@ -452,8 +452,17 @@ public class AppToolbar {
 
         viewVisible(b.debugToggleDebugOverlayText, app.isFeatureFlag(FeatureFlag.AVAILABLE_LOGS_OVERLAY), View.GONE);
         viewVisible(b.debugPersonalTick, app.isFeatureFlag(FeatureFlag.AVAILABLE_UI_PERSONAL_TICK), View.GONE);
+        viewVisible(b.debugRestartActivity, app.isFeatureFlag(FeatureFlag.AVAILABLE_RESTART_ACTIVITY), View.GONE);
         viewClick(b.debugToggleDebugOverlayText, () -> ((MainActivity) activity).toggleLogsOverlay());
         viewClick(b.debugPersonalTick, showPersonalTickDebug);
+        viewClick(b.debugRestartActivity, () -> {
+            activity.finish();
+            Intent intent = new Intent(activity, activity.getClass());
+            try {
+                intent.replaceExtras(activity.getIntent().getExtras());
+            } catch (Exception ignored) {}
+            activity.startActivity(intent);
+        });
         viewClick(b.about, () -> rootNavigationHost.navigate(AboutFragment.create(), true));
         viewClick(b.settings, () -> rootNavigationHost.navigate(SettingsFragment.create(), true));
         viewClick(b.calendar, () -> new DatePickerDialog(activity)

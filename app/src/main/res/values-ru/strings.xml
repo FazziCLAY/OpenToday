@@ -66,8 +66,9 @@
     <string name="toolbar_more_selection_export_setMessage_nomsg">Без сообщения</string>
     <string name="toolbar_more_selection_export_setMessage_title">Экспорт с сообщением</string>
     <string name="toolbar_more_selection_editSelected">Редактировать выбранный</string>
-    <string name="toolbar_more_opentoday_debug_personalTick">Отладка: VIP Tick :)</string>
+    <string name="toolbar_more_opentoday_debug_personalTick">ОТДАЛКА: VIP Tick :)</string>
     <string name="toolbar_more_opentoday_toggleLogsOverlay">ОТЛАДКА: Переключить показ логов</string>
+    <string name="toolbar_more_opentoday_debug_restartActivity">ОТЛАДКА: Рестарт активности</string>
     <string name="toolbar_more_opentoday_calendar">Календарь</string>
     <string name="toolbar_more_selection_copySelectedHere">Копировать выбранное сюда</string>
     <string name="toolbar_more_file_import_unsupported">Не поддерживается</string>

@@ -11,7 +11,8 @@ public enum FeatureFlag {
     AVAILABLE_UI_PERSONAL_TICK("Toolbar -> OpenToday debug button"),
     DISABLE_AUTOMATIC_TICK("DISABLE ALL AUTOMATIC TICK IN ItemManager caps :)"),
     EXPERIMENTAL_TRANSFORM("Enable experimental transform items"),
-    PREVIEW_MIGRATION("Allow migration on 'previewMode' in m.json");
+    PREVIEW_MIGRATION("Allow migration on 'previewMode' in m.json"),
+    AVAILABLE_RESTART_ACTIVITY("Toolbar -> OpenToday: restart activity button");
 
     private final String description;
 
