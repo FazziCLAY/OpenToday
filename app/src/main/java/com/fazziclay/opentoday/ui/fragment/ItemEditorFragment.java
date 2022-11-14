@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
@@ -276,14 +277,17 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
                 .show();
     }
 
-
     private void deleteRequest() {
-        new AlertDialog.Builder(requireContext())
+        deleteRequest(requireContext(), item, this::cancel);
+    }
+
+    public static void deleteRequest(Context context, Item item, Runnable onDelete) {
+        new AlertDialog.Builder(context)
                 .setTitle(R.string.dialogItem_delete_title)
                 .setNegativeButton(R.string.dialogItem_delete_cancel, null)
                 .setPositiveButton(R.string.dialogItem_delete_apply, ((dialog1, which) -> {
                     item.delete();
-                    cancel();
+                    if (onDelete != null) onDelete.run();
                 }))
                 .show();
     }
