@@ -23,8 +23,10 @@ import com.fazziclay.opentoday.app.migration.Migration;
 import com.fazziclay.opentoday.app.migration.MigrationActivity;
 import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.updatechecker.UpdateChecker;
-import com.fazziclay.opentoday.callback.CallbackImportance;
 import com.fazziclay.opentoday.databinding.ActivityMainBinding;
+import com.fazziclay.opentoday.databinding.MigrationNotificationBinding;
+import com.fazziclay.opentoday.databinding.NotificationDebugappBinding;
+import com.fazziclay.opentoday.databinding.NotificationUpdateAvailableBinding;
 import com.fazziclay.opentoday.ui.UITickService;
 import com.fazziclay.opentoday.ui.fragment.MainRootFragment;
 import com.fazziclay.opentoday.ui.interfaces.ContainBackStack;
@@ -69,10 +71,9 @@ public class MainActivity extends AppCompatActivity {
         this.uiTickService = new UITickService(this);
         this.binding = ActivityMainBinding.inflate(getLayoutInflater());
 
-        viewVisible(binding.debugs, false, View.GONE);
-        L.getCallbackStorage().addCallback(CallbackImportance.DEFAULT, onDebugLog);
-
+        long startStat_apptelemetrythemebinging = System.currentTimeMillis();
         setContentView(binding.getRoot());
+        long startStat_setviewanddebug = System.currentTimeMillis();
 
         if (savedInstanceState == null) {
             getSupportFragmentManager()
@@ -80,11 +81,15 @@ public class MainActivity extends AppCompatActivity {
                     .replace(CONTAINER_ID, MainRootFragment.create(), "MainRootFragment")
                     .commit();
         }
+        long startStat_setfragment = System.currentTimeMillis();
+
 
         setupAppDebugNotify();
         setupUpdateAvailableNotify();
         setupMigrationNotify();
         setupCurrentDate();
+        long startStat_setups = System.currentTimeMillis();
+
 
         if (app.getSettingsManager().isQuickNoteNotification()) {
             QuickNoteReceiver.sendQuickNoteNotification(this);
@@ -93,9 +98,19 @@ public class MainActivity extends AppCompatActivity {
             uiTickService.create();
             uiTickService.tick();
         }
+        long startStat_preStop = System.currentTimeMillis();
+
         if (app.isFeatureFlag(FeatureFlag.SHOW_MAINACTIVITY_STARTUP_TIME)) {
-            long startupTime = System.currentTimeMillis() - start;
+            long c = System.currentTimeMillis();
+
+            long startupTime = c - start;
             StringBuilder text = new StringBuilder("MainActivity startup time:\n").append(startupTime).append("ms");
+            text.append("\n");
+            text.append("App;telemetry;theme;binging: ").append(startStat_apptelemetrythemebinging - start).append("ms\n");
+            text.append("setContentView&debugs: ").append(startStat_setviewanddebug - startStat_apptelemetrythemebinging).append("ms\n");
+            text.append("Set fragment: ").append(startStat_setfragment - startStat_setviewanddebug).append("ms\n");
+            text.append("setups: ").append(startStat_setups - startStat_setfragment).append("ms\n");
+            text.append("preStop: ").append(startStat_preStop - startStat_setups).append("ms\n");
             Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
         }
     }
@@ -104,8 +119,11 @@ public class MainActivity extends AppCompatActivity {
         Migration.is((isTime, m, e) -> runOnUiThread(() -> {
             if (isTime && m != null) {
                 if (m.isTimeForMe(app)) {
-                    viewVisible(binding.migrationNotification.getRoot(), true, View.GONE);
-                    viewClick(binding.migrationNotification.getRoot(), () -> {
+                    MigrationNotificationBinding migrationNotification = MigrationNotificationBinding.inflate(getLayoutInflater());
+                    binding.notifications.addView(migrationNotification.getRoot());
+
+                    viewVisible(migrationNotification.getRoot(), true, View.GONE);
+                    viewClick(migrationNotification.getRoot(), () -> {
                         startActivity(new Intent(this, MigrationActivity.class));
                     });
 
@@ -197,29 +215,33 @@ public class MainActivity extends AppCompatActivity {
     // Update checker
     private void setupUpdateAvailableNotify() {
         UpdateChecker.check(app, (available, url) -> runOnUiThread(() -> {
-            viewVisible(binding.updateAvailable, available, View.GONE);
-            if (url != null) {
-                viewClick(binding.updateAvailable, () -> NetworkUtil.openBrowser(MainActivity.this, url));
+            if (available) {
+                NotificationUpdateAvailableBinding updateAvailable = NotificationUpdateAvailableBinding.inflate(getLayoutInflater());
+                binding.notifications.addView(updateAvailable.getRoot());
+
+                viewVisible(updateAvailable.getRoot(), available, View.GONE);
+                if (url != null) {
+                    viewClick(updateAvailable.getRoot(), () -> NetworkUtil.openBrowser(MainActivity.this, url));
+                }
             }
         }));
     }
 
     // App is DEBUG warning notify
     private void setupAppDebugNotify() {
-        viewVisible(binding.debugApp, App.DEBUG, View.GONE);
+        if (App.DEBUG) {
+            NotificationDebugappBinding b = NotificationDebugappBinding.inflate(getLayoutInflater());
+            binding.notifications.addView(b.getRoot());
+        }
     }
 
     public void toggleLogsOverlay() {
-        binding.debugs.setVisibility(binding.debugs.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+
     }
 
-    private class LocalOnDebugLog implements OnDebugLog {
+    private static class LocalOnDebugLog implements OnDebugLog {
         @Override
         public void run(String text) {
-            if (isDestroyed() || binding == null || !App.DEBUG) {
-                return;
-            }
-            runOnUiThread(() -> binding.debugs.setText(text));
         }
     }
 }

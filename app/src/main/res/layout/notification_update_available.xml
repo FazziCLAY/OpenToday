@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/update_available"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape"
+    android:backgroundTint="?attr/updateAvailable_backgroundColor"
+    android:orientation="vertical"
+    android:padding="5sp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/update_available"
+        android:textColor="?attr/updateAvailable_textColor"
+        android:textSize="20sp"
+        app:drawableLeftCompat="@drawable/update_available" />
+</LinearLayout>

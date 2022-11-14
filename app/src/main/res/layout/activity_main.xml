@@ -1,122 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.fazziclay.opentoday.ui.activity.MainActivity">
 
+    <!-- Current date -->
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <!-- Current date -->
-        <LinearLayout
-            android:id="@+id/current_date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="4sp"
-            android:paddingEnd="4sp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/current_date_date"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                tools:text="2022.06.25 Saturday"
-                android:textColor="?attr/main_currentDate_color"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/current_date_time"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0"
-                android:gravity="end"
-                tools:text="10:00:59"
-                android:textColor="?attr/main_currentDate_color"
-                android:textSize="24sp" />
-
-        </LinearLayout>
-
-        <!-- Notifications -->
-        <LinearLayout
-            android:id="@+id/notifications"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:id="@+id/debug_app"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5sp"
-                android:layout_marginStart="2sp"
-                android:layout_marginEnd="2sp"
-                android:background="@drawable/shape"
-                android:backgroundTint="#ff0000"
-                android:orientation="vertical"
-                android:padding="5sp"
-                android:visibility="gone"
-                tools:visibility="visible">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/debug_app"
-                    android:textColor="#000000"
-                    android:textSize="20sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/update_available"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5sp"
-                android:layout_marginStart="2sp"
-                android:layout_marginEnd="2sp"
-                android:background="@drawable/shape"
-                android:backgroundTint="?attr/updateAvailable_backgroundColor"
-                android:orientation="vertical"
-                android:padding="5sp"
-                android:visibility="gone"
-                tools:visibility="visible">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/update_available"
-                    android:textColor="?attr/updateAvailable_textColor"
-                    android:textSize="20sp"
-                    app:drawableLeftCompat="@drawable/update_available" />
-            </LinearLayout>
-
-            <include tools:visibility="visible" android:visibility="gone" android:id="@+id/migrationNotification" layout="@layout/_migration_notification" />
-        </LinearLayout>
-
-        <FrameLayout
-            android:id="@+id/content_root"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </LinearLayout>
-    <TextView
-        android:visibility="gone"
-        tools:visibility="visible"
-        android:clickable="false"
-        android:overScrollMode="always"
-        android:contextClickable="false"
-        android:id="@+id/debugs"
+        android:id="@+id/current_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="[AOo] 123213"
-        android:textColor="#FFEA00"
-        android:shadowColor="#000000"
-        android:shadowRadius="4"
-        android:background="#18000000"
-        android:textSize="13sp" />
-</RelativeLayout>
+        android:paddingStart="4sp"
+        android:paddingEnd="4sp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/current_date_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            tools:text="2022.06.25 Saturday"
+            android:textColor="?attr/main_currentDate_color"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/current_date_time"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="end"
+            tools:text="10:00:59"
+            android:textColor="?attr/main_currentDate_color"
+            android:textSize="24sp" />
+
+    </LinearLayout>
+
+    <!-- Notifications -->
+    <LinearLayout
+        android:id="@+id/notifications"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="4sp">
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/content_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

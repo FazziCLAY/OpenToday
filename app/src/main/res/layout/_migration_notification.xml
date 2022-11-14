@@ -5,9 +5,6 @@
     android:layout_width="match_parent"
     android:background="@drawable/shape"
     android:backgroundTint="#00CA9A"
-    android:layout_marginTop="5sp"
-    android:layout_marginStart="2sp"
-    android:layout_marginEnd="2sp"
     android:padding="5sp"
     android:layout_height="match_parent">
 
