@@ -407,7 +407,8 @@ public class ItemStorageDrawer {
                         } else {
                             Toast.makeText(activity, R.string.transform_not_allowed, Toast.LENGTH_SHORT).show();
                         }
-                    }).show();
+                    }).setTitle(activity.getString(R.string.transform_selectTypeDialog_title))
+                            .setMessage(activity.getString(R.string.transform_selectTypeDialog_message)).show();
                     break;
             }
 

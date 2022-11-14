@@ -271,4 +271,6 @@
 
     <string name="itemsStorageEmpty_details"><![CDATA[Use bottom toolbar for add items.\nItems -> Plus(+)]]></string>
     <string name="itemsStorageEmpty_title">Empty</string>
+    <string name="transform_selectTypeDialog_title">Select result type</string>
+    <string name="transform_selectTypeDialog_message" />
 </resources>

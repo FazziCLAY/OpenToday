@@ -267,4 +267,6 @@
 
     <string name="itemsStorageEmpty_details"><![CDATA[Используйте тулбар внизу что бы добавить айтемы.\nАйтемы -> Плюс(+)]]></string>
     <string name="itemsStorageEmpty_title">Пусто</string>
+    <string name="transform_selectTypeDialog_title">Выберите тип результата</string>
+    <string name="transform_selectTypeDialog_message" />
 </resources>
