@@ -7,12 +7,12 @@ android {
 
     defaultConfig {
         // =====
-        var isDev = false
-        var verBuild = 80
-        var verName = "0.9.8.3 OLD"
+        var isDev = true
+        var verBuild = 99
+        var verName = "_1.0"
         // =====
 
-        applicationId "ru.fazziclay.opentoday" + (isDev ? ".dev" : "")
+        applicationId "com.fazziclay.opentoday" + (isDev ? ".dev" : "")
         minSdk 26
         targetSdk 32
         versionCode verBuild
