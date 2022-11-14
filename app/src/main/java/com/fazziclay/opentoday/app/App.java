@@ -90,7 +90,6 @@ public class App extends Application {
             FeatureFlag.ALWAYS_SHOW_SAVE_STATUS,
             FeatureFlag.SHOW_MAINACTIVITY_STARTUP_TIME,
             FeatureFlag.AVAILABLE_UI_PERSONAL_TICK,
-            FeatureFlag.EXPERIMENTAL_TRANSFORM,
             FeatureFlag.PREVIEW_MIGRATION,
             FeatureFlag.AVAILABLE_RESTART_ACTIVITY
     ) : Collections.emptyList());
