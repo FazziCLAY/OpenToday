@@ -8,32 +8,63 @@ public class ExperimentalTransform {
         if (to == DayRepeatableCheckboxItem.class) {
             if (from == CheckboxItem.class) {
                 CheckboxItem checkboxItem = (CheckboxItem) item;
-                return new Transform(true, new DayRepeatableCheckboxItem(checkboxItem, false, 0));
+                return Transform.allow(new DayRepeatableCheckboxItem(checkboxItem, false, 0));
 
             } else if (from == TextItem.class) {
                 TextItem textItem = (TextItem) item;
-                return new Transform(true, new DayRepeatableCheckboxItem(new CheckboxItem(textItem, false), false, 0));
+                return Transform.allow(new DayRepeatableCheckboxItem(new CheckboxItem(textItem, false), false, 0));
             }
         }
 
         if (to == CheckboxItem.class) {
             if (from == TextItem.class) {
                 TextItem textItem = (TextItem) item;
-                return new Transform(true, new CheckboxItem(textItem, false));
+                return Transform.allow(new CheckboxItem(textItem, false));
             }
         }
 
         if (to == LongTextItem.class) {
             if (from == TextItem.class) {
                 TextItem textItem = (TextItem) item;
-                return new Transform(true, new LongTextItem(textItem, ""));
+                return Transform.allow(new LongTextItem(textItem, ""));
             }
         }
 
-        return new Transform(false, null);
+        if (to == GroupItem.class) {
+            GroupItem groupItem = new GroupItem((TextItem) item, getContainer(item));
+            return Transform.allow(groupItem);
+        }
+
+        if (to == CycleListItem.class) {
+            CycleListItem cycleListItem = new CycleListItem((TextItem) item, getContainer(item));
+            return Transform.allow(cycleListItem);
+        }
+
+        if (to == FilterGroupItem.class) {
+            FilterGroupItem filterGroupItem = new FilterGroupItem((TextItem) item, getContainer(item));
+            return Transform.allow(filterGroupItem);
+        }
+        return Transform.NOT_ALLOW;
+    }
+
+    private static boolean isItemContainer(Item item) {
+        return item instanceof ContainerItem;
+    }
+
+    private static ContainerItem getContainer(Item item) {
+        if (isItemContainer(item)) {
+            return (ContainerItem) item;
+        }
+        return null;
     }
 
     public static class Transform {
+        public static Transform NOT_ALLOW = new Transform(false, null);
+
+        public static Transform allow(Item item) {
+            return new Transform(true, item);
+        }
+
         private final boolean allow;
         private final Item result;
 
