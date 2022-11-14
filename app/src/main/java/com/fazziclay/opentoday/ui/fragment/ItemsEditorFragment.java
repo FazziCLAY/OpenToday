@@ -12,14 +12,19 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.AppType;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
+import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
+import com.fazziclay.opentoday.callback.CallbackImportance;
+import com.fazziclay.opentoday.callback.Status;
+import com.fazziclay.opentoday.databinding.ItemsStorageEmptyBinding;
 import com.fazziclay.opentoday.ui.UI;
 import com.fazziclay.opentoday.ui.activity.MainActivity;
 import com.fazziclay.opentoday.ui.dialog.DialogEditItemFilter;
@@ -46,6 +51,8 @@ public class ItemsEditorFragment extends Fragment {
     private SettingsManager settingsManager;
     private ItemsStorage itemsStorage;
     private boolean previewMode;
+    private LinearLayout layout;
+    private boolean currentlyIsNone;
     private ItemStorageDrawer itemStorageDrawer;
 
     private UUID tabId;
@@ -55,6 +62,7 @@ public class ItemsEditorFragment extends Fragment {
     private Tab tab;
     private Item item;
     private final List<Runnable> onCreateListeners = new ArrayList<>();
+    private OnItemsStorageUpdate onItemStorageChangeCallback;
 
     public static ItemsEditorFragment createRoot(UUID tab) {
         return ItemsEditorFragment.create(tab, null, false);
@@ -135,21 +143,66 @@ public class ItemsEditorFragment extends Fragment {
         }
 
         itemStorageDrawer.create();
+
+        layout = new LinearLayout(requireContext());
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        updateNotFoundState(true, (itemsStorage.size() == 0));
+        onItemStorageChangeCallback = new OnItemsStorageUpdate() {
+            @Override
+            public Status onAdded(Item item, int position) {
+                updateNotFoundState(false, false);
+                return Status.NONE;
+            }
+
+            @Override
+            public Status onDeleted(Item item, int position) {
+                updateNotFoundState(false, itemsStorage.size() <= 1);
+                return Status.NONE;
+            }
+
+            @Override
+            public Status onMoved(Item item, int from, int to) {
+                return Status.NONE;
+            }
+
+            @Override
+            public Status onUpdated(Item item, int position) {
+                return Status.NONE;
+            }
+        };
+        itemsStorage.getOnUpdateCallbacks().addCallback(CallbackImportance.MIN, onItemStorageChangeCallback);
         runOnCreateListeners();
     }
 
+    private static final boolean IGNORE_EMPTY_FEATURE = App.APP_TYPE == AppType.OLD_RED;
+    private void updateNotFoundState(boolean ignoreCache, boolean none) {
+        if (!ignoreCache && currentlyIsNone == none) {
+            return;
+        }
+        currentlyIsNone = none;
+        layout.removeAllViews();
+        if (IGNORE_EMPTY_FEATURE) none = false;
+        if (none) {
+            ItemsStorageEmptyBinding b = ItemsStorageEmptyBinding.inflate(getLayoutInflater());
+            layout.addView(b.getRoot());
+        } else {
+            layout.addView(itemStorageDrawer.getView());
+        }
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         L.o(TAG, "onCreateView", L.nn(savedInstanceState));
-        return itemStorageDrawer.getView();
+        return layout;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         if (this.itemStorageDrawer != null) this.itemStorageDrawer.destroy();
+        if (this.itemsStorage != null) itemsStorage.getOnUpdateCallbacks().deleteCallback(onItemStorageChangeCallback);
     }
 
     public ItemsStorage getItemStorage() {

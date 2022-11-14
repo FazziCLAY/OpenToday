@@ -263,4 +263,7 @@
     <string name="_migration_shortDescription">Пришло время обновить приложение до релизной версии!\nЭто означает что вам нужно проделать некоторые шаги для обновления приложения.</string>
     <string name="_migration_clickToDetails">Нажмите для деталей</string>
     <string name="_migration_dialogStart">Начать</string>
+
+    <string name="itemsStorageEmpty_details"><![CDATA[Используйте тулбар внизу что бы добавить айтемы.\nАйтемы -> Плюс(+)]]></string>
+    <string name="itemsStorageEmpty_title">Пусто</string>
 </resources>

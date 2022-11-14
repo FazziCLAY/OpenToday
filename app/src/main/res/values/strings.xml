@@ -262,8 +262,12 @@
     <string name="abc_success">Successfully</string>
 
 
-    <string name="_migration_title">Time To Migration!</string>
+    <string name="_migration_title">Time for Migration!</string>
     <string name="_migration_shortDescription">It\'s time to update the app to the release version!\nThis means that you need to go through some steps to update the application.</string>
     <string name="_migration_clickToDetails">Click to details</string>
     <string name="_migration_dialogStart">Start</string>
+
+
+    <string name="itemsStorageEmpty_details"><![CDATA[Use bottom toolbar for add items.\nItems -> Plus(+)]]></string>
+    <string name="itemsStorageEmpty_title">Empty</string>
 </resources>
