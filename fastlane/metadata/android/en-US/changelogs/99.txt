@@ -1,0 +1,6 @@
+--- NEW OpenToday APP ---
+* Bug fixes
+* Uses new package
+* Added "Empty" text for empty containers
+* Startup optimize
+(2022.11.14 - 0.9.9.9 - v99)
