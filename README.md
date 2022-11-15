@@ -5,7 +5,8 @@ Android application for the organization of life, pro notes, reminders
 
 
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/fazziclay/opentoday?style=plastic) ](https://github.com/FazziCLAY/OpenToday/releases)
-[![IzzyOnDroid](https://img.shields.io/endpoint?style=plastic&url=https://apt.izzysoft.de/fdroid/api/v1/shield/ru.fazziclay.opentoday)](https://apt.izzysoft.de/fdroid/index/apk/ru.fazziclay.opentoday)
+[![IzzyOnDroid](https://img.shields.io/endpoint?style=plastic&color=%2300bb00&url=https://apt.izzysoft.de/fdroid/api/v1/shield/com.fazziclay.opentoday)](https://apt.izzysoft.de/fdroid/index/apk/com.fazziclay.opentoday)
+[![IzzyOnDroid-OLD](https://img.shields.io/endpoint?style=plastic&color=red&label=Old%20application&url=https://apt.izzysoft.de/fdroid/api/v1/shield/ru.fazziclay.opentoday)](https://apt.izzysoft.de/fdroid/index/apk/ru.fazziclay.opentoday)
 
 # Using
 Your main friends are Items
