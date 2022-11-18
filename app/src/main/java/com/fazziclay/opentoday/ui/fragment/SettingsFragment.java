@@ -113,6 +113,7 @@ public class SettingsFragment extends Fragment {
             colorHistoryManager.save();
         });
 
+        // Export
         viewClick(binding.export, () -> showExportDialog(requireActivity(), settingsManager, colorHistoryManager));
 
         // Is telemetry
