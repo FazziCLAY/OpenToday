@@ -114,6 +114,13 @@ public class SettingsFragment extends Fragment {
         });
 
         viewClick(binding.export, () -> showExportDialog(requireActivity(), settingsManager, colorHistoryManager));
+
+        // Is telemetry
+        binding.isTelemetry.setChecked(settingsManager.isTelemetry());
+        viewClick(binding.isTelemetry, () -> {
+            settingsManager.setTelemetry(binding.isTelemetry.isChecked());
+            settingsManager.save();
+        });
     }
 
     private void setupThemeSpinner() {
