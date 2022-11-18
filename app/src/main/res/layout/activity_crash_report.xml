@@ -7,6 +7,7 @@
     android:padding="8sp">
 
     <Button
+        android:visibility="gone"
         android:id="@+id/sendToDeveloper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
