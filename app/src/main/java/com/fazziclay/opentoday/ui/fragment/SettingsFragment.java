@@ -119,8 +119,10 @@ public class SettingsFragment extends Fragment {
         // Is telemetry
         binding.isTelemetry.setChecked(settingsManager.isTelemetry());
         viewClick(binding.isTelemetry, () -> {
-            settingsManager.setTelemetry(binding.isTelemetry.isChecked());
+            final boolean is = binding.isTelemetry.isChecked();
+            settingsManager.setTelemetry(is);
             settingsManager.save();
+            app.getTelemetry().setEnabled(is);
         });
     }
 

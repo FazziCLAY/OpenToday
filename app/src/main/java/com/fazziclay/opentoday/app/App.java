@@ -260,7 +260,7 @@ public class App extends Application {
 
     private void preCheckTelemetry() {
         if (telemetry == null) {
-            telemetry = new Telemetry(this);
+            telemetry = new Telemetry(this, getSettingsManager().isTelemetry());
         }
     }
 

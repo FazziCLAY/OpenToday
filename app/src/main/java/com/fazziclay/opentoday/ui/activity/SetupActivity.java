@@ -30,8 +30,10 @@ public class SetupActivity extends AppCompatActivity {
 
     private void done() {
         App app = App.get(this);
-        app.getSettingsManager().setTelemetry(binding.telemetry.isChecked());
+        final boolean isTelemetry = binding.telemetry.isChecked();
+        app.getSettingsManager().setTelemetry(isTelemetry);
         app.getSettingsManager().save();
+        app.getTelemetry().setEnabled(isTelemetry);
 
         setupDone();
         startMain();

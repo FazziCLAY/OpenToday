@@ -38,13 +38,20 @@ public class Telemetry {
     private final File lastFile;
     private TelemetryStatus telemetryStatus = null;
     private boolean isTelemetryStatusQuerying = false;
+    private boolean isEnabled;
 
-    public Telemetry(App app) {
+    public Telemetry(App app, boolean isEnabled) {
         this.app = app;
         this.lastFile = new File(app.getExternalCacheDir(), "telemetry-lasts.json");
+        this.isEnabled = isEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.isEnabled = enabled;
     }
 
     public void queryTelemetryStatus() {
+        if (!isEnabled) return;
         isTelemetryStatusQuerying = true;
         new Thread(() -> {
             try {
@@ -58,6 +65,7 @@ public class Telemetry {
     }
 
     public void send(LPacket lPacket) {
+        if (!isEnabled) return;
         L.o("Telemetry send");
         if (lPacket.isDelay() && !NO_DELAY) {
             long last = getLastSend(lPacket.getClass().getName());
