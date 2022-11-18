@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         // =====
-        var isDev = true
+        var isDev = false
         var verBuild = 100
         var verName = "0.9.9.9.1"
         // =====
