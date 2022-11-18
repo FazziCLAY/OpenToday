@@ -269,4 +269,10 @@
     <string name="itemsStorageEmpty_title">Пусто</string>
     <string name="transform_selectTypeDialog_title">Выберите тип результата</string>
     <string name="transform_selectTypeDialog_message" />
+
+    <string name="toolbar_more_opentoday_debug_resetSetup">ОТЛАДКА: заново новый</string>
+    <string name="abc_done_button">Готово!</string>
+    <string name="setup_telemetry">Разрешить анонимную статистику</string>
+    <string name="setup_telemetry_details">Эта статистика очень поможет разработчику; Она содердит это:\n * Айпи\n * Номер приложения\n * Открытие/закрытие (макс. 1 раз/день)\n * Краши и Ошибки</string>
+    <string name="settings_isTelemetry">@string/setup_telemetry</string>
 </resources>

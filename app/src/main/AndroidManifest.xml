@@ -39,6 +39,9 @@
             android:name="com.fazziclay.opentoday.debug.TestItemViewGenerator"
             android:exported="false" />
         <activity
+            android:name="com.fazziclay.opentoday.ui.activity.SetupActivity"
+            android:exported="false" />
+        <activity
             android:name="com.fazziclay.opentoday.debug.TestItemStorageDrawer"
             android:exported="false" />
         <activity

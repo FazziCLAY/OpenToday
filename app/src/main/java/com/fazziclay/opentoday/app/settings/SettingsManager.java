@@ -47,6 +47,7 @@ public class SettingsManager {
     private ItemAction itemOnClickAction = ItemAction.OPEN_EDITOR;
     private ItemAction itemOnLeftAction = ItemAction.MINIMIZE_REVERT;
     private UUID quickNoteNotificationItemsStorageId = null;
+    private boolean isTelemetry = true;
 
 
     public SettingsManager(File saveFile) {
@@ -72,6 +73,8 @@ public class SettingsManager {
     @Setter public void setItemOnLeftAction(ItemAction itemOnLeftAction) {this.itemOnLeftAction = itemOnLeftAction;}
     @Getter public UUID getQuickNoteNotificationItemsStorageId() {return quickNoteNotificationItemsStorageId;}
     @Setter public void setQuickNoteNotificationItemsStorageId(UUID quickNoteNotificationItemsStorageId) {this.quickNoteNotificationItemsStorageId = quickNoteNotificationItemsStorageId;}
+    @Getter public boolean isTelemetry() {return isTelemetry;}
+    @Setter public void setTelemetry(boolean b) {this.isTelemetry = b;}
 
     private void load() {
         if (!FileUtil.isExist(saveFile)) {
@@ -111,6 +114,7 @@ public class SettingsManager {
             try {
                 this.quickNoteNotificationItemsStorageId = UUID.fromString(j.optString("quickNoteNotificationItemsStorageId"));
             } catch (Exception ignored) {}
+            this.isTelemetry = j.optBoolean("isTelemetry", true);
 
         } catch (Exception e) {
             L.o("SettingsManager", "load", e);
@@ -145,6 +149,7 @@ public class SettingsManager {
         j.put("itemOnClickAction", itemOnClickAction.name());
         j.put("itemOnLeftAction", itemOnLeftAction.name());
         j.put("quickNoteNotificationItemsStorageId", quickNoteNotificationItemsStorageId != null ? quickNoteNotificationItemsStorageId.toString() : null);
+        j.put("isTelemetry", this.isTelemetry);
         return j;
     }
 

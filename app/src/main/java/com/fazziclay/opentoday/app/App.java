@@ -52,6 +52,10 @@ public class App extends Application {
     public static final String NOTIFICATION_ITEMS_CHANNEL = "items_notifications";
     private static final String NOTIFICATION_CRASH_CHANNEL = "crash_report";
 
+    // Shared preference
+    public static final String SHARED_NAME = "main";
+    public static final String SHARED_KEY_IS_SETUP_DONE = "isSetupDone";
+
     // DEBUG
     public static final boolean SHADOW_RELEASE = false;
     public static final boolean DEBUG = !SHADOW_RELEASE && BuildConfig.DEBUG;
@@ -91,7 +95,8 @@ public class App extends Application {
             FeatureFlag.SHOW_MAINACTIVITY_STARTUP_TIME,
             FeatureFlag.AVAILABLE_UI_PERSONAL_TICK,
             FeatureFlag.PREVIEW_MIGRATION,
-            FeatureFlag.AVAILABLE_RESTART_ACTIVITY
+            FeatureFlag.AVAILABLE_RESTART_ACTIVITY,
+            FeatureFlag.AVAILABLE_RESET_SETUP
     ) : Collections.emptyList());
     private long appStartupTime = 0;
 

@@ -58,6 +58,13 @@
         android:layout_height="wrap_content"
         android:text="@string/settings_сolorHistoryLocked" />
 
+    <CheckBox
+        android:id="@+id/isTelemetry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_isTelemetry" />
+
+
     <Button
         android:id="@+id/export"
         android:layout_width="wrap_content"

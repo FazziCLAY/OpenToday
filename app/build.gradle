@@ -7,9 +7,9 @@ android {
 
     defaultConfig {
         // =====
-        var isDev = false
-        var verBuild = 99
-        var verName = "0.9.9.9"
+        var isDev = true
+        var verBuild = 100
+        var verName = "0.9.9.9.1"
         // =====
 
         applicationId "com.fazziclay.opentoday" + (isDev ? ".dev" : "")

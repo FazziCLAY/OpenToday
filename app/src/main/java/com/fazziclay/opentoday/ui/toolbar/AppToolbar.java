@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
@@ -51,6 +52,7 @@ import com.fazziclay.opentoday.databinding.ToolbarMoreOpentodayBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreSelectionBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreTabsBinding;
 import com.fazziclay.opentoday.ui.activity.MainActivity;
+import com.fazziclay.opentoday.ui.activity.SetupActivity;
 import com.fazziclay.opentoday.ui.dialog.DialogSelectItemAction;
 import com.fazziclay.opentoday.ui.fragment.AboutFragment;
 import com.fazziclay.opentoday.ui.fragment.DeleteItemsFragment;
@@ -453,6 +455,7 @@ public class AppToolbar {
         viewVisible(b.debugToggleDebugOverlayText, app.isFeatureFlag(FeatureFlag.AVAILABLE_LOGS_OVERLAY), View.GONE);
         viewVisible(b.debugPersonalTick, app.isFeatureFlag(FeatureFlag.AVAILABLE_UI_PERSONAL_TICK), View.GONE);
         viewVisible(b.debugRestartActivity, app.isFeatureFlag(FeatureFlag.AVAILABLE_RESTART_ACTIVITY), View.GONE);
+        viewVisible(b.debugResetSetup, app.isFeatureFlag(FeatureFlag.AVAILABLE_RESET_SETUP), View.GONE);
         viewClick(b.debugToggleDebugOverlayText, () -> ((MainActivity) activity).toggleLogsOverlay());
         viewClick(b.debugPersonalTick, showPersonalTickDebug);
         viewClick(b.debugRestartActivity, () -> {
@@ -462,6 +465,11 @@ public class AppToolbar {
                 intent.replaceExtras(activity.getIntent().getExtras());
             } catch (Exception ignored) {}
             activity.startActivity(intent);
+        });
+        viewClick(b.debugResetSetup, () -> {
+            activity.getSharedPreferences(App.SHARED_NAME, Context.MODE_PRIVATE).edit().putBoolean(App.SHARED_KEY_IS_SETUP_DONE, false).apply();
+            activity.finish();
+            activity.startActivity(new Intent(activity, SetupActivity.class));
         });
         viewClick(b.about, () -> rootNavigationHost.navigate(AboutFragment.create(), true));
         viewClick(b.settings, () -> rootNavigationHost.navigate(SettingsFragment.create(), true));

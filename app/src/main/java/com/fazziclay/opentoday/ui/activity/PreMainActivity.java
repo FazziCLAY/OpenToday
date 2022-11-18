@@ -2,6 +2,7 @@ package com.fazziclay.opentoday.ui.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -36,6 +37,13 @@ public class PreMainActivity extends Activity {
             text.append(app.getAppStartupTime()).append("ms");
             Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
         }
-        startActivity(new Intent(this, MainActivity.class));
+
+        final SharedPreferences sharedPreferences = getSharedPreferences(App.SHARED_NAME, MODE_PRIVATE);
+        final boolean isSetupDone = sharedPreferences.getBoolean(App.SHARED_KEY_IS_SETUP_DONE, false);
+        if (isSetupDone) {
+            startActivity(new Intent(this, MainActivity.class));
+        } else {
+            startActivity(new Intent(this, SetupActivity.class));
+        }
     }
 }
