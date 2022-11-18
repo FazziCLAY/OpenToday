@@ -68,7 +68,7 @@
     <Button
         android:id="@+id/export"
         android:layout_width="wrap_content"
-        android:layout_gravity="end"
+        android:layout_gravity="start"
         android:text="@string/settings_export"
         android:layout_height="wrap_content" />
 </LinearLayout>
