@@ -90,7 +90,7 @@ Structure
 * Version 1: <data> is a json converted to base64 but previously passed through GZip compression
 
 
-## Tree of code (show & not fully)
+## Tree of code (not full)
 ```css
 com.fazziclay.opentoday
 |
