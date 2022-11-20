@@ -275,7 +275,7 @@
 
     <string name="toolbar_more_opentoday_debug_resetSetup">DEBUG: Reset setup</string>
     <string name="abc_done_button">Done!</string>
-    <string name="setup_telemetry">Allow send anonymous statistic</string>
-    <string name="setup_telemetry_details">This statistic will help the developer a lot; It contain this:\n * IP\n * Instance ID\n * App open/close (max 1 per day)\n * Crashed &amp; Errors</string>
+    <string name="setup_telemetry">Allow to send anonymous statistics</string>
+    <string name="setup_telemetry_details">These statistics will help the developer a lot. They contain:\n * IP\n * Instance ID\n * App open/close (max 1 per day)\n * Crashes and Errors</string>
     <string name="settings_isTelemetry">@string/setup_telemetry</string>
 </resources>
