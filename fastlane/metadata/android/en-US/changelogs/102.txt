@@ -1,0 +1,14 @@
+The first release! v1.0
+Fixed bugs:
+* #16 The 'version' file has never been updated after creation
+* #17 Fixed CRASH: when deleting an item in the root, it does not cancel the selection (deselect)
+* #18 When importing settings, the theme was not updated
+* #21 Renamed 'ui' to 'gui'
+
+Other:
+* #15 Added 'First day of week' to settings (used in calendars)
+* #14 Added technical support for the initial text in ImportFragment
+* #14 Now import-text is automatically used when pasting into QuickNote
+* #~~ Deleted migration support
+
+Happy New Year!
