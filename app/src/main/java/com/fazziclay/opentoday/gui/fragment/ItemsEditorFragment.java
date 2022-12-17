@@ -12,7 +12,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.AppType;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
@@ -175,14 +174,12 @@ public class ItemsEditorFragment extends Fragment {
         runOnCreateListeners();
     }
 
-    private static final boolean IGNORE_EMPTY_FEATURE = App.APP_TYPE == AppType.OLD_RED;
     private void updateNotFoundState(boolean ignoreCache, boolean none) {
         if (!ignoreCache && currentlyIsNone == none) {
             return;
         }
         currentlyIsNone = none;
         layout.removeAllViews();
-        if (IGNORE_EMPTY_FEATURE) none = false;
         if (none) {
             ItemsStorageEmptyBinding b = ItemsStorageEmptyBinding.inflate(getLayoutInflater());
             layout.addView(b.getRoot());

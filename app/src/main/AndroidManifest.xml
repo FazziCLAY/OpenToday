@@ -51,9 +51,6 @@
             android:name="com.fazziclay.opentoday.debug.TestItemManager"
             android:exported="false" />
         <activity
-            android:name="com.fazziclay.opentoday.app.migration.MigrationActivity"
-            android:exported="false" />
-        <activity
             android:name="com.fazziclay.opentoday.gui.activity.CrashReportActivity"
             android:exported="true">
             <intent-filter>

@@ -3,9 +3,7 @@ package com.fazziclay.opentoday.gui.activity;
 import static com.fazziclay.opentoday.util.InlineUtil.viewClick;
 import static com.fazziclay.opentoday.util.InlineUtil.viewVisible;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -19,13 +17,10 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.FeatureFlag;
 import com.fazziclay.opentoday.app.Telemetry;
-import com.fazziclay.opentoday.app.migration.Migration;
-import com.fazziclay.opentoday.app.migration.MigrationActivity;
 import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.app.updatechecker.UpdateChecker;
 import com.fazziclay.opentoday.databinding.ActivityMainBinding;
-import com.fazziclay.opentoday.databinding.MigrationNotificationBinding;
 import com.fazziclay.opentoday.databinding.NotificationDebugappBinding;
 import com.fazziclay.opentoday.databinding.NotificationUpdateAvailableBinding;
 import com.fazziclay.opentoday.gui.UITickService;
@@ -89,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
 
         setupAppDebugNotify();
         setupUpdateAvailableNotify();
-        setupMigrationNotify();
         setupCurrentDate();
         long startStat_setups = System.currentTimeMillis();
 
@@ -116,30 +110,6 @@ public class MainActivity extends AppCompatActivity {
             text.append("preStop: ").append(startStat_preStop - startStat_setups).append("ms\n");
             Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void setupMigrationNotify() {
-        Migration.is((isTime, m, e) -> runOnUiThread(() -> {
-            if (isTime && m != null) {
-                if (m.isTimeForMe(app)) {
-                    MigrationNotificationBinding migrationNotification = MigrationNotificationBinding.inflate(getLayoutInflater());
-                    binding.notifications.addView(migrationNotification.getRoot());
-
-                    viewVisible(migrationNotification.getRoot(), true, View.GONE);
-                    viewClick(migrationNotification.getRoot(), () -> {
-                        startActivity(new Intent(this, MigrationActivity.class));
-                    });
-
-                    new AlertDialog.Builder(this)
-                            .setTitle(R.string._migration_title)
-                            .setMessage(R.string._migration_shortDescription)
-                            .setPositiveButton(R.string._migration_dialogStart, (gfd, gf56) -> {
-                                startActivity(new Intent(this, MigrationActivity.class));
-                            })
-                            .show();
-                }
-            }
-        }));
     }
 
     @Override

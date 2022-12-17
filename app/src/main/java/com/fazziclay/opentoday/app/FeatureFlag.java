@@ -10,7 +10,6 @@ public enum FeatureFlag {
     ALWAYS_SHOW_SAVE_STATUS("ItemManager: always show save status in toast"),
     AVAILABLE_UI_PERSONAL_TICK("Toolbar -> OpenToday debug button"),
     DISABLE_AUTOMATIC_TICK("DISABLE ALL AUTOMATIC TICK IN ItemManager caps :)"),
-    PREVIEW_MIGRATION("Allow migration on 'previewMode' in m.json"),
     AVAILABLE_RESTART_ACTIVITY("Toolbar -> OpenToday: restart activity button"),
     AVAILABLE_RESET_SETUP("Toolbar -> OpenToday: reset setup");
 

@@ -30,9 +30,7 @@ import ru.fazziclay.opentoday.telemetry.packet.PacketSetVersion;
 public class Telemetry {
     public static final PacketsRegistry REGISTRY = new TelemetryPackets();
     private static final boolean NO_DELAY = (App.DEBUG && false);
-    private static final String URL_V1 = "https://fazziclay.github.io/api/project_3/v1/telemetry/telemetry_v2.json";
-    private static final String URL_V2 = "https://fazziclay.github.io/api/project_3/v2/telemetry_v1.json";
-    private static final String URL = App.APP_TYPE == AppType.OLD_RED ? URL_V1 : URL_V2;
+    private static final String URL = "https://fazziclay.github.io/api/project_3/v2/telemetry_v1.json";
 
     private final App app;
     private final File lastFile;
@@ -272,7 +270,7 @@ public class Telemetry {
         public static TelemetryStatus fromJson(JSONObject j) throws JSONException {
             if (j == null) return null;
             return new TelemetryStatus(
-                    j.optBoolean(App.APP_TYPE == AppType.OLD_RED ? "isEnabled" : "enabled", false),
+                    j.optBoolean("enabled", false),
                     j.optString("host", null),
                     j.optInt("port", 0)
             );
