@@ -53,6 +53,20 @@ public class LocalItemsTab extends Tab {
                 LocalItemsTab.this.save();
             }
         };
+        applyDeleteSelectionFix();
+    }
+
+    protected LocalItemsTab() {
+        itemsStorage = new SimpleItemsStorage() {
+            @Override
+            public void save() {
+                LocalItemsTab.this.save();
+            }
+        };
+        applyDeleteSelectionFix();
+    }
+
+    private void applyDeleteSelectionFix() {
         itemsStorage.getOnUpdateCallbacks().addCallback(CallbackImportance.MIN, new OnItemsStorageUpdate() {
             @Override
             public Status onAdded(Item item, int position) {
@@ -75,15 +89,6 @@ public class LocalItemsTab extends Tab {
                 return Status.NONE;
             }
         });
-    }
-
-    protected LocalItemsTab() {
-        itemsStorage = new SimpleItemsStorage() {
-            @Override
-            public void save() {
-                LocalItemsTab.this.save();
-            }
-        };
     }
 
     @Override
