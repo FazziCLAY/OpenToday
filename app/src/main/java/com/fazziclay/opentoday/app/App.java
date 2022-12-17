@@ -114,7 +114,7 @@ public class App extends Application {
 
             registryNotificationsChannels();
 
-            if (!fixResult.isVersionFileExist()) updateVersionFile();
+            if (fixResult.isVersionFileUpdateRequired()) updateVersionFile();
             if (fixResult.isFixed()) {
                 getTelemetry().send(new Telemetry.DataFixerLogsLPacket(fixResult.getDataVersion(), fixResult.getLogs()));
             }

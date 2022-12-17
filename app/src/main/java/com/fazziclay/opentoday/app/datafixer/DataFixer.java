@@ -6,6 +6,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.fazziclay.opentoday.app.App;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,12 +32,15 @@ public class DataFixer {
     public FixResult fixToCurrentVersion() {
         int dataVersion;
         boolean isVersionFileExist = FileUtil.isExist(versionFile);
+        boolean isVersionFileOutdated = false;
 
         // If version file NOT EXIST
         if (isVersionFileExist) {
             try {
                 JSONObject versionData = new JSONObject(FileUtil.getText(versionFile));
-                dataVersion = versionData.getInt("data_version");
+                dataVersion = versionData.optInt("data_version", 0);
+                int applicationVersion = versionData.optInt("application_version", 0);
+                isVersionFileOutdated = applicationVersion != App.VERSION_CODE;
             } catch (JSONException e) {
                 Log.e("DataFixer", "parse from 'version' file", e);
                 return FixResult.NO_FIX;
@@ -52,7 +57,7 @@ public class DataFixer {
             }
             // === DETECT 1 DATA VERSION
         }
-        if (dataVersion == 0) return FixResult.NO_FIX.versionFileExist(isVersionFileExist);
+        if (dataVersion == 0) return FixResult.NO_FIX.versionFileExist(isVersionFileExist).versionFileOutdated(isVersionFileOutdated);
 
         dataVersion = tryFix(dataVersion);
 
@@ -60,9 +65,9 @@ public class DataFixer {
         if (isUpdated) {
             File logFile = new File(context.getExternalCacheDir(), "data-fixer/logs/" + System.currentTimeMillis() + ".txt");
             FileUtil.setText(logFile, logs.toString());
-            return new FixResult(dataVersion, logFile, logs.toString()).versionFileExist(isVersionFileExist);
+            return new FixResult(dataVersion, logFile, logs.toString()).versionFileExist(isVersionFileExist).versionFileOutdated(isVersionFileOutdated);
         }
-        return FixResult.NO_FIX.versionFileExist(isVersionFileExist);
+        return FixResult.NO_FIX.versionFileExist(isVersionFileExist).versionFileOutdated(isVersionFileOutdated);
     }
 
     // Logs
@@ -88,6 +93,7 @@ public class DataFixer {
 
         private final boolean fixed;
         private boolean versionFileExist = false;
+        private boolean versionFileOutdated = false;
         private int dataVersion;
         private File logFile;
         private String logs;
@@ -108,12 +114,17 @@ public class DataFixer {
             return this;
         }
 
+        public FixResult versionFileOutdated(boolean b) {
+            this.versionFileOutdated = b;
+            return this;
+        }
+
         public boolean isFixed() {
             return fixed;
         }
 
-        public boolean isVersionFileExist() {
-            return versionFileExist;
+        public boolean isVersionFileUpdateRequired() {
+            return !versionFileExist || versionFileOutdated;
         }
 
         public int getDataVersion() {
