@@ -22,6 +22,7 @@ import com.fazziclay.opentoday.app.Telemetry;
 import com.fazziclay.opentoday.app.migration.Migration;
 import com.fazziclay.opentoday.app.migration.MigrationActivity;
 import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
+import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.app.updatechecker.UpdateChecker;
 import com.fazziclay.opentoday.databinding.ActivityMainBinding;
 import com.fazziclay.opentoday.databinding.MigrationNotificationBinding;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private App app;
+    private SettingsManager settingsManager;
     private UITickService uiTickService;
     private long lastExitClick = 0;
     private final OnDebugLog onDebugLog = new LocalOnDebugLog();
@@ -67,7 +69,8 @@ public class MainActivity extends AppCompatActivity {
         this.app = App.get(this);
         this.app.setAppInForeground(true);
         this.app.getTelemetry().send(new Telemetry.UiOpenLPacket());
-        AppCompatDelegate.setDefaultNightMode(this.app.getSettingsManager().getTheme());
+        this.settingsManager = app.getSettingsManager();
+        AppCompatDelegate.setDefaultNightMode(settingsManager.getTheme());
         this.uiTickService = new UITickService(this);
         this.binding = ActivityMainBinding.inflate(getLayoutInflater());
 
@@ -91,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         long startStat_setups = System.currentTimeMillis();
 
 
-        if (app.getSettingsManager().isQuickNoteNotification()) {
+        if (settingsManager.isQuickNoteNotification()) {
             QuickNoteReceiver.sendQuickNoteNotification(this);
         }
         if (!app.isFeatureFlag(FeatureFlag.DISABLE_AUTOMATIC_TICK)) {
@@ -195,7 +198,11 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         currentDateHandler.post(currentDateRunnable);
-        viewClick(binding.currentDate, () -> new DatePickerDialog(this).show());
+        viewClick(binding.currentDate, () -> {
+            DatePickerDialog dialog = new DatePickerDialog(this);
+            dialog.getDatePicker().setFirstDayOfWeek(settingsManager.getFirstDayOfWeek());
+            dialog.show();
+        });
     }
 
     private void setCurrentDate() {

@@ -38,8 +38,11 @@ import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 
 import org.json.JSONException;
 
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class SettingsFragment extends Fragment {
     public static SettingsFragment create() {
@@ -71,6 +74,7 @@ public class SettingsFragment extends Fragment {
 
     private void setupView() {
         setupThemeSpinner();
+        setupFirstDayOfWeekSpinner();
 
         // QuickNote
         binding.quickNoteCheckbox.setChecked(settingsManager.isQuickNoteNotification());
@@ -140,6 +144,29 @@ public class SettingsFragment extends Fragment {
                 int t = themeSpinnerAdapter.getItem(position);
                 AppCompatDelegate.setDefaultNightMode(t);
                 settingsManager.setTheme(t);
+                settingsManager.save();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+    }
+
+    private void setupFirstDayOfWeekSpinner() {
+        DateFormatSymbols dfs = DateFormatSymbols.getInstance(Locale.getDefault());
+        String[] weekdays = dfs.getWeekdays();
+
+        SimpleSpinnerAdapter<Integer> themeSpinnerAdapter = new SimpleSpinnerAdapter<Integer>(requireContext())
+                .add(weekdays[Calendar.SUNDAY], Calendar.SUNDAY)
+                .add(weekdays[Calendar.MONDAY], Calendar.MONDAY);
+
+        binding.firstDayOfWeekSpinner.setAdapter(themeSpinnerAdapter);
+        binding.firstDayOfWeekSpinner.setSelection(themeSpinnerAdapter.getValuePosition(settingsManager.getFirstDayOfWeek()));
+        binding.firstDayOfWeekSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                int t = themeSpinnerAdapter.getItem(position);
+                settingsManager.setFirstDayOfWeek(t);
                 settingsManager.save();
             }
 

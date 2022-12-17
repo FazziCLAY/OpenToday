@@ -473,8 +473,11 @@ public class AppToolbar {
         });
         viewClick(b.about, () -> rootNavigationHost.navigate(AboutFragment.create(), true));
         viewClick(b.settings, () -> rootNavigationHost.navigate(SettingsFragment.create(), true));
-        viewClick(b.calendar, () -> new DatePickerDialog(activity)
-                .show());
+        viewClick(b.calendar, () -> {
+            DatePickerDialog dialog = new DatePickerDialog(activity);
+            dialog.getDatePicker().setFirstDayOfWeek(settingsManager.getFirstDayOfWeek());
+            dialog.show();
+        });
 
         toolbarMoreView.addView(b.getRoot());
     }

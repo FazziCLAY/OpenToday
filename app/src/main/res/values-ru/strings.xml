@@ -275,4 +275,5 @@
     <string name="setup_telemetry">Разрешить анонимную статистику</string>
     <string name="setup_telemetry_details">Эта статистика очень поможет разработчику; Она содердит это:\n * Айпи\n * Номер приложения\n * Открытие/закрытие (макс. 1 раз/день)\n * Краши и Ошибки</string>
     <string name="settings_isTelemetry">@string/setup_telemetry</string>
+    <string name="settings_firstDayOfWeek_title">Первый день недели</string>
 </resources>

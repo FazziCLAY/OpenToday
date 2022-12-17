@@ -46,6 +46,20 @@
 
 
     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_firstDayOfWeek_title"
+        android:textSize="18sp" />
+
+    <Spinner
+        android:id="@+id/firstDayOfWeek_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/settings_firstDayOfWeek_title"
+        android:minHeight="48dp"
+        tools:ignore="DuplicateSpeakableTextCheck" />
+
+    <TextView
         android:id="@+id/colorHistoryTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
