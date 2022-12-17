@@ -109,13 +109,15 @@ public class ImportWrapper {
         return result;
     }
 
+    public static boolean isImportText(String content) {
+        content = content.trim();
+        return content.startsWith("--OPENTODAY-IMPORT-START--") && content.endsWith("--OPENTODAY-IMPORT-END--");
+    }
+
     public static ImportWrapper finalImport(String content) throws Exception {
         content = content.trim();
-        if (!content.startsWith("--OPENTODAY-IMPORT-START--")) {
-            throw new Exception("startsWith not header");
-        }
-        if (!content.endsWith("--OPENTODAY-IMPORT-END--")) {
-            throw new Exception("endsWith");
+        if (!isImportText(content)) {
+            throw new Exception("Not import text");
         }
 
         int version = Integer.parseInt(content.split("\n")[1]);

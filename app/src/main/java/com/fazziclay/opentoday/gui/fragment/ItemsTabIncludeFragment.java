@@ -16,7 +16,10 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.ImportWrapper;
+import com.fazziclay.opentoday.app.items.ID;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
@@ -203,6 +206,21 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         binding.quickNoteAdd.setOnClickListener(v -> {
             String s = binding.quickNoteText.getText().toString();
             if (s.isEmpty()) return;
+            if (ImportWrapper.isImportText(s)) {
+                binding.quickNoteText.setText("");
+                UUID id = null;
+                if (currentItemsStorage instanceof ID) {
+                    ID i = (ID) currentItemsStorage;
+                    id = i.getId();
+                }
+
+                if (id == null) {
+                    Toast.makeText(requireContext(), R.string.toolbar_more_file_import_unsupported, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                ((NavigationHost) UI.findFragmentInParents(this, MainRootFragment.class)).navigate(ImportFragment.create(id, s.trim(), true), true);
+                return;
+            }
             binding.quickNoteText.setText("");
             if (currentItemsStorage != null) {
                 TextItem item = new TextItem(s);
