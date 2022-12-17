@@ -3,12 +3,15 @@ package com.fazziclay.opentoday.app.items.tab;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.TickSession;
 import com.fazziclay.opentoday.app.items.SimpleItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemIEUtil;
+import com.fazziclay.opentoday.callback.CallbackImportance;
 import com.fazziclay.opentoday.callback.CallbackStorage;
+import com.fazziclay.opentoday.callback.Status;
 
 import org.json.JSONObject;
 
@@ -50,6 +53,28 @@ public class LocalItemsTab extends Tab {
                 LocalItemsTab.this.save();
             }
         };
+        itemsStorage.getOnUpdateCallbacks().addCallback(CallbackImportance.MIN, new OnItemsStorageUpdate() {
+            @Override
+            public Status onAdded(Item item, int position) {
+                return Status.NONE;
+            }
+
+            @Override
+            public Status onDeleted(Item item, int position) {
+                App.get().getItemManager().deselectItem(item); // TODO: 31.08.2022 other fix??  !!BUGFIX!!
+                return Status.NONE;
+            }
+
+            @Override
+            public Status onMoved(Item item, int from, int to) {
+                return Status.NONE;
+            }
+
+            @Override
+            public Status onUpdated(Item item, int position) {
+                return Status.NONE;
+            }
+        });
     }
 
     protected LocalItemsTab() {
