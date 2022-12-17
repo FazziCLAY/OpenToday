@@ -36,6 +36,8 @@ import java.util.UUID;
 
 public class ImportFragment extends Fragment {
     private static final String KEY_ITEMS_STORAGE = "importFragment:itemsStorageId";
+    private static final String KEY_START_TEXT = "importFragment:startImportText";
+    private static final String KEY_AUTORUN = "importFragment:autoRun";
 
     @NonNull
     public static ImportFragment create(@NonNull final UUID itemsStorageId) {
@@ -43,6 +45,19 @@ public class ImportFragment extends Fragment {
 
         final Bundle args = new Bundle();
         args.putString(KEY_ITEMS_STORAGE, itemsStorageId.toString());
+        f.setArguments(args);
+
+        return f;
+    }
+
+    @NonNull
+    public static ImportFragment create(@NonNull final UUID itemsStorageId, final String startText, final boolean autoRun) {
+        final ImportFragment f = new ImportFragment();
+
+        final Bundle args = new Bundle();
+        args.putString(KEY_ITEMS_STORAGE, itemsStorageId.toString());
+        args.putString(KEY_START_TEXT, startText);
+        args.putBoolean(KEY_AUTORUN, autoRun);
         f.setArguments(args);
 
         return f;
@@ -61,6 +76,13 @@ public class ImportFragment extends Fragment {
         app = App.get(requireContext());
         itemManager = app.getItemManager();
         itemsStorage = itemManager.getItemStorageById(UUID.fromString(getArguments().getString(KEY_ITEMS_STORAGE)));
+
+        if (getArguments().containsKey(KEY_START_TEXT)) {
+            if (getArguments().getBoolean(KEY_AUTORUN)) {
+                String s = getArguments().getString(KEY_START_TEXT);
+                importData(s);
+            }
+        }
     }
 
     @Nullable
@@ -68,6 +90,9 @@ public class ImportFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DialogImportBinding.inflate(inflater);
 
+        if (getArguments().containsKey(KEY_START_TEXT)) {
+            binding.editText.setText(getArguments().getString(KEY_START_TEXT));
+        }
         viewClick(binding.runImport, () -> importData(binding.editText.getText().toString()));
         viewClick(binding.cancel, () -> UI.back(this));
 
