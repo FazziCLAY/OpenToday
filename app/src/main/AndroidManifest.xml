@@ -14,7 +14,7 @@
 
         <!-- Activities -->
         <activity
-            android:name="com.fazziclay.opentoday.ui.activity.PreMainActivity"
+            android:name="com.fazziclay.opentoday.gui.activity.PreMainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,23 +23,23 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.fazziclay.opentoday.ui.activity.OpenSourceLicensesActivity"
+            android:name="com.fazziclay.opentoday.gui.activity.OpenSourceLicensesActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.fazziclay.opentoday.ui.activity.OpenSourceLicenseActivity"
+            android:name="com.fazziclay.opentoday.gui.activity.OpenSourceLicenseActivity"
             android:exported="false" />
         <activity
-            android:name="com.fazziclay.opentoday.ui.activity.MainActivity"
+            android:name="com.fazziclay.opentoday.gui.activity.MainActivity"
             android:exported="false" />
         <activity
             android:name="com.fazziclay.opentoday.debug.TestItemViewGenerator"
             android:exported="false" />
         <activity
-            android:name="com.fazziclay.opentoday.ui.activity.SetupActivity"
+            android:name="com.fazziclay.opentoday.gui.activity.SetupActivity"
             android:exported="false" />
         <activity
             android:name="com.fazziclay.opentoday.debug.TestItemStorageDrawer"
@@ -54,7 +54,7 @@
             android:name="com.fazziclay.opentoday.app.migration.MigrationActivity"
             android:exported="false" />
         <activity
-            android:name="com.fazziclay.opentoday.ui.activity.CrashReportActivity"
+            android:name="com.fazziclay.opentoday.gui.activity.CrashReportActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

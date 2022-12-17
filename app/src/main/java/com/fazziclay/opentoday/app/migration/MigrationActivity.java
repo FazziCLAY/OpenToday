@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.databinding.MigrationActivityBinding;
-import com.fazziclay.opentoday.ui.fragment.SettingsFragment;
+import com.fazziclay.opentoday.gui.fragment.SettingsFragment;
 import com.fazziclay.opentoday.util.ColorUtil;
 import com.fazziclay.opentoday.util.NetworkUtil;
 

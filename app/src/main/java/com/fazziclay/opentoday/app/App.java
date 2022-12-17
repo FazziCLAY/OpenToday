@@ -20,7 +20,7 @@ import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.migration.MigrationActivity;
 import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
-import com.fazziclay.opentoday.ui.activity.CrashReportActivity;
+import com.fazziclay.opentoday.gui.activity.CrashReportActivity;
 import com.fazziclay.opentoday.util.DebugUtil;
 
 import org.json.JSONObject;

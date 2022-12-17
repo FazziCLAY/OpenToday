@@ -16,7 +16,7 @@ import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
-import com.fazziclay.opentoday.ui.fragment.ItemsTabIncludeFragment;
+import com.fazziclay.opentoday.gui.fragment.ItemsTabIncludeFragment;
 
 public class QuickNoteReceiver extends BroadcastReceiver {
     public static final String REMOTE_INPUT_KEY = "opentoday_quick_note_remote_input";
