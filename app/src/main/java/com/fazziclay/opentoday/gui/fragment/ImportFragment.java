@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 
 import com.fazziclay.opentoday.R;
@@ -219,6 +220,7 @@ public class ImportFragment extends Fragment {
         if (importWrapper.isPerm(ImportWrapper.Permission.OVERWRITE_SETTINGS)) {
             SettingsManager settingsManager = app.getSettingsManager();
             settingsManager.importData(importWrapper.getSettings());
+            AppCompatDelegate.setDefaultNightMode(settingsManager.getTheme());
         }
 
         Toast.makeText(activity, R.string.toolbar_more_file_import_success, Toast.LENGTH_SHORT).show();
