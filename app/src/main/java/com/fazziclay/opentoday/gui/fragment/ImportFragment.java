@@ -28,7 +28,7 @@ import com.fazziclay.opentoday.app.items.Selection;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
-import com.fazziclay.opentoday.databinding.DialogImportBinding;
+import com.fazziclay.opentoday.databinding.FragmentImportBinding;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.util.NetworkUtil;
 
@@ -63,7 +63,7 @@ public class ImportFragment extends Fragment {
         return f;
     }
 
-    private DialogImportBinding binding;
+    private FragmentImportBinding binding;
     private Activity activity;
     private App app;
     private ItemManager itemManager;
@@ -88,7 +88,7 @@ public class ImportFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = DialogImportBinding.inflate(inflater);
+        binding = FragmentImportBinding.inflate(inflater);
 
         if (getArguments().containsKey(KEY_START_TEXT)) {
             binding.editText.setText(getArguments().getString(KEY_START_TEXT));
