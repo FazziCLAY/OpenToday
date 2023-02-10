@@ -29,11 +29,13 @@ import com.fazziclay.opentoday.app.ColorHistoryManager;
 import com.fazziclay.opentoday.app.FeatureFlag;
 import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.items.ItemManager;
+import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.databinding.ExportBinding;
 import com.fazziclay.opentoday.databinding.FragmentSettingsBinding;
+import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 
 import org.json.JSONException;
@@ -128,6 +130,13 @@ public class SettingsFragment extends Fragment {
             settingsManager.save();
             app.getTelemetry().setEnabled(is);
         });
+
+        binding.defaultQuickNoteType.setText(getString(R.string.settings_defaultQuickNoteType, getString(settingsManager.getDefaultQuickNoteType().getNameResId())));
+        viewClick(binding.defaultQuickNoteType, () -> new DialogSelectItemType(getContext(), type -> {
+            settingsManager.setDefaultQuickNoteType(ItemsRegistry.REGISTRY.get(type));
+            binding.defaultQuickNoteType.setText(getString(R.string.settings_defaultQuickNoteType, getString(settingsManager.getDefaultQuickNoteType().getNameResId())));
+            settingsManager.save();
+        }).show());
     }
 
     private void setupThemeSpinner() {

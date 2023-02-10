@@ -85,4 +85,11 @@
         android:layout_gravity="start"
         android:text="@string/settings_export"
         android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/defaultQuickNoteType"
+        android:layout_width="wrap_content"
+        android:layout_gravity="end"
+        android:text="@string/settings_defaultQuickNoteType"
+        android:layout_height="wrap_content" />
 </LinearLayout>

@@ -203,6 +203,8 @@
     <string name="settings_export">Export</string>
     <string name="settings_export_dialog_title">Export</string>
     <string name="settings_export_dialog_export">Export</string>
+    <string name="settings_defaultQuickNoteType">QuickNote type: %s</string>
+
 
     <!-- Import -->
     <string name="importFragment_dialog_main_title">Import</string>

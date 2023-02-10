@@ -223,7 +223,13 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
             }
             binding.quickNoteText.setText("");
             if (currentItemsStorage != null) {
-                TextItem item = new TextItem(s);
+                Item item = settingsManager.getDefaultQuickNoteType().create();
+
+                if (item instanceof TextItem) {
+                    TextItem textItem = (TextItem) item;
+                    textItem.setText(s);
+                }
+
                 if (app.getSettingsManager().isParseTimeFromQuickNote()) item.getNotifications().addAll(QUICK_NOTE_NOTIFICATIONS_PARSE.run(s));
                 currentItemsStorage.addItem(item);
             }
