@@ -203,6 +203,7 @@
     <string name="settings_export">Экспорт</string>
     <string name="settings_export_dialog_title">Экспорт</string>
     <string name="settings_export_dialog_export">Экспорт</string>
+    <string name="settings_defaultQuickNoteType">Тип быстрой заметки: %s</string>
 
 
     <!-- Import -->

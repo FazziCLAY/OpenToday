@@ -7,6 +7,8 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.annotation.Getter;
 import com.fazziclay.opentoday.annotation.Setter;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
+import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.util.L;
 
 import org.json.JSONException;
@@ -48,6 +50,7 @@ public class SettingsManager {
     private ItemAction itemOnLeftAction = ItemAction.MINIMIZE_REVERT;
     private UUID quickNoteNotificationItemsStorageId = null;
     private boolean isTelemetry = true;
+    private ItemsRegistry.ItemInfo defaultQuickNoteType = ItemsRegistry.REGISTRY.get(TextItem.class);
 
 
     public SettingsManager(File saveFile) {
@@ -75,6 +78,8 @@ public class SettingsManager {
     @Setter public void setQuickNoteNotificationItemsStorageId(UUID quickNoteNotificationItemsStorageId) {this.quickNoteNotificationItemsStorageId = quickNoteNotificationItemsStorageId;}
     @Getter public boolean isTelemetry() {return isTelemetry;}
     @Setter public void setTelemetry(boolean b) {this.isTelemetry = b;}
+    @Getter public ItemsRegistry.ItemInfo getDefaultQuickNoteType() {return defaultQuickNoteType;}
+    @Setter public void setDefaultQuickNoteType(ItemsRegistry.ItemInfo defaultQuickNoteType) {this.defaultQuickNoteType = defaultQuickNoteType;}
 
     private void load() {
         if (!FileUtil.isExist(saveFile)) {
@@ -115,6 +120,9 @@ public class SettingsManager {
                 this.quickNoteNotificationItemsStorageId = UUID.fromString(j.optString("quickNoteNotificationItemsStorageId"));
             } catch (Exception ignored) {}
             this.isTelemetry = j.optBoolean("isTelemetry", true);
+            try {
+                this.defaultQuickNoteType = ItemsRegistry.REGISTRY.get(j.getString("defaultQuickNoteType"));
+            } catch (Exception ignored) {}
 
         } catch (Exception e) {
             L.o("SettingsManager", "load", e);
@@ -150,6 +158,7 @@ public class SettingsManager {
         j.put("itemOnLeftAction", itemOnLeftAction.name());
         j.put("quickNoteNotificationItemsStorageId", quickNoteNotificationItemsStorageId != null ? quickNoteNotificationItemsStorageId.toString() : null);
         j.put("isTelemetry", this.isTelemetry);
+        j.put("defaultQuickNoteType", this.defaultQuickNoteType.getStringType());
         return j;
     }
 

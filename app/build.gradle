@@ -7,11 +7,9 @@ android {
 
     defaultConfig {
         // =====
-        // The first release!!! Happy new year :) !!!
-        //                      ~ FazziCLAY 2022.12.17
         var isDev = false
-        var verBuild = 102
-        var verName = "1.0"
+        var verBuild = 104
+        var verName = "1.0.1"
         // =====
 
         applicationId "com.fazziclay.opentoday" + (isDev ? ".dev" : "")
