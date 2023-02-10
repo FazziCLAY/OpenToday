@@ -1,0 +1,2 @@
+Added 'default QuickNote item type' to settings! by @FazziCLAY in #23
+Update FazziCLAY`s licenses
