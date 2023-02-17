@@ -11,7 +11,7 @@ import java.util.List;
 import ru.fazziclay.javaneoutil.FileUtil;
 
 public class ColorHistoryManager {
-    // How to optimize this to primitive int?
+    // TODO: How to optimize this to primitive int?
     private final List<Integer> history;
     private final int maxSave;
     private final File dataFile;
