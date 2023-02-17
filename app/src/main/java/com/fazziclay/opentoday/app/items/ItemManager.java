@@ -417,7 +417,7 @@ public class ItemManager {
                     new Handler(App.get().getMainLooper()).post(() -> Toast.makeText(App.get(), "Error: Save exception: " + e + "; cause: " + e.getCause(), Toast.LENGTH_LONG).show());
                 } catch (Exception ignored) {}
                 try {
-                    App.exception(App.get(), e);
+                    App.exception(null, e);
                 } catch (Exception ignored) {}
             }
         }
