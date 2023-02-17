@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         Runnable exit = super::onBackPressed;
         Runnable def = () -> {
-            if (System.currentTimeMillis() - lastExitClick > 1000) {
+            if (System.currentTimeMillis() - lastExitClick > 2000) {
                 Toast.makeText(this, R.string.exit_tab_2_count, Toast.LENGTH_SHORT).show();
                 lastExitClick = System.currentTimeMillis();
             } else {
