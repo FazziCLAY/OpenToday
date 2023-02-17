@@ -1,7 +1,7 @@
 package com.fazziclay.opentoday.app.items.callback;
 
 import com.fazziclay.opentoday.app.items.Selection;
-import com.fazziclay.opentoday.callback.Callback;
+import com.fazziclay.opentoday.util.callback.Callback;
 
 import java.util.List;
 

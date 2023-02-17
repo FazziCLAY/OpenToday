@@ -4,10 +4,10 @@ import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 
-import com.fazziclay.opentoday.annotation.Getter;
-import com.fazziclay.opentoday.annotation.RequireSave;
-import com.fazziclay.opentoday.annotation.SaveKey;
-import com.fazziclay.opentoday.annotation.Setter;
+import com.fazziclay.opentoday.util.annotation.Getter;
+import com.fazziclay.opentoday.util.annotation.RequireSave;
+import com.fazziclay.opentoday.util.annotation.SaveKey;
+import com.fazziclay.opentoday.util.annotation.Setter;
 
 import org.json.JSONObject;
 

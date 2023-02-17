@@ -7,8 +7,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.fazziclay.opentoday.annotation.RequireSave;
-import com.fazziclay.opentoday.annotation.SaveKey;
+import com.fazziclay.opentoday.util.annotation.RequireSave;
+import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.TickSession;
 import com.fazziclay.opentoday.app.items.callback.OnSelectionChanged;
@@ -25,8 +25,8 @@ import com.fazziclay.opentoday.app.items.tab.ItemsTabController;
 import com.fazziclay.opentoday.app.items.tab.LocalItemsTab;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.items.tab.TabIEUtil;
-import com.fazziclay.opentoday.callback.CallbackStorage;
-import com.fazziclay.opentoday.callback.Status;
+import com.fazziclay.opentoday.util.callback.CallbackStorage;
+import com.fazziclay.opentoday.util.callback.Status;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

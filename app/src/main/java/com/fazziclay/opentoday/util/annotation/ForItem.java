@@ -1,4 +1,4 @@
-package com.fazziclay.opentoday.annotation;
+package com.fazziclay.opentoday.util.annotation;
 
 import com.fazziclay.opentoday.app.items.item.Item;
 

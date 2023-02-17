@@ -5,10 +5,10 @@ import android.os.Looper;
 
 import androidx.annotation.NonNull;
 
-import com.fazziclay.opentoday.annotation.Getter;
-import com.fazziclay.opentoday.annotation.RequireSave;
-import com.fazziclay.opentoday.annotation.SaveKey;
-import com.fazziclay.opentoday.annotation.Setter;
+import com.fazziclay.opentoday.util.annotation.Getter;
+import com.fazziclay.opentoday.util.annotation.RequireSave;
+import com.fazziclay.opentoday.util.annotation.SaveKey;
+import com.fazziclay.opentoday.util.annotation.Setter;
 import com.fazziclay.opentoday.app.TickSession;
 import com.fazziclay.opentoday.app.items.CurrentItemStorage;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
@@ -16,9 +16,9 @@ import com.fazziclay.opentoday.app.items.ItemsUtils;
 import com.fazziclay.opentoday.app.items.SimpleItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnCurrentItemStorageUpdate;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
-import com.fazziclay.opentoday.callback.CallbackImportance;
-import com.fazziclay.opentoday.callback.CallbackStorage;
-import com.fazziclay.opentoday.callback.Status;
+import com.fazziclay.opentoday.util.callback.CallbackImportance;
+import com.fazziclay.opentoday.util.callback.CallbackStorage;
+import com.fazziclay.opentoday.util.callback.Status;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

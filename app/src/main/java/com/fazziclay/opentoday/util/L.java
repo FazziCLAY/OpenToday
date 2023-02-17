@@ -3,8 +3,8 @@ package com.fazziclay.opentoday.util;
 import android.util.Log;
 
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.callback.CallbackStorage;
-import com.fazziclay.opentoday.callback.Status;
+import com.fazziclay.opentoday.util.callback.CallbackStorage;
+import com.fazziclay.opentoday.util.callback.Status;
 
 import java.util.Arrays;
 

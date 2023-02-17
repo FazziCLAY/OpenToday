@@ -4,8 +4,8 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.fazziclay.opentoday.R;
-import com.fazziclay.opentoday.annotation.Getter;
-import com.fazziclay.opentoday.annotation.Setter;
+import com.fazziclay.opentoday.util.annotation.Getter;
+import com.fazziclay.opentoday.util.annotation.Setter;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.item.TextItem;

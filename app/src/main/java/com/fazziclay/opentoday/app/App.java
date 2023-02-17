@@ -14,7 +14,7 @@ import androidx.core.app.NotificationCompat;
 import com.fazziclay.neosocket.NeoSocket;
 import com.fazziclay.opentoday.BuildConfig;
 import com.fazziclay.opentoday.R;
-import com.fazziclay.opentoday.annotation.AppInitIfNeed;
+import com.fazziclay.opentoday.util.annotation.AppInitIfNeed;
 import com.fazziclay.opentoday.app.datafixer.DataFixer;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
