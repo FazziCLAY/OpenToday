@@ -64,7 +64,8 @@ public class App extends Application {
     public static Class<? extends Activity> DEBUG_MAIN_ACTIVITY = (DEBUG & false) ? OpenSourceLicensesActivity.class : null;
     public static final boolean DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY = (DEBUG && false);
 
-    private static Thread.UncaughtExceptionHandler defaultHandler;
+    private static Thread.UncaughtExceptionHandler androidUncaughtHandler;
+    private static Thread.UncaughtExceptionHandler appUncaughtHandler;
 
     // Instance
     private static volatile App instance = null;
@@ -123,7 +124,7 @@ public class App extends Application {
     }
 
     private void registryNotificationsChannels() {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
         notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_QUCIKNOTE_CHANNEL, getString(R.string.notification_quickNote_title), NotificationManager.IMPORTANCE_HIGH));
         notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_ITEMS_CHANNEL, getString(R.string.notification_items_title), NotificationManager.IMPORTANCE_HIGH));
     }
@@ -135,12 +136,13 @@ public class App extends Application {
     @NonNull
     private UUID parseInstanceId() {
         final File instanceIdFile = new File(getExternalFilesDir(""), "instanceId");
-        UUID instanceId;
+        final UUID instanceId;
         if (FileUtil.isExist(instanceIdFile)) {
             try {
                 instanceId = UUID.fromString(FileUtil.getText(instanceIdFile));
             } catch (Exception e) {
-                throw new RuntimeException("Cannot get App instanceId!", e);
+                FileUtil.setText(instanceIdFile, UUID.randomUUID().toString());
+                throw new RuntimeException("Cannot get App instanceId! (rewritten before crash.)", e);
             }
 
         } else {
@@ -165,7 +167,7 @@ public class App extends Application {
         }
     }
 
-    private License[] getOpenSourceLicences() {
+    private License[] createOpenSourceLicensesArray() {
         // TODO: 19.10.2022 add v prefix to version to telemetry
         return new License[]{
                 new License("LICENSE_OpenToday", "OpenToday (this app)", "fazziclay@gmail.com\nhttps://fazziclay.github.io/opentoday"),
@@ -176,19 +178,14 @@ public class App extends Application {
         };
     }
 
-    public boolean isFeatureFlag(FeatureFlag flag) {
-        if (flag == null) return true;
-        for (FeatureFlag f : this.getFeatureFlags()) {
-            if (f == flag) {
-                return true;
-            }
-        }
-        return false;
+    public boolean isFeatureFlag(final FeatureFlag flag) {
+        return this.getFeatureFlags().contains(flag);
     }
 
     private void setupCrashReporter() {
-        defaultHandler = Thread.getDefaultUncaughtExceptionHandler();
-        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> App.crash(App.this, CrashReport.create(throwable), true));
+        androidUncaughtHandler = Thread.getDefaultUncaughtExceptionHandler();
+        appUncaughtHandler = (thread, throwable) -> App.crash(this, CrashReport.create(thread, throwable), true);
+        Thread.setDefaultUncaughtExceptionHandler(appUncaughtHandler);
     }
 
     public static void exception(Context context, Exception exception) {
@@ -196,63 +193,71 @@ public class App extends Application {
     }
 
     private static void crash(Context context, final CrashReport crashReport, boolean fatal) {
-        crashReport.setFatal(CrashReport.FatalEnum.fromBoolean(fatal));
         if (context == null) context = App.get();
+        crashReport.setFatal(CrashReport.FatalEnum.fromBoolean(fatal));
 
         // === File ===
         final File crashReportFile = new File(context.getExternalCacheDir(), "crash_report/" + crashReport.getID().toString());
         FileUtil.setText(crashReportFile, crashReport.convertToText());
 
+        // === Android.Log ===
         try {
-            Log.e("OpenToday-Crash", "Crash saved to: " + crashReportFile.getAbsolutePath());
-            Log.e("OpenToday-Crash", crashReport.convertToText(), crashReport.getThrowable());
+            final String CRASH_TAG = "OpenToday-Crash";
+            Log.e(CRASH_TAG, "=== Crash " + crashReport.getID() + " === (S)");
+            Log.e(CRASH_TAG, "Crash saved to: " + crashReportFile.getAbsolutePath());
+            Log.e(CRASH_TAG, crashReport.convertToText(), crashReport.getThrowable());
+            Log.e(CRASH_TAG, "=== Crash " + crashReport.getID() + " === (E)");
         } catch (Exception ignored) {}
 
+        // === If fatal: notify user ===
         if (fatal) {
-            // === NOTIFICATION ===
-            final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_CRASH_CHANNEL, context.getString(R.string.notification_crash_title), NotificationManager.IMPORTANCE_DEFAULT));
-
-            final int flag;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                flag = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE;
-            } else {
-                flag = PendingIntent.FLAG_UPDATE_CURRENT;
-            }
-            notificationManager.notify(new Random().nextInt(), new NotificationCompat.Builder(context, App.NOTIFICATION_CRASH_CHANNEL)
-                    .setSmallIcon(android.R.drawable.stat_sys_warning)
-                    .setContentTitle(context.getString(R.string.crash_notification_title))
-                    .setContentText(context.getString(R.string.crash_notification_text))
-                    .setSubText(context.getString(R.string.crash_notification_subtext))
-                    .setStyle(new NotificationCompat.BigTextStyle()
-                            .bigText(context.getString(R.string.crash_notification_big_text))
-                            .setBigContentTitle(context.getString(R.string.crash_notification_big_title))
-                            .setSummaryText(context.getString(R.string.crash_notification_big_summary)))
-                    .setPriority(NotificationCompat.PRIORITY_MAX)
-                    .setContentIntent(PendingIntent.getActivity(context, 0, CrashReportActivity.createLaunchIntent(context, crashReportFile.getAbsolutePath()), flag))
-                    .setAutoCancel(true)
-                    .build());
-
+            sendCrashNotification(context, crashReportFile);
         }
 
         // Telemetry
         final App app = App.get(context);
-        if (app != null && app.getTelemetry() != null) {
-            app.getTelemetry().send(new Telemetry.CrashReportLPacket(crashReport));
+        final Telemetry telemetry = app.getTelemetry();
+        if (app != null && telemetry != null) {
+            telemetry.send(new Telemetry.CrashReportLPacket(crashReport));
         }
 
-        try {
-            Thread.sleep(250);
-        } catch (Exception ignored) {}
-
-        if (defaultHandler != null && fatal) {
-            defaultHandler.uncaughtException(crashReport.getThread(), crashReport.getThrowable());
+        // === If fatal: crash app. ===
+        if (fatal && androidUncaughtHandler != null) {
+            DebugUtil.sleep(250);
+            androidUncaughtHandler.uncaughtException(crashReport.getThread(), crashReport.getThrowable());
         }
+    }
+
+    private static void sendCrashNotification(final Context context, File fileToCrash) {
+        // === NOTIFICATION ===
+        final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_CRASH_CHANNEL, context.getString(R.string.notification_crash_title), NotificationManager.IMPORTANCE_DEFAULT));
+
+        final int flag;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            flag = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE;
+        } else {
+            flag = PendingIntent.FLAG_UPDATE_CURRENT;
+        }
+        notificationManager.notify(new Random().nextInt(), new NotificationCompat.Builder(context, App.NOTIFICATION_CRASH_CHANNEL)
+                .setSmallIcon(android.R.drawable.stat_sys_warning)
+                .setContentTitle(context.getString(R.string.crash_notification_title))
+                .setContentText(context.getString(R.string.crash_notification_text))
+                .setSubText(context.getString(R.string.crash_notification_subtext))
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(context.getString(R.string.crash_notification_big_text))
+                        .setBigContentTitle(context.getString(R.string.crash_notification_big_title))
+                        .setSummaryText(context.getString(R.string.crash_notification_big_summary)))
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setContentIntent(PendingIntent.getActivity(context, 0, CrashReportActivity.createLaunchIntent(context, fileToCrash.getAbsolutePath()), flag))
+                .setAutoCancel(true)
+                .build());
+
     }
 
     private void preCheckOpenSourceLicenses() {
         if (openSourceLicenses == null) {
-            openSourceLicenses = getOpenSourceLicences();
+            openSourceLicenses = createOpenSourceLicensesArray();
         }
     }
 
