@@ -5,6 +5,9 @@ import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationsRegistry;
 import com.fazziclay.opentoday.app.items.tab.TabsRegistry;
 
+/**
+ * All registry's
+ */
 public class Registry {
     public static final TabsRegistry TABS = TabsRegistry.REGISTRY;
     public static final ItemsRegistry ITEMS = ItemsRegistry.REGISTRY;
