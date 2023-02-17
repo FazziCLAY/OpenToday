@@ -25,6 +25,10 @@ public class CrashReport {
     private final Map<Thread, StackTraceElement[]> allStackTraces;
     private FatalEnum fatal = FatalEnum.UNKNOWN;
 
+    public static CrashReport create(Thread thread, Throwable throwable) {
+        return create(thread, throwable, System.currentTimeMillis(), System.nanoTime(), Thread.getAllStackTraces());
+    }
+
     public static CrashReport create(Throwable throwable) {
         return create(Thread.currentThread(), throwable, System.currentTimeMillis(), System.nanoTime(), Thread.getAllStackTraces());
     }
