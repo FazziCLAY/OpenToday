@@ -17,6 +17,7 @@ import com.fazziclay.javaneoutil.NonNull;
 import com.fazziclay.neosocket.NeoSocket;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.datafixer.DataFixer;
+import com.fazziclay.opentoday.app.datafixer.FixResult;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
@@ -108,7 +109,7 @@ public class App extends Application {
             DebugUtil.sleep(DEBUG_APP_START_SLEEP);
 
             final DataFixer dataFixer = new DataFixer(this);
-            final DataFixer.FixResult fixResult = dataFixer.fixToCurrentVersion();
+            final FixResult fixResult = dataFixer.fixToCurrentVersion();
 
             registryNotificationsChannels();
 
