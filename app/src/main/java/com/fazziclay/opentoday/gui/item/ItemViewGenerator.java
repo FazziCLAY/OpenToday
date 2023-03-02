@@ -21,7 +21,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 
 import com.fazziclay.opentoday.R;
-import com.fazziclay.opentoday.util.annotation.ForItem;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
@@ -34,7 +33,6 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.LongTextItem;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
-import com.fazziclay.opentoday.util.callback.Status;
 import com.fazziclay.opentoday.databinding.ItemCheckboxBinding;
 import com.fazziclay.opentoday.databinding.ItemCounterBinding;
 import com.fazziclay.opentoday.databinding.ItemCycleListBinding;
@@ -48,6 +46,8 @@ import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.gui.interfaces.StorageEditsActions;
 import com.fazziclay.opentoday.util.DebugUtil;
 import com.fazziclay.opentoday.util.ResUtil;
+import com.fazziclay.opentoday.util.annotation.ForItem;
+import com.fazziclay.opentoday.util.callback.Status;
 
 public class ItemViewGenerator {
     @NonNull private final Activity activity;

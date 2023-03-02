@@ -1,5 +1,7 @@
 package com.fazziclay.opentoday.app;
 
+import com.fazziclay.javaneoutil.FileUtil;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -7,8 +9,6 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.fazziclay.javaneoutil.FileUtil;
 
 public class ColorHistoryManager {
     // TODO: How to optimize this to primitive int?

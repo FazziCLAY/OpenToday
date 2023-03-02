@@ -2,6 +2,7 @@ package com.fazziclay.opentoday.app;
 
 import androidx.annotation.NonNull;
 
+import com.fazziclay.javaneoutil.FileUtil;
 import com.fazziclay.neosocket.Client;
 import com.fazziclay.neosocket.PacketHandler;
 import com.fazziclay.neosocket.packet.Packet;
@@ -17,7 +18,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import com.fazziclay.javaneoutil.FileUtil;
 import ru.fazziclay.opentoday.telemetry.TelemetryPackets;
 import ru.fazziclay.opentoday.telemetry.packet.Packet20004Login;
 import ru.fazziclay.opentoday.telemetry.packet.Packet20005Handshake;

@@ -3,14 +3,13 @@ package com.fazziclay.opentoday.app.updatechecker;
 import android.content.Context;
 import android.util.Log;
 
+import com.fazziclay.javaneoutil.FileUtil;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.util.NetworkUtil;
 
 import org.json.JSONObject;
 
 import java.io.File;
-
-import com.fazziclay.javaneoutil.FileUtil;
 
 public class UpdateChecker {
     private static final String V2_URL_LATEST_BUILD = "https://fazziclay.github.io/api/project_3/v2/latest_build";

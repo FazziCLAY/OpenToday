@@ -6,6 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.fazziclay.javaneoutil.FileUtil;
 import com.fazziclay.opentoday.app.App;
 
 import org.json.JSONArray;
@@ -14,8 +15,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.UUID;
-
-import com.fazziclay.javaneoutil.FileUtil;
 
 public class DataFixer {
     private final Context context;

@@ -11,9 +11,11 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
+import com.fazziclay.javaneoutil.FileUtil;
+import com.fazziclay.javaneoutil.JavaNeoUtil;
+import com.fazziclay.javaneoutil.NonNull;
 import com.fazziclay.neosocket.NeoSocket;
 import com.fazziclay.opentoday.R;
-import com.fazziclay.opentoday.util.annotation.AppInitIfNeed;
 import com.fazziclay.opentoday.app.datafixer.DataFixer;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
@@ -21,6 +23,7 @@ import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.gui.activity.CrashReportActivity;
 import com.fazziclay.opentoday.gui.activity.OpenSourceLicensesActivity;
 import com.fazziclay.opentoday.util.DebugUtil;
+import com.fazziclay.opentoday.util.annotation.AppInitIfNeed;
 
 import org.json.JSONObject;
 
@@ -32,9 +35,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-import com.fazziclay.javaneoutil.FileUtil;
-import com.fazziclay.javaneoutil.JavaNeoUtil;
-import com.fazziclay.javaneoutil.NonNull;
 import ru.fazziclay.opentoday.telemetry.OpenTodayTelemetry;
 
 @SuppressWarnings("PointlessBooleanExpression") // for debug variables

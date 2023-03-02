@@ -3,10 +3,10 @@ package com.fazziclay.opentoday.app.items.tab;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.fazziclay.opentoday.util.annotation.RequireSave;
-import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.app.items.ID;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
+import com.fazziclay.opentoday.util.annotation.RequireSave;
+import com.fazziclay.opentoday.util.annotation.SaveKey;
 
 import org.json.JSONObject;
 
