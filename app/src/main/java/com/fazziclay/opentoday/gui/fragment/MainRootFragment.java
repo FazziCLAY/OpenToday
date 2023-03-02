@@ -60,14 +60,16 @@ public class MainRootFragment extends Fragment implements NavigationHost {
         Logger.d(TAG, "popBackStack");
         Fragment currentFragment = getChildFragmentManager().findFragmentById(CONTAINER_ID);
         if (currentFragment instanceof BackStackMember) {
+            Logger.d(TAG, "popBackStack", "current fragment is BackStackMember!");
             BackStackMember t = (BackStackMember) currentFragment;
             if (t.popBackStack()) {
                 return true;
             }
         }
 
+        Logger.d(TAG, "popBackStack", "pop internal");
         if (getChildFragmentManager().getBackStackEntryCount() > 0) {
-            getChildFragmentManager().popBackStackImmediate();
+            getChildFragmentManager().popBackStack();
             return true;
         }
         return false;
