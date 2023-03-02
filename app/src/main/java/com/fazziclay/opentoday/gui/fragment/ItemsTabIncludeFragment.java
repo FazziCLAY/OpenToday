@@ -45,7 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import ru.fazziclay.javaneoutil.FileUtil;
+import com.fazziclay.javaneoutil.FileUtil;
 
 public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab, NavigationHost {
     private static final String TAG = "ItemsTabIncludeFragment";

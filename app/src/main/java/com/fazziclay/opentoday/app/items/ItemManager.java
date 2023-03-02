@@ -45,7 +45,7 @@ import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import ru.fazziclay.javaneoutil.FileUtil;
+import com.fazziclay.javaneoutil.FileUtil;
 
 public class ItemManager {
     private static final boolean DEBUG_ITEMS_SET = (App.DEBUG && false);

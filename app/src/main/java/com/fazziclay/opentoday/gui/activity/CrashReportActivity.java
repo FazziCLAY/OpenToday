@@ -17,7 +17,7 @@ import com.fazziclay.opentoday.app.App;
 
 import java.io.File;
 
-import ru.fazziclay.javaneoutil.FileUtil;
+import com.fazziclay.javaneoutil.FileUtil;
 
 public class CrashReportActivity extends Activity {
     private static final String EXTRA_PATH = "crash_report_activity_path";

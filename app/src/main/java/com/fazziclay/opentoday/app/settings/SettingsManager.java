@@ -18,7 +18,7 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.UUID;
 
-import ru.fazziclay.javaneoutil.FileUtil;
+import com.fazziclay.javaneoutil.FileUtil;
 
 public class SettingsManager {
     // Theme

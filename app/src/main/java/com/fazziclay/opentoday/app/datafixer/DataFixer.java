@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.UUID;
 
-import ru.fazziclay.javaneoutil.FileUtil;
+import com.fazziclay.javaneoutil.FileUtil;
 
 public class DataFixer {
     private final Context context;

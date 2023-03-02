@@ -32,9 +32,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-import ru.fazziclay.javaneoutil.FileUtil;
-import ru.fazziclay.javaneoutil.JavaNeoUtil;
-import ru.fazziclay.javaneoutil.NonNull;
+import com.fazziclay.javaneoutil.FileUtil;
+import com.fazziclay.javaneoutil.JavaNeoUtil;
+import com.fazziclay.javaneoutil.NonNull;
 import ru.fazziclay.opentoday.telemetry.OpenTodayTelemetry;
 
 @SuppressWarnings("PointlessBooleanExpression") // for debug variables

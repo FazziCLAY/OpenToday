@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import ru.fazziclay.javaneoutil.FileUtil;
+import com.fazziclay.javaneoutil.FileUtil;
 import ru.fazziclay.opentoday.telemetry.TelemetryPackets;
 import ru.fazziclay.opentoday.telemetry.packet.Packet20004Login;
 import ru.fazziclay.opentoday.telemetry.packet.Packet20005Handshake;
