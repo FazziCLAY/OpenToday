@@ -1,0 +1,23 @@
+Build 106 (1.0.2)
+* #10 #25 Fixed missing ItemStorage-Context
+* Added 'Export' button to ItemEditor
+* Double-click to exit time changed 1->2 seconds
+* Updated JavaNeoUtil from 1.0 to 1.1
+* Optimized CrashReport
+* Optimized for-loop`s
+* Optimized Loggers (added new Logger, uses TAG var)
+* Added COPY ITEM ID button to ItemEditor
+* Now if the item name is empty, its type name will be used in the path
+* Toolbar -> OpenToday: textAllCaps now true
+
+
+Code-side:
+* added ItemManager.getTabPosition(Tab)
+* UI.findFragmentInParents uses T-parameter
+* UI.back -> UI.rootBack
+* ContainBackStack -> BackStackMember
+* now the topic is put first before sending telemetry
+* added CustomBuildConfig for simple first build
+* IDE: Optimized imports
+* deleted last argument from AppToolbar (current navigationHost)
+* ItemsTabIncludeFragment is reviewed (fixed missing ItemStorage-context)
