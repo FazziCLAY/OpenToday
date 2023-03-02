@@ -4,8 +4,8 @@ import androidx.annotation.NonNull;
 
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.tab.Tab;
-import com.fazziclay.opentoday.callback.Callback;
-import com.fazziclay.opentoday.callback.Status;
+import com.fazziclay.opentoday.util.callback.Callback;
+import com.fazziclay.opentoday.util.callback.Status;
 
 /**
  * @see ItemManager#getOnTabsChanged()

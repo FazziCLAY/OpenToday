@@ -9,9 +9,9 @@ import com.fazziclay.opentoday.app.items.SimpleItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemIEUtil;
-import com.fazziclay.opentoday.callback.CallbackImportance;
-import com.fazziclay.opentoday.callback.CallbackStorage;
-import com.fazziclay.opentoday.callback.Status;
+import com.fazziclay.opentoday.util.callback.CallbackImportance;
+import com.fazziclay.opentoday.util.callback.CallbackStorage;
+import com.fazziclay.opentoday.util.callback.Status;
 
 import org.json.JSONObject;
 
@@ -148,5 +148,10 @@ public class LocalItemsTab extends Tab {
     @Override
     public CallbackStorage<OnItemsStorageUpdate> getOnUpdateCallbacks() {
         return itemsStorage.getOnUpdateCallbacks();
+    }
+
+    @Override
+    public String toString() {
+        return "LocalItemsTab{"+getName()+"}";
     }
 }

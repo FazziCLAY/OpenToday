@@ -6,7 +6,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.fazziclay.javaneoutil.FileUtil;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.util.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,9 +17,9 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.UUID;
 
-import ru.fazziclay.javaneoutil.FileUtil;
-
 public class DataFixer {
+    private static final String TAG = "DataFixer";
+
     private final Context context;
     private final File versionFile;
     private final StringBuilder logs = new StringBuilder();
@@ -42,7 +44,7 @@ public class DataFixer {
                 int applicationVersion = versionData.optInt("application_version", 0);
                 isVersionFileOutdated = applicationVersion != App.VERSION_CODE;
             } catch (JSONException e) {
-                Log.e("DataFixer", "parse from 'version' file", e);
+                Logger.e(TAG, "state: parse from 'version' file", e);
                 return FixResult.NO_FIX;
             }
         } else {
@@ -50,18 +52,19 @@ public class DataFixer {
             File entry_data = new File(context.getExternalFilesDir(""), "entry_data.json");
             if (FileUtil.isExist(entry_data)) {
                 dataVersion = 1;
-                Log.d("DataFixer", "detect 1 dataVersion");
+                Logger.d(TAG, "detected first(1) dataVersion (entry_data.json)");
             } else {
-                Log.d("DataFixer", "detect app not initialized!");
+                Logger.d(TAG, "detected not initialized app (first run?)");
                 return FixResult.NO_FIX;
             }
             // === DETECT 1 DATA VERSION
         }
+        Logger.i(TAG, "parsed dataVersion = " + dataVersion);
         if (dataVersion == 0) return FixResult.NO_FIX.versionFileExist(isVersionFileExist).versionFileOutdated(isVersionFileOutdated);
 
         dataVersion = tryFix(dataVersion);
 
-        Log.d("DataFixer", "latest dataVersion = " + dataVersion);
+        Logger.i(TAG, "Fix done! Current dataVersion = " + dataVersion);
         if (isUpdated) {
             File logFile = new File(context.getExternalCacheDir(), "data-fixer/logs/" + System.currentTimeMillis() + ".txt");
             FileUtil.setText(logFile, logs.toString());
@@ -77,66 +80,14 @@ public class DataFixer {
 
     private void log(String tag, String m, Throwable t) {
         if (t != null) {
-            Log.e("DataFixer-log", String.format("[%s] %s", tag, m), t);
+            Logger.e("DataFixer-log", String.format("[%s] %s", tag, m), t);
         } else {
-            Log.d("DataFixer-log", String.format("[%s] %s", tag, m));
+            Logger.d("DataFixer-log", String.format("[%s] %s", tag, m));
         }
 
         logs.append(String.format("[%s] %s", tag, m)).append("\n");
         if (t != null) {
             logs.append(String.format("[%s] Throwable:\n", tag)).append(Log.getStackTraceString(t)).append("\n");
-        }
-    }
-
-    public static class FixResult {
-        public static FixResult NO_FIX = new FixResult();
-
-        private final boolean fixed;
-        private boolean versionFileExist = false;
-        private boolean versionFileOutdated = false;
-        private int dataVersion;
-        private File logFile;
-        private String logs;
-
-        public FixResult(int dataVersion, File logFile, String logs) {
-            this.dataVersion = dataVersion;
-            this.logFile = logFile;
-            this.logs = logs;
-            this.fixed = true;
-        }
-
-        private FixResult() {
-            this.fixed = false;
-        }
-
-        public FixResult versionFileExist(boolean b) {
-            this.versionFileExist = b;
-            return this;
-        }
-
-        public FixResult versionFileOutdated(boolean b) {
-            this.versionFileOutdated = b;
-            return this;
-        }
-
-        public boolean isFixed() {
-            return fixed;
-        }
-
-        public boolean isVersionFileUpdateRequired() {
-            return !versionFileExist || versionFileOutdated;
-        }
-
-        public int getDataVersion() {
-            return dataVersion;
-        }
-
-        public File getLogFile() {
-            return logFile;
-        }
-
-        public String getLogs() {
-            return logs;
         }
     }
 

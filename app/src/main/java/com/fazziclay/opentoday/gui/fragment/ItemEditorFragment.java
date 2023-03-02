@@ -29,7 +29,7 @@ import androidx.fragment.app.Fragment;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.ColorHistoryManager;
-import com.fazziclay.opentoday.app.FeatureFlag;
+import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
@@ -54,7 +54,7 @@ import com.fazziclay.opentoday.databinding.DialogItemModuleTextBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleLongtextBinding;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.dialog.DialogItemNotificationsEditor;
-import com.fazziclay.opentoday.gui.interfaces.ContainBackStack;
+import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
 import com.fazziclay.opentoday.util.MinTextWatcher;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
@@ -72,7 +72,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-public class ItemEditorFragment extends Fragment implements ContainBackStack {
+public class ItemEditorFragment extends Fragment implements BackStackMember {
     private static final int MODE_UNKNOWN = 0x00;
     private static final int MODE_CREATE = 0x02;
     private static final int MODE_EDIT = 0x04;
@@ -294,7 +294,7 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
 
     private void cancel() {
         unsavedChanges = false;
-        UI.back(this);
+        UI.rootBack(this);
     }
 
     @Override
@@ -382,10 +382,23 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
                         .show();
             });
             binding.minimize.setChecked(item.isMinimize());
-            viewVisible(binding.copyItemId, app.isFeatureFlag(FeatureFlag.ITEM_EDITOR_SHOW_COPY_ID_BUTTON), View.GONE);
+            //viewVisible(binding.copyItemId, app.isFeatureFlag(FeatureFlag.ITEM_EDITOR_SHOW_COPY_ID_BUTTON), View.GONE);
             viewClick(binding.copyItemId, () -> {
                 ClipboardManager clipboardManager = activity.getSystemService(ClipboardManager.class);
                 clipboardManager.setPrimaryClip(ClipData.newPlainText("Item id", item.getId() == null ? "null" : item.getId().toString()));
+            });
+
+            viewClick(binding.exportItem, () -> {
+                ImportWrapper w = ImportWrapper.createImport(ImportWrapper.Permission.ADD_ITEMS_TO_CURRENT)
+                        .addItem(item)
+                        .build();
+                ClipboardManager clipboardManager = activity.getSystemService(ClipboardManager.class);
+                try {
+                    clipboardManager.setPrimaryClip(ClipData.newPlainText("OpenToday export", w.finalExport()));
+                    Toast.makeText(requireContext(), R.string.export_success, Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             });
 
             // On edit start

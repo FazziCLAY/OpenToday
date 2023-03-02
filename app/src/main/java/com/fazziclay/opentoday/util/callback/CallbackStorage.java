@@ -1,4 +1,4 @@
-package com.fazziclay.opentoday.callback;
+package com.fazziclay.opentoday.util.callback;
 
 import java.util.ArrayList;
 import java.util.List;

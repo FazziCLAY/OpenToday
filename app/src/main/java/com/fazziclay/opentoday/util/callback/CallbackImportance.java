@@ -1,4 +1,4 @@
-package com.fazziclay.opentoday.callback;
+package com.fazziclay.opentoday.util.callback;
 
 /**
  * <p>{@link CallbackImportance#MAX} - q=100</p>

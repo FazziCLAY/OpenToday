@@ -87,7 +87,7 @@
     <!-- Section: OpenToday -->
     <style name="OpenToday.Base.Toolbar.Section.Root.OpenToday" parent="OpenToday.Base.Toolbar.Section.Root" />
     <style name="OpenToday.Base.Toolbar.Section.Button.OpenToday" parent="OpenToday.Base.Toolbar.Section.Button">
-        <item name="android:textAllCaps">false</item>
+        <item name="android:textAllCaps">true</item>
     </style>
 
 

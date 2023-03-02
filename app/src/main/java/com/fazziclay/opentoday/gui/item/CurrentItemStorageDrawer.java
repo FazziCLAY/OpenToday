@@ -13,11 +13,11 @@ import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.callback.OnCurrentItemStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
-import com.fazziclay.opentoday.callback.CallbackImportance;
-import com.fazziclay.opentoday.callback.Status;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.gui.interfaces.StorageEditsActions;
 import com.fazziclay.opentoday.util.ResUtil;
+import com.fazziclay.opentoday.util.callback.CallbackImportance;
+import com.fazziclay.opentoday.util.callback.Status;
 
 public class CurrentItemStorageDrawer {
     private final Activity activity;

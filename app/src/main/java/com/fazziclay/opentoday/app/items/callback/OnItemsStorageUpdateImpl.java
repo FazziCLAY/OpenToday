@@ -1,7 +1,7 @@
 package com.fazziclay.opentoday.app.items.callback;
 
 import com.fazziclay.opentoday.app.items.item.Item;
-import com.fazziclay.opentoday.callback.Status;
+import com.fazziclay.opentoday.util.callback.Status;
 
 /**
  * @see OnItemsStorageUpdate

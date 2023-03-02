@@ -3,13 +3,14 @@ package com.fazziclay.opentoday.app.settings;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import com.fazziclay.javaneoutil.FileUtil;
 import com.fazziclay.opentoday.R;
-import com.fazziclay.opentoday.annotation.Getter;
-import com.fazziclay.opentoday.annotation.Setter;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.util.L;
+import com.fazziclay.opentoday.util.annotation.Getter;
+import com.fazziclay.opentoday.util.annotation.Setter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,8 +18,6 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.Calendar;
 import java.util.UUID;
-
-import ru.fazziclay.javaneoutil.FileUtil;
 
 public class SettingsManager {
     // Theme

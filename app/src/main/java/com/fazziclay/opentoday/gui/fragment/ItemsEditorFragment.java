@@ -21,8 +21,6 @@ import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
-import com.fazziclay.opentoday.callback.CallbackImportance;
-import com.fazziclay.opentoday.callback.Status;
 import com.fazziclay.opentoday.databinding.ItemsStorageEmptyBinding;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.activity.MainActivity;
@@ -31,6 +29,8 @@ import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.gui.interfaces.StorageEditsActions;
 import com.fazziclay.opentoday.gui.item.ItemStorageDrawer;
 import com.fazziclay.opentoday.util.L;
+import com.fazziclay.opentoday.util.callback.CallbackImportance;
+import com.fazziclay.opentoday.util.callback.Status;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,7 +87,7 @@ public class ItemsEditorFragment extends Fragment {
         L.o(TAG, "onCreate", L.nn(savedInstanceState));
         activity = (MainActivity) requireActivity();
         navigationHost = (NavigationHost) getParentFragment();
-        rootNavigationHost = (NavigationHost) UI.findFragmentInParents(this, MainRootFragment.class);
+        rootNavigationHost = UI.findFragmentInParents(this, MainRootFragment.class);
         itemManager = App.get(requireContext()).getItemManager();
         settingsManager = App.get(requireContext()).getSettingsManager();
 

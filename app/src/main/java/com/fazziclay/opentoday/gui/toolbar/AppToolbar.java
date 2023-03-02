@@ -42,8 +42,6 @@ import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.receiver.ItemsTickReceiver;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
-import com.fazziclay.opentoday.callback.CallbackImportance;
-import com.fazziclay.opentoday.callback.Status;
 import com.fazziclay.opentoday.databinding.ToolbarBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreFileBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreItemsBinding;
@@ -62,6 +60,8 @@ import com.fazziclay.opentoday.gui.fragment.ItemsTabIncludeFragment;
 import com.fazziclay.opentoday.gui.fragment.SettingsFragment;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.util.ResUtil;
+import com.fazziclay.opentoday.util.callback.CallbackImportance;
+import com.fazziclay.opentoday.util.callback.Status;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,7 +78,6 @@ public class AppToolbar {
     private final ItemManager itemManager;
     private final SettingsManager settingsManager;
     private ItemsStorage itemsStorage; // For context toolbar work
-    private Tab tab; // For context toolbar work
     private View currentToolbarButton = null; // Current active button. If none: null
     private OnSelectionChanged onSelectionChanged = null; // (Selection TAB) On selection changed. For runtime update selection information
     private OnSelectionChanged onSelectionChangedTab = null; // (Selection TAB) On selection changed. For runtime update selection information
@@ -88,13 +87,12 @@ public class AppToolbar {
     private View itemsSectionCacheView = null;
     private OnMoreVisibleChanged onMoreVisibleChangedListener = null;
     private final NavigationHost rootNavigationHost;
-    private final NavigationHost navigationHost;
     private long lastTabReorder;
 
     private View sectionItems;
 
 
-    public AppToolbar(Activity activity, ItemManager itemManager, SettingsManager settingsManager, ItemsStorage itemsStorage, NavigationHost rootNavigationHost, ItemsTabIncludeFragment itemsTabIncludeFragment) {
+    public AppToolbar(Activity activity, ItemManager itemManager, SettingsManager settingsManager, ItemsStorage itemsStorage, NavigationHost rootNavigationHost) {
         this.activity = activity;
         this.toolbarMoreView = new LinearLayout(activity);
         this.toolbarView = new LinearLayout(activity);
@@ -103,7 +101,6 @@ public class AppToolbar {
         this.settingsManager = settingsManager;
         this.itemsStorage = itemsStorage;
         this.rootNavigationHost = rootNavigationHost;
-        this.navigationHost = itemsTabIncludeFragment;
         this.toolbarMoreView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         this.toolbarMoreView.setOrientation(LinearLayout.VERTICAL);
         this.toolbarMoreView.setClickable(false);
@@ -409,7 +406,7 @@ public class AppToolbar {
                 viewVisible(holder.itemView, itemInfo.isCompatibility(app.getFeatureFlags()), View.GONE);
 
                 holder.name.setText(itemInfo.getNameResId());
-                viewClick(holder.create, () -> rootNavigationHost.navigate(ItemEditorFragment.create(tab.getId(), itemInfo.getClassType()), true));
+                viewClick(holder.create, () -> rootNavigationHost.navigate(ItemEditorFragment.create(((ID)itemsStorage).getId(), itemInfo.getClassType()), true));
                 viewClick(holder.add, () -> itemsStorage.addItem(ItemsRegistry.REGISTRY.get(itemInfo.getClassType()).create()));
             }
 
@@ -607,9 +604,6 @@ public class AppToolbar {
         this.itemsStorage = itemsStorage;
     }
 
-    public void setTab(Tab tab) {
-        this.tab = tab;
-    }
 
     public void setOnMoreVisibleChangedListener(OnMoreVisibleChanged l) {
         onMoreVisibleChangedListener = l;

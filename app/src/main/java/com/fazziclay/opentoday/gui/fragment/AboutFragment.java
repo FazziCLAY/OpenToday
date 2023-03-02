@@ -46,7 +46,7 @@ public class AboutFragment extends Fragment {
         viewClick(binding.sourceCode, () -> NetworkUtil.openBrowser(requireActivity(), LINK_OPENSOURCE));
         viewClick(binding.issues, () -> NetworkUtil.openBrowser(requireActivity(), LINK_ISSUES));
         viewClick(binding.licenses, () -> requireActivity().startActivity(OpenSourceLicensesActivity.createLaunchIntent(requireContext())));
-        viewClick(binding.ok, () -> UI.back(this));
+        viewClick(binding.ok, () -> UI.rootBack(this));
 
         return binding.getRoot();
     }

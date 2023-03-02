@@ -106,11 +106,11 @@ public class DeleteItemsFragment extends Fragment {
                         itemManager.deselectItem(item);
                         item.delete();
                     }
-                    UI.back(this);
+                    UI.rootBack(this);
                 }))
                 .show());
 
-        binding.cancelButton.setOnClickListener(v -> UI.back(this));
+        binding.cancelButton.setOnClickListener(v -> UI.rootBack(this));
         return binding.getRoot();
     }
 

@@ -6,7 +6,7 @@ import androidx.annotation.Nullable;
 import com.fazziclay.opentoday.app.TickSession;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.Item;
-import com.fazziclay.opentoday.callback.CallbackStorage;
+import com.fazziclay.opentoday.util.callback.CallbackStorage;
 
 import java.util.List;
 import java.util.UUID;
