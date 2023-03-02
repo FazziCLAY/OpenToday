@@ -9,7 +9,7 @@ import com.fazziclay.opentoday.util.callback.Status;
 import java.util.Arrays;
 
 public class L {
-    public static final boolean ENABLED = (App.DEBUG && true);
+    public static final boolean ENABLED = (App.LOG && true);
     private static final L instance = new L();
 
     public static L getInstance() {
@@ -38,7 +38,6 @@ public class L {
 
     public void o_(Object... objects) {
         if (!ENABLED) {
-            Log.e("L", Arrays.toString(objects));
             return;
         }
         StringBuilder temp = new StringBuilder();
