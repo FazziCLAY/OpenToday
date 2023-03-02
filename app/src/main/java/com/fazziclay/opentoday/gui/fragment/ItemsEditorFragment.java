@@ -87,7 +87,7 @@ public class ItemsEditorFragment extends Fragment {
         L.o(TAG, "onCreate", L.nn(savedInstanceState));
         activity = (MainActivity) requireActivity();
         navigationHost = (NavigationHost) getParentFragment();
-        rootNavigationHost = (NavigationHost) UI.findFragmentInParents(this, MainRootFragment.class);
+        rootNavigationHost = UI.findFragmentInParents(this, MainRootFragment.class);
         itemManager = App.get(requireContext()).getItemManager();
         settingsManager = App.get(requireContext()).getSettingsManager();
 

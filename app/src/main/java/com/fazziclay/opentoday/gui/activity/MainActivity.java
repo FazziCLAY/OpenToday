@@ -1,5 +1,6 @@
 package com.fazziclay.opentoday.gui.activity;
 
+import static com.fazziclay.opentoday.util.InlineUtil.nullStat;
 import static com.fazziclay.opentoday.util.InlineUtil.viewClick;
 import static com.fazziclay.opentoday.util.InlineUtil.viewVisible;
 
@@ -25,10 +26,9 @@ import com.fazziclay.opentoday.databinding.NotificationDebugappBinding;
 import com.fazziclay.opentoday.databinding.NotificationUpdateAvailableBinding;
 import com.fazziclay.opentoday.gui.UITickService;
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment;
-import com.fazziclay.opentoday.gui.interfaces.ContainBackStack;
-import com.fazziclay.opentoday.util.L;
+import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
+import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.NetworkUtil;
-import com.fazziclay.opentoday.util.OnDebugLog;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
     private SettingsManager settingsManager;
     private UITickService uiTickService;
     private long lastExitClick = 0;
-    private final OnDebugLog onDebugLog = new LocalOnDebugLog();
 
     // Current Date
     private Handler currentDateHandler;
@@ -56,22 +55,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        long start = System.currentTimeMillis();
+        Logger.d(TAG, "onCreate", nullStat(savedInstanceState));
+        long ping_start = System.currentTimeMillis();
         try {
             getSupportActionBar().hide();
         } catch (Exception ignored) {}
 
         this.app = App.get(this);
-        this.app.setAppInForeground(true);
-        this.app.getTelemetry().send(new Telemetry.UiOpenLPacket());
         this.settingsManager = app.getSettingsManager();
         AppCompatDelegate.setDefaultNightMode(settingsManager.getTheme());
+        this.app.setAppInForeground(true);
+        this.app.getTelemetry().send(new Telemetry.UiOpenLPacket());
         this.uiTickService = new UITickService(this);
         this.binding = ActivityMainBinding.inflate(getLayoutInflater());
 
-        long startStat_apptelemetrythemebinging = System.currentTimeMillis();
+        long ping_startStat_apptelemetrythemebinging = System.currentTimeMillis();
         setContentView(binding.getRoot());
-        long startStat_setviewanddebug = System.currentTimeMillis();
+        long ping_startStat_setviewanddebug = System.currentTimeMillis();
 
         if (savedInstanceState == null) {
             getSupportFragmentManager()
@@ -79,13 +79,13 @@ public class MainActivity extends AppCompatActivity {
                     .replace(CONTAINER_ID, MainRootFragment.create(), "MainRootFragment")
                     .commit();
         }
-        long startStat_setfragment = System.currentTimeMillis();
+        long ping_startStat_setfragment = System.currentTimeMillis();
 
 
         setupAppDebugNotify();
         setupUpdateAvailableNotify();
         setupCurrentDate();
-        long startStat_setups = System.currentTimeMillis();
+        long ping_startStat_setups = System.currentTimeMillis();
 
 
         if (settingsManager.isQuickNoteNotification()) {
@@ -100,14 +100,14 @@ public class MainActivity extends AppCompatActivity {
         if (app.isFeatureFlag(FeatureFlag.SHOW_MAINACTIVITY_STARTUP_TIME)) {
             long c = System.currentTimeMillis();
 
-            long startupTime = c - start;
+            long startupTime = c - ping_start;
             StringBuilder text = new StringBuilder("MainActivity startup time:\n").append(startupTime).append("ms");
             text.append("\n");
-            text.append("App;telemetry;theme;binging: ").append(startStat_apptelemetrythemebinging - start).append("ms\n");
-            text.append("setContentView&debugs: ").append(startStat_setviewanddebug - startStat_apptelemetrythemebinging).append("ms\n");
-            text.append("Set fragment: ").append(startStat_setfragment - startStat_setviewanddebug).append("ms\n");
-            text.append("setups: ").append(startStat_setups - startStat_setfragment).append("ms\n");
-            text.append("preStop: ").append(startStat_preStop - startStat_setups).append("ms\n");
+            text.append("App;telemetry;theme;binging: ").append(ping_startStat_apptelemetrythemebinging - ping_start).append("ms\n");
+            text.append("setContentView&debugs: ").append(ping_startStat_setviewanddebug - ping_startStat_apptelemetrythemebinging).append("ms\n");
+            text.append("Set fragment: ").append(ping_startStat_setfragment - ping_startStat_setviewanddebug).append("ms\n");
+            text.append("setups: ").append(ping_startStat_setups - ping_startStat_setfragment).append("ms\n");
+            text.append("preStop: ").append(startStat_preStop - ping_startStat_setups).append("ms\n");
             Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
         }
     }
@@ -125,8 +125,8 @@ public class MainActivity extends AppCompatActivity {
         };
 
         Fragment fragment = getMainRootFragment();
-        if (fragment instanceof ContainBackStack) {
-            ContainBackStack d = (ContainBackStack) fragment;
+        if (fragment instanceof BackStackMember) {
+            BackStackMember d = (BackStackMember) fragment;
             if (!d.popBackStack()) {
                 def.run();
             }
@@ -138,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Logger.d(TAG, "onDestroy");
         if (app != null) {
             app.setAppInForeground(false);
             app.getTelemetry().send(new Telemetry.UiClosedLPacket());
@@ -146,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
             uiTickService.destroy();
         }
         currentDateHandler.removeCallbacks(currentDateRunnable);
-        L.getCallbackStorage().deleteCallback(onDebugLog);
     }
 
     private Fragment getMainRootFragment() {
@@ -213,12 +213,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void toggleLogsOverlay() {
-
-    }
-
-    private static class LocalOnDebugLog implements OnDebugLog {
-        @Override
-        public void run(String text) {
-        }
+        // TODO: 3/2/23 delete
     }
 }

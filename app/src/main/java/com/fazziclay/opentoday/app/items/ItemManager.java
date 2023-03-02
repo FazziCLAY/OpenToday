@@ -176,6 +176,14 @@ public class ItemManager {
         return tabs;
     }
 
+    public int getTabPosition(UUID tabId) {
+        Tab tab = getTab(tabId);
+        if (tab == null) {
+            return -1;
+        }
+        return tabs.indexOf(tab);
+    }
+
     public Tab getTab(UUID uuid) {
         for (Tab tab : getTabs()) {
             if (tab.getId().equals(uuid)) {

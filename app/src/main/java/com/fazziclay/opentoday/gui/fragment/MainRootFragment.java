@@ -1,5 +1,7 @@
 package com.fazziclay.opentoday.gui.fragment;
 
+import static com.fazziclay.opentoday.util.InlineUtil.nullStat;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,9 +14,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.fazziclay.opentoday.R;
-import com.fazziclay.opentoday.gui.interfaces.ContainBackStack;
+import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
-import com.fazziclay.opentoday.util.L;
+import com.fazziclay.opentoday.util.Logger;
 
 public class MainRootFragment extends Fragment implements NavigationHost {
     private static final int CONTAINER_ID = R.id.content;
@@ -27,13 +29,13 @@ public class MainRootFragment extends Fragment implements NavigationHost {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        L.o(TAG, "onCreate", L.nn(savedInstanceState));
+        Logger.d(TAG, "onCreate", nullStat(savedInstanceState));
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        L.o(TAG, "onCreateView", "sis=", L.nn(savedInstanceState));
+        Logger.d(TAG, "onCreateView inflater=", nullStat(inflater), "container=", nullStat(container), "savedInstanceState", nullStat(savedInstanceState));
         FrameLayout frameLayout = new FrameLayout(requireContext());
         frameLayout.setId(CONTAINER_ID);
         return frameLayout;
@@ -41,10 +43,11 @@ public class MainRootFragment extends Fragment implements NavigationHost {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        L.o(TAG, "onViewCreated", "sis=", L.nn(savedInstanceState));
         super.onViewCreated(view, savedInstanceState);
+        Logger.d(TAG, "onViewCreated", nullStat(savedInstanceState));
 
         if (savedInstanceState == null) {
+            Logger.d(TAG, "onViewCreated", "fragment replaced", ItemsTabIncludeFragment.class.getCanonicalName());
             getChildFragmentManager()
                     .beginTransaction()
                     .replace(CONTAINER_ID, ItemsTabIncludeFragment.create())
@@ -54,11 +57,11 @@ public class MainRootFragment extends Fragment implements NavigationHost {
 
     @Override
     public boolean popBackStack() {
-        L.o(TAG, "popBackStack");
+        Logger.d(TAG, "popBackStack");
         Fragment currentFragment = getChildFragmentManager().findFragmentById(CONTAINER_ID);
-        if (currentFragment instanceof ContainBackStack) {
-            ContainBackStack currentFragmentBackStack = (ContainBackStack) currentFragment;
-            if (currentFragmentBackStack.popBackStack()) {
+        if (currentFragment instanceof BackStackMember) {
+            BackStackMember t = (BackStackMember) currentFragment;
+            if (t.popBackStack()) {
                 return true;
             }
         }
@@ -72,7 +75,7 @@ public class MainRootFragment extends Fragment implements NavigationHost {
 
     @Override
     public void navigate(Fragment fragment, boolean addToBackStack) {
-        L.o(TAG, "navigate", "to=", fragment, "back=", addToBackStack);
+        Logger.d(TAG, "navigate to=", fragment, "addToBack=", addToBackStack);
         FragmentTransaction transaction = getChildFragmentManager()
                 .beginTransaction()
                 .replace(CONTAINER_ID, fragment);

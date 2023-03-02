@@ -9,20 +9,23 @@ import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 
 public class UI {
     @Nullable
-    public static Fragment findFragmentInParents(@NonNull final Fragment fragment, @NonNull final Class<? extends Fragment> find) {
+    public static <T extends Fragment> T findFragmentInParents(@NonNull final Fragment fragment, @NonNull final Class<T> find) {
+        if (fragment == null) throw new NullPointerException("Fragment is null!");
+        if (find == null) throw new NullPointerException("find is null!");
         if (fragment.getParentFragment() == null) {
             return null;
         }
-        if (fragment.getParentFragment().getClass() == find) {
-            return fragment.getParentFragment();
+        Fragment parent = fragment.getParentFragment();
+        if (parent.getClass() == find) {
+            return (T) parent;
         } else {
             return findFragmentInParents(fragment.getParentFragment(), find);
         }
     }
 
-    public static void back(@NonNull final Fragment fragment) {
+    public static void rootBack(@NonNull final Fragment fragment) {
         if (fragment == null) throw new NullPointerException("Fragment is null!");
-        final MainRootFragment host = (MainRootFragment) UI.findFragmentInParents(fragment, MainRootFragment.class);
+        final MainRootFragment host = UI.findFragmentInParents(fragment, MainRootFragment.class);
         if (host == null) throw new RuntimeException("fragment is not in MainRootFragment tree!");
         host.popBackStack();
     }

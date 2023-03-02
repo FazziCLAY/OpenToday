@@ -94,7 +94,7 @@ public class ImportFragment extends Fragment {
             binding.editText.setText(getArguments().getString(KEY_START_TEXT));
         }
         viewClick(binding.runImport, () -> importData(binding.editText.getText().toString()));
-        viewClick(binding.cancel, () -> UI.back(this));
+        viewClick(binding.cancel, () -> UI.rootBack(this));
 
         return binding.getRoot();
     }
@@ -115,7 +115,7 @@ public class ImportFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(activity, activity.getString(R.string.toolbar_more_file_import_exception, e.toString()), Toast.LENGTH_SHORT).show();
-            UI.back(this);
+            UI.rootBack(this);
         }
     }
 
@@ -188,7 +188,7 @@ public class ImportFragment extends Fragment {
                     } else {
                         directImport(importWrapper);
                     }
-                    UI.back(this);
+                    UI.rootBack(this);
                 })
                 .show();
     }

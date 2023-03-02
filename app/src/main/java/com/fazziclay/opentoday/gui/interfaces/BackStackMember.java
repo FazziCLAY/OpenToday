@@ -1,5 +1,5 @@
 package com.fazziclay.opentoday.gui.interfaces;
 
-public interface ContainBackStack {
+public interface BackStackMember {
     boolean popBackStack();
 }

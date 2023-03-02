@@ -54,7 +54,7 @@ import com.fazziclay.opentoday.databinding.DialogItemModuleTextBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleLongtextBinding;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.dialog.DialogItemNotificationsEditor;
-import com.fazziclay.opentoday.gui.interfaces.ContainBackStack;
+import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
 import com.fazziclay.opentoday.util.MinTextWatcher;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
@@ -72,7 +72,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-public class ItemEditorFragment extends Fragment implements ContainBackStack {
+public class ItemEditorFragment extends Fragment implements BackStackMember {
     private static final int MODE_UNKNOWN = 0x00;
     private static final int MODE_CREATE = 0x02;
     private static final int MODE_EDIT = 0x04;
@@ -294,7 +294,7 @@ public class ItemEditorFragment extends Fragment implements ContainBackStack {
 
     private void cancel() {
         unsavedChanges = false;
-        UI.back(this);
+        UI.rootBack(this);
     }
 
     @Override
