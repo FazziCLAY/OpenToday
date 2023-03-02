@@ -12,7 +12,6 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 
 import com.fazziclay.neosocket.NeoSocket;
-import com.fazziclay.opentoday.BuildConfig;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.util.annotation.AppInitIfNeed;
 import com.fazziclay.opentoday.app.datafixer.DataFixer;
@@ -42,9 +41,9 @@ import ru.fazziclay.opentoday.telemetry.OpenTodayTelemetry;
 public class App extends Application {
     // Application
     public static final int APPLICATION_DATA_VERSION = 8;
-    public static final String VERSION_NAME = BuildConfig.VERSION_NAME;
-    public static final int VERSION_CODE = BuildConfig.VERSION_CODE;
-    public static final String APPLICATION_ID = BuildConfig.APPLICATION_ID;
+    public static final String VERSION_NAME = CustomBuildConfig.VERSION_NAME;
+    public static final int VERSION_CODE = CustomBuildConfig.VERSION_CODE;
+    public static final String APPLICATION_ID = CustomBuildConfig.APPLICATION_ID;
 
     // Notifications
     public static final String NOTIFICATION_QUCIKNOTE_CHANNEL = QuickNoteReceiver.NOTIFICATION_CHANNEL;
@@ -57,7 +56,7 @@ public class App extends Application {
 
     // DEBUG
     public static final boolean SHADOW_RELEASE = false;
-    public static final boolean DEBUG = !SHADOW_RELEASE && BuildConfig.DEBUG;
+    public static final boolean DEBUG = !SHADOW_RELEASE && CustomBuildConfig.DEBUG;
     public static final boolean DEBUG_TICK_NOTIFICATION = (DEBUG & false);
     public static final int DEBUG_MAIN_ACTIVITY_START_SLEEP = (DEBUG & false) ? 6000 : 0;
     public static final int DEBUG_APP_START_SLEEP = (DEBUG & false) ? 8000 : 0;
