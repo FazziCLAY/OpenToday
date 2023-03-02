@@ -149,4 +149,9 @@ public class LocalItemsTab extends Tab {
     public CallbackStorage<OnItemsStorageUpdate> getOnUpdateCallbacks() {
         return itemsStorage.getOnUpdateCallbacks();
     }
+
+    @Override
+    public String toString() {
+        return "LocalItemsTab{"+getName()+"}";
+    }
 }
