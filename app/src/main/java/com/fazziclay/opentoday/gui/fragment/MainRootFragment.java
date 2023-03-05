@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.fazziclay.opentoday.R;
+import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.util.Logger;
@@ -25,6 +26,15 @@ public class MainRootFragment extends Fragment implements NavigationHost {
     public static MainRootFragment create() {
         return new MainRootFragment();
     }
+
+    private final FirstFragmentInterface firstFragmentInterface = () -> {
+        final App app = App.get(requireContext());
+        if (app.isPinCodeNeed()) {
+            return EnterPinCodeFragment.create();
+        } else {
+            return ItemsTabIncludeFragment.create();
+        }
+    };
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,10 +57,11 @@ public class MainRootFragment extends Fragment implements NavigationHost {
         Logger.d(TAG, "onViewCreated", nullStat(savedInstanceState));
 
         if (savedInstanceState == null) {
-            Logger.d(TAG, "onViewCreated", "fragment replaced", ItemsTabIncludeFragment.class.getCanonicalName());
+            Fragment first = firstFragmentInterface.create();
+            Logger.d(TAG, "onViewCreated", "fragment replaced", first.getClass().getCanonicalName());
             getChildFragmentManager()
                     .beginTransaction()
-                    .replace(CONTAINER_ID, ItemsTabIncludeFragment.create())
+                    .replace(CONTAINER_ID, first)
                     .commit();
         }
     }
@@ -84,5 +95,9 @@ public class MainRootFragment extends Fragment implements NavigationHost {
 
         if (addToBackStack) transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    interface FirstFragmentInterface {
+        Fragment create();
     }
 }

@@ -281,4 +281,11 @@
     <string name="setup_telemetry_details">These statistics will help the developer a lot. They contain:\n * IP\n * Instance ID\n * App open/close (max 1 per day)\n * Crashes and Errors</string>
     <string name="settings_isTelemetry">@string/setup_telemetry</string>
     <string name="settings_firstDayOfWeek_title">First day of week</string>
+
+
+    <string name="enter_pincode_title">Enter pin-code</string>
+    <string name="enter_pincode_timeout">Try later (reopen app)</string>
+    <string name="settings_pincode">Pin-code: %s</string>
+    <string name="settings_pincode_off">OFF</string>
+    <string name="settings_pincode_on">ON</string>
 </resources>

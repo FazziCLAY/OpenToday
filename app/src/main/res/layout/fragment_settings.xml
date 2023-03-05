@@ -92,4 +92,10 @@
         android:layout_gravity="end"
         android:text="@string/settings_defaultQuickNoteType"
         android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/pincode"
+        android:layout_width="wrap_content"
+        android:text="@string/settings_pincode"
+        android:layout_height="wrap_content" />
 </LinearLayout>

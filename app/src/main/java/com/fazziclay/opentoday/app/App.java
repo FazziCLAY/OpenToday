@@ -19,6 +19,7 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.datafixer.DataFixer;
 import com.fazziclay.opentoday.app.datafixer.FixResult;
 import com.fazziclay.opentoday.app.items.ItemManager;
+import com.fazziclay.opentoday.app.pincode.PinCodeManager;
 import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.gui.activity.CrashReportActivity;
@@ -54,6 +55,7 @@ public class App extends Application {
     // Shared preference
     public static final String SHARED_NAME = "main";
     public static final String SHARED_KEY_IS_SETUP_DONE = "isSetupDone";
+    public static final String SHARED_KEY_PINCODE = "app_pinCode";
 
     // DEBUG
     public static final boolean SHADOW_RELEASE = false;
@@ -85,15 +87,16 @@ public class App extends Application {
     @AppInitIfNeed private SettingsManager settingsManager = null;
     @AppInitIfNeed private ColorHistoryManager colorHistoryManager = null;
     @AppInitIfNeed private Telemetry telemetry = null;
+    private PinCodeManager pinCodeManager = null;
     @AppInitIfNeed private License[] openSourceLicenses = null;
     private final List<FeatureFlag> featureFlags = new ArrayList<>(App.DEBUG ? Arrays.asList(
             FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
-            FeatureFlag.ITEM_EDITOR_SHOW_COPY_ID_BUTTON,
+            //FeatureFlag.ITEM_EDITOR_SHOW_COPY_ID_BUTTON,
             FeatureFlag.AVAILABLE_LOGS_OVERLAY,
             FeatureFlag.NONE,
-            FeatureFlag.SHOW_APP_STARTUP_TIME_IN_PREMAIN_ACTIVITY,
-            FeatureFlag.ALWAYS_SHOW_SAVE_STATUS,
-            FeatureFlag.SHOW_MAINACTIVITY_STARTUP_TIME,
+            //FeatureFlag.SHOW_APP_STARTUP_TIME_IN_PREMAIN_ACTIVITY,
+            //FeatureFlag.ALWAYS_SHOW_SAVE_STATUS,
+            //FeatureFlag.SHOW_MAINACTIVITY_STARTUP_TIME,
             FeatureFlag.AVAILABLE_UI_PERSONAL_TICK,
             FeatureFlag.AVAILABLE_RESTART_ACTIVITY,
             FeatureFlag.AVAILABLE_RESET_SETUP
@@ -114,6 +117,8 @@ public class App extends Application {
 
             registryNotificationsChannels();
 
+            this.pinCodeManager = new PinCodeManager(this);
+
             if (fixResult.isVersionFileUpdateRequired()) updateVersionFile();
             if (fixResult.isFixed()) {
                 getTelemetry().send(new Telemetry.DataFixerLogsLPacket(fixResult.getDataVersion(), fixResult.getLogs()));
@@ -122,6 +127,18 @@ public class App extends Application {
             crash(this, CrashReport.create(new RuntimeException(getClass().getName() + " onCreate exception: " + e, e)), false);
         }
         this.appStartupTime = System.currentTimeMillis() - start;
+    }
+
+    public boolean isPinCodeNeed() {
+        return this.pinCodeManager.isPinCodeSet();
+    }
+
+    public boolean isPinCodeAllow(String p) {
+        return p.equals(this.pinCodeManager.getPinCode());
+    }
+
+    public int getPinCodeLength() {
+        return this.pinCodeManager.getPinCode().length();
     }
 
     private void registryNotificationsChannels() {
@@ -324,6 +341,11 @@ public class App extends Application {
         preCheckOpenSourceLicenses();
         return this.openSourceLicenses;
     }
+
+    public PinCodeManager getPinCodeManager() {
+        return pinCodeManager;
+    }
+
     public boolean isAppInForeground() { return appInForeground; }
     public void setAppInForeground(boolean appInForeground) { this.appInForeground = appInForeground; }
     public List<FeatureFlag> getFeatureFlags() {return featureFlags;}

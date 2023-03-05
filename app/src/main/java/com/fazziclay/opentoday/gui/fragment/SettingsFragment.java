@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -31,6 +32,7 @@ import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.tab.Tab;
+import com.fazziclay.opentoday.app.pincode.PinCodeManager;
 import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.databinding.ExportBinding;
@@ -55,6 +57,8 @@ public class SettingsFragment extends Fragment {
     private App app;
     private SettingsManager settingsManager;
     private ColorHistoryManager colorHistoryManager;
+    private PinCodeManager pinCodeManager;
+    private Runnable pinCodeCallback = () -> {};
     private long easterEggLastClick = 0;
     private int easterEggCounter = 0;
 
@@ -64,6 +68,7 @@ public class SettingsFragment extends Fragment {
         app = App.get(requireContext());
         settingsManager = app.getSettingsManager();
         colorHistoryManager = app.getColorHistoryManager();
+        pinCodeManager = app.getPinCodeManager();
     }
 
     @Nullable
@@ -137,6 +142,47 @@ public class SettingsFragment extends Fragment {
             binding.defaultQuickNoteType.setText(getString(R.string.settings_defaultQuickNoteType, getString(settingsManager.getDefaultQuickNoteType().getNameResId())));
             settingsManager.save();
         }).show());
+
+        pinCodeCallback = () -> binding.pincode.setText(getString(R.string.settings_pincode, (pinCodeManager.isPinCodeSet() ? getString(R.string.settings_pincode_on) : getString(R.string.settings_pincode_off))));
+        pinCodeCallback.run();
+        viewClick(binding.pincode, () -> {
+            boolean is = pinCodeManager.isPinCodeSet();
+            AlertDialog.Builder d = new AlertDialog.Builder(requireContext())
+                    .setTitle("App Pin-code")
+                    .setMessage(is ? "Current Pin-code: " + pinCodeManager.getPinCode() : "Pin-code disabled")
+                    .setNeutralButton("Cancel", null)
+                    .setPositiveButton(is ? "Disable" : "Enable", (dialogInterface, i) -> {
+                        if (is) {
+                            pinCodeManager.disablePinCode();
+                            pinCodeCallback.run();
+                            Toast.makeText(app, "Success!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            EditText t = new EditText(requireContext());
+                            t.setHint("Enter pin...");
+                            new AlertDialog.Builder(requireContext())
+                                    .setTitle("Enable pin-code")
+                                    .setMessage("Dont forget this. Backup file: pcb (pin code backup)")
+                                    .setView(t)
+                                    .setPositiveButton("Set", (fsdf, fdsfd) -> {
+                                        try {
+                                            pinCodeManager.enablePinCode(t.getText().toString());
+                                            pinCodeCallback.run();
+                                            Toast.makeText(app, "Success!", Toast.LENGTH_SHORT).show();
+                                        } catch (Exception e) {
+                                            if (e instanceof PinCodeManager.ContainNonDigitChars) {
+                                                Toast.makeText(app, "Error! Pin-code contains non-digit chars", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(app, "Error!", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    })
+                                    .setNegativeButton("Cancel", null)
+                                    .show();
+                        }
+                    });
+
+            d.show();
+        });
     }
 
     private void setupThemeSpinner() {

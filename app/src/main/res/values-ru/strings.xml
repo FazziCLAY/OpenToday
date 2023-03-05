@@ -277,4 +277,11 @@
     <string name="setup_telemetry_details">Эта статистика очень поможет разработчику; Она содердит это:\n * Айпи\n * Номер приложения\n * Открытие/закрытие (макс. 1 раз/день)\n * Краши и Ошибки</string>
     <string name="settings_isTelemetry">@string/setup_telemetry</string>
     <string name="settings_firstDayOfWeek_title">Первый день недели</string>
+
+
+    <string name="enter_pincode_title">Введите пин-код</string>
+    <string name="enter_pincode_timeout">Попробуйте позже (перезайдите в приложение)</string>
+    <string name="settings_pincode">Пин-код %s</string>
+    <string name="settings_pincode_off">выключен</string>
+    <string name="settings_pincode_on">включен</string>
 </resources>
