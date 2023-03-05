@@ -1,95 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Tabs -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        tools:background="#00ff00"
         app:tabGravity="start"
         app:tabMode="scrollable" />
 
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        tools:background="#ff0000"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/quickNote"
+        android:layout_below="@id/tabs" />
+
     <RelativeLayout
+        android:id="@+id/quickNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:minHeight="40sp"
+        style="@style/Theme.OpenToday.ItemsTabInclude.Root"
+        android:layout_above="@id/toolbar"
+        android:orientation="horizontal">
 
-        <!-- ViewPager -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_height="match_parent">
-
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/viewPager"
-                android:paddingRight="4sp"
-                android:paddingLeft="4sp"
-                android:layout_width="match_parent"
-                android:layout_weight="1"
-                android:layout_height="0dp" />
-
-            <LinearLayout
-                android:id="@+id/quickNote"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="40sp"
-                style="@style/Theme.OpenToday.ItemsTabInclude.Root"
-                android:gravity="bottom"
-                android:paddingRight="2sp"
-                android:paddingLeft="2sp"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/quickNoteText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    tools:text="This is text"
-                    style="@style/Theme.OpenToday.ItemsTabInclude.Input"
-                    android:hint="@string/quickNote_hint"
-                    android:inputType="textMultiLine"
-                    android:importantForAutofill="no" />
-
-                <ImageButton
-                    android:id="@+id/quickNoteAdd"
-                    android:layout_width="48dp"
-                    android:layout_height="45sp"
-                    style="@style/Theme.OpenToday.ItemsTabInclude.Enter"
-                    android:layout_weight="0"
-                    android:contentDescription="@string/quickNote_add"
-                    android:src="@android:drawable/ic_menu_send" />
-
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- Toolbar more -->
-        <LinearLayout
-            android:id="@+id/toolbar_more"
+        <EditText
+            android:id="@+id/quickNoteText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:orientation="vertical"
-            android:clickable="false" />
+            tools:text="This is text"
+            style="@style/Theme.OpenToday.ItemsTabInclude.Input"
+            android:hint="@string/quickNote_hint"
+            android:inputType="textMultiLine"
+            android:layout_toStartOf="@id/quickNoteAdd"
+            android:importantForAutofill="no" />
+
+        <ImageButton
+            android:id="@+id/quickNoteAdd"
+            android:layout_width="48dp"
+            android:layout_height="45sp"
+            style="@style/Theme.OpenToday.ItemsTabInclude.Enter"
+            android:contentDescription="@string/quickNote_add"
+            android:layout_alignParentEnd="true"
+            android:src="@android:drawable/ic_menu_send" />
+
     </RelativeLayout>
 
+    <!-- Toolbar more -->
+    <FrameLayout
+        android:id="@+id/toolbar_more"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/toolbar"
+        android:orientation="vertical"
+        android:clickable="false" />
+
     <!-- Toolbar buttons -->
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="0"
         android:paddingLeft="5sp"
         android:paddingRight="5sp"
-        android:background="?attr/toolbar_background">
+        android:layout_alignParentBottom="true"
+        android:background="?attr/toolbar_background" />
 
-        <!-- include layout="@layout/toolbar" / -->
-
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>
