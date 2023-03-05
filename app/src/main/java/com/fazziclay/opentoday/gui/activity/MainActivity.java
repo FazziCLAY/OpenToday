@@ -37,7 +37,7 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    private static final int CONTAINER_ID = R.id.content_root;
+    private static final int CONTAINER_ID = R.id.mainActivity_rootFragmentContainer;
 
     private ActivityMainBinding binding;
     private App app;
