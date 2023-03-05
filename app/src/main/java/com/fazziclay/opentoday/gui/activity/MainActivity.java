@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 
 import com.fazziclay.opentoday.R;
+import com.fazziclay.opentoday.app.ActivitySettings;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.FeatureFlag;
 import com.fazziclay.opentoday.app.Telemetry;
@@ -49,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     private Handler currentDateHandler;
     private Runnable currentDateRunnable;
     private GregorianCalendar currentDateCalendar;
+
+    private ActivitySettings activitySettings = new ActivitySettings().setClockVisible(true).setNotificationsVisible(true);
 
 
     // Activity overrides
@@ -214,5 +217,19 @@ public class MainActivity extends AppCompatActivity {
 
     public void toggleLogsOverlay() {
         // TODO: 3/2/23 delete
+    }
+
+    public ActivitySettings getActivitySettings() {
+        return activitySettings;
+    }
+
+    public void pushActivitySettings(ActivitySettings a) {
+        this.activitySettings = a;
+        updateByActivitySettings();
+    }
+
+    public void updateByActivitySettings() {
+        viewVisible(binding.currentDate, activitySettings.isClockVisible(), View.GONE);
+        viewVisible(binding.notifications, activitySettings.isNotificationsVisible(), View.GONE);
     }
 }
