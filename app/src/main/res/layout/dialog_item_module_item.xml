@@ -1,20 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     style="@style/Theme.OpenToday.ItemEditModule">
 
-    <HorizontalScrollView
+    <TextView
+        android:id="@+id/notifications_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="@string/dialog_item_module_item_notifications" />
+
+    <TextView
+        android:id="@+id/notifications_preview"
+        android:layout_width="match_parent"
+        android:layout_below="@id/notifications_title"
+        android:layout_height="wrap_content" />
+
+    <HorizontalScrollView
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/notifications_preview"
         android:minHeight="0sp">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minHeight="0sp">
+
+            <Button
+                android:id="@+id/edit_notifications"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/dialog_item_module_item_editNotifications"
+                tools:ignore="ButtonStyle" />
 
             <Button
                 android:id="@+id/copyItemId"
@@ -34,43 +55,43 @@
                 android:text="@string/dialog_item_module_item_export"
                 style="?android:attr/buttonBarButtonStyle" />
         </LinearLayout>
-
-
     </HorizontalScrollView>
 
     <TextView
+        android:id="@+id/backgroundColor_title"
+        android:layout_below="@id/buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/dialog_item_module_item_backgroundColor_hint" />
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/viewBackgroundColor_edit"
-        android:orientation="horizontal"
+        android:layout_below="@id/backgroundColor_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <LinearLayout
-            android:layout_weight="1"
             android:id="@+id/viewBackgroundColor_indicator"
-            android:layout_gravity="center"
-            android:layout_width="0dp"
-            android:layout_height="45sp"
+            android:layout_width="match_parent"
+            android:layout_height="35sp"
+            android:layout_toStartOf="@id/default_background_color"
             android:background="@drawable/shape_color_indicator"
             android:backgroundTint="#ff000f"
-            android:orientation="horizontal">
-        </LinearLayout>
+            android:orientation="horizontal" />
 
         <CheckBox
-            android:layout_weight="0"
             android:id="@+id/default_background_color"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:minHeight="0sp" />
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:minHeight="0sp"/>
+    </RelativeLayout>
 
 
     <TextView
+        android:id="@+id/viewMinHeight_title"
         android:layout_width="match_parent"
+        android:layout_below="@id/viewBackgroundColor_edit"
         android:layout_height="wrap_content"
         android:text="@string/dialog_item_module_item_minHeight_hint" />
 
@@ -82,30 +103,19 @@
         android:hint="0"
         android:maxLength="10"
         android:importantForAutofill="no"
+        android:layout_below="@id/viewMinHeight_title"
+        android:layout_toStartOf="@id/minimize"
         tools:ignore="HardcodedText" />
 
     <CheckBox
         android:id="@+id/minimize"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="0sp"
-        android:text="@string/dialog_item_module_item_minimize" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/dialog_item_module_item_notifications" />
-
-    <TextView
-        android:id="@+id/notifications_preview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/edit_notifications"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/dialog_item_module_item_editNotifications"
-        android:layout_gravity="end" />
+        android:minHeight="0sp"
+        android:layout_alignBaseline="@id/viewMinHeight"
+        android:layout_alignParentEnd="true"
+        android:text="@string/dialog_item_module_item_minimize" />
 
-</LinearLayout>
+
+
+</RelativeLayout>

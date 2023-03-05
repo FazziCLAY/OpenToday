@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/Theme.OpenToday.Toolbar.Section.Root.Items.ItemRow">
 
@@ -12,12 +12,15 @@
     <Button
         android:id="@+id/add"
         android:text="!"
+        android:layout_toEndOf="@id/create"
         tools:ignore="HardcodedText"
         style="@style/Theme.OpenToday.Toolbar.Section.Button.Items.ItemRow.AddOnly" />
 
     <TextView
         android:id="@+id/name"
         tools:text="Checkbox"
+        android:layout_toEndOf="@id/add"
+        android:layout_alignBaseline="@id/create"
         style="@style/Theme.OpenToday.Toolbar.Section.Text.Items.ItemRow" />
 
-</LinearLayout>
+</RelativeLayout>
