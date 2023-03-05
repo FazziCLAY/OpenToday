@@ -288,4 +288,23 @@
     <string name="settings_pincode">Pin-code: %s</string>
     <string name="settings_pincode_off">OFF</string>
     <string name="settings_pincode_on">ON</string>
+
+    <string name="settings_pincode_title">Pin-code for app</string>
+    <string name="settings_pincode_message_on">Current pin-code: %s</string>
+    <string name="settings_pincode_message_off">Pin-code disabled</string>
+    <string name="settings_pincode_cancel">Cancel</string>
+    <string name="settings_pincode_button_disable">Disable</string>
+    <string name="settings_pincode_button_enable">Enable</string>
+    <string name="settings_pincode_disable_success">Successfully</string>
+    <string name="settings_pincode_enable_hint">Enter new pin-code…</string>
+    <string name="settings_pincode_enable_title">Enable pin-code</string>
+    <string name="settings_pincode_enable_message">Don\'t forget this!</string>
+    <string name="settings_pincode_enable_apply">Set</string>
+    <string name="settings_pincode_enable_success">Pin-code set successfully</string>
+    <string name="settings_pincode_enable_nonDigitsError">Error: Pin-code contains non-digits chars!</string>
+    <string name="settings_pincode_enable_unknownError">Unknown error!</string>
+    <string name="settings_pincode_enable_cancel">Cancel</string>
+    <string name="settings_firstTab_first">First</string>
+    <string name="settings_firstTab_onClosed">On closed</string>
+    <string name="settings_firstTab_title">Tab on open</string>
 </resources>

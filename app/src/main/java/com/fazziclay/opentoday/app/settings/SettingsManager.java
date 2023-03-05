@@ -50,6 +50,7 @@ public class SettingsManager {
     private UUID quickNoteNotificationItemsStorageId = null;
     private boolean isTelemetry = true;
     private ItemsRegistry.ItemInfo defaultQuickNoteType = ItemsRegistry.REGISTRY.get(TextItem.class);
+    private FirstTab firstTab = FirstTab.TAB_ON_CLOSING;
 
 
     public SettingsManager(File saveFile) {
@@ -79,6 +80,8 @@ public class SettingsManager {
     @Setter public void setTelemetry(boolean b) {this.isTelemetry = b;}
     @Getter public ItemsRegistry.ItemInfo getDefaultQuickNoteType() {return defaultQuickNoteType;}
     @Setter public void setDefaultQuickNoteType(ItemsRegistry.ItemInfo defaultQuickNoteType) {this.defaultQuickNoteType = defaultQuickNoteType;}
+    @Getter public FirstTab getFirstTab() {return firstTab;}
+    @Setter public void setFirstTab(FirstTab firstTab) {this.firstTab = firstTab;}
 
     private void load() {
         if (!FileUtil.isExist(saveFile)) {
@@ -123,6 +126,10 @@ public class SettingsManager {
                 this.defaultQuickNoteType = ItemsRegistry.REGISTRY.get(j.getString("defaultQuickNoteType"));
             } catch (Exception ignored) {}
 
+            try {
+                this.firstTab = FirstTab.valueOf(j.getString("firstTab"));
+            } catch (Exception ignored) {}
+
         } catch (Exception e) {
             L.o("SettingsManager", "load", e);
             App.exception(null, e);
@@ -158,6 +165,7 @@ public class SettingsManager {
         j.put("quickNoteNotificationItemsStorageId", quickNoteNotificationItemsStorageId != null ? quickNoteNotificationItemsStorageId.toString() : null);
         j.put("isTelemetry", this.isTelemetry);
         j.put("defaultQuickNoteType", this.defaultQuickNoteType.getStringType());
+        j.put("firstTab", this.firstTab.name());
         return j;
     }
 
@@ -187,5 +195,10 @@ public class SettingsManager {
         public int nameResId() {
             return resId;
         }
+    }
+
+    public enum FirstTab {
+        FIRST,
+        TAB_ON_CLOSING
     }
 }

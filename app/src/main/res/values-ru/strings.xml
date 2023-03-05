@@ -284,4 +284,23 @@
     <string name="settings_pincode">Пин-код %s</string>
     <string name="settings_pincode_off">выключен</string>
     <string name="settings_pincode_on">включен</string>
+
+    <string name="settings_pincode_title">Пин-код приложения</string>
+    <string name="settings_pincode_message_on">Текущий пин-код: %s</string>
+    <string name="settings_pincode_message_off">Пин-код отключен</string>
+    <string name="settings_pincode_cancel">Отмена</string>
+    <string name="settings_pincode_button_disable">Отключить</string>
+    <string name="settings_pincode_button_enable">Включить</string>
+    <string name="settings_pincode_disable_success">Успешно</string>
+    <string name="settings_pincode_enable_hint">Введите новый пин-код…</string>
+    <string name="settings_pincode_enable_title">Включение пин-кода</string>
+    <string name="settings_pincode_enable_message">Не забудьте его!</string>
+    <string name="settings_pincode_enable_apply">Установить</string>
+    <string name="settings_pincode_enable_success">Пин-код установлен успешно</string>
+    <string name="settings_pincode_enable_nonDigitsError">Ошибка: пин-код может содержать только цифры!</string>
+    <string name="settings_pincode_enable_unknownError">Неизвестная ошибка!</string>
+    <string name="settings_pincode_enable_cancel">Отмена</string>
+    <string name="settings_firstTab_first">Первая</string>
+    <string name="settings_firstTab_onClosed">На момент закрытия</string>
+    <string name="settings_firstTab_title">Вкладка при открытии</string>
 </resources>

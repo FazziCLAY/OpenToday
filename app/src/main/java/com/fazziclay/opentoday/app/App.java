@@ -56,6 +56,7 @@ public class App extends Application {
     public static final String SHARED_NAME = "main";
     public static final String SHARED_KEY_IS_SETUP_DONE = "isSetupDone";
     public static final String SHARED_KEY_PINCODE = "app_pinCode";
+    public static final String SHARED_KEY_LAST_TAB = "app_tabInclude_lastTabId";
 
     // DEBUG
     public static final boolean SHADOW_RELEASE = false;
