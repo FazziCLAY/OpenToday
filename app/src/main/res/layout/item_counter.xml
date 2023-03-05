@@ -1,60 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:backgroundTint="?attr/item_counter_backgroundColor"
-    android:background="@drawable/shape"
-    android:paddingEnd="1sp">
+    android:background="@drawable/shape">
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <TextView
+        android:id="@+id/title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5sp"
+        tools:text="Simple Counter"
+        android:textSize="19sp"
+        android:layout_toStartOf="@id/down"
+        android:textColor="?attr/item_counter_textColor" />
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="Simple Counter"
-            android:textSize="19sp"
-            android:paddingLeft="5sp"
-            android:textColor="?attr/item_counter_textColor" />
+    <Button
+        android:id="@+id/down"
+        android:layout_width="40sp"
+        android:layout_height="37sp"
+        android:layout_gravity="center"
+        android:minHeight="0sp"
+        android:minWidth="0sp"
+        android:gravity="center"
+        android:text="-"
+        android:textSize="13sp"
+        android:layout_toStartOf="@id/up"
+        tools:ignore="HardcodedText" />
 
-        <Button
-            android:id="@+id/down"
-            android:layout_width="40sp"
-            android:layout_height="35sp"
-            android:layout_gravity="center"
-            android:layout_weight="0"
-            android:minHeight="0sp"
-            android:minWidth="0sp"
-            android:gravity="center"
-            android:text="-"
-            android:textSize="13sp"
-            tools:ignore="HardcodedText" />
-
-        <Button
-            android:layout_marginStart="2sp"
-            android:id="@+id/up"
-            android:layout_width="40sp"
-            android:layout_height="35sp"
-            android:layout_gravity="center"
-            android:layout_weight="0"
-            android:gravity="center"
-            android:text="+"
-            android:textSize="13sp"
-            tools:ignore="HardcodedText" />
-
-    </LinearLayout>
+    <Button
+        android:layout_marginStart="2sp"
+        android:id="@+id/up"
+        android:layout_width="40sp"
+        android:layout_height="37sp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="+"
+        android:textSize="13sp"
+        android:layout_alignParentEnd="true"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/counter"
         android:layout_width="match_parent"
         android:textSize="20sp"
-        android:paddingLeft="5sp"
         tools:text="0.0"
+        android:layout_alignLeft="@id/title"
+        android:layout_below="@id/title"
         android:layout_height="wrap_content" />
-</LinearLayout>
+</RelativeLayout>
