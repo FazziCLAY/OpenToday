@@ -171,10 +171,16 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         currentDateHandler.post(currentDateRunnable);
-        viewClick(binding.currentDate, () -> {
+        viewClick(binding.currentDateDate, () -> {
             DatePickerDialog dialog = new DatePickerDialog(this);
-            dialog.getDatePicker().setFirstDayOfWeek(settingsManager.getFirstDayOfWeek());
             dialog.show();
+            dialog.getDatePicker().setFirstDayOfWeek(settingsManager.getFirstDayOfWeek());
+        });
+
+        viewClick(binding.currentDateTime, () -> {
+            DatePickerDialog dialog = new DatePickerDialog(this);
+            dialog.show();
+            dialog.getDatePicker().setFirstDayOfWeek(settingsManager.getFirstDayOfWeek());
         });
     }
 
@@ -229,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateByActivitySettings() {
-        viewVisible(binding.currentDate, activitySettings.isClockVisible(), View.GONE);
+        viewVisible(binding.currentDateDate, activitySettings.isClockVisible(), View.GONE);
         viewVisible(binding.notifications, activitySettings.isNotificationsVisible(), View.GONE);
     }
 }
