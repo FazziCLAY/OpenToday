@@ -42,4 +42,62 @@
         android:layout_alignParentBottom="true"
         android:layout_height="match_parent" />
 
+    <ScrollView
+        android:id="@+id/debug_logs_scroll"
+        android:visibility="gone"
+        android:background="#22222222"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/debug_logs_text"
+                android:textColor="#ffff00"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+
+        </HorizontalScrollView>
+    </ScrollView>
+
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/debug_logs_switch"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:background="#FF0000"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/debug_logs_sizeUp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:backgroundTint="#FF0000"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@id/debug_logs_switch"
+        android:text="+"
+        android:minHeight="0sp"
+        android:minWidth="0sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
+    <Button
+        android:id="@+id/debug_logs_sizeDown"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:backgroundTint="#FF0000"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@id/debug_logs_sizeUp"
+        android:text="-"
+        android:minHeight="0sp"
+        android:minWidth="0sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
 </RelativeLayout>

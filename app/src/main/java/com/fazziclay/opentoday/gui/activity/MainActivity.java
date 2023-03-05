@@ -52,7 +52,8 @@ public class MainActivity extends AppCompatActivity {
     private GregorianCalendar currentDateCalendar;
 
     private ActivitySettings activitySettings = new ActivitySettings().setClockVisible(true).setNotificationsVisible(true);
-
+    private boolean debugView = false;
+    int debugViewSize = 13;
 
     // Activity overrides
     @Override
@@ -113,6 +114,9 @@ public class MainActivity extends AppCompatActivity {
             text.append("preStop: ").append(startStat_preStop - ping_startStat_setups).append("ms\n");
             Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
         }
+
+        updateDebugView();
+
     }
 
     @Override
@@ -222,7 +226,39 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void toggleLogsOverlay() {
-        // TODO: 3/2/23 delete
+        this.debugView = !this.debugView;
+        updateDebugView();
+    }
+
+    private void updateDebugView() {
+        if (debugView) {
+            binding.debugLogsSizeUp.setVisibility(View.VISIBLE);
+            binding.debugLogsSizeDown.setVisibility(View.VISIBLE);
+            binding.debugLogsSwitch.setVisibility(View.VISIBLE);
+            binding.debugLogsSwitch.setOnClickListener(fds -> {
+                boolean b = binding.debugLogsSwitch.isChecked();
+                viewVisible(binding.debugLogsScroll, b, View.GONE);
+                binding.debugLogsText.setText(getLogs());
+            });
+            binding.debugLogsText.setTextSize(debugViewSize);
+            binding.debugLogsSizeUp.setOnClickListener(rffs -> {
+                debugViewSize++;
+                binding.debugLogsText.setTextSize(debugViewSize);
+            });
+            binding.debugLogsSizeDown.setOnClickListener(fsdwe -> {
+                debugViewSize--;
+                binding.debugLogsText.setTextSize(debugViewSize);
+            });
+        } else {
+            binding.debugLogsSizeUp.setVisibility(View.GONE);
+            binding.debugLogsSizeDown.setVisibility(View.GONE);
+            binding.debugLogsSwitch.setVisibility(View.GONE);
+            binding.debugLogsText.setText("");
+        }
+    }
+
+    private String getLogs() {
+        return Logger.getLOGS().toString();
     }
 
     public ActivitySettings getActivitySettings() {
