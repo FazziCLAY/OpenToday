@@ -17,6 +17,8 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         tools:background="#ff0000"
+        android:paddingEnd="4sp"
+        android:paddingStart="4sp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/quickNote"
