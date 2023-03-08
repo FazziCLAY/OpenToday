@@ -1,0 +1,6 @@
+* Big optimize layouts
+* Added Pin-code support
+* Review settings UI
+* New setting: tab on open: First/on_closed_time
+* Toolbar -> File: Import from clipboard (visible only if clipboard contains ImportText)
+* Fix Logger
