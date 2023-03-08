@@ -238,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
             binding.debugLogsSwitch.setOnClickListener(fds -> {
                 boolean b = binding.debugLogsSwitch.isChecked();
                 viewVisible(binding.debugLogsScroll, b, View.GONE);
-                binding.debugLogsText.setText(getLogs());
+                binding.debugLogsText.setText(Logger.getLOGS().toString());
             });
             binding.debugLogsText.setTextSize(debugViewSize);
             binding.debugLogsSizeUp.setOnClickListener(rffs -> {
@@ -257,9 +257,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private String getLogs() {
-        return Logger.getLOGS().toString();
-    }
 
     public ActivitySettings getActivitySettings() {
         return activitySettings;
