@@ -392,9 +392,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
 
         @Override
         public int getItemCount() {
-            int i = itemManager.getTabs().size();
-            Logger.d(TAG, LocalViewPagerAdapter.class.getSimpleName(), "getItemCount", "returned=", i);
-            return i;
+            return itemManager.getTabs().size();
         }
     }
 }
