@@ -108,7 +108,7 @@
         <TextView
             android:id="@+id/firstTab_title"
             android:layout_width="wrap_content"
-            android:layout_height="30sp"
+            android:layout_height="45sp"
             android:gravity="center"
             android:text="@string/settings_firstTab_title"
             android:layout_below="@id/pincode"/>
@@ -117,6 +117,7 @@
             android:id="@+id/firstTab"
             android:layout_width="match_parent"
             android:layout_below="@id/pincode"
+            android:minHeight="48dp"
             android:layout_toEndOf="@id/firstTab_title"
             android:layout_height="wrap_content" />
 
