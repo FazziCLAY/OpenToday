@@ -3,6 +3,12 @@
     style="@style/Theme.OpenToday.Toolbar.Section.Root.File">
 
     <Button
+        android:id="@+id/importDataFromClipboard"
+        android:visibility="gone"
+        android:text="@string/toolbar_more_file_importFromClipboard"
+        style="@style/Theme.OpenToday.Toolbar.Section.Button.File.ImportFromClipboard" />
+
+    <Button
         android:id="@+id/importData"
         android:text="@string/toolbar_more_file_import"
         style="@style/Theme.OpenToday.Toolbar.Section.Button.File.Import" />

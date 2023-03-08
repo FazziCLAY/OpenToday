@@ -210,6 +210,33 @@ public class AppToolbar {
     private void onFileClick() {
         ToolbarMoreFileBinding b = ToolbarMoreFileBinding.inflate(activity.getLayoutInflater(), toolbarMoreView, false);
 
+        ClipboardManager c = activity.getSystemService(ClipboardManager.class);
+        boolean visible = ImportWrapper.isImportText(String.valueOf(c.getText()));
+        viewVisible(b.importDataFromClipboard, visible, View.GONE);
+        viewClick(b.importDataFromClipboard, () -> {
+            try {
+                ClipboardManager clipboardManager = activity.getSystemService(ClipboardManager.class);
+                String text = String.valueOf(clipboardManager.getText());
+                if (ImportWrapper.isImportText(text)) {
+                    UUID id = null;
+                    if (itemsStorage instanceof ID) {
+                        ID i = (ID) itemsStorage;
+                        id = i.getId();
+                    }
+
+                    if (id == null) {
+                        Toast.makeText(activity, R.string.toolbar_more_file_import_unsupported, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    rootNavigationHost.navigate(ImportFragment.create(id, text, true), true);
+                } else {
+                    Toast.makeText(activity, "This is not import text!", Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
         // Save button
         viewClick(b.saveAll, () -> {
             boolean success = itemManager.saveAllDirect();

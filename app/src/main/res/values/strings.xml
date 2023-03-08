@@ -307,4 +307,5 @@
     <string name="settings_firstTab_first">First</string>
     <string name="settings_firstTab_onClosed">On closed</string>
     <string name="settings_firstTab_title">Tab on open</string>
+    <string name="toolbar_more_file_importFromClipboard">Import from clipboard</string>
 </resources>
