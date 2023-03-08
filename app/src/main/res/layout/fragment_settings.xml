@@ -1,95 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     style="@style/Theme.OpenToday.Settings.Root">
 
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/settings_theme_title"
-        android:textSize="18sp" />
+        android:layout_height="wrap_content">
 
-    <Spinner
-        android:id="@+id/theme_spinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/settings_theme_title"
-        android:minHeight="48dp"
-        tools:ignore="DuplicateSpeakableTextCheck" />
+        <TextView
+            android:id="@+id/themeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="45sp"
+            android:gravity="center"
+            android:text="@string/settings_theme_title"
+            android:layout_alignBottom="@id/theme_spinner"
+            android:textSize="18sp" />
 
-    <CheckBox
-        android:id="@+id/quickNote_checkbox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/settings_quickNote" />
+        <Spinner
+            android:id="@+id/theme_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/settings_theme_title"
+            android:minHeight="48dp"
+            android:layout_toEndOf="@+id/themeTitle"
+            tools:ignore="DuplicateSpeakableTextCheck" />
 
-    <CheckBox
-        android:id="@+id/parseTimeFromQuickNote"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/settings_parseTimeFromQuickNote" />
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/quickNote_checkbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/theme_spinner"
+            android:text="@string/settings_quickNote" />
 
-    <CheckBox
-        android:id="@+id/minimizeGrayColor"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/settings_minimizeGrayColor" />
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/parseTimeFromQuickNote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/quickNote_checkbox"
+            android:text="@string/settings_parseTimeFromQuickNote" />
 
-    <CheckBox
-        android:id="@+id/trimItemNamesOnEdit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/settings_trimItemNamesOnEdit" />
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/minimizeGrayColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/parseTimeFromQuickNote"
+            android:text="@string/settings_minimizeGrayColor" />
 
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/trimItemNamesOnEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/minimizeGrayColor"
+            android:text="@string/settings_trimItemNamesOnEdit" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/settings_firstDayOfWeek_title"
-        android:textSize="18sp" />
+        <TextView
+            android:id="@+id/firstDayOfWeek_title"
+            android:layout_width="wrap_content"
+            android:layout_height="45sp"
+            android:gravity="center"
+            android:text="@string/settings_firstDayOfWeek_title"
+            android:layout_below="@id/trimItemNamesOnEdit"
+            android:textSize="18sp" />
 
-    <Spinner
-        android:id="@+id/firstDayOfWeek_spinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/settings_firstDayOfWeek_title"
-        android:minHeight="48dp"
-        tools:ignore="DuplicateSpeakableTextCheck" />
-
-    <TextView
-        android:id="@+id/colorHistoryTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/settings_colorHistory_title"
-        android:textSize="18sp" />
-
-    <CheckBox
-        android:id="@+id/colorHistoryLocked"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/settings_сolorHistoryLocked" />
-
-    <CheckBox
-        android:id="@+id/isTelemetry"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/settings_isTelemetry" />
+        <Spinner
+            android:id="@+id/firstDayOfWeek_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/settings_firstDayOfWeek_title"
+            android:minHeight="48dp"
+            android:layout_alignTop="@id/firstDayOfWeek_title"
+            android:layout_toEndOf="@id/firstDayOfWeek_title"
+            tools:ignore="DuplicateSpeakableTextCheck" />
 
 
-    <Button
-        android:id="@+id/export"
-        android:layout_width="wrap_content"
-        android:layout_gravity="start"
-        android:text="@string/settings_export"
-        android:layout_height="wrap_content" />
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/colorHistoryLocked"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/firstDayOfWeek_spinner"
+            android:text="@string/settings_сolorHistoryLocked" />
 
-    <Button
-        android:id="@+id/defaultQuickNoteType"
-        android:layout_width="wrap_content"
-        android:layout_gravity="end"
-        android:text="@string/settings_defaultQuickNoteType"
-        android:layout_height="wrap_content" />
-</LinearLayout>
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/isTelemetry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/colorHistoryLocked"
+            android:text="@string/settings_isTelemetry" />
+
+
+        <Button
+            android:id="@+id/defaultQuickNoteType"
+            android:layout_width="wrap_content"
+            android:text="@string/settings_defaultQuickNoteType"
+            android:layout_below="@id/isTelemetry"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/pincode"
+            android:layout_width="wrap_content"
+            android:text="@string/settings_pincode"
+            android:layout_below="@id/defaultQuickNoteType"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/firstTab_title"
+            android:layout_width="wrap_content"
+            android:layout_height="45sp"
+            android:gravity="center"
+            android:text="@string/settings_firstTab_title"
+            android:layout_below="@id/pincode"/>
+
+        <Spinner
+            android:id="@+id/firstTab"
+            android:layout_width="match_parent"
+            android:layout_below="@id/pincode"
+            android:minHeight="48dp"
+            android:layout_toEndOf="@id/firstTab_title"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/export"
+            android:layout_width="wrap_content"
+            android:text="@string/settings_export"
+            android:layout_below="@id/firstTab"
+            android:layout_marginTop="20sp"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+</ScrollView>

@@ -1,7 +1,7 @@
 package com.fazziclay.opentoday.gui.interfaces;
 
-import android.widget.LinearLayout;
+import android.view.ViewGroup;
 
 public interface ContentInterface {
-    void run(LinearLayout linearLayout);
+    void run(ViewGroup linearLayout);
 }

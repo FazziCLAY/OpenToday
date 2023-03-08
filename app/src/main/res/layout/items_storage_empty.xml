@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center">
+    android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/itemsStorageEmpty_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/itemsStorageEmpty_title"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:textSize="20.6sp" />
 
 
     <TextView
+        android:id="@+id/itemsStorageEmpty_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/itemsStorageEmpty_title"
         android:text="@string/itemsStorageEmpty_details"
         android:textSize="18sp" />
 
-</LinearLayout>
+</RelativeLayout>

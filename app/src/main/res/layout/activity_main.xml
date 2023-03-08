@@ -1,39 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="com.fazziclay.opentoday.gui.activity.MainActivity">
 
-    <!-- Current date -->
-    <LinearLayout
-        android:id="@+id/current_date"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/current_date_date"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="4sp"
-        android:paddingEnd="4sp"
-        android:orientation="horizontal">
+        android:gravity="center_vertical"
+        tools:text="2022.06.25 Saturday"
+        android:layout_alignBaseline="@id/current_date_time"
+        android:textColor="?attr/main_currentDate_color"
+        android:textSize="20sp" />
 
-        <TextView
-            android:id="@+id/current_date_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            tools:text="2022.06.25 Saturday"
-            android:textColor="?attr/main_currentDate_color"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/current_date_time"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="end"
-            tools:text="10:00:59"
-            android:textColor="?attr/main_currentDate_color"
-            android:textSize="24sp" />
-
-    </LinearLayout>
+    <TextView
+        android:id="@+id/current_date_time"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@id/current_date_date"
+        android:layout_width="wrap_content"
+        android:gravity="end"
+        android:layout_height="wrap_content"
+        tools:text="10:00:59"
+        android:textColor="?attr/main_currentDate_color"
+        android:textSize="24sp" />
 
     <!-- Notifications -->
     <LinearLayout
@@ -41,12 +32,72 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="4sp">
+        android:layout_below="@id/current_date_date">
     </LinearLayout>
 
     <FrameLayout
-        android:id="@+id/content_root"
+        android:id="@+id/mainActivity_rootFragmentContainer"
         android:layout_width="match_parent"
+        android:layout_below="@id/notifications"
+        android:layout_alignParentBottom="true"
         android:layout_height="match_parent" />
 
-</LinearLayout>
+    <ScrollView
+        android:id="@+id/debug_logs_scroll"
+        android:visibility="gone"
+        android:background="#22222222"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/debug_logs_text"
+                android:textColor="#ffff00"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+
+        </HorizontalScrollView>
+    </ScrollView>
+
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/debug_logs_switch"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:background="#FF0000"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/debug_logs_sizeUp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:backgroundTint="#FF0000"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@id/debug_logs_switch"
+        android:text="+"
+        android:minHeight="0sp"
+        android:minWidth="0sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
+    <Button
+        android:id="@+id/debug_logs_sizeDown"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:backgroundTint="#FF0000"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@id/debug_logs_sizeUp"
+        android:text="-"
+        android:minHeight="0sp"
+        android:minWidth="0sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+</RelativeLayout>

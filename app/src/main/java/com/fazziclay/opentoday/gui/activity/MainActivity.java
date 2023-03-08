@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 
 import com.fazziclay.opentoday.R;
+import com.fazziclay.opentoday.app.ActivitySettings;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.FeatureFlag;
 import com.fazziclay.opentoday.app.Telemetry;
@@ -37,7 +38,7 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    private static final int CONTAINER_ID = R.id.content_root;
+    private static final int CONTAINER_ID = R.id.mainActivity_rootFragmentContainer;
 
     private ActivityMainBinding binding;
     private App app;
@@ -50,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
     private Runnable currentDateRunnable;
     private GregorianCalendar currentDateCalendar;
 
+    private ActivitySettings activitySettings = new ActivitySettings().setClockVisible(true).setNotificationsVisible(true);
+    private boolean debugView = false;
+    int debugViewSize = 13;
 
     // Activity overrides
     @Override
@@ -110,6 +114,9 @@ public class MainActivity extends AppCompatActivity {
             text.append("preStop: ").append(startStat_preStop - ping_startStat_setups).append("ms\n");
             Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
         }
+
+        updateDebugView();
+
     }
 
     @Override
@@ -168,10 +175,16 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         currentDateHandler.post(currentDateRunnable);
-        viewClick(binding.currentDate, () -> {
+        viewClick(binding.currentDateDate, () -> {
             DatePickerDialog dialog = new DatePickerDialog(this);
-            dialog.getDatePicker().setFirstDayOfWeek(settingsManager.getFirstDayOfWeek());
             dialog.show();
+            dialog.getDatePicker().setFirstDayOfWeek(settingsManager.getFirstDayOfWeek());
+        });
+
+        viewClick(binding.currentDateTime, () -> {
+            DatePickerDialog dialog = new DatePickerDialog(this);
+            dialog.show();
+            dialog.getDatePicker().setFirstDayOfWeek(settingsManager.getFirstDayOfWeek());
         });
     }
 
@@ -213,6 +226,49 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void toggleLogsOverlay() {
-        // TODO: 3/2/23 delete
+        this.debugView = !this.debugView;
+        updateDebugView();
+    }
+
+    private void updateDebugView() {
+        if (debugView) {
+            binding.debugLogsSizeUp.setVisibility(View.VISIBLE);
+            binding.debugLogsSizeDown.setVisibility(View.VISIBLE);
+            binding.debugLogsSwitch.setVisibility(View.VISIBLE);
+            binding.debugLogsSwitch.setOnClickListener(fds -> {
+                boolean b = binding.debugLogsSwitch.isChecked();
+                viewVisible(binding.debugLogsScroll, b, View.GONE);
+                binding.debugLogsText.setText(Logger.getLOGS().toString());
+            });
+            binding.debugLogsText.setTextSize(debugViewSize);
+            binding.debugLogsSizeUp.setOnClickListener(rffs -> {
+                debugViewSize++;
+                binding.debugLogsText.setTextSize(debugViewSize);
+            });
+            binding.debugLogsSizeDown.setOnClickListener(fsdwe -> {
+                debugViewSize--;
+                binding.debugLogsText.setTextSize(debugViewSize);
+            });
+        } else {
+            binding.debugLogsSizeUp.setVisibility(View.GONE);
+            binding.debugLogsSizeDown.setVisibility(View.GONE);
+            binding.debugLogsSwitch.setVisibility(View.GONE);
+            binding.debugLogsText.setText("");
+        }
+    }
+
+
+    public ActivitySettings getActivitySettings() {
+        return activitySettings;
+    }
+
+    public void pushActivitySettings(ActivitySettings a) {
+        this.activitySettings = a;
+        updateByActivitySettings();
+    }
+
+    public void updateByActivitySettings() {
+        viewVisible(binding.currentDateDate, activitySettings.isClockVisible(), View.GONE);
+        viewVisible(binding.notifications, activitySettings.isNotificationsVisible(), View.GONE);
     }
 }

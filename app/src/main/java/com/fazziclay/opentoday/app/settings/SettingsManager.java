@@ -8,7 +8,7 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.item.TextItem;
-import com.fazziclay.opentoday.util.L;
+import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.Setter;
 
@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.UUID;
 
 public class SettingsManager {
+    private static final String TAG = "SettingsManager";
     // Theme
     private static final String KEY_THEME = "theme";
     private static final String THEME_SYSTEM = "system";
@@ -50,6 +51,7 @@ public class SettingsManager {
     private UUID quickNoteNotificationItemsStorageId = null;
     private boolean isTelemetry = true;
     private ItemsRegistry.ItemInfo defaultQuickNoteType = ItemsRegistry.REGISTRY.get(TextItem.class);
+    private FirstTab firstTab = FirstTab.TAB_ON_CLOSING;
 
 
     public SettingsManager(File saveFile) {
@@ -79,6 +81,8 @@ public class SettingsManager {
     @Setter public void setTelemetry(boolean b) {this.isTelemetry = b;}
     @Getter public ItemsRegistry.ItemInfo getDefaultQuickNoteType() {return defaultQuickNoteType;}
     @Setter public void setDefaultQuickNoteType(ItemsRegistry.ItemInfo defaultQuickNoteType) {this.defaultQuickNoteType = defaultQuickNoteType;}
+    @Getter public FirstTab getFirstTab() {return firstTab;}
+    @Setter public void setFirstTab(FirstTab firstTab) {this.firstTab = firstTab;}
 
     private void load() {
         if (!FileUtil.isExist(saveFile)) {
@@ -123,8 +127,12 @@ public class SettingsManager {
                 this.defaultQuickNoteType = ItemsRegistry.REGISTRY.get(j.getString("defaultQuickNoteType"));
             } catch (Exception ignored) {}
 
+            try {
+                this.firstTab = FirstTab.valueOf(j.getString("firstTab"));
+            } catch (Exception ignored) {}
+
         } catch (Exception e) {
-            L.o("SettingsManager", "load", e);
+            Logger.d(TAG, "load", e);
             App.exception(null, e);
         }
     }
@@ -134,7 +142,7 @@ public class SettingsManager {
             JSONObject j = exportJSONSettings();
             FileUtil.setText(saveFile, j.toString());
         } catch (Exception e) {
-            L.o("SettingsManager", "save", e);
+            Logger.d(TAG, "save", e);
             App.exception(null, e);
         }
     }
@@ -158,6 +166,7 @@ public class SettingsManager {
         j.put("quickNoteNotificationItemsStorageId", quickNoteNotificationItemsStorageId != null ? quickNoteNotificationItemsStorageId.toString() : null);
         j.put("isTelemetry", this.isTelemetry);
         j.put("defaultQuickNoteType", this.defaultQuickNoteType.getStringType());
+        j.put("firstTab", this.firstTab.name());
         return j;
     }
 
@@ -187,5 +196,10 @@ public class SettingsManager {
         public int nameResId() {
             return resId;
         }
+    }
+
+    public enum FirstTab {
+        FIRST,
+        TAB_ON_CLOSING
     }
 }

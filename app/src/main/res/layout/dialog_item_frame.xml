@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,10 +8,10 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_above="@id/apply_button"
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -28,50 +28,39 @@
                 android:id="@+id/canvas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/itemTypeName"
                 android:orientation="vertical" />
-        </LinearLayout>
+        </RelativeLayout>
     </ScrollView>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/delete_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:gravity="end|center_vertical">
+        android:drawableTop="@android:drawable/ic_menu_delete"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:text="@string/dialogItem_delete"
+        style="@style/Widget.AppCompat.Button" />
 
-        <Button
-            android:id="@+id/delete_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableTop="@android:drawable/ic_menu_delete"
-            android:layout_margin="5sp"
-            android:text="@string/dialogItem_delete"
-            style="@style/Widget.AppCompat.Button" />
 
-        <Space
-            android:layout_weight="999"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="NestedWeights" />
+    <Button
+        android:id="@+id/cancel_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableTop="@android:drawable/ic_menu_close_clear_cancel"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@id/apply_button"
+        android:text="@string/dialogItem_cancel"
+        style="@style/Widget.AppCompat.Button" />
 
-        <Button
-            android:layout_weight="1"
-            android:id="@+id/cancel_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableTop="@android:drawable/ic_menu_close_clear_cancel"
-            android:layout_margin="5sp"
-            android:text="@string/dialogItem_cancel"
-            style="@style/Widget.AppCompat.Button" />
-
-        <Button
-            android:id="@+id/apply_button"
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableTop="@android:drawable/ic_menu_save"
-            android:layout_margin="5sp"
-            android:text="@string/dialogItem_apply"
-            style="@style/Widget.AppCompat.Button" />
-    </LinearLayout>
-</LinearLayout>
+    <Button
+        android:id="@+id/apply_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableTop="@android:drawable/ic_menu_save"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:text="@string/dialogItem_apply"
+        style="@style/Widget.AppCompat.Button" />
+</RelativeLayout>

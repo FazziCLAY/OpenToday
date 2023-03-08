@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:backgroundTint="?attr/item_text_background_color"
-    android:background="@drawable/shape"
-    android:orientation="vertical">
+    android:background="@drawable/shape">
 
     <TextView
         android:id="@+id/title"
@@ -22,7 +21,8 @@
         android:layout_height="wrap_content"
         tools:text="Simple long text"
         android:textSize="15sp"
+        android:layout_below="@id/title"
         android:textColor="?attr/item_text_textColor"
         android:paddingLeft="5sp" />
 
-</LinearLayout>
+</RelativeLayout>

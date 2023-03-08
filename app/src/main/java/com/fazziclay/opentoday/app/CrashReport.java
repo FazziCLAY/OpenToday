@@ -2,8 +2,6 @@ package com.fazziclay.opentoday.app;
 
 import android.os.Build;
 
-import com.fazziclay.opentoday.util.L;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
@@ -225,7 +223,7 @@ public class CrashReport {
 
         String loggerLLogs;
         try {
-            loggerLLogs = L.getInstance().getFinalText();
+            loggerLLogs = "L logger deleted from this version.";
         } catch (Exception e) {
             loggerLLogs = "(Unknown " + e + ")";
         }

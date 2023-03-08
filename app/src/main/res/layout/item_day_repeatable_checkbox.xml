@@ -3,31 +3,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:background="@drawable/shape"
     android:backgroundTint="?attr/item_checkbox_day_repeatable_backgroundColor">
 
-    <LinearLayout
+    <CheckBox
+        android:id="@+id/checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="35sp"
+        android:minHeight="0sp" />
+
+    <TextView
+        android:id="@+id/text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <CheckBox
-            android:id="@+id/checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="35sp"
-            android:minHeight="0sp" />
-
-        <TextView
-            android:id="@+id/text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:text="Simple Checkbox (Day repeatable)"
-            android:textSize="19sp"
-            android:textColor="?attr/item_checkbox_day_repeatable_textColor" />
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        tools:text="Simple Checkbox (Day repeatable)"
+        android:textSize="19sp"
+        android:layout_toStartOf="@id/image"
+        android:layout_toEndOf="@id/checkbox"
+        android:layout_alignBaseline="@id/checkbox"
+        android:textColor="?attr/item_checkbox_day_repeatable_textColor" />
 
     <ImageView
+        android:id="@+id/image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"

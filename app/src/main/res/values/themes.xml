@@ -73,6 +73,9 @@
     <style name="Theme.OpenToday.Toolbar.Section.Root.File" parent="OpenToday.Base.Toolbar.Section.Root.File">
         <item name="android:background">@color/toolbar_section_backgroundColor</item>
     </style>
+    <style name="Theme.OpenToday.Toolbar.Section.Button.File.ImportFromClipboard" parent="OpenToday.Base.Toolbar.Section.Button.File">
+        <item name="android:backgroundTint">#BA1DF4</item>
+    </style>
     <style name="Theme.OpenToday.Toolbar.Section.Button.File.Import" parent="OpenToday.Base.Toolbar.Section.Button.File">
         <item name="android:backgroundTint">#BA1DF4</item>
     </style>

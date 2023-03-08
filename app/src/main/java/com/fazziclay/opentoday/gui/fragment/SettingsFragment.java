@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -31,6 +32,7 @@ import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.tab.Tab;
+import com.fazziclay.opentoday.app.pincode.PinCodeManager;
 import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.databinding.ExportBinding;
@@ -55,6 +57,8 @@ public class SettingsFragment extends Fragment {
     private App app;
     private SettingsManager settingsManager;
     private ColorHistoryManager colorHistoryManager;
+    private PinCodeManager pinCodeManager;
+    private Runnable pinCodeCallback = () -> {};
     private long easterEggLastClick = 0;
     private int easterEggCounter = 0;
 
@@ -64,6 +68,7 @@ public class SettingsFragment extends Fragment {
         app = App.get(requireContext());
         settingsManager = app.getSettingsManager();
         colorHistoryManager = app.getColorHistoryManager();
+        pinCodeManager = app.getPinCodeManager();
     }
 
     @Nullable
@@ -112,7 +117,7 @@ public class SettingsFragment extends Fragment {
         });
 
         // Lock color history
-        viewClick(binding.colorHistoryTitle, this::experimentalFeaturesInteract);
+        viewClick(binding.themeTitle, this::experimentalFeaturesInteract);
         binding.colorHistoryLocked.setChecked(colorHistoryManager.isLocked());
         viewClick(binding.colorHistoryLocked, () -> {
             colorHistoryManager.setLocked(binding.colorHistoryLocked.isChecked());
@@ -137,6 +142,69 @@ public class SettingsFragment extends Fragment {
             binding.defaultQuickNoteType.setText(getString(R.string.settings_defaultQuickNoteType, getString(settingsManager.getDefaultQuickNoteType().getNameResId())));
             settingsManager.save();
         }).show());
+
+        pinCodeCallback = () -> binding.pincode.setText(getString(R.string.settings_pincode, (pinCodeManager.isPinCodeSet() ? getString(R.string.settings_pincode_on) : getString(R.string.settings_pincode_off))));
+        pinCodeCallback.run();
+        viewClick(binding.pincode, () -> {
+            boolean is = pinCodeManager.isPinCodeSet();
+            AlertDialog.Builder d = new AlertDialog.Builder(requireContext())
+                    .setTitle(R.string.settings_pincode_title)
+                    .setMessage(is ? getString(R.string.settings_pincode_message_on, pinCodeManager.getPinCode()) : getString(R.string.settings_pincode_message_off))
+                    .setNeutralButton(R.string.settings_pincode_cancel, null)
+                    .setPositiveButton(is ? R.string.settings_pincode_button_disable : R.string.settings_pincode_button_enable, (dialogInterface, i) -> {
+                        if (is) {
+                            pinCodeManager.disablePinCode();
+                            pinCodeCallback.run();
+                            Toast.makeText(app, R.string.settings_pincode_disable_success, Toast.LENGTH_SHORT).show();
+                        } else {
+                            EditText t = new EditText(requireContext());
+                            t.setHint(R.string.settings_pincode_enable_hint);
+                            new AlertDialog.Builder(requireContext())
+                                    .setTitle(R.string.settings_pincode_enable_title)
+                                    .setMessage(R.string.settings_pincode_enable_message)
+                                    .setView(t)
+                                    .setPositiveButton(R.string.settings_pincode_enable_apply, (fsdf, fdsfd) -> {
+                                        try {
+                                            pinCodeManager.enablePinCode(t.getText().toString());
+                                            pinCodeCallback.run();
+                                            Toast.makeText(app, R.string.settings_pincode_enable_success, Toast.LENGTH_SHORT).show();
+                                        } catch (Exception e) {
+                                            if (e instanceof PinCodeManager.ContainNonDigitChars) {
+                                                Toast.makeText(app, R.string.settings_pincode_enable_nonDigitsError, Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(app, R.string.settings_pincode_enable_unknownError, Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.settings_pincode_enable_cancel, null)
+                                    .show();
+                        }
+                    });
+
+            d.show();
+        });
+
+        setupFirstTabSpinner();
+    }
+
+    private void setupFirstTabSpinner() {
+        SimpleSpinnerAdapter<SettingsManager.FirstTab> firstTabSimpleSpinnerAdapter = new SimpleSpinnerAdapter<SettingsManager.FirstTab>(requireContext())
+                .add(requireContext().getString(R.string.settings_firstTab_first), SettingsManager.FirstTab.FIRST)
+                .add(requireContext().getString(R.string.settings_firstTab_onClosed), SettingsManager.FirstTab.TAB_ON_CLOSING);
+
+        binding.firstTab.setAdapter(firstTabSimpleSpinnerAdapter);
+        binding.firstTab.setSelection(firstTabSimpleSpinnerAdapter.getValuePosition(settingsManager.getFirstTab()));
+        binding.firstTab.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                SettingsManager.FirstTab t = firstTabSimpleSpinnerAdapter.getItem(position);
+                settingsManager.setFirstTab(t);
+                settingsManager.save();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
     }
 
     private void setupThemeSpinner() {
