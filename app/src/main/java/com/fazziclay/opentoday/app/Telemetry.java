@@ -7,7 +7,7 @@ import com.fazziclay.neosocket.Client;
 import com.fazziclay.neosocket.PacketHandler;
 import com.fazziclay.neosocket.packet.Packet;
 import com.fazziclay.neosocket.packet.PacketsRegistry;
-import com.fazziclay.opentoday.util.L;
+import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.NetworkUtil;
 
 import org.json.JSONException;
@@ -28,6 +28,7 @@ import ru.fazziclay.opentoday.telemetry.packet.Packet20009UIClosed;
 import ru.fazziclay.opentoday.telemetry.packet.PacketSetVersion;
 
 public class Telemetry {
+    private static final String TAG = "Telemetry";
     public static final PacketsRegistry REGISTRY = new TelemetryPackets();
     private static final boolean NO_DELAY = (App.DEBUG && false);
     private static final String URL = "https://fazziclay.github.io/api/project_3/v2/telemetry_v1.json";
@@ -64,11 +65,11 @@ public class Telemetry {
 
     public void send(LPacket lPacket) {
         if (!isEnabled) return;
-        L.o("Telemetry send");
+        Logger.d(TAG, "send()");
         if (lPacket.isDelay() && !NO_DELAY) {
             long last = getLastSend(lPacket.getClass().getName());
             long curr = System.currentTimeMillis();
-            L.o("Telemetry last=", last, "curr=", curr);
+            Logger.d(TAG, "send() last=", last, "curr=", curr);
             boolean hoursNoDelayed = curr - last < 24*60*60*1000;
             if (hoursNoDelayed) {
                 GregorianCalendar g = new GregorianCalendar();
@@ -77,7 +78,7 @@ public class Telemetry {
                 g = new GregorianCalendar();
                 g.setTimeInMillis(curr);
                 int d2 = g.get(Calendar.DAY_OF_MONTH);
-                L.o("Telemetry d1=", d1, "d2=", d2);
+                Logger.d(TAG, "send() d1=", d1, "d2=", d2);
                 if (d1 == d2) {
                     return;
                 }
@@ -86,11 +87,11 @@ public class Telemetry {
 
         SendThread thread = new SendThread(lPacket.getPacket());
         thread.start();
-        L.o("Telemetry send: wait");
+        Logger.d(TAG, "send(): wait");
         while (thread.isBusy() && lPacket.isBlocking()) {
             thread.tick();
         }
-        L.o("Telemetry send: wait: done");
+        Logger.d(TAG, "send(): wait: done");
         setLastSend(lPacket.getClass().getName());
     }
 
@@ -136,7 +137,7 @@ public class Telemetry {
         public void run() {
             isBusy = true;
             try {
-                L.o("Telemetry SaveThread: ");
+                Logger.d(TAG, "SaveThread run()");
                 if (!isTelemetryStatusQuerying && telemetryStatus == null) {
                     queryTelemetryStatus();
                 }
@@ -145,20 +146,21 @@ public class Telemetry {
                         tick();
                     }
                 }
-                L.o("Telemetry SaveThread: query done");
+                Logger.d(TAG, "SaveThread: query done");
                 if (telemetryStatus == null) {
                     throw new RuntimeException("WTF: don't query telemetryStatus");
                 }
                 if (telemetryStatus.isEnabled()) {
-                    L.o("Telemetry SaveThread: enabled! client new");
+                    Logger.d(TAG, "SaveThread: enabled! client new");
                     Client client = new Client(telemetryStatus.getHost(), telemetryStatus.getPort(), REGISTRY, new PacketHandler() {
                         @Override
                         public void received(Client client, Packet packet) {
-                            L.o("Telemetry", "Received: ", packet.toString());
+                            Logger.d(TAG, "[client] received: ", packet.toString());
                         }
 
                         @Override
                         public void setup(Client client) {
+                            Logger.d(TAG, "[client] setup");
                             try {
                                 client.send(new PacketSetVersion(2));
                                 client.send(new Packet20004Login(app.getInstanceId()));
@@ -169,18 +171,18 @@ public class Telemetry {
                                 send = true;
 
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                Logger.e(TAG, "[client] setup exception", e);
                             }
                         }
 
                         @Override
                         public void preDisconnect(Client client) {
-                            L.o("Telemetry", "preDisconnect");
+                            Logger.d(TAG, "[client] preDisconnect");
                         }
 
                         @Override
                         public void fatalException(Client client, Exception e) {
-                            L.o("Telemetry", "fatalException", e);
+                            Logger.d(TAG, "[client] fatalException", e);
                         }
                     });
                     new Thread(() -> {
@@ -191,12 +193,12 @@ public class Telemetry {
                         }
                     }).start();
 
-                    L.o("Telemetry wait send or 10 ser");
+                    Logger.d(TAG, "wait send or 10 ser");
                     long start = System.currentTimeMillis();
                     while (!send && System.currentTimeMillis() - start < 10 * 1000) {
                         tick();
                     }
-                    L.o("Telemetry wait send or 10 ser: done");
+                    Logger.d(TAG, "wait send or 10 ser: done");
 
                 }
             } catch (Exception e) {

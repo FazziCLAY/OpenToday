@@ -8,7 +8,7 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.item.TextItem;
-import com.fazziclay.opentoday.util.L;
+import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.Setter;
 
@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.UUID;
 
 public class SettingsManager {
+    private static final String TAG = "SettingsManager";
     // Theme
     private static final String KEY_THEME = "theme";
     private static final String THEME_SYSTEM = "system";
@@ -131,7 +132,7 @@ public class SettingsManager {
             } catch (Exception ignored) {}
 
         } catch (Exception e) {
-            L.o("SettingsManager", "load", e);
+            Logger.d(TAG, "load", e);
             App.exception(null, e);
         }
     }
@@ -141,7 +142,7 @@ public class SettingsManager {
             JSONObject j = exportJSONSettings();
             FileUtil.setText(saveFile, j.toString());
         } catch (Exception e) {
-            L.o("SettingsManager", "save", e);
+            Logger.d(TAG, "save", e);
             App.exception(null, e);
         }
     }

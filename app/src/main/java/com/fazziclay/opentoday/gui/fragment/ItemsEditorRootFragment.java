@@ -1,5 +1,7 @@
 package com.fazziclay.opentoday.gui.fragment;
 
+import static com.fazziclay.opentoday.util.InlineUtil.nullStat;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +23,6 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
-import com.fazziclay.opentoday.util.L;
 import com.fazziclay.opentoday.util.Logger;
 
 import java.util.UUID;
@@ -47,7 +48,7 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        L.o(TAG, "onCreate", L.nn(savedInstanceState));
+        Logger.d(TAG, "onCreate", nullStat(savedInstanceState));
 
         Bundle args = getArguments();
         tabId = UUID.fromString(args.getString(EXTRA_TAB_ID));
@@ -72,7 +73,7 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        L.o(TAG, "onCreateView", L.nn(savedInstanceState));
+        Logger.d(TAG, "onCreateView", nullStat(savedInstanceState));
         path = new TextView(requireContext());
         updatePath();
 
@@ -150,7 +151,7 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
 
         ItemsTabIncludeFragment f = ((ItemsTabIncludeFragment) getParentFragment());
         if (f == null) {
-            L.o(TAG, "updateItemStorageContext", "parent fragment is null!!!!");
+            Logger.d(TAG, "updateItemStorageContext", "parent fragment is null!!!!");
             return;
         }
         f.setItemStorageInContext(itemsStorage);

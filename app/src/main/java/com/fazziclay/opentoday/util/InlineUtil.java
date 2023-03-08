@@ -17,7 +17,7 @@ public class InlineUtil {
      * Print message to System.in stream (System.out.println(o))
      * **/
     public static void l(Object... o) {
-        L.o(o);
+        Logger.d("*InlineUtil* l()", o);
     }
 
     public static String nullStat(Object o) {

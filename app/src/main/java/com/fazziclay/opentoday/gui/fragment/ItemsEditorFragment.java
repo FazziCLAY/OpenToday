@@ -1,5 +1,7 @@
 package com.fazziclay.opentoday.gui.fragment;
 
+import static com.fazziclay.opentoday.util.InlineUtil.nullStat;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +31,7 @@ import com.fazziclay.opentoday.gui.dialog.DialogEditItemFilter;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.gui.interfaces.StorageEditsActions;
 import com.fazziclay.opentoday.gui.item.ItemStorageDrawer;
-import com.fazziclay.opentoday.util.L;
+import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
 
@@ -85,7 +87,7 @@ public class ItemsEditorFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        L.o(TAG, "onCreate", L.nn(savedInstanceState));
+        Logger.d(TAG, "onCreate", nullStat(savedInstanceState));
         activity = (MainActivity) requireActivity();
         navigationHost = (NavigationHost) getParentFragment();
         rootNavigationHost = UI.findFragmentInParents(this, MainRootFragment.class);
@@ -193,7 +195,7 @@ public class ItemsEditorFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        L.o(TAG, "onCreateView", L.nn(savedInstanceState));
+        Logger.d(TAG, "onCreateView", nullStat(savedInstanceState));
         return layout;
     }
 

@@ -11,7 +11,7 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.TickSession;
 import com.fazziclay.opentoday.app.items.ItemManager;
-import com.fazziclay.opentoday.util.L;
+import com.fazziclay.opentoday.util.Logger;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,7 +32,7 @@ public class ItemsTickReceiver extends BroadcastReceiver {
 
         if (intent != null && intent.getExtras() != null && intent.getExtras().containsKey("debugMessage")) {
             String s = intent.getExtras().getString("debugMessage", "none");
-            L.o("ItemsTickReceiver", "DebugMessage! " + s);
+            Logger.d("ItemsTickReceiver", "DebugMessage! " + s);
         }
 
         debugNotification(context);
