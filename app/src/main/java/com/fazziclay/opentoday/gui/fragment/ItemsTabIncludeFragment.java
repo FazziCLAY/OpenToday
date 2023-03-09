@@ -94,7 +94,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
             throw new RuntimeException("Unknown firstTab settings!");
         }
 
-        this.toolbar = new AppToolbar(requireActivity(), itemManager, settingsManager, currentItemsStorage, UI.findFragmentInParents(this, MainRootFragment.class));
+        this.toolbar = new AppToolbar(requireActivity(), itemManager, settingsManager, currentItemsStorage, rootNavigationHost, binding.toolbar, binding.toolbarMore);
 
         // Tabs
         itemManager.getOnTabsChanged().addCallback(CallbackImportance.DEFAULT, localOnTabChanged);
@@ -117,8 +117,6 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         updateViewPager(false);
 
 
-        this.binding.toolbar.addView(this.toolbar.getToolbarView());
-        this.binding.toolbarMore.addView(this.toolbar.getToolbarMoreView());
         this.toolbar.setOnMoreVisibleChangedListener(visible -> binding.quickNote.setVisibility(!visible ? View.VISIBLE : View.INVISIBLE));
         this.toolbar.create();
 

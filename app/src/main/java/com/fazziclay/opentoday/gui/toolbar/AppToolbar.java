@@ -58,6 +58,7 @@ import com.fazziclay.opentoday.gui.fragment.ImportFragment;
 import com.fazziclay.opentoday.gui.fragment.ItemEditorFragment;
 import com.fazziclay.opentoday.gui.fragment.SettingsFragment;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
+import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
@@ -68,11 +69,14 @@ import java.util.List;
 import java.util.UUID;
 
 public class AppToolbar {
+    private static final String TAG = "AppToolbar";
+
     private final Activity activity;
     private ToolbarBinding binding;
-    private final LinearLayout toolbarView;
-    private final LinearLayout toolbarMoreView;
+    private final ViewGroup toolbarView;
+    private final ViewGroup toolbarMoreView;
     private boolean destroyed = false;
+    private boolean created = false;
     private final App app;
     private final ItemManager itemManager;
     private final SettingsManager settingsManager;
@@ -91,82 +95,79 @@ public class AppToolbar {
     private View sectionItems;
 
 
-    public AppToolbar(Activity activity, ItemManager itemManager, SettingsManager settingsManager, ItemsStorage itemsStorage, NavigationHost rootNavigationHost) {
-        this.activity = activity;
-        this.toolbarMoreView = new LinearLayout(activity);
-        this.toolbarView = new LinearLayout(activity);
+    public AppToolbar(final Activity activity,
+                      final ItemManager itemManager,
+                      final SettingsManager settingsManager,
+                      final ItemsStorage itemsStorage,
+                      final NavigationHost rootNavigationHost,
+                      final ViewGroup toolbarView,
+                      final ViewGroup toolbarMoreView) {
         this.app = App.get(activity);
+        this.activity = activity;
         this.itemManager = itemManager;
         this.settingsManager = settingsManager;
         this.itemsStorage = itemsStorage;
         this.rootNavigationHost = rootNavigationHost;
-        this.toolbarMoreView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        this.toolbarMoreView.setOrientation(LinearLayout.VERTICAL);
-        this.toolbarMoreView.setClickable(false);
-        this.toolbarView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        this.toolbarView.setOrientation(LinearLayout.VERTICAL);
+        this.toolbarView = toolbarView;
+        this.toolbarMoreView = toolbarMoreView;
+        Logger.d(TAG, "<init>");
     }
 
     public void create() {
+        if (created) throw new RuntimeException("AppToolbar already created!");
+        created = true;
+
+        Logger.d(TAG, "create");
         this.binding = ToolbarBinding.inflate(activity.getLayoutInflater());
         this.toolbarView.addView(binding.getRoot());
 
-        viewClick(binding.toolbarFile, () -> {
-            if (preOnClick(binding.toolbarFile)) onFileClick();
-        });
-        viewClick(binding.toolbarItems, () -> {
-            if (preOnClick(binding.toolbarItems)) onItemsClick();
-        });
-        viewClick(binding.toolbarSelection, () -> {
-            if (preOnClick(binding.toolbarSelection)) onSelectionClick();
-        });
-        viewClick(binding.toolbarOpentoday, () -> {
-            if (preOnClick(binding.toolbarOpentoday)) onOpenTodayClick();
-        });
-        viewClick(binding.toolbarTabs, () -> {
-            if (preOnClick(binding.toolbarTabs)) onTabsClick();
-        });
+        // setup buttons callbacks
+        setupButtonCallback(binding.toolbarFile, this::onFileClick);
+        setupButtonCallback(binding.toolbarItems, this::onItemsClick);
+        setupButtonCallback(binding.toolbarSelection, this::onSelectionClick);
+        setupButtonCallback(binding.toolbarTabs, this::onTabsClick);
+        setupButtonCallback(binding.toolbarOpentoday, this::onOpenTodayClick);
+
+        // Selection button
         onSelectionChangedTab = selections -> {
-            if (selections.isEmpty()) {
-                binding.toolbarSelection.setVisibility(View.GONE);
-                if (currentToolbarButton == binding.toolbarSelection) {
-                    closeMoreView();
-                }
-            } else {
-                binding.toolbarSelection.setVisibility(View.VISIBLE);
+            boolean visible = !selections.isEmpty();
+            viewVisible(binding.toolbarSelection, visible, View.GONE);
+            if (!visible && currentToolbarButton == binding.toolbarSelection) {
+                closeMoreView();
             }
         };
         itemManager.getOnSelectionUpdated().addCallback(CallbackImportance.DEFAULT, onSelectionChangedTab);
-        binding.toolbarSelection.setVisibility(itemManager.getSelections().length == 0 ? View.GONE : View.VISIBLE);
+        viewVisible(binding.toolbarSelection, !itemManager.isSelectionEmpty(), View.GONE);
     }
 
-
-    public View getToolbarView() {
-        return toolbarView;
-    }
-
-    public View getToolbarMoreView() {
-        return toolbarMoreView;
-    }
 
     public void destroy() {
+        if (!created) throw new RuntimeException("No created before");
         if (destroyed) {
-            throw new RuntimeException("destroyed");
+            throw new RuntimeException("AppToolbar already destroyed");
         }
+        Logger.d(TAG, "destroy");
         destroyed = true;
         if (onSelectionChanged != null) itemManager.getOnSelectionUpdated().deleteCallback(onSelectionChanged);
         if (onSelectionChangedTab != null) itemManager.getOnSelectionUpdated().deleteCallback(onSelectionChangedTab);
         if (onTabsChanged != null) itemManager.getOnTabsChanged().deleteCallback(onTabsChanged);
+        toolbarView.removeAllViews();
+        toolbarMoreView.removeAllViews();
+        this.binding = null;
+    }
+
+    private void setupButtonCallback(final View view, final Runnable runnable) {
+        viewClick(view, () -> preOnClick(view, runnable));
     }
 
     // Set view android:backgroundTint for value from style param
-
     private void backgroundTintFromStyle(int style, View view) {
         TypedArray typedArray = ResUtil.getStyleColor(activity, style, android.R.attr.backgroundTint);
         int color = typedArray.getColor(0, Color.RED);
         view.setBackgroundTintList(ColorStateList.valueOf(color));
         typedArray.recycle();
     }
+
     private void resetMoreView() {
         toolbarMoreView.removeAllViews();
         if (currentToolbarButton != null) {
@@ -176,21 +177,20 @@ public class AppToolbar {
         if (onTabsChanged != null) itemManager.getOnTabsChanged().deleteCallback(onTabsChanged);
     }
 
-    private boolean preOnClick(View buttonView) {
+    private void preOnClick(final View buttonView, final Runnable runnable) {
         resetMoreView();
         if (currentToolbarButton == buttonView) {
             currentToolbarButton = null;
             if (onMoreVisibleChangedListener != null) {
                 onMoreVisibleChangedListener.onChange(false);
             }
-            return false;
         } else {
             currentToolbarButton = buttonView;
             backgroundTintFromStyle(R.style.Theme_OpenToday_Toolbar_Button_Selected, currentToolbarButton);
             if (onMoreVisibleChangedListener != null) {
                 onMoreVisibleChangedListener.onChange(true);
             }
-            return true;
+            runnable.run();
         }
     }
 

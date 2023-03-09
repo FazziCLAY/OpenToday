@@ -286,6 +286,10 @@ public class ItemManager {
         return onSelectionUpdated;
     }
 
+    public boolean isSelectionEmpty() {
+        return selections.isEmpty();
+    }
+
     public Selection[] getSelections() {
         return selections.toArray(new Selection[0]);
     }
