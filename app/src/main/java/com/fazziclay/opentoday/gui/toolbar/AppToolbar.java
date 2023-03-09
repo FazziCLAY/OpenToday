@@ -56,7 +56,6 @@ import com.fazziclay.opentoday.gui.fragment.AboutFragment;
 import com.fazziclay.opentoday.gui.fragment.DeleteItemsFragment;
 import com.fazziclay.opentoday.gui.fragment.ImportFragment;
 import com.fazziclay.opentoday.gui.fragment.ItemEditorFragment;
-import com.fazziclay.opentoday.gui.fragment.ItemsTabIncludeFragment;
 import com.fazziclay.opentoday.gui.fragment.SettingsFragment;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.util.ResUtil;
