@@ -5,6 +5,7 @@ import static com.fazziclay.opentoday.util.InlineUtil.viewClick;
 import static com.fazziclay.opentoday.util.InlineUtil.viewVisible;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -19,13 +20,13 @@ import com.fazziclay.opentoday.app.ActivitySettings;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.FeatureFlag;
 import com.fazziclay.opentoday.app.Telemetry;
+import com.fazziclay.opentoday.app.receiver.ItemsTickReceiver;
 import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.app.updatechecker.UpdateChecker;
 import com.fazziclay.opentoday.databinding.ActivityMainBinding;
 import com.fazziclay.opentoday.databinding.NotificationDebugappBinding;
 import com.fazziclay.opentoday.databinding.NotificationUpdateAvailableBinding;
-import com.fazziclay.opentoday.gui.UITickService;
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment;
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
 import com.fazziclay.opentoday.util.Logger;
@@ -43,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private App app;
     private SettingsManager settingsManager;
-    private UITickService uiTickService;
     private long lastExitClick = 0;
 
     // Current Date
@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(settingsManager.getTheme());
         this.app.setAppInForeground(true);
         this.app.getTelemetry().send(new Telemetry.UiOpenLPacket());
-        this.uiTickService = new UITickService(this);
         this.binding = ActivityMainBinding.inflate(getLayoutInflater());
 
         long ping_startStat_apptelemetrythemebinging = System.currentTimeMillis();
@@ -94,10 +93,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (settingsManager.isQuickNoteNotification()) {
             QuickNoteReceiver.sendQuickNoteNotification(this);
-        }
-        if (!app.isFeatureFlag(FeatureFlag.DISABLE_AUTOMATIC_TICK)) {
-            uiTickService.create();
-            uiTickService.tick();
         }
         long startStat_preStop = System.currentTimeMillis();
 
@@ -150,9 +145,6 @@ public class MainActivity extends AppCompatActivity {
             app.setAppInForeground(false);
             app.getTelemetry().send(new Telemetry.UiClosedLPacket());
         }
-        if (uiTickService != null) {
-            uiTickService.destroy();
-        }
         currentDateHandler.removeCallbacks(currentDateRunnable);
     }
 
@@ -170,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 if (isDestroyed()) return;
                 setCurrentDate();
+                internalItemsTick();
                 long millis = System.currentTimeMillis() % 1000;
                 currentDateHandler.postDelayed(this, 1000 - millis);
             }
@@ -186,6 +179,12 @@ public class MainActivity extends AppCompatActivity {
             dialog.show();
             dialog.getDatePicker().setFirstDayOfWeek(settingsManager.getFirstDayOfWeek());
         });
+    }
+
+    private void internalItemsTick() {
+        if (!app.isFeatureFlag(FeatureFlag.DISABLE_AUTOMATIC_TICK)) {
+            sendBroadcast(new Intent(this, ItemsTickReceiver.class));
+        }
     }
 
     private void setCurrentDate() {
