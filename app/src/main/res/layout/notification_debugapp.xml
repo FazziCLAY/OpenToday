@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/debug_app"
+<FrameLayout android:id="@+id/debug_app"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/shape"
     android:backgroundTint="#ff0000"
-    android:orientation="vertical"
     android:padding="5sp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -14,4 +13,4 @@
         android:text="@string/debug_app"
         android:textColor="#000000"
         android:textSize="20sp" />
-</LinearLayout>
+</FrameLayout>
