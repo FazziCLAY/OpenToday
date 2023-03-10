@@ -37,6 +37,7 @@ import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.databinding.ExportBinding;
 import com.fazziclay.opentoday.databinding.FragmentSettingsBinding;
+import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 
@@ -315,52 +316,11 @@ public class SettingsFragment extends Fragment {
             easterEggCounter++;
             if (easterEggCounter >= 6) {
                 easterEggCounter = 0;
-                showFeatureFlagsDialog();
+                UI.Debug.showFeatureFlagsDialog(app, requireContext());
             }
         } else {
             easterEggCounter = 0;
         }
         easterEggLastClick = System.currentTimeMillis();
-    }
-
-    private void showFeatureFlagsDialog() {
-        LinearLayout view = new LinearLayout(requireContext());
-        view.setOrientation(LinearLayout.VERTICAL);
-
-        for (FeatureFlag featureFlag : FeatureFlag.values()) {
-            CheckBox c = new CheckBox(requireContext());
-            c.setText(featureFlag.name());
-            c.setChecked(app.isFeatureFlag(featureFlag));
-            viewClick(c, () -> {
-                boolean is = c.isChecked();
-                if (is) {
-                    if (!app.isFeatureFlag(featureFlag)) {
-                        app.getFeatureFlags().add(featureFlag);
-                    }
-                } else {
-                    if (app.isFeatureFlag(featureFlag)) {
-                        app.getFeatureFlags().remove(featureFlag);
-                    }
-                }
-            });
-
-            TextView textView = new TextView(requireContext());
-            textView.setText(featureFlag.getDescription());
-            textView.setTextSize(11);
-            textView.setPadding(60, 0, 0, 0);
-
-            view.addView(c);
-            view.addView(textView);
-        }
-
-        ScrollView scrollView = new ScrollView(requireContext());
-        scrollView.addView(view);
-
-        Dialog dialog = new AlertDialog.Builder(requireContext())
-                .setView(scrollView)
-                .setTitle("DEBUG: FeatureFlags")
-                .setNegativeButton(R.string.abc_cancel, null)
-                .create();
-        dialog.show();
     }
 }
