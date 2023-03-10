@@ -86,6 +86,7 @@
     <!-- Section: Tabs -->
     <style name="OpenToday.Base.Toolbar.Section.Root.Tabs" parent="OpenToday.Base.Toolbar.Section.Root" />
     <style name="OpenToday.Base.Toolbar.Section.Button.Tabs" parent="OpenToday.Base.Toolbar.Section.Button" />
+    <style name="OpenToday.Base.Toolbar.Section.Text.Tabs" parent="OpenToday.Base.Toolbar.Section.Text" />
 
 
     <!-- Section: OpenToday -->
