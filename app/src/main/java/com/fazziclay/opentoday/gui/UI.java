@@ -1,6 +1,7 @@
 package com.fazziclay.opentoday.gui;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.EditText;
@@ -10,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.receiver.ItemsTickReceiver;
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
@@ -60,6 +62,23 @@ public class UI {
                         }
                     })
                     .show();
+        }
+
+        public static void showCrashWithMessageDialog(final Context context, final String exceptionMessagePattern) {
+            Toast.makeText(context, R.string.manuallyCrash_crash, Toast.LENGTH_SHORT).show();
+            EditText message = new EditText(context);
+            message.setHint(R.string.manuallyCrash_dialog_inputHint);
+            Dialog dialog = new AlertDialog.Builder(context)
+                    .setTitle(R.string.manuallyCrash_dialog_title)
+                    .setView(message)
+                    .setMessage(R.string.manuallyCrash_dialog_message)
+                    .setPositiveButton(R.string.manuallyCrash_dialog_apply, (var1, var2) -> {
+                        throw new RuntimeException(String.format(exceptionMessagePattern, message.getText().toString()));
+                    })
+                    .setNegativeButton(R.string.manuallyCrash_dialog_cancel, null)
+                    .create();
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
         }
     }
 }
