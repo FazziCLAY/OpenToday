@@ -68,6 +68,7 @@ public class ImportFragment extends Fragment {
     private App app;
     private ItemManager itemManager;
     private ItemsStorage itemsStorage;
+    private boolean autoRun = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,6 +80,7 @@ public class ImportFragment extends Fragment {
 
         if (getArguments().containsKey(KEY_START_TEXT)) {
             if (getArguments().getBoolean(KEY_AUTORUN)) {
+                autoRun = true;
                 String s = getArguments().getString(KEY_START_TEXT);
                 importData(s);
             }
@@ -90,9 +92,7 @@ public class ImportFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentImportBinding.inflate(inflater);
 
-        if (getArguments().containsKey(KEY_START_TEXT)) {
-            binding.editText.setText(getArguments().getString(KEY_START_TEXT));
-        }
+
         viewClick(binding.runImport, () -> importData(binding.editText.getText().toString()));
         viewClick(binding.cancel, () -> UI.rootBack(this));
 
@@ -177,7 +177,11 @@ public class ImportFragment extends Fragment {
         new AlertDialog.Builder(activity)
                 .setTitle(R.string.importFragment_dialog_main_title)
                 .setMessage(getString(R.string.importFragment_dialog_main_message, perms.toString(), info))
-                .setNegativeButton(R.string.importFragment_dialog_main_cancel, null)
+                .setNegativeButton(R.string.importFragment_dialog_main_cancel, (fdsoijh, hfjgds) -> {
+                    if (autoRun) {
+                        UI.rootBack(this);
+                    }
+                })
                 .setPositiveButton(R.string.importFragment_dialog_main_import, (ignore0, ignore1) -> {
                     if (importWrapper.isPerm(ImportWrapper.Permission.PRE_IMPORT_SHOW_DIALOG)) {
                         new AlertDialog.Builder(requireActivity())
