@@ -32,6 +32,7 @@ import com.fazziclay.opentoday.app.ColorHistoryManager;
 import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
+import com.fazziclay.opentoday.app.items.Selection;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
@@ -172,7 +173,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        FragmentItemEditorBinding binding = FragmentItemEditorBinding.inflate(inflater);
+        final FragmentItemEditorBinding binding = FragmentItemEditorBinding.inflate(inflater);
 
         if (item instanceof Item) {
             binding.modules.addView(addEditModule(new ItemEditModule()));
@@ -340,6 +341,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding = FragmentItemEditorModuleItemBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
 
             // equip
+            binding.selected.setChecked(itemManager.isSelected(item));
             binding.viewMinHeight.setText(String.valueOf(item.getViewMinHeight()));
             binding.defaultBackgroundColor.setChecked(!item.isViewCustomBackgroundColor());
             temp_backgroundColor = item.getViewBackgroundColor();
@@ -448,6 +450,15 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             item.setViewBackgroundColor(temp_backgroundColor);
             item.setViewCustomBackgroundColor(!binding.defaultBackgroundColor.isChecked());
             item.setMinimize(binding.minimize.isChecked());
+            if (binding.selected.isChecked()) {
+                if (!itemManager.isSelected(item)) {
+                    itemManager.selectItem(new Selection(item.getParentItemStorage(), item));
+                }
+            } else {
+                if (itemManager.isSelected(item)) {
+                    itemManager.deselectItem(item);
+                }
+            }
         }
 
         @Override

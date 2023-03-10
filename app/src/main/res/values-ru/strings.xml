@@ -307,4 +307,5 @@
     <string name="toolbar_more_file_importFromClipboard_unknownError">Неизвестная ошибка!</string>
     <string name="toolbar_more_file_importFromClipboard_notImportText">Это не импорт-текст</string>
     <string name="toolbar_more_tabs_delete_notAllowOneTabMode">Удаление невозможно</string>
+    <string name="fragment_itemEditor_module_item_selected">Выделен</string>
 </resources>
