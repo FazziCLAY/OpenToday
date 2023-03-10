@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#333333"
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/toolbar_tabs_tabsListTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="23sp"
@@ -13,23 +14,20 @@
         android:text="@string/toolbar_tabs_title" />
 
 
-    <RelativeLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tabsRecycleView"
+        android:layout_below="@id/toolbar_tabs_tabsListTitle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/tabsRecycleView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        android:layout_height="wrap_content" />
 
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/addTab"
-            android:src="@android:drawable/ic_input_add"
-            android:layout_width="wrap_content"
-            android:layout_margin="10sp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:contentDescription="@string/add_new_tab" />
-    </RelativeLayout>
-</LinearLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addTab"
+        android:src="@android:drawable/ic_input_add"
+        android:layout_width="wrap_content"
+        android:layout_margin="10sp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBaseline="@id/tabsRecycleView"
+        android:contentDescription="@string/add_new_tab" />
+</RelativeLayout>
