@@ -146,44 +146,7 @@ public class SettingsFragment extends Fragment {
 
         pinCodeCallback = () -> binding.pincode.setText(getString(R.string.settings_pincode, (pinCodeManager.isPinCodeSet() ? getString(R.string.settings_pincode_on) : getString(R.string.settings_pincode_off))));
         pinCodeCallback.run();
-        viewClick(binding.pincode, () -> {
-            boolean is = pinCodeManager.isPinCodeSet();
-            AlertDialog.Builder d = new AlertDialog.Builder(requireContext())
-                    .setTitle(R.string.settings_pincode_title)
-                    .setMessage(is ? getString(R.string.settings_pincode_message_on, pinCodeManager.getPinCode()) : getString(R.string.settings_pincode_message_off))
-                    .setNeutralButton(R.string.settings_pincode_cancel, null)
-                    .setPositiveButton(is ? R.string.settings_pincode_button_disable : R.string.settings_pincode_button_enable, (dialogInterface, i) -> {
-                        if (is) {
-                            pinCodeManager.disablePinCode();
-                            pinCodeCallback.run();
-                            Toast.makeText(app, R.string.settings_pincode_disable_success, Toast.LENGTH_SHORT).show();
-                        } else {
-                            EditText t = new EditText(requireContext());
-                            t.setHint(R.string.settings_pincode_enable_hint);
-                            new AlertDialog.Builder(requireContext())
-                                    .setTitle(R.string.settings_pincode_enable_title)
-                                    .setMessage(R.string.settings_pincode_enable_message)
-                                    .setView(t)
-                                    .setPositiveButton(R.string.settings_pincode_enable_apply, (fsdf, fdsfd) -> {
-                                        try {
-                                            pinCodeManager.enablePinCode(t.getText().toString());
-                                            pinCodeCallback.run();
-                                            Toast.makeText(app, R.string.settings_pincode_enable_success, Toast.LENGTH_SHORT).show();
-                                        } catch (Exception e) {
-                                            if (e instanceof PinCodeManager.ContainNonDigitChars) {
-                                                Toast.makeText(app, R.string.settings_pincode_enable_nonDigitsError, Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                Toast.makeText(app, R.string.settings_pincode_enable_unknownError, Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                    })
-                                    .setNegativeButton(R.string.settings_pincode_enable_cancel, null)
-                                    .show();
-                        }
-                    });
-
-            d.show();
-        });
+        viewClick(binding.pincode, this::showPinCodeDialog);
 
         setupFirstTabSpinner();
     }
@@ -309,6 +272,45 @@ public class SettingsFragment extends Fragment {
                     }
                 })
                 .show();
+    }
+
+    private void showPinCodeDialog() {
+        boolean is = pinCodeManager.isPinCodeSet();
+        AlertDialog.Builder d = new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.settings_pincode_title)
+                .setMessage(is ? getString(R.string.settings_pincode_message_on, pinCodeManager.getPinCode()) : getString(R.string.settings_pincode_message_off))
+                .setNeutralButton(R.string.settings_pincode_cancel, null)
+                .setPositiveButton(is ? R.string.settings_pincode_button_disable : R.string.settings_pincode_button_enable, (dialogInterface, i) -> {
+                    if (is) {
+                        pinCodeManager.disablePinCode();
+                        pinCodeCallback.run();
+                        Toast.makeText(app, R.string.settings_pincode_disable_success, Toast.LENGTH_SHORT).show();
+                    } else {
+                        EditText t = new EditText(requireContext());
+                        t.setHint(R.string.settings_pincode_enable_hint);
+                        new AlertDialog.Builder(requireContext())
+                                .setTitle(R.string.settings_pincode_enable_title)
+                                .setMessage(R.string.settings_pincode_enable_message)
+                                .setView(t)
+                                .setPositiveButton(R.string.settings_pincode_enable_apply, (fsdf, fdsfd) -> {
+                                    try {
+                                        pinCodeManager.enablePinCode(t.getText().toString());
+                                        pinCodeCallback.run();
+                                        Toast.makeText(app, R.string.settings_pincode_enable_success, Toast.LENGTH_SHORT).show();
+                                    } catch (Exception e) {
+                                        if (e instanceof PinCodeManager.ContainNonDigitChars) {
+                                            Toast.makeText(app, R.string.settings_pincode_enable_nonDigitsError, Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(app, R.string.settings_pincode_enable_unknownError, Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                })
+                                .setNegativeButton(R.string.settings_pincode_enable_cancel, null)
+                                .show();
+                    }
+                });
+
+        d.show();
     }
 
     private void experimentalFeaturesInteract() {
