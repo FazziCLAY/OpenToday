@@ -488,8 +488,6 @@ public class AppToolbar {
     private void onSelectionClick() {
         ToolbarMoreSelectionBinding localBinding = ToolbarMoreSelectionBinding.inflate(activity.getLayoutInflater());
         registerMoreView(localBinding.getRoot());
-        viewVisible(localBinding.empty, itemManager.isSelectionEmpty(), View.GONE);
-        viewVisible(localBinding.notEmpty, !itemManager.isSelectionEmpty(), View.GONE);
 
         viewClick(localBinding.exportSelected, this::exportSelected);
         viewLong(localBinding.exportSelected, this::showExportSelectedWithMessageDialog);
@@ -539,8 +537,6 @@ public class AppToolbar {
         // Add selection listener
         onSelectionChanged = (selections) -> {
             localBinding.selectedInfo.setText(activity.getString(R.string.toolbar_more_selection_info, String.valueOf(selections.size())));
-            viewVisible(localBinding.empty, selections.isEmpty(), View.GONE);
-            viewVisible(localBinding.notEmpty, !selections.isEmpty(), View.GONE);
             viewVisible(localBinding.editSelected, selections.size() == 1, View.GONE);
         };
         onSelectionChanged.onSelectionChanged(Arrays.asList(itemManager.getSelections())); // First run

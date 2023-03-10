@@ -1,124 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:clickable="false">
+    style="@style/Theme.OpenToday.Toolbar.Section.Root.Selection">
 
-    <LinearLayout
-        android:id="@+id/empty"
-        android:visibility="gone"
-        tools:visibility="visible"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#aa000000"
-        android:orientation="vertical">
+    <Button
+        android:id="@+id/exportSelected"
+        android:text="@string/toolbar_more_selection_export"
+        style="@style/Theme.OpenToday.Toolbar.Section.Button.Selection.ExportSelected" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="@string/toolbar_more_selection_empty"
-            android:textSize="16sp"
-            android:textColor="#ffffff" />
+    <Button
+        android:id="@+id/deselect_all"
+        android:text="@string/toolbar_more_selection_deselectAll"
+        style="@style/Theme.OpenToday.Toolbar.Section.Button.Selection.DeselectAll" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/notEmpty"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingStart="5sp"
-        android:paddingEnd="5sp">
-
-        <Button
-            android:id="@+id/exportSelected"
-            android:backgroundTint="#BA1DF4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="1sp"
-            android:layout_marginRight="1sp"
-            android:minHeight="45sp"
-            android:minWidth="0sp"
-            android:textAllCaps="false"
-            android:text="@string/toolbar_more_selection_export" />
-
-        <Button
-            android:id="@+id/deselect_all"
-            android:backgroundTint="#16FF2D"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="1sp"
-            android:layout_marginRight="1sp"
-            android:minHeight="45sp"
-            android:minWidth="0sp"
-            android:textAllCaps="false"
-            android:text="@string/toolbar_more_selection_deselectAll" />
-
-        <Button
-            android:id="@+id/delete"
-            android:backgroundTint="#E8514D"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="1sp"
-            android:layout_marginRight="1sp"
-            android:minHeight="45sp"
-            android:minWidth="0sp"
-            android:textAllCaps="false"
-            android:text="@string/toolbar_more_selection_delete" />
+    <Button
+        android:id="@+id/delete"
+        android:text="@string/toolbar_more_selection_delete"
+        style="@style/Theme.OpenToday.Toolbar.Section.Button.Selection.Delete" />
 
 
-        <Button
-            android:id="@+id/move_selected_here"
-            android:backgroundTint="#1C919C"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="1sp"
-            android:layout_marginRight="1sp"
-            android:minHeight="45sp"
-            android:minWidth="0sp"
-            android:textAllCaps="false"
-            android:text="@string/toolbar_more_selection_moveSelectedHere" />
+    <Button
+        android:id="@+id/move_selected_here"
+        android:text="@string/toolbar_more_selection_moveSelectedHere"
+        style="@style/Theme.OpenToday.Toolbar.Section.Button.Selection.MoveHere" />
 
-        <Button
-            android:id="@+id/copy_selected_here"
-            android:backgroundTint="#25529A"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="1sp"
-            android:layout_marginRight="1sp"
-            android:minHeight="45sp"
-            android:minWidth="0sp"
-            android:textAllCaps="false"
-            android:text="@string/toolbar_more_selection_copySelectedHere" />
+    <Button
+        android:id="@+id/copy_selected_here"
+        android:text="@string/toolbar_more_selection_copySelectedHere"
+        style="@style/Theme.OpenToday.Toolbar.Section.Button.Selection.CopyHere" />
 
 
-        <Button
-            android:id="@+id/edit_selected"
-            android:backgroundTint="#661AD0"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="1sp"
-            android:layout_marginRight="1sp"
-            android:minHeight="45sp"
-            android:minWidth="0sp"
-            android:textAllCaps="false"
-            android:text="@string/toolbar_more_selection_editSelected" />
+    <Button
+        android:id="@+id/edit_selected"
+        android:text="@string/toolbar_more_selection_editSelected"
+        style="@style/Theme.OpenToday.Toolbar.Section.Button.Selection.Edit" />
 
-        <TextView
-            android:id="@+id/selectedInfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:textSize="22sp"
-            android:background="@drawable/shape"
-            android:paddingStart="2sp"
-            android:paddingEnd="2sp"
-            android:backgroundTint="#000000"
-            android:text="@string/toolbar_more_selection_info" />
+    <TextView
+        android:id="@+id/selectedInfo"
+        android:text="@string/toolbar_more_selection_info"
+        style="@style/Theme.OpenToday.Toolbar.Section.Text.Selection.Info" />
 
-    </LinearLayout>
 </LinearLayout>
