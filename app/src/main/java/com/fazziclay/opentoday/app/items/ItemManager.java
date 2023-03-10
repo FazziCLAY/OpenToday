@@ -176,6 +176,10 @@ public class ItemManager {
         return tabs;
     }
 
+    public Tab getTabAt(int i) {
+        return tabs.get(i);
+    }
+
     public int getTabPosition(UUID tabId) {
         Tab tab = getTab(tabId);
         if (tab == null) {
