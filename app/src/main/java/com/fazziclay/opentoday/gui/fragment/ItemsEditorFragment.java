@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class ItemsEditorFragment extends Fragment {
-    private static final int RES_FILTER_BUTTON_IMAGE = android.R.drawable.stat_notify_voicemail;
+    private static final int RES_FILTER_BUTTON_IMAGE = android.R.drawable.ic_menu_manage;
     private static final String EXTRA_TAB_ID = "items_editor_fragment_tabId";
     private static final String EXTRA_ITEM_ID = "items_editor_fragment_itemId";
     private static final String EXTRA_PREVIEW_MODE = "items_editor_fragment_previewMode";
