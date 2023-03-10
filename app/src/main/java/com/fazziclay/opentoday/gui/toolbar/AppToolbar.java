@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +32,6 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.FeatureFlag;
 import com.fazziclay.opentoday.app.ImportWrapper;
-import com.fazziclay.opentoday.app.items.ID;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.ItemsUtils;
@@ -41,7 +41,6 @@ import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.tab.Tab;
-import com.fazziclay.opentoday.app.receiver.ItemsTickReceiver;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.databinding.ToolbarBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreFileBinding;
@@ -50,6 +49,7 @@ import com.fazziclay.opentoday.databinding.ToolbarMoreItemsItemBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreOpentodayBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreSelectionBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreTabsBinding;
+import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.activity.MainActivity;
 import com.fazziclay.opentoday.gui.activity.SetupActivity;
 import com.fazziclay.opentoday.gui.dialog.DialogSelectItemAction;
@@ -384,50 +384,55 @@ public class AppToolbar {
                 .show();
     }
 
-    private static class H extends RecyclerView.ViewHolder {
+    private class H extends RecyclerView.ViewHolder {
         private final TextView name;
         private final Button create;
         private final Button add;
 
-        public H(@NonNull View itemView, TextView name, Button create, Button add) {
-            super(itemView);
-            this.name = name;
-            this.create = create;
-            this.add = add;
+        public H(ViewGroup parent) {
+            super(new FrameLayout(activity));
+            ToolbarMoreItemsItemBinding b = ToolbarMoreItemsItemBinding.inflate(activity.getLayoutInflater(), parent, false);
+            this.name = b.name;
+            this.create = b.create;
+            this.add = b.add;
+            ((FrameLayout) itemView).addView(b.getRoot());
+        }
+
+        public void clear() {
+            ((FrameLayout) itemView).removeAllViews();
         }
     }
 
     private void onItemsClick() {
         // Cache
         if (itemsSectionCacheView != null) {
-            if (itemsSectionCacheView.getParent() != null) {
-                ((ViewGroup)itemsSectionCacheView.getParent()).removeView(itemsSectionCacheView);
-                toolbarMoreView.addView(itemsSectionCacheView);
-                return;
-            }
+            registerMoreView(itemsSectionCacheView);
+            return;
         }
 
         // Non-cache
-        ToolbarMoreItemsBinding b = ToolbarMoreItemsBinding.inflate(activity.getLayoutInflater());
+        ToolbarMoreItemsBinding localBinding = ToolbarMoreItemsBinding.inflate(activity.getLayoutInflater());
+        registerMoreView(itemsSectionCacheView = localBinding.getRoot());
 
-        b.items.setLayoutManager(new LinearLayoutManager(activity, RecyclerView.VERTICAL, false));
-        b.items.setAdapter(new RecyclerView.Adapter<H>() {
+        localBinding.items.setLayoutManager(new LinearLayoutManager(activity, RecyclerView.VERTICAL, false));
+        localBinding.items.setAdapter(new RecyclerView.Adapter<H>() {
             @NonNull
             @Override
             public H onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                ToolbarMoreItemsItemBinding b = ToolbarMoreItemsItemBinding.inflate(activity.getLayoutInflater(), parent, false);
-                return new H(b.getRoot(), b.name, b.create, b.add);
+                return new H(parent);
             }
 
             @Override
             public void onBindViewHolder(@NonNull H holder, int position) {
                 ItemsRegistry.ItemInfo itemInfo = ItemsRegistry.REGISTRY.getAllItems()[position];
 
-                viewVisible(holder.itemView, itemInfo.isCompatibility(app.getFeatureFlags()), View.GONE);
-
-                holder.name.setText(itemInfo.getNameResId());
-                viewClick(holder.create, () -> rootNavigationHost.navigate(ItemEditorFragment.create(((ID)itemsStorage).getId(), itemInfo.getClassType()), true));
-                viewClick(holder.add, () -> itemsStorage.addItem(ItemsRegistry.REGISTRY.get(itemInfo.getClassType()).create()));
+                if (itemInfo.isCompatibility(app.getFeatureFlags())) {
+                    holder.name.setText(itemInfo.getNameResId());
+                    viewClick(holder.create, () -> rootNavigationHost.navigate(ItemEditorFragment.create(ItemsUtils.getId(itemsStorage), itemInfo.getClassType()), true));
+                    viewClick(holder.add, () -> itemsStorage.addItem(ItemsRegistry.REGISTRY.get(itemInfo.getClassType()).create()));
+                } else {
+                    holder.clear();
+                }
             }
 
             @Override
@@ -437,45 +442,28 @@ public class AppToolbar {
         });
 
         // Action: On click
-        viewClick(b.changeOnClick, () -> new DialogSelectItemAction(activity, settingsManager.getItemOnClickAction(), itemOnClickAction -> {
+        viewClick(localBinding.changeOnClick, () -> new DialogSelectItemAction(activity, settingsManager.getItemOnClickAction(), itemOnClickAction -> {
             settingsManager.setItemOnClickAction(itemOnClickAction);
             settingsManager.save();
         }, activity.getString(R.string.toolbar_more_items_action_click)).show());
         // Action: On left swipe
-        viewClick(b.changeOnLeftSwipe, () -> new DialogSelectItemAction(activity, settingsManager.getItemOnLeftAction(), itemOnLeftAction -> {
+        viewClick(localBinding.changeOnLeftSwipe, () -> new DialogSelectItemAction(activity, settingsManager.getItemOnLeftAction(), itemOnLeftAction -> {
             settingsManager.setItemOnLeftAction(itemOnLeftAction);
             settingsManager.save();
         }, activity.getString(R.string.toolbar_more_items_action_leftSwipe)).show());
-
-        // Cache view & show
-        toolbarMoreView.addView(itemsSectionCacheView = b.getRoot());
     }
 
     private void onOpenTodayClick() {
-        ToolbarMoreOpentodayBinding b = ToolbarMoreOpentodayBinding.inflate(activity.getLayoutInflater());
+        ToolbarMoreOpentodayBinding localBinding = ToolbarMoreOpentodayBinding.inflate(activity.getLayoutInflater());
+        registerMoreView(localBinding.getRoot());
 
-        Runnable showPersonalTickDebug = () -> {
-            EditText view = new EditText(activity);
-            new AlertDialog.Builder(activity)
-                    .setView(view)
-                    .setPositiveButton("TICK", (dfsd, fdsg) -> {
-                        try {
-                            UUID id = UUID.fromString(view.getText().toString());
-                            activity.sendBroadcast(new Intent(activity, ItemsTickReceiver.class).putExtra(ItemsTickReceiver.EXTRA_PERSONAL_TICK, new String[]{id.toString()}).putExtra("debugMessage", "Debug personal tick is work!"));
-                        } catch (Exception e) {
-                            Toast.makeText(activity, e.toString(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .show();
-        };
-
-        viewVisible(b.debugToggleDebugOverlayText, app.isFeatureFlag(FeatureFlag.AVAILABLE_LOGS_OVERLAY), View.GONE);
-        viewVisible(b.debugPersonalTick, app.isFeatureFlag(FeatureFlag.AVAILABLE_UI_PERSONAL_TICK), View.GONE);
-        viewVisible(b.debugRestartActivity, app.isFeatureFlag(FeatureFlag.AVAILABLE_RESTART_ACTIVITY), View.GONE);
-        viewVisible(b.debugResetSetup, app.isFeatureFlag(FeatureFlag.AVAILABLE_RESET_SETUP), View.GONE);
-        viewClick(b.debugToggleDebugOverlayText, () -> ((MainActivity) activity).toggleLogsOverlay());
-        viewClick(b.debugPersonalTick, showPersonalTickDebug);
-        viewClick(b.debugRestartActivity, () -> {
+        viewVisible(localBinding.debugToggleDebugOverlayText, app.isFeatureFlag(FeatureFlag.AVAILABLE_LOGS_OVERLAY), View.GONE);
+        viewVisible(localBinding.debugPersonalTick, app.isFeatureFlag(FeatureFlag.AVAILABLE_UI_PERSONAL_TICK), View.GONE);
+        viewVisible(localBinding.debugRestartActivity, app.isFeatureFlag(FeatureFlag.AVAILABLE_RESTART_ACTIVITY), View.GONE);
+        viewVisible(localBinding.debugResetSetup, app.isFeatureFlag(FeatureFlag.AVAILABLE_RESET_SETUP), View.GONE);
+        viewClick(localBinding.debugToggleDebugOverlayText, () -> ((MainActivity) activity).toggleLogsOverlay());
+        viewClick(localBinding.debugPersonalTick, () -> UI.Debug.showPersonalTickDialog(activity));
+        viewClick(localBinding.debugRestartActivity, () -> {
             activity.finish();
             Intent intent = new Intent(activity, activity.getClass());
             try {
@@ -483,86 +471,35 @@ public class AppToolbar {
             } catch (Exception ignored) {}
             activity.startActivity(intent);
         });
-        viewClick(b.debugResetSetup, () -> {
+        viewClick(localBinding.debugResetSetup, () -> {
             activity.getSharedPreferences(App.SHARED_NAME, Context.MODE_PRIVATE).edit().putBoolean(App.SHARED_KEY_IS_SETUP_DONE, false).apply();
             activity.finish();
             activity.startActivity(new Intent(activity, SetupActivity.class));
         });
-        viewClick(b.about, () -> rootNavigationHost.navigate(AboutFragment.create(), true));
-        viewClick(b.settings, () -> rootNavigationHost.navigate(SettingsFragment.create(), true));
-        viewClick(b.calendar, () -> {
+        viewClick(localBinding.about, () -> rootNavigationHost.navigate(AboutFragment.create(), true));
+        viewClick(localBinding.settings, () -> rootNavigationHost.navigate(SettingsFragment.create(), true));
+        viewClick(localBinding.calendar, () -> {
             DatePickerDialog dialog = new DatePickerDialog(activity);
             dialog.getDatePicker().setFirstDayOfWeek(settingsManager.getFirstDayOfWeek());
             dialog.show();
         });
-
-        toolbarMoreView.addView(b.getRoot());
     }
 
     private void onSelectionClick() {
-        ToolbarMoreSelectionBinding b = ToolbarMoreSelectionBinding.inflate(activity.getLayoutInflater());
-        if (itemManager.getSelections().length == 0) {
-            b.empty.setVisibility(View.VISIBLE);
-            b.notEmpty.setVisibility(View.GONE);
-        }
+        ToolbarMoreSelectionBinding localBinding = ToolbarMoreSelectionBinding.inflate(activity.getLayoutInflater());
+        registerMoreView(localBinding.getRoot());
+        viewVisible(localBinding.empty, itemManager.isSelectionEmpty(), View.GONE);
+        viewVisible(localBinding.notEmpty, !itemManager.isSelectionEmpty(), View.GONE);
 
-        Runnable export = () -> {
-            try {
-                ImportWrapper.Builder builder = ImportWrapper.createImport(ImportWrapper.Permission.ADD_ITEMS_TO_CURRENT);
-                for (Selection selection : itemManager.getSelections()) {
-                    builder.addItem(selection.getItem());
-                }
-                ImportWrapper importWrapper = builder.build();
-                ClipboardManager clipboardManager = activity.getSystemService(ClipboardManager.class);
-                clipboardManager.setPrimaryClip(ClipData.newPlainText(activity.getString(R.string.toolbar_more_selection_export_clipdata_label), importWrapper.finalExport()));
-                Toast.makeText(activity, R.string.toolbar_more_selection_export_success, Toast.LENGTH_SHORT).show();
-
-            } catch (Exception e) {
-                Toast.makeText(activity, activity.getString(R.string.toolbar_more_selection_export_exception, e.toString()), Toast.LENGTH_SHORT).show();
-            }
-        };
-
-        viewClick(b.exportSelected, export);
-        
-        viewLong(b.exportSelected, () -> {
-            EditText dialogMessage = new EditText(activity);
-
-            new AlertDialog.Builder(activity)
-                    .setTitle(R.string.toolbar_more_selection_export_setMessage_title)
-                    .setView(dialogMessage)
-                    .setNeutralButton(R.string.toolbar_more_selection_export_setMessage_nomsg, (ignore0, ignore1) -> export.run())
-                    .setPositiveButton(R.string.toolbar_more_selection_export_setMessage_export, (ignore2, ignore3) -> {
-                        String msg = dialogMessage.getText().toString();
-
-                        try {
-                            ImportWrapper.Builder builder = ImportWrapper.createImport(ImportWrapper.Permission.ADD_ITEMS_TO_CURRENT, ImportWrapper.Permission.PRE_IMPORT_SHOW_DIALOG);
-                            for (Selection selection : itemManager.getSelections()) {
-                                builder.addItem(selection.getItem());
-                            }
-                            builder.setDialogMessage(msg);
-                            ImportWrapper importWrapper = builder.build();
-                            ClipboardManager clipboardManager = activity.getSystemService(ClipboardManager.class);
-                            clipboardManager.setPrimaryClip(ClipData.newPlainText(activity.getString(R.string.toolbar_more_selection_export_clipdata_label), importWrapper.finalExport()));
-                            Toast.makeText(activity, R.string.toolbar_more_selection_export_success, Toast.LENGTH_SHORT).show();
-
-                        } catch (Exception e) {
-                            Toast.makeText(activity, activity.getString(R.string.toolbar_more_selection_export_exception, e.toString()), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .setNegativeButton(R.string.toolbar_more_selection_export_setMessage_cancel, null)
-                    .show();
-        });
+        viewClick(localBinding.exportSelected, this::exportSelected);
+        viewLong(localBinding.exportSelected, this::showExportSelectedWithMessageDialog);
 
         // Deselect all
-        viewClick(b.deselectAll, itemManager::deselectAll);
+        viewClick(localBinding.deselectAll, itemManager::deselectAll);
 
         // Move selected to this
-        viewClick(b.moveSelectedHere, () -> {
-            // If nothing selected
-            if (itemManager.getSelections().length == 0) {
-                Toast.makeText(activity, R.string.toolbar_more_selection_nothingSelected, Toast.LENGTH_SHORT).show();
-                return;
-            }
+        viewClick(localBinding.moveSelectedHere, () -> {
+            if (checkSelectionEmpty()) return;
 
             for (Selection selection : itemManager.getSelections()) {
                 selection.moveToStorage(itemsStorage);
@@ -571,12 +508,8 @@ public class AppToolbar {
         });
 
         // copy
-        viewClick(b.copySelectedHere, () -> {
-            // If nothing selected
-            if (itemManager.getSelections().length == 0) {
-                Toast.makeText(activity, R.string.toolbar_more_selection_nothingSelected, Toast.LENGTH_SHORT).show();
-                return;
-            }
+        viewClick(localBinding.copySelectedHere, () -> {
+            if (checkSelectionEmpty()) return;
 
             for (Selection selection : itemManager.getSelections()) {
                 selection.copyToStorage(itemsStorage);
@@ -585,12 +518,8 @@ public class AppToolbar {
         });
 
         // Delete selected
-        viewClick(b.delete, () -> {
-            // If nothing selected
-            if (itemManager.getSelections().length == 0) {
-                Toast.makeText(activity, R.string.toolbar_more_selection_nothingSelected, Toast.LENGTH_SHORT).show();
-                return;
-            }
+        viewClick(localBinding.delete, () -> {
+            if (checkSelectionEmpty()) return;
 
             List<Item> items = new ArrayList<>();
             for (Selection selection : itemManager.getSelections()) {
@@ -601,7 +530,7 @@ public class AppToolbar {
             rootNavigationHost.navigate(DeleteItemsFragment.create(items.toArray(new Item[0])), true);
         });
 
-        viewClick(b.editSelected, () -> {
+        viewClick(localBinding.editSelected, () -> {
             if (itemManager.getSelections().length > 0) {
                 Item item = itemManager.getSelections()[0].getItem();
                 rootNavigationHost.navigate(ItemEditorFragment.edit(item.getId()), true);
@@ -609,15 +538,65 @@ public class AppToolbar {
         });
         // Add selection listener
         onSelectionChanged = (selections) -> {
-            b.selectedInfo.setText(activity.getString(R.string.toolbar_more_selection_info, String.valueOf(selections.size())));
-            viewVisible(b.empty, selections.isEmpty(), View.GONE);
-            viewVisible(b.notEmpty, !selections.isEmpty(), View.GONE);
-            viewVisible(b.editSelected, selections.size() == 1, View.GONE);
+            localBinding.selectedInfo.setText(activity.getString(R.string.toolbar_more_selection_info, String.valueOf(selections.size())));
+            viewVisible(localBinding.empty, selections.isEmpty(), View.GONE);
+            viewVisible(localBinding.notEmpty, !selections.isEmpty(), View.GONE);
+            viewVisible(localBinding.editSelected, selections.size() == 1, View.GONE);
         };
         onSelectionChanged.onSelectionChanged(Arrays.asList(itemManager.getSelections())); // First run
         itemManager.getOnSelectionUpdated().addCallback(CallbackImportance.MIN, onSelectionChanged); // Add to callbackStorage
+    }
 
-        toolbarMoreView.addView(b.getRoot());
+    private boolean checkSelectionEmpty() {
+        if (itemManager.isSelectionEmpty()) {
+            Toast.makeText(activity, R.string.toolbar_more_selection_nothingSelected, Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return false;
+    }
+
+    private void exportSelected() {
+        try {
+            ImportWrapper.Builder builder = ImportWrapper.createImport(ImportWrapper.Permission.ADD_ITEMS_TO_CURRENT);
+            for (Selection selection : itemManager.getSelections()) {
+                builder.addItem(selection.getItem());
+            }
+            ImportWrapper importWrapper = builder.build();
+            app.getClipboardManager().setPrimaryClip(ClipData.newPlainText(activity.getString(R.string.toolbar_more_selection_export_clipdata_label), importWrapper.finalExport()));
+            Toast.makeText(activity, R.string.toolbar_more_selection_export_success, Toast.LENGTH_SHORT).show();
+
+        } catch (Exception e) {
+            Toast.makeText(activity, activity.getString(R.string.toolbar_more_selection_export_exception, e.toString()), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showExportSelectedWithMessageDialog() {
+        EditText dialogMessage = new EditText(activity);
+
+        new AlertDialog.Builder(activity)
+                .setTitle(R.string.toolbar_more_selection_export_setMessage_title)
+                .setView(dialogMessage)
+                .setNeutralButton(R.string.toolbar_more_selection_export_setMessage_nomsg, (ignore0, ignore1) -> exportSelected())
+                .setPositiveButton(R.string.toolbar_more_selection_export_setMessage_export, (ignore2, ignore3) -> {
+                    String msg = dialogMessage.getText().toString();
+
+                    try {
+                        ImportWrapper.Builder builder = ImportWrapper.createImport(ImportWrapper.Permission.ADD_ITEMS_TO_CURRENT, ImportWrapper.Permission.PRE_IMPORT_SHOW_DIALOG);
+                        for (Selection selection : itemManager.getSelections()) {
+                            builder.addItem(selection.getItem());
+                        }
+                        builder.setDialogMessage(msg);
+                        ImportWrapper importWrapper = builder.build();
+                        ClipboardManager clipboardManager = activity.getSystemService(ClipboardManager.class);
+                        clipboardManager.setPrimaryClip(ClipData.newPlainText(activity.getString(R.string.toolbar_more_selection_export_clipdata_label), importWrapper.finalExport()));
+                        Toast.makeText(activity, R.string.toolbar_more_selection_export_success, Toast.LENGTH_SHORT).show();
+
+                    } catch (Exception e) {
+                        Toast.makeText(activity, activity.getString(R.string.toolbar_more_selection_export_exception, e.toString()), Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton(R.string.toolbar_more_selection_export_setMessage_cancel, null)
+                .show();
     }
 
     public void setItemStorage(ItemsStorage itemsStorage) {
