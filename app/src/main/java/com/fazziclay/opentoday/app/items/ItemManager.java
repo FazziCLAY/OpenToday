@@ -176,6 +176,14 @@ public class ItemManager {
         return tabs;
     }
 
+    public boolean isOneTabMode() {
+        return getTabsCount() == 1;
+    }
+
+    public int getTabsCount() {
+        return tabs.size();
+    }
+
     public Tab getTabAt(int i) {
         return tabs.get(i);
     }
@@ -220,7 +228,7 @@ public class ItemManager {
     }
 
     public void deleteTab(Tab tab) {
-        if (this.tabs.size() == 1) {
+        if (getTabsCount() == 1) {
             throw new SecurityException("Not allowed one tab (after delete tabs count == 0)");
         }
         this.tabs.remove(tab);
