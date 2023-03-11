@@ -26,6 +26,7 @@ import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.gui.activity.CrashReportActivity;
 import com.fazziclay.opentoday.gui.activity.OpenSourceLicensesActivity;
 import com.fazziclay.opentoday.util.DebugUtil;
+import com.fazziclay.opentoday.util.License;
 import com.fazziclay.opentoday.util.annotation.AppInitIfNeed;
 
 import org.json.JSONObject;
