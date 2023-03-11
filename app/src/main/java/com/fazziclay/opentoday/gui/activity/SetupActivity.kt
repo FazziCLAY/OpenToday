@@ -1,50 +1,40 @@
-package com.fazziclay.opentoday.gui.activity;
+package com.fazziclay.opentoday.gui.activity
 
-import static com.fazziclay.opentoday.util.InlineUtil.viewClick;
+import android.content.Intent
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import com.fazziclay.opentoday.app.App
+import com.fazziclay.opentoday.databinding.ActivitySetupBinding
+import com.fazziclay.opentoday.util.InlineUtil.viewClick
 
-import android.content.Intent;
-import android.os.Bundle;
+class SetupActivity : AppCompatActivity() {
+    private lateinit var binding: ActivitySetupBinding
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
-import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.databinding.ActivitySetupBinding;
-
-public class SetupActivity extends AppCompatActivity {
-    private ActivitySetupBinding binding;
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        try {
-            getSupportActionBar().hide();
-        } catch (Exception ignored) {}
-
-        binding = ActivitySetupBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        viewClick(binding.done, this::done);
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        supportActionBar!!.hide()
+        binding = ActivitySetupBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        viewClick(binding.done, this::done)
     }
 
-    private void done() {
-        App app = App.get(this);
-        final boolean isTelemetry = binding.telemetry.isChecked();
-        app.getSettingsManager().setTelemetry(isTelemetry);
-        app.getSettingsManager().save();
-        app.getTelemetry().setEnabled(isTelemetry);
-
-        setupDone();
-        startMain();
+    private fun done() {
+        val app = App.get(this)
+        val isTelemetry = binding.telemetry.isChecked
+        app.settingsManager.isTelemetry = isTelemetry
+        app.settingsManager.save()
+        app.telemetry.setEnabled(isTelemetry)
+        setupDone()
+        startMain()
     }
 
-    private void setupDone() {
-        getSharedPreferences(App.SHARED_NAME, MODE_PRIVATE).edit().putBoolean(App.SHARED_KEY_IS_SETUP_DONE, true).apply();
+    private fun setupDone() {
+        getSharedPreferences(App.SHARED_NAME, MODE_PRIVATE).edit().putBoolean(App.SHARED_KEY_IS_SETUP_DONE, true).apply()
     }
 
-    private void startMain() {
-        startActivity(new Intent(this, MainActivity.class));
-        finish();
+    private fun startMain() {
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 }
