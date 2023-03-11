@@ -1,328 +1,300 @@
-package com.fazziclay.opentoday.gui.fragment;
+package com.fazziclay.opentoday.gui.fragment
 
-import static com.fazziclay.opentoday.util.InlineUtil.viewClick;
+import android.app.Activity
+import android.app.AlertDialog
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.DialogInterface
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.Fragment
+import com.fazziclay.opentoday.R
+import com.fazziclay.opentoday.app.App
+import com.fazziclay.opentoday.app.ColorHistoryManager
+import com.fazziclay.opentoday.app.ImportWrapper
+import com.fazziclay.opentoday.app.items.item.Item
+import com.fazziclay.opentoday.app.items.item.ItemsRegistry
+import com.fazziclay.opentoday.app.pincode.PinCodeManager
+import com.fazziclay.opentoday.app.pincode.PinCodeManager.ContainNonDigitChars
+import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver
+import com.fazziclay.opentoday.app.settings.SettingsManager
+import com.fazziclay.opentoday.app.settings.SettingsManager.FirstTab
+import com.fazziclay.opentoday.databinding.ExportBinding
+import com.fazziclay.opentoday.databinding.FragmentSettingsBinding
+import com.fazziclay.opentoday.gui.UI
+import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType
+import com.fazziclay.opentoday.util.InlineUtil.*
+import com.fazziclay.opentoday.util.Logger
+import com.fazziclay.opentoday.util.SimpleSpinnerAdapter
+import org.json.JSONException
+import java.text.DateFormatSymbols
+import java.util.*
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
+class SettingsFragment : Fragment() {
+    companion object {
+        private const val TAG = "SettingsFragment"
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.fragment.app.Fragment;
-
-import com.fazziclay.opentoday.R;
-import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.ColorHistoryManager;
-import com.fazziclay.opentoday.app.FeatureFlag;
-import com.fazziclay.opentoday.app.ImportWrapper;
-import com.fazziclay.opentoday.app.items.ItemManager;
-import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
-import com.fazziclay.opentoday.app.items.tab.Tab;
-import com.fazziclay.opentoday.app.pincode.PinCodeManager;
-import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
-import com.fazziclay.opentoday.app.settings.SettingsManager;
-import com.fazziclay.opentoday.databinding.ExportBinding;
-import com.fazziclay.opentoday.databinding.FragmentSettingsBinding;
-import com.fazziclay.opentoday.gui.UI;
-import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType;
-import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
-
-import org.json.JSONException;
-
-import java.text.DateFormatSymbols;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
-
-public class SettingsFragment extends Fragment {
-    public static SettingsFragment create() {
-        return new SettingsFragment();
+        @JvmStatic
+        fun create(): SettingsFragment {
+            return SettingsFragment()
+        }
     }
 
-    private FragmentSettingsBinding binding;
-    private App app;
-    private SettingsManager settingsManager;
-    private ColorHistoryManager colorHistoryManager;
-    private PinCodeManager pinCodeManager;
-    private Runnable pinCodeCallback = () -> {};
-    private long easterEggLastClick = 0;
-    private int easterEggCounter = 0;
+    private lateinit var binding: FragmentSettingsBinding
+    private lateinit var app: App
+    private lateinit var settingsManager: SettingsManager
+    private lateinit var colorHistoryManager: ColorHistoryManager
+    private lateinit var pinCodeManager: PinCodeManager
+    private var pinCodeCallback = Runnable {}
+    private var easterEggLastClick: Long = 0
+    private var easterEggCounter = 0
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        app = App.get(requireContext());
-        settingsManager = app.getSettingsManager();
-        colorHistoryManager = app.getColorHistoryManager();
-        pinCodeManager = app.getPinCodeManager();
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Logger.d(TAG, "onCreate")
+        app = App.get(requireContext())
+        settingsManager = app.settingsManager
+        colorHistoryManager = app.colorHistoryManager
+        pinCodeManager = app.pinCodeManager
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = FragmentSettingsBinding.inflate(inflater);
-        setupView();
-        return binding.getRoot();
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = FragmentSettingsBinding.inflate(inflater)
+        setupView()
+        return binding.root
     }
 
-    private void setupView() {
-        setupThemeSpinner();
-        setupFirstDayOfWeekSpinner();
+    private fun setupView() {
+        setupThemeSpinner()
+        setupFirstDayOfWeekSpinner()
+        setupFirstTabSpinner()
+
+        // Debug
+        viewClick(binding.themeTitle, Runnable { experimentalFeaturesInteract() })
 
         // QuickNote
-        binding.quickNoteCheckbox.setChecked(settingsManager.isQuickNoteNotification());
-        viewClick(binding.quickNoteCheckbox, () -> {
-            settingsManager.setQuickNoteNotification(binding.quickNoteCheckbox.isChecked());
-            if (settingsManager.isQuickNoteNotification()) {
-                QuickNoteReceiver.sendQuickNoteNotification(requireContext());
+        binding.quickNoteCheckbox.isChecked = settingsManager.isQuickNoteNotification
+        viewClick(binding.quickNoteCheckbox, Runnable {
+            settingsManager.isQuickNoteNotification = binding.quickNoteCheckbox.isChecked
+            if (settingsManager.isQuickNoteNotification) {
+                QuickNoteReceiver.sendQuickNoteNotification(requireContext())
             } else {
-                QuickNoteReceiver.cancelQuickNoteNotification(requireContext());
+                QuickNoteReceiver.cancelQuickNoteNotification(requireContext())
             }
-            settingsManager.save();
-        });
+            settingsManager.save()
+        })
 
         // Parse time from quick note
-        binding.parseTimeFromQuickNote.setChecked(settingsManager.isParseTimeFromQuickNote());
-        viewClick(binding.parseTimeFromQuickNote, () -> {
-            settingsManager.setParseTimeFromQuickNote(binding.parseTimeFromQuickNote.isChecked());
-            settingsManager.save();
-        });
+        binding.parseTimeFromQuickNote.isChecked = settingsManager.isParseTimeFromQuickNote
+        viewClick(binding.parseTimeFromQuickNote, Runnable {
+            settingsManager.isParseTimeFromQuickNote = binding.parseTimeFromQuickNote.isChecked
+            settingsManager.save()
+        })
 
         // Minimize gray color
-        binding.minimizeGrayColor.setChecked(settingsManager.isMinimizeGrayColor());
-        viewClick(binding.minimizeGrayColor, () -> {
-            settingsManager.setMinimizeGrayColor(binding.minimizeGrayColor.isChecked());
-            settingsManager.save();
-        });
+        binding.minimizeGrayColor.isChecked = settingsManager.isMinimizeGrayColor
+        viewClick(binding.minimizeGrayColor, Runnable {
+            settingsManager.isMinimizeGrayColor = binding.minimizeGrayColor.isChecked
+            settingsManager.save()
+        })
 
         // Trim item names in Editor
-        binding.trimItemNamesOnEdit.setChecked(settingsManager.isTrimItemNamesOnEdit());
-        viewClick(binding.trimItemNamesOnEdit, () -> {
-            settingsManager.setTrimItemNamesOnEdit(binding.trimItemNamesOnEdit.isChecked());
-            settingsManager.save();
-        });
+        binding.trimItemNamesOnEdit.isChecked = settingsManager.isTrimItemNamesOnEdit
+        viewClick(binding.trimItemNamesOnEdit, Runnable {
+            settingsManager.isTrimItemNamesOnEdit = binding.trimItemNamesOnEdit.isChecked
+            settingsManager.save()
+        })
 
         // Lock color history
-        viewClick(binding.themeTitle, this::experimentalFeaturesInteract);
-        binding.colorHistoryLocked.setChecked(colorHistoryManager.isLocked());
-        viewClick(binding.colorHistoryLocked, () -> {
-            colorHistoryManager.setLocked(binding.colorHistoryLocked.isChecked());
-            colorHistoryManager.save();
-        });
+        binding.colorHistoryLocked.isChecked = colorHistoryManager.isLocked
+        viewClick(binding.colorHistoryLocked, Runnable {
+            colorHistoryManager.isLocked = binding.colorHistoryLocked.isChecked
+            colorHistoryManager.save()
+        })
 
         // Export
-        viewClick(binding.export, () -> showExportDialog(requireActivity(), settingsManager, colorHistoryManager));
+        viewClick(binding.export, Runnable { showExportDialog(requireActivity(), settingsManager, colorHistoryManager) })
 
         // Is telemetry
-        binding.isTelemetry.setChecked(settingsManager.isTelemetry());
-        viewClick(binding.isTelemetry, () -> {
-            final boolean is = binding.isTelemetry.isChecked();
-            settingsManager.setTelemetry(is);
-            settingsManager.save();
-            app.getTelemetry().setEnabled(is);
-        });
-
-        binding.defaultQuickNoteType.setText(getString(R.string.settings_defaultQuickNoteType, getString(settingsManager.getDefaultQuickNoteType().getNameResId())));
-        viewClick(binding.defaultQuickNoteType, () -> new DialogSelectItemType(getContext(), type -> {
-            settingsManager.setDefaultQuickNoteType(ItemsRegistry.REGISTRY.get(type));
-            binding.defaultQuickNoteType.setText(getString(R.string.settings_defaultQuickNoteType, getString(settingsManager.getDefaultQuickNoteType().getNameResId())));
-            settingsManager.save();
-        }).show());
-
-        pinCodeCallback = () -> binding.pincode.setText(getString(R.string.settings_pincode, (pinCodeManager.isPinCodeSet() ? getString(R.string.settings_pincode_on) : getString(R.string.settings_pincode_off))));
-        pinCodeCallback.run();
-        viewClick(binding.pincode, this::showPinCodeDialog);
-
-        setupFirstTabSpinner();
+        binding.isTelemetry.isChecked = settingsManager.isTelemetry
+        viewClick(binding.isTelemetry, Runnable {
+            val isTelemetry = binding.isTelemetry.isChecked
+            settingsManager.isTelemetry = isTelemetry
+            settingsManager.save()
+            app.telemetry.setEnabled(isTelemetry)
+        })
+        binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(settingsManager.defaultQuickNoteType.nameResId))
+        viewClick(binding.defaultQuickNoteType, Runnable {
+            DialogSelectItemType(context) { type: Class<out Item?> ->
+                settingsManager.defaultQuickNoteType = ItemsRegistry.REGISTRY.get(type)
+                binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(settingsManager.defaultQuickNoteType.nameResId))
+                settingsManager.save()
+            }.show()
+        })
+        pinCodeCallback = Runnable { binding.pincode.text = getString(R.string.settings_pincode, if (pinCodeManager.isPinCodeSet) getString(R.string.settings_pincode_on) else getString(R.string.settings_pincode_off)) }
+        pinCodeCallback.run()
+        viewClick(binding.pincode, Runnable { showPinCodeDialog() })
     }
 
-    private void setupFirstTabSpinner() {
-        SimpleSpinnerAdapter<SettingsManager.FirstTab> firstTabSimpleSpinnerAdapter = new SimpleSpinnerAdapter<SettingsManager.FirstTab>(requireContext())
-                .add(requireContext().getString(R.string.settings_firstTab_first), SettingsManager.FirstTab.FIRST)
-                .add(requireContext().getString(R.string.settings_firstTab_onClosed), SettingsManager.FirstTab.TAB_ON_CLOSING);
-
-        binding.firstTab.setAdapter(firstTabSimpleSpinnerAdapter);
-        binding.firstTab.setSelection(firstTabSimpleSpinnerAdapter.getValuePosition(settingsManager.getFirstTab()));
-        binding.firstTab.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                SettingsManager.FirstTab t = firstTabSimpleSpinnerAdapter.getItem(position);
-                settingsManager.setFirstTab(t);
-                settingsManager.save();
+    private fun setupFirstTabSpinner() {
+        val firstTabSimpleSpinnerAdapter = SimpleSpinnerAdapter<FirstTab>(requireContext())
+                .add(requireContext().getString(R.string.settings_firstTab_first), FirstTab.FIRST)
+                .add(requireContext().getString(R.string.settings_firstTab_onClosed), FirstTab.TAB_ON_CLOSING)
+        binding.firstTab.adapter = firstTabSimpleSpinnerAdapter
+        binding.firstTab.setSelection(firstTabSimpleSpinnerAdapter.getValuePosition(settingsManager.firstTab))
+        binding.firstTab.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val t = firstTabSimpleSpinnerAdapter.getItem(position)
+                settingsManager.firstTab = t
+                settingsManager.save()
             }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
     }
 
-    private void setupThemeSpinner() {
-        SimpleSpinnerAdapter<Integer> themeSpinnerAdapter = new SimpleSpinnerAdapter<Integer>(requireContext())
+    private fun setupThemeSpinner() {
+        val adapter = SimpleSpinnerAdapter<Int>(requireContext())
                 .add(requireContext().getString(R.string.settings_theme_system), AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
                 .add(requireContext().getString(R.string.settings_theme_light), AppCompatDelegate.MODE_NIGHT_NO)
-                .add(requireContext().getString(R.string.settings_theme_night), AppCompatDelegate.MODE_NIGHT_YES);
-
-        binding.themeSpinner.setAdapter(themeSpinnerAdapter);
-        binding.themeSpinner.setSelection(themeSpinnerAdapter.getValuePosition(settingsManager.getTheme()));
-        binding.themeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                int t = themeSpinnerAdapter.getItem(position);
-                AppCompatDelegate.setDefaultNightMode(t);
-                settingsManager.setTheme(t);
-                settingsManager.save();
+                .add(requireContext().getString(R.string.settings_theme_night), AppCompatDelegate.MODE_NIGHT_YES)
+        binding.themeSpinner.adapter = adapter
+        binding.themeSpinner.setSelection(adapter.getValuePosition(settingsManager.theme))
+        binding.themeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val theme = adapter.getItem(position)
+                UI.setTheme(theme)
+                settingsManager.theme = theme
+                settingsManager.save()
             }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
     }
 
-    private void setupFirstDayOfWeekSpinner() {
-        DateFormatSymbols dfs = DateFormatSymbols.getInstance(Locale.getDefault());
-        String[] weekdays = dfs.getWeekdays();
-
-        SimpleSpinnerAdapter<Integer> themeSpinnerAdapter = new SimpleSpinnerAdapter<Integer>(requireContext())
+    private fun setupFirstDayOfWeekSpinner() {
+        val weekdays = DateFormatSymbols.getInstance(Locale.getDefault()).weekdays
+        val adapter = SimpleSpinnerAdapter<Int>(requireContext())
                 .add(weekdays[Calendar.SUNDAY], Calendar.SUNDAY)
-                .add(weekdays[Calendar.MONDAY], Calendar.MONDAY);
-
-        binding.firstDayOfWeekSpinner.setAdapter(themeSpinnerAdapter);
-        binding.firstDayOfWeekSpinner.setSelection(themeSpinnerAdapter.getValuePosition(settingsManager.getFirstDayOfWeek()));
-        binding.firstDayOfWeekSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                int t = themeSpinnerAdapter.getItem(position);
-                settingsManager.setFirstDayOfWeek(t);
-                settingsManager.save();
+                .add(weekdays[Calendar.MONDAY], Calendar.MONDAY)
+        binding.firstDayOfWeekSpinner.adapter = adapter
+        binding.firstDayOfWeekSpinner.setSelection(adapter.getValuePosition(settingsManager.firstDayOfWeek))
+        binding.firstDayOfWeekSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val day = adapter.getItem(position)
+                settingsManager.firstDayOfWeek = day
+                settingsManager.save()
             }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
     }
 
-    public static void showExportDialog(Activity context, SettingsManager settingsManager, ColorHistoryManager colorHistoryManager) {
-        ExportBinding binding = ExportBinding.inflate(context.getLayoutInflater());
-        
-        new AlertDialog.Builder(context)
-                .setView(binding.getRoot())
+    private fun showPinCodeDialog() {
+        val isPinSet = pinCodeManager.isPinCodeSet
+        val d = AlertDialog.Builder(requireContext())
+                .setTitle(R.string.settings_pincode_title)
+                .setMessage(if (isPinSet) getString(R.string.settings_pincode_message_on, pinCodeManager.pinCode) else getString(R.string.settings_pincode_message_off))
+                .setNeutralButton(R.string.settings_pincode_cancel, null)
+                .setPositiveButton(if (isPinSet) R.string.settings_pincode_button_disable else R.string.settings_pincode_button_enable) { _: DialogInterface?, _: Int ->
+                    if (isPinSet) {
+                        pinCodeManager.disablePinCode()
+                        pinCodeCallback.run()
+                        Toast.makeText(app, R.string.settings_pincode_disable_success, Toast.LENGTH_SHORT).show()
+                    } else {
+                        val t = EditText(requireContext())
+                        t.setHint(R.string.settings_pincode_enable_hint)
+                        AlertDialog.Builder(requireContext())
+                                .setTitle(R.string.settings_pincode_enable_title)
+                                .setMessage(R.string.settings_pincode_enable_message)
+                                .setView(t)
+                                .setPositiveButton(R.string.settings_pincode_enable_apply) { _: DialogInterface?, _: Int ->
+                                    try {
+                                        pinCodeManager.enablePinCode(t.text.toString())
+                                        pinCodeCallback.run()
+                                        Toast.makeText(app, R.string.settings_pincode_enable_success, Toast.LENGTH_SHORT).show()
+                                    } catch (e: Exception) {
+                                        if (e is ContainNonDigitChars) {
+                                            Toast.makeText(app, R.string.settings_pincode_enable_nonDigitsError, Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            Toast.makeText(app, R.string.settings_pincode_enable_unknownError, Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                }
+                                .setNegativeButton(R.string.settings_pincode_enable_cancel, null)
+                                .show()
+                    }
+                }
+        d.show()
+    }
+
+    private fun showExportDialog(context: Activity, settingsManager: SettingsManager?, colorHistoryManager: ColorHistoryManager?) {
+        val binding = ExportBinding.inflate(context.layoutInflater)
+        AlertDialog.Builder(context)
+                .setView(binding.root)
                 .setTitle(R.string.settings_export_dialog_title)
                 .setNegativeButton(R.string.abc_cancel, null)
-                .setPositiveButton(R.string.settings_export_dialog_export, (ignore0, ignore1) -> {
-                    final ItemManager itemManager = App.get(context).getItemManager();
-                    List<ImportWrapper.Permission> perms = new ArrayList<>();
-                    final boolean isAllItems = binding.exportAllItems.isChecked();
-                    final boolean isSettings = binding.exportSettings.isChecked();
-                    final boolean isColorHistory = binding.exportColorHistory.isChecked();
-
-                    final String dialogMessage = binding.exportDialogMessage.getText().toString().trim();
-                    final boolean isDialogMessage = !dialogMessage.isEmpty();
-
-                    if (isAllItems) perms.add(ImportWrapper.Permission.ADD_TABS);
-                    if (isSettings) perms.add(ImportWrapper.Permission.OVERWRITE_SETTINGS);
-                    if (isColorHistory) perms.add(ImportWrapper.Permission.OVERWRITE_COLOR_HISTORY);
-                    if (isDialogMessage) perms.add(ImportWrapper.Permission.PRE_IMPORT_SHOW_DIALOG);
-
-
-                    ImportWrapper.Builder i = ImportWrapper.createImport(perms.toArray(new ImportWrapper.Permission[0]));
-                    if (isDialogMessage) i.setDialogMessage(dialogMessage);
-                    if (isAllItems) i.addTabAll(itemManager.getTabs().toArray(new Tab[0]));
+                .setPositiveButton(R.string.settings_export_dialog_export) { _: DialogInterface?, _: Int ->
+                    val itemManager = App.get(context).itemManager
+                    val perms: MutableList<ImportWrapper.Permission> = ArrayList()
+                    val isAllItems = binding.exportAllItems.isChecked
+                    val isSettings = binding.exportSettings.isChecked
+                    val isColorHistory = binding.exportColorHistory.isChecked
+                    val dialogMessage = binding.exportDialogMessage.text.toString().trim { it <= ' ' }
+                    val isDialogMessage = dialogMessage.isNotEmpty()
+                    if (isAllItems) perms.add(ImportWrapper.Permission.ADD_TABS)
+                    if (isSettings) perms.add(ImportWrapper.Permission.OVERWRITE_SETTINGS)
+                    if (isColorHistory) perms.add(ImportWrapper.Permission.OVERWRITE_COLOR_HISTORY)
+                    if (isDialogMessage) perms.add(ImportWrapper.Permission.PRE_IMPORT_SHOW_DIALOG)
+                    val i = ImportWrapper.createImport(*perms.toTypedArray())
+                    if (isDialogMessage) i.setDialogMessage(dialogMessage)
+                    if (isAllItems) i.addTabAll(*itemManager.tabs.toTypedArray())
                     if (isSettings) {
                         try {
-                            i.setSettings(settingsManager.exportJSONSettings());
-                        } catch (JSONException e) {
-                            Toast.makeText(context, context.getString(R.string.export_error, e.toString()), Toast.LENGTH_SHORT).show();
-                            return;
+                            i.setSettings(settingsManager!!.exportJSONSettings())
+                        } catch (e: JSONException) {
+                            Toast.makeText(context, context.getString(R.string.export_error, e.toString()), Toast.LENGTH_SHORT).show()
+                            return@setPositiveButton
                         }
                     }
                     if (isColorHistory) {
                         try {
-                            i.setColorHistory(colorHistoryManager.exportJSONColorHistory());
-                        } catch (JSONException e) {
-                            Toast.makeText(context, context.getString(R.string.export_error, e.toString()), Toast.LENGTH_SHORT).show();
-                            return;
+                            i.setColorHistory(colorHistoryManager!!.exportJSONColorHistory())
+                        } catch (e: JSONException) {
+                            Toast.makeText(context, context.getString(R.string.export_error, e.toString()), Toast.LENGTH_SHORT).show()
+                            return@setPositiveButton
                         }
                     }
-
                     try {
-                        String s = i.build().finalExport();
-
-                        ClipboardManager clipboardManager = context.getSystemService(ClipboardManager.class);
-                        clipboardManager.setPrimaryClip(ClipData.newPlainText(context.getString(R.string.export_clipdata_label), s));
-
-                        Toast.makeText(context, R.string.export_success, Toast.LENGTH_SHORT).show();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, context.getString(R.string.export_error, e.toString()), Toast.LENGTH_SHORT).show();
+                        val s = i.build().finalExport()
+                        val clipboardManager = context.getSystemService(ClipboardManager::class.java)
+                        clipboardManager.setPrimaryClip(ClipData.newPlainText(context.getString(R.string.export_clipdata_label), s))
+                        Toast.makeText(context, R.string.export_success, Toast.LENGTH_SHORT).show()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Toast.makeText(context, context.getString(R.string.export_error, e.toString()), Toast.LENGTH_SHORT).show()
                     }
-                })
-                .show();
+                }
+                .show()
     }
 
-    private void showPinCodeDialog() {
-        boolean is = pinCodeManager.isPinCodeSet();
-        AlertDialog.Builder d = new AlertDialog.Builder(requireContext())
-                .setTitle(R.string.settings_pincode_title)
-                .setMessage(is ? getString(R.string.settings_pincode_message_on, pinCodeManager.getPinCode()) : getString(R.string.settings_pincode_message_off))
-                .setNeutralButton(R.string.settings_pincode_cancel, null)
-                .setPositiveButton(is ? R.string.settings_pincode_button_disable : R.string.settings_pincode_button_enable, (dialogInterface, i) -> {
-                    if (is) {
-                        pinCodeManager.disablePinCode();
-                        pinCodeCallback.run();
-                        Toast.makeText(app, R.string.settings_pincode_disable_success, Toast.LENGTH_SHORT).show();
-                    } else {
-                        EditText t = new EditText(requireContext());
-                        t.setHint(R.string.settings_pincode_enable_hint);
-                        new AlertDialog.Builder(requireContext())
-                                .setTitle(R.string.settings_pincode_enable_title)
-                                .setMessage(R.string.settings_pincode_enable_message)
-                                .setView(t)
-                                .setPositiveButton(R.string.settings_pincode_enable_apply, (fsdf, fdsfd) -> {
-                                    try {
-                                        pinCodeManager.enablePinCode(t.getText().toString());
-                                        pinCodeCallback.run();
-                                        Toast.makeText(app, R.string.settings_pincode_enable_success, Toast.LENGTH_SHORT).show();
-                                    } catch (Exception e) {
-                                        if (e instanceof PinCodeManager.ContainNonDigitChars) {
-                                            Toast.makeText(app, R.string.settings_pincode_enable_nonDigitsError, Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Toast.makeText(app, R.string.settings_pincode_enable_unknownError, Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                })
-                                .setNegativeButton(R.string.settings_pincode_enable_cancel, null)
-                                .show();
-                    }
-                });
-
-        d.show();
-    }
-
-    private void experimentalFeaturesInteract() {
+    private fun experimentalFeaturesInteract() {
         if (System.currentTimeMillis() - easterEggLastClick < 1000) {
-            easterEggCounter++;
+            easterEggCounter++
             if (easterEggCounter >= 6) {
-                easterEggCounter = 0;
-                UI.Debug.showFeatureFlagsDialog(app, requireContext());
+                easterEggCounter = 0
+                UI.Debug.showFeatureFlagsDialog(app, requireContext())
             }
         } else {
-            easterEggCounter = 0;
+            easterEggCounter = 0
         }
-        easterEggLastClick = System.currentTimeMillis();
+        easterEggLastClick = System.currentTimeMillis()
     }
 }
