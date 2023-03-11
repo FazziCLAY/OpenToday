@@ -124,6 +124,12 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         return null;
     }
 
+    public void setItemFilter(Item item, ItemFilter itemFilter) {
+        for (ItemFilterWrapper wrapper : items) {
+            if (wrapper.item == item) wrapper.filter = itemFilter;
+        }
+    }
+
     public Item[] getActiveItems() {
         List<Item> ret = new ArrayList<>();
         for (ItemFilterWrapper activeItem : activeItems) {
@@ -299,7 +305,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
 
     public static class ItemFilterWrapper {
         private final Item item;
-        private final ItemFilter filter;
+        private ItemFilter filter;
 
         public ItemFilterWrapper(Item item, ItemFilter filter) {
             this.item = item;

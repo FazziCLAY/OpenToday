@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5sp">
+
+    <Button
+        android:id="@+id/rootReplace"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Replace root"
+        />
+
+    <TextView
+        android:id="@+id/rootTypeTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Root filter type:"
+        android:textSize="17sp"
+        android:layout_toEndOf="@id/rootReplace"
+        />
+
+    <TextView
+        android:id="@+id/rootType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test"
+        android:layout_toEndOf="@id/rootReplace"
+        android:layout_below="@id/rootTypeTitle"
+        />
+
+    <TextView
+        android:id="@+id/editor_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Editor:"
+        android:textSize="22sp"
+        android:layout_below="@id/rootReplace"
+        />
+
+    <FrameLayout
+        android:id="@+id/itemFilter_root_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/editor_title" />
+
+</RelativeLayout>

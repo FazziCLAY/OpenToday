@@ -27,7 +27,6 @@ import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.databinding.ItemsStorageEmptyBinding;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.activity.MainActivity;
-import com.fazziclay.opentoday.gui.dialog.DialogEditItemFilter;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.gui.interfaces.StorageEditsActions;
 import com.fazziclay.opentoday.gui.item.ItemStorageDrawer;
@@ -219,7 +218,7 @@ public class ItemsEditorFragment extends Fragment {
     }
 
     public void addOnCreateListener(Runnable o) {
-        onCreateListeners.add(o);
+        onCreateListeners.add(o); // TODO: 3/11/23 remove unused onCreateListener
     }
 
     @Nullable
@@ -238,12 +237,18 @@ public class ItemsEditorFragment extends Fragment {
 
             ImageButton filter = new ImageButton(view.getContext());
             filter.setImageResource(RES_FILTER_BUTTON_IMAGE);
-            filter.setOnClickListener(v -> new DialogEditItemFilter(activity, filterGroupItem.getItemFilter(item), filterGroupItem::save).show());
+            filter.setOnClickListener(v -> {
+                editFilterGroupItemFilter(filterGroupItem, item);
+            });
             layout.addView(filter);
             filter.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 70, 0));
 
             return layout;
         });
+    }
+
+    private void editFilterGroupItemFilter(FilterGroupItem filterGroupItem, Item item) {
+        rootNavigationHost.navigate(FilterGroupItemFilterEditorFragment.create(filterGroupItem.getId(), item.getId()), true);
     }
 
     private void runOnCreateListeners() {

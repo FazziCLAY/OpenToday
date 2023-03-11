@@ -1,9 +1,9 @@
-package com.fazziclay.opentoday.gui.dialog;
+package com.fazziclay.opentoday.gui.part;
 
-import android.app.Activity;
-import android.app.Dialog;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
@@ -13,9 +13,9 @@ import android.widget.TextView;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.items.item.filter.DateItemFilter;
-import com.fazziclay.opentoday.app.items.item.filter.ItemFilter;
 import com.fazziclay.opentoday.databinding.DialogEditItemFilterBinding;
 import com.fazziclay.opentoday.databinding.DialogEditItemFilterRowBinding;
+import com.fazziclay.opentoday.gui.interfaces.Destroy;
 import com.fazziclay.opentoday.util.MinTextWatcher;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 
@@ -26,32 +26,33 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
-public class DialogEditItemFilter {
-    private final Activity activity;
+public class DateItemFilterPartEditor implements Destroy {
+    private final Context context;
     private final DialogEditItemFilterBinding binding;
-    private final Dialog dialog;
     private final Runnable saveSignal;
     private GregorianCalendar calendar;
     private final Handler handler;
     private final List<Runnable> runnableList = new ArrayList<>();
 
 
-    public DialogEditItemFilter(Activity activity, ItemFilter itemFilter, Runnable saveSignal) {
-        this.activity = activity;
-        DateItemFilter dateItemFilter = (DateItemFilter) itemFilter; // TODO: 3/10/23 owo
+    @Override
+    public void destroy() {
+        for (Runnable runnable : runnableList) {
+            handler.removeCallbacks(runnable);
+        }
+        runnableList.clear();
+    }
 
-        this.binding = DialogEditItemFilterBinding.inflate(activity.getLayoutInflater());
-        this.dialog = new Dialog(activity);
+    public View getRootView() {
+        return binding.getRoot();
+    }
+
+    public DateItemFilterPartEditor(Context context, LayoutInflater layoutInflater, DateItemFilter dateItemFilter, Runnable saveSignal) {
+        this.context = context;
+        this.binding = DialogEditItemFilterBinding.inflate(layoutInflater);
         this.saveSignal = saveSignal;
         this.calendar = new GregorianCalendar();
         this.handler = new Handler(Looper.getMainLooper());
-        this.dialog.setContentView(binding.getRoot());
-        this.dialog.setOnCancelListener(dialog -> {
-            for (Runnable runnable : runnableList) {
-                handler.removeCallbacks(runnable);
-            }
-            runnableList.clear();
-        });
 
         DateFormatSymbols dfs = DateFormatSymbols.getInstance(Locale.getDefault());
         String[] months = dfs.getMonths();
@@ -89,7 +90,7 @@ public class DialogEditItemFilter {
             public int getCurrentValue() {
                 return calendar.get(Calendar.MONTH);
             }
-        }, binding.month, R.string.dialog_editItemFilter_month, new SimpleSpinnerAdapter<Integer>(activity)
+        }, binding.month, R.string.dialog_editItemFilter_month, new SimpleSpinnerAdapter<Integer>(context)
                 .add("(0) " + months[0], 0)
                 .add("(1) " + months[1], 1)
                 .add("(2) " + months[2], 2)
@@ -136,7 +137,7 @@ public class DialogEditItemFilter {
             public int getCurrentValue() {
                 return calendar.get(Calendar.DAY_OF_WEEK);
             }
-        }, binding.dayOfWeek, R.string.dialog_editItemFilter_dayOfWeek, new SimpleSpinnerAdapter<Integer>(activity)
+        }, binding.dayOfWeek, R.string.dialog_editItemFilter_dayOfWeek, new SimpleSpinnerAdapter<Integer>(context)
                 .add("(1) " + weekdays[1], 1)
                 .add("(2) " + weekdays[2], 2)
                 .add("(3) " + weekdays[3], 3)
@@ -263,8 +264,8 @@ public class DialogEditItemFilter {
             }
         });
 
-        SimpleSpinnerAdapter<String> simpleSpinnerAdapter = new SimpleSpinnerAdapter<String>(activity)
-                .add(activity.getString(R.string.dialog_editItemFilter_disable), "disable")
+        SimpleSpinnerAdapter<String> simpleSpinnerAdapter = new SimpleSpinnerAdapter<String>(context)
+                .add(context.getString(R.string.dialog_editItemFilter_disable), "disable")
                 .add("==", "==")
                 .add(">", ">")
                 .add(">=", ">=")
@@ -399,8 +400,4 @@ public class DialogEditItemFilter {
         int getCurrentValue();
     }
 
-
-    public void show() {
-        dialog.show();
-    }
 }
