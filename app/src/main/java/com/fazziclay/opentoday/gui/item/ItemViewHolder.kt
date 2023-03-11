@@ -1,18 +1,23 @@
-package com.fazziclay.opentoday.gui.item;
+package com.fazziclay.opentoday.gui.item
 
-import android.content.Context;
-import android.widget.LinearLayout;
+import android.content.Context
+import android.widget.FrameLayout
+import androidx.recyclerview.widget.RecyclerView
 
-import androidx.recyclerview.widget.RecyclerView;
+class ItemViewHolder(context: Context) : RecyclerView.ViewHolder(FrameLayout(context)) {
+    companion object {
+        private const val PADDING_LEFT = 0
+        private const val PADDING_TOP = 5
+        private const val PADDING_RIGHT = 0
+        private const val PADDING_BOTTOM = 5
+    }
 
-public class ItemViewHolder extends RecyclerView.ViewHolder {
-    public final LinearLayout layout;
 
-    public ItemViewHolder(Context context) {
-        super(new LinearLayout(context));
-        layout = (LinearLayout) itemView;
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(0, 5, 0, 5);
-        layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+    @JvmField
+    val layout: FrameLayout = itemView as FrameLayout
+
+    init {
+        layout.setPadding(PADDING_LEFT, PADDING_TOP, PADDING_RIGHT, PADDING_BOTTOM)
+        layout.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
     }
 }
