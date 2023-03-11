@@ -1,0 +1,7 @@
+Optimize findFragmentsInParents (recursive)
+Optimize notifications for android 13+
+Large layouts optimize
+Toolbar optimize
+Add 'Selected' checkbox to ItemEditor
+Optimize ImportFragment (no render text if is by autoRun initiative)
+Icon on ItemsEditor FilterGroupItem-mode changed
