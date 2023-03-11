@@ -216,7 +216,7 @@ public class Telemetry {
         }
     }
 
-    private static class LPacket {
+    public static class LPacket {
         private final boolean isDelay;
         private final boolean blocking;
         private final Packet packet;

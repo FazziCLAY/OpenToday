@@ -26,8 +26,10 @@ import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.gui.activity.CrashReportActivity;
 import com.fazziclay.opentoday.gui.activity.OpenSourceLicensesActivity;
 import com.fazziclay.opentoday.util.DebugUtil;
+import com.fazziclay.opentoday.util.License;
 import com.fazziclay.opentoday.util.annotation.AppInitIfNeed;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -43,7 +45,7 @@ import ru.fazziclay.opentoday.telemetry.OpenTodayTelemetry;
 @SuppressWarnings("PointlessBooleanExpression") // for debug variables
 public class App extends Application {
     // Application
-    public static final int APPLICATION_DATA_VERSION = 9;
+    public static final int APPLICATION_DATA_VERSION = 8;
     public static final String VERSION_NAME = CustomBuildConfig.VERSION_NAME;
     public static final int VERSION_CODE = CustomBuildConfig.VERSION_CODE;
     public static final String APPLICATION_ID = CustomBuildConfig.APPLICATION_ID;
@@ -325,37 +327,50 @@ public class App extends Application {
     // getters & setters
     public JSONObject getVersionData() { return versionData; }
     public long getAppStartupTime() {return appStartupTime;}
+
+    @NotNull
     public UUID getInstanceId() {
         preCheckInstanceId();
         return instanceId;
     }
 
+    @NotNull
     public Telemetry getTelemetry() {
         preCheckTelemetry();
         return telemetry;
     }
+
+    @NotNull
     public ItemManager getItemManager() {
         preCheckItemManager();
         return itemManager;
     }
+
+    @NotNull
     public SettingsManager getSettingsManager() {
         preCheckSettingsManager();
         return this.settingsManager;
     }
+
+    @NotNull
     public ColorHistoryManager getColorHistoryManager() {
         preCheckColorHistoryManager();
         return colorHistoryManager;
     }
+
+    @NotNull
     public License[] getOpenSourcesLicenses() {
         preCheckOpenSourceLicenses();
         return this.openSourceLicenses;
     }
 
+    @NotNull
     public ClipboardManager getClipboardManager() {
         preCheckClipboardManager();
         return this.clipboardManager;
     }
 
+    @NotNull
     public PinCodeManager getPinCodeManager() {
         return pinCodeManager;
     }

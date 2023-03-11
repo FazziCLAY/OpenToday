@@ -1,5 +1,3 @@
-# Changelog v110 1.0.4
-
 Optimize findFragmentsInParents (recursive)
 Optimize notifications for android 13+
 Large layouts optimize
