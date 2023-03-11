@@ -1,49 +1,43 @@
-package com.fazziclay.opentoday.gui.activity;
+package com.fazziclay.opentoday.gui.activity
 
-import android.app.Activity;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.widget.Toast;
+import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
+import android.widget.Toast
+import com.fazziclay.opentoday.app.App
+import com.fazziclay.opentoday.app.FeatureFlag
+import com.fazziclay.opentoday.gui.UI
+import com.fazziclay.opentoday.util.DebugUtil
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatDelegate;
-
-import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.FeatureFlag;
-import com.fazziclay.opentoday.util.DebugUtil;
-
-public class PreMainActivity extends Activity {
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        run();
-        finish();
+class PreMainActivity : Activity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        run()
+        finish()
     }
 
-    private void run() {
-        DebugUtil.sleep(App.DEBUG_MAIN_ACTIVITY_START_SLEEP);
+    private fun run() {
+        DebugUtil.sleep(App.DEBUG_MAIN_ACTIVITY_START_SLEEP)
         if (App.DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY) {
-            throw new RuntimeException("This is cute Runtime Exception :)", new RuntimeException("DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY is enabled :)"));
+            throw RuntimeException("This is cute Runtime Exception :)", RuntimeException("DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY is enabled :)"))
         }
-        if (!(App.DEBUG_MAIN_ACTIVITY == MainActivity.class || App.DEBUG_MAIN_ACTIVITY == null)) {
-            startActivity(new Intent(this, App.DEBUG_MAIN_ACTIVITY));
-            return;
+        if (!(App.DEBUG_MAIN_ACTIVITY == MainActivity::class.java || App.DEBUG_MAIN_ACTIVITY == null)) {
+            startActivity(Intent(this, App.DEBUG_MAIN_ACTIVITY))
+            return
         }
-        final App app = App.get(this);
-        AppCompatDelegate.setDefaultNightMode(app.getSettingsManager().getTheme());
+        val app = App.get(this)
+        UI.setTheme(app.settingsManager.theme)
         if (app.isFeatureFlag(FeatureFlag.SHOW_APP_STARTUP_TIME_IN_PREMAIN_ACTIVITY)) {
-            StringBuilder text = new StringBuilder("App startup time:\n");
-            text.append(app.getAppStartupTime()).append("ms");
-            Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+            val text = StringBuilder("App startup time:\n")
+            text.append(app.appStartupTime).append("ms")
+            Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
         }
-
-        final SharedPreferences sharedPreferences = getSharedPreferences(App.SHARED_NAME, MODE_PRIVATE);
-        final boolean isSetupDone = sharedPreferences.getBoolean(App.SHARED_KEY_IS_SETUP_DONE, false);
+        val sharedPreferences = getSharedPreferences(App.SHARED_NAME, MODE_PRIVATE)
+        val isSetupDone = sharedPreferences.getBoolean(App.SHARED_KEY_IS_SETUP_DONE, false)
         if (isSetupDone) {
-            startActivity(new Intent(this, MainActivity.class));
+            startActivity(Intent(this, MainActivity::class.java))
         } else {
-            startActivity(new Intent(this, SetupActivity.class));
+            startActivity(Intent(this, SetupActivity::class.java))
         }
     }
 }
