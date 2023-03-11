@@ -1,5 +1,5 @@
-package com.fazziclay.opentoday.gui.interfaces;
+package com.fazziclay.opentoday.gui.interfaces
 
-public interface BackStackMember {
-    boolean popBackStack();
+interface BackStackMember {
+    fun popBackStack(): Boolean
 }

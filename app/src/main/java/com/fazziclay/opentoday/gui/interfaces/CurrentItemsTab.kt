@@ -1,11 +1,10 @@
-package com.fazziclay.opentoday.gui.interfaces;
+package com.fazziclay.opentoday.gui.interfaces
 
-import com.fazziclay.opentoday.app.items.tab.Tab;
+import com.fazziclay.opentoday.app.items.tab.Tab
+import java.util.*
 
-import java.util.UUID;
-
-public interface CurrentItemsTab {
-    UUID getCurrentTabId();
-    Tab getCurrentTab();
-    void setCurrentTab(UUID id);
+interface CurrentItemsTab {
+    fun getCurrentTabId(): UUID
+    fun getCurrentTab(): Tab
+    fun setCurrentTab(id: UUID?)
 }

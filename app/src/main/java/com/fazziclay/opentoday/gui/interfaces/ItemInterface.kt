@@ -1,8 +1,7 @@
-package com.fazziclay.opentoday.gui.interfaces;
+package com.fazziclay.opentoday.gui.interfaces
 
-import com.fazziclay.opentoday.app.items.item.Item;
+import com.fazziclay.opentoday.app.items.item.Item
 
-@FunctionalInterface
-public interface ItemInterface {
-    void run(Item item);
+fun interface ItemInterface {
+    fun run(item: Item?)
 }

@@ -111,10 +111,10 @@ public class ItemViewGenerator {
 
         } else if (type == GroupItem.class) {
             final GroupItem groupItem = (GroupItem) item;
-            resultView = generateGroupItemView(groupItem, parent, v -> storageEdits.onGroupEdit(groupItem), linearLayout -> {
+            resultView = generateGroupItemView(groupItem, parent, v -> storageEdits.onGroupEdit(groupItem), viewGroup -> {
                 final ItemStorageDrawer itemStorageDrawer = new ItemStorageDrawer(activity, itemManager, settingsManager, groupItem, itemOnClick, onItemEditor, previewMode, storageEdits);
                 itemStorageDrawer.create();
-                linearLayout.addView(itemStorageDrawer.getView());
+                viewGroup.addView(itemStorageDrawer.getView());
             });
 
         } else if (type == FilterGroupItem.class) {

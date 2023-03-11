@@ -1,7 +1,7 @@
-package com.fazziclay.opentoday.gui.interfaces;
+package com.fazziclay.opentoday.gui.interfaces
 
-import androidx.fragment.app.Fragment;
+import androidx.fragment.app.Fragment
 
-public interface NavigationHost extends BackStackMember {
-    void navigate(Fragment fragment, boolean addToBackStack);
+interface NavigationHost : BackStackMember {
+    fun navigate(fragment: Fragment, addToBackStack: Boolean)
 }
