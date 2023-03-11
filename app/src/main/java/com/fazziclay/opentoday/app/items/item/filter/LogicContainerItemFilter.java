@@ -17,7 +17,8 @@ public class LogicContainerItemFilter extends ItemFilter {
             }
 
             return new JSONObject()
-                    .put("filters", filters);
+                    .put("filters", filters)
+                    .put("description", l.description);
         }
 
         @Override
@@ -34,6 +35,8 @@ public class LogicContainerItemFilter extends ItemFilter {
                 i++;
             }
 
+            l.description = json.optString("description", l.description);
+
             return l;
         }
     };
@@ -41,6 +44,19 @@ public class LogicContainerItemFilter extends ItemFilter {
     private final List<ItemFilter> filters = new ArrayList<>();
     private LogicMode logicMode = LogicMode.AND;
     private boolean reverse = false;
+    private String description = "";
+
+    public LogicContainerItemFilter() {
+    }
+
+    public LogicContainerItemFilter(LogicContainerItemFilter copy) {
+        this.reverse = copy.reverse;
+        this.logicMode = copy.logicMode;
+        for (ItemFilter filter : copy.filters) {
+            this.filters.add(filter.copy());
+        }
+        this.description = copy.description;
+    }
 
     private boolean isFit0(FitEquip fitEquip) {
         if (logicMode == LogicMode.AND) {
@@ -76,6 +92,10 @@ public class LogicContainerItemFilter extends ItemFilter {
         filters.remove(filter);
     }
 
+    public ItemFilter[] getFilters() {
+        return filters.toArray(new ItemFilter[0]);
+    }
+
     public void setLogicMode(LogicMode logicMode) {
         this.logicMode = logicMode;
     }
@@ -94,6 +114,16 @@ public class LogicContainerItemFilter extends ItemFilter {
 
     @Override
     public ItemFilter copy() {
-        throw new RuntimeException("Todo: not done"); // TODO: 3/10/23 not done!
+        return new LogicContainerItemFilter(this);
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public void setDescription(String s) {
+        this.description = s;
     }
 }

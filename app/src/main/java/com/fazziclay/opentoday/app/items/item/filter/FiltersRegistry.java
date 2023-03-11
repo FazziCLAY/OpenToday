@@ -4,8 +4,8 @@ public class FiltersRegistry {
     public static final FiltersRegistry REGISTRY = new FiltersRegistry();
 
     private static final FilterInfo[] INFOS = new FilterInfo[]{
-            new FilterInfo(DateItemFilter.class, "DateItemFilter", DateItemFilter.IE_TOOL),
-            new FilterInfo(LogicContainerItemFilter.class, "LogicContainerItemFilter", LogicContainerItemFilter.IE_TOOL),
+            new FilterInfo(DateItemFilter.class,           "DateItemFilter",           DateItemFilter.IE_TOOL,           DateItemFilter::new),
+            new FilterInfo(LogicContainerItemFilter.class, "LogicContainerItemFilter", LogicContainerItemFilter.IE_TOOL, LogicContainerItemFilter::new),
     };
 
     public FilterInfo[] getAllFilters() {
@@ -33,12 +33,14 @@ public class FiltersRegistry {
     public static class FilterInfo {
         private final Class<? extends ItemFilter> clazz;
         private final String stringType;
-        private final FilterImportExportTool iteool;
+        private final FilterImportExportTool ietool;
+        private final CreateFilterInterface createFilterInterface;
 
-        public FilterInfo(Class<? extends ItemFilter> clazz, String stringType, FilterImportExportTool iteool) {
+        public FilterInfo(Class<? extends ItemFilter> clazz, String stringType, FilterImportExportTool ietool, CreateFilterInterface createFilterInterface) {
             this.clazz = clazz;
             this.stringType = stringType;
-            this.iteool = iteool;
+            this.ietool = ietool;
+            this.createFilterInterface = createFilterInterface;
         }
 
         public Class<? extends ItemFilter> getClazz() {
@@ -50,7 +52,15 @@ public class FiltersRegistry {
         }
 
         public FilterImportExportTool getIETool() {
-            return iteool;
+            return ietool;
         }
+
+        public CreateFilterInterface getCreateFilterInterface() {
+            return createFilterInterface;
+        }
+    }
+
+    public interface CreateFilterInterface {
+        ItemFilter create();
     }
 }

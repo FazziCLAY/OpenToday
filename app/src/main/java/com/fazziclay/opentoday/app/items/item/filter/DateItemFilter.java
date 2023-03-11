@@ -13,7 +13,8 @@ public class DateItemFilter extends ItemFilter implements Cloneable {
         @Override
         public JSONObject exportFilter(ItemFilter filter) throws Exception {
             DateItemFilter f = (DateItemFilter) filter;
-            JSONObject j = new JSONObject().put("filterType", "DateItemFilter");
+            JSONObject j = new JSONObject();
+            j.put("description", f.description);
             if (f.year != null) j.put("year", f.year.exportI());
             if (f.month != null) j.put("month", f.month.exportI());
             if (f.dayOfWeek != null) j.put("dayOfWeek", f.dayOfWeek.exportI());
@@ -31,6 +32,7 @@ public class DateItemFilter extends ItemFilter implements Cloneable {
         public ItemFilter importFilter(JSONObject json, ItemFilter d) {
             DateItemFilter i = new DateItemFilter();
 
+            i.description = json.optString("description", i.description);
             i.year = IntegerValue.importI(json.optJSONObject("year"));
             i.month = IntegerValue.importI(json.optJSONObject("month"));
             i.dayOfWeek = IntegerValue.importI(json.optJSONObject("dayOfWeek"));
@@ -44,6 +46,7 @@ public class DateItemFilter extends ItemFilter implements Cloneable {
             return i;
         }
     };
+    private String description = "";
     private IntegerValue year = null;
     private IntegerValue month = null;
     private IntegerValue dayOfMonth = null;
@@ -76,6 +79,16 @@ public class DateItemFilter extends ItemFilter implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public void setDescription(String s) {
+        description = s;
     }
 
     public boolean check(Calendar calendar, IntegerValue integerValue, int field) {
