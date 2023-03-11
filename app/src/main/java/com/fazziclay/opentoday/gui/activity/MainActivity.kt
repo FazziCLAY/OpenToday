@@ -1,273 +1,216 @@
-package com.fazziclay.opentoday.gui.activity;
+package com.fazziclay.opentoday.gui.activity
 
-import static com.fazziclay.opentoday.util.InlineUtil.nullStat;
-import static com.fazziclay.opentoday.util.InlineUtil.viewClick;
-import static com.fazziclay.opentoday.util.InlineUtil.viewVisible;
+import android.app.DatePickerDialog
+import android.content.Intent
+import android.os.Bundle
+import android.os.Handler
+import android.view.View
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
+import com.fazziclay.opentoday.R
+import com.fazziclay.opentoday.app.ActivitySettings
+import com.fazziclay.opentoday.app.App
+import com.fazziclay.opentoday.app.FeatureFlag
+import com.fazziclay.opentoday.app.Telemetry.UiClosedLPacket
+import com.fazziclay.opentoday.app.Telemetry.UiOpenLPacket
+import com.fazziclay.opentoday.app.receiver.ItemsTickReceiver
+import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver
+import com.fazziclay.opentoday.app.updatechecker.UpdateChecker
+import com.fazziclay.opentoday.databinding.ActivityMainBinding
+import com.fazziclay.opentoday.databinding.NotificationDebugappBinding
+import com.fazziclay.opentoday.databinding.NotificationUpdateAvailableBinding
+import com.fazziclay.opentoday.gui.UI
+import com.fazziclay.opentoday.gui.fragment.MainRootFragment
+import com.fazziclay.opentoday.gui.interfaces.BackStackMember
+import com.fazziclay.opentoday.util.InlineUtil.*
+import com.fazziclay.opentoday.util.Logger
+import com.fazziclay.opentoday.util.NetworkUtil
+import java.text.SimpleDateFormat
+import java.util.*
 
-import android.app.DatePickerDialog;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.view.View;
-import android.widget.Toast;
+class MainActivity : AppCompatActivity() {
+    companion object {
+        private const val TAG = "MainActivity"
+        private const val CONTAINER_ID = R.id.mainActivity_rootFragmentContainer
+    }
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.fragment.app.Fragment;
-
-import com.fazziclay.opentoday.R;
-import com.fazziclay.opentoday.app.ActivitySettings;
-import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.FeatureFlag;
-import com.fazziclay.opentoday.app.Telemetry;
-import com.fazziclay.opentoday.app.receiver.ItemsTickReceiver;
-import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
-import com.fazziclay.opentoday.app.settings.SettingsManager;
-import com.fazziclay.opentoday.app.updatechecker.UpdateChecker;
-import com.fazziclay.opentoday.databinding.ActivityMainBinding;
-import com.fazziclay.opentoday.databinding.NotificationDebugappBinding;
-import com.fazziclay.opentoday.databinding.NotificationUpdateAvailableBinding;
-import com.fazziclay.opentoday.gui.fragment.MainRootFragment;
-import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
-import com.fazziclay.opentoday.util.Logger;
-import com.fazziclay.opentoday.util.NetworkUtil;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-
-public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "MainActivity";
-    private static final int CONTAINER_ID = R.id.mainActivity_rootFragmentContainer;
-
-    private ActivityMainBinding binding;
-    private App app;
-    private SettingsManager settingsManager;
-    private long lastExitClick = 0;
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var app: App
+    private var lastExitClick: Long = 0
 
     // Current Date
-    private Handler currentDateHandler;
-    private Runnable currentDateRunnable;
-    private GregorianCalendar currentDateCalendar;
-
-    private ActivitySettings activitySettings = new ActivitySettings().setClockVisible(true).setNotificationsVisible(true);
-    private boolean debugView = false;
-    int debugViewSize = 13;
+    private lateinit var currentDateHandler: Handler
+    private lateinit var currentDateRunnable: Runnable
+    private lateinit var currentDateCalendar: GregorianCalendar
+    private var activitySettings: ActivitySettings = ActivitySettings().setClockVisible(true).setNotificationsVisible(true)
+    private var debugView = false
+    private var debugViewSize = 13
 
     // Activity overrides
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Logger.d(TAG, "onCreate", nullStat(savedInstanceState));
-        long ping_start = System.currentTimeMillis();
-        try {
-            getSupportActionBar().hide();
-        } catch (Exception ignored) {}
-
-        this.app = App.get(this);
-        this.settingsManager = app.getSettingsManager();
-        AppCompatDelegate.setDefaultNightMode(settingsManager.getTheme());
-        this.app.setAppInForeground(true);
-        this.app.getTelemetry().send(new Telemetry.UiOpenLPacket());
-        this.binding = ActivityMainBinding.inflate(getLayoutInflater());
-
-        long ping_startStat_apptelemetrythemebinging = System.currentTimeMillis();
-        setContentView(binding.getRoot());
-        long ping_startStat_setviewanddebug = System.currentTimeMillis();
-
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Logger.d(TAG, "onCreate", nullStat(savedInstanceState))
+        app = App.get(this)
+        UI.setTheme(app.settingsManager.theme)
+        app.isAppInForeground = true
+        app.telemetry.send(UiOpenLPacket())
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        supportActionBar!!.hide()
+        setContentView(binding.root)
         if (savedInstanceState == null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
+            supportFragmentManager.beginTransaction()
                     .replace(CONTAINER_ID, MainRootFragment.create(), "MainRootFragment")
-                    .commit();
+                    .commit()
         }
-        long ping_startStat_setfragment = System.currentTimeMillis();
-
-
-        setupAppDebugNotify();
-        setupUpdateAvailableNotify();
-        setupCurrentDate();
-        long ping_startStat_setups = System.currentTimeMillis();
-
-
-        if (settingsManager.isQuickNoteNotification()) {
-            QuickNoteReceiver.sendQuickNoteNotification(this);
+        setupNotifications()
+        setupCurrentDate()
+        if (app.settingsManager.isQuickNoteNotification) {
+            QuickNoteReceiver.sendQuickNoteNotification(this)
         }
-        long startStat_preStop = System.currentTimeMillis();
-
-        if (app.isFeatureFlag(FeatureFlag.SHOW_MAINACTIVITY_STARTUP_TIME)) {
-            long c = System.currentTimeMillis();
-
-            long startupTime = c - ping_start;
-            StringBuilder text = new StringBuilder("MainActivity startup time:\n").append(startupTime).append("ms");
-            text.append("\n");
-            text.append("App;telemetry;theme;binging: ").append(ping_startStat_apptelemetrythemebinging - ping_start).append("ms\n");
-            text.append("setContentView&debugs: ").append(ping_startStat_setviewanddebug - ping_startStat_apptelemetrythemebinging).append("ms\n");
-            text.append("Set fragment: ").append(ping_startStat_setfragment - ping_startStat_setviewanddebug).append("ms\n");
-            text.append("setups: ").append(ping_startStat_setups - ping_startStat_setfragment).append("ms\n");
-            text.append("preStop: ").append(startStat_preStop - ping_startStat_setups).append("ms\n");
-            Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
-        }
-
-        updateDebugView();
-
-    }
-
-    @Override
-    public void onBackPressed() {
-        Runnable exit = super::onBackPressed;
-        Runnable def = () -> {
-            if (System.currentTimeMillis() - lastExitClick > 2000) {
-                Toast.makeText(this, R.string.exit_tab_2_count, Toast.LENGTH_SHORT).show();
-                lastExitClick = System.currentTimeMillis();
-            } else {
-                exit.run();
+        updateDebugView()
+        onBackPressedDispatcher.addCallback(object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val exit = Runnable { this@MainActivity.finish() }
+                val def = Runnable {
+                    if (System.currentTimeMillis() - lastExitClick > 2000) {
+                        Toast.makeText(this@MainActivity, R.string.exit_tab_2_count, Toast.LENGTH_SHORT).show()
+                        lastExitClick = System.currentTimeMillis()
+                    } else {
+                        exit.run()
+                    }
+                }
+                val fragment = supportFragmentManager.findFragmentById(CONTAINER_ID)
+                if (fragment is BackStackMember) {
+                    if (!fragment.popBackStack()) {
+                        def.run()
+                    }
+                } else {
+                    def.run()
+                }
             }
-        };
-
-        Fragment fragment = getMainRootFragment();
-        if (fragment instanceof BackStackMember) {
-            BackStackMember d = (BackStackMember) fragment;
-            if (!d.popBackStack()) {
-                def.run();
-            }
-        } else {
-            def.run();
-        }
+        })
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Logger.d(TAG, "onDestroy");
-        if (app != null) {
-            app.setAppInForeground(false);
-            app.getTelemetry().send(new Telemetry.UiClosedLPacket());
-        }
-        currentDateHandler.removeCallbacks(currentDateRunnable);
+    private fun setupNotifications() {
+        setupAppDebugNotify()
+        setupUpdateAvailableNotify()
     }
 
-    private Fragment getMainRootFragment() {
-        return getSupportFragmentManager().findFragmentById(CONTAINER_ID);
+    override fun onDestroy() {
+        super.onDestroy()
+        Logger.d(TAG, "onDestroy")
+        app.isAppInForeground = false
+        app.telemetry.send(UiClosedLPacket())
+        currentDateHandler.removeCallbacks(currentDateRunnable)
     }
 
     // Current Date
-    private void setupCurrentDate() {
-        currentDateCalendar = new GregorianCalendar();
-        setCurrentDate();
-        currentDateHandler = new Handler(getMainLooper());
-        currentDateRunnable = new Runnable() {
-            @Override
-            public void run() {
-                if (isDestroyed()) return;
-                setCurrentDate();
-                internalItemsTick();
-                long millis = System.currentTimeMillis() % 1000;
-                currentDateHandler.postDelayed(this, 1000 - millis);
-            }
-        };
-        currentDateHandler.post(currentDateRunnable);
-        viewClick(binding.currentDateDate, () -> {
-            DatePickerDialog dialog = new DatePickerDialog(this);
-            dialog.show();
-            dialog.getDatePicker().setFirstDayOfWeek(settingsManager.getFirstDayOfWeek());
-        });
-
-        viewClick(binding.currentDateTime, () -> {
-            DatePickerDialog dialog = new DatePickerDialog(this);
-            dialog.show();
-            dialog.getDatePicker().setFirstDayOfWeek(settingsManager.getFirstDayOfWeek());
-        });
+    private fun setupCurrentDate() {
+        currentDateCalendar = GregorianCalendar()
+        setCurrentDate()
+        currentDateHandler = Handler(mainLooper)
+        currentDateRunnable = Runnable {
+                if (isDestroyed) return@Runnable
+                setCurrentDate()
+                internalItemsTick()
+                val millis = System.currentTimeMillis() % 1000
+                currentDateHandler.postDelayed(currentDateRunnable, 1000 - millis)
+        }
+        currentDateHandler.post(currentDateRunnable)
+        viewClick(binding.currentDateDate, Runnable {
+            val dialog = DatePickerDialog(this)
+            dialog.datePicker.firstDayOfWeek = app.settingsManager.firstDayOfWeek
+            dialog.show()
+        })
+        viewClick(binding.currentDateTime, Runnable {
+            val dialog = DatePickerDialog(this)
+            dialog.datePicker.firstDayOfWeek = app.settingsManager.firstDayOfWeek
+            dialog.show()
+        })
     }
 
-    private void internalItemsTick() {
+    private fun internalItemsTick() {
         if (!app.isFeatureFlag(FeatureFlag.DISABLE_AUTOMATIC_TICK)) {
-            sendBroadcast(new Intent(this, ItemsTickReceiver.class));
+            sendBroadcast(Intent(this@MainActivity, ItemsTickReceiver::class.java))
         }
     }
 
-    private void setCurrentDate() {
-        currentDateCalendar.setTimeInMillis(System.currentTimeMillis());
-        Date time = currentDateCalendar.getTime();
+    private fun setCurrentDate() {
+        currentDateCalendar.timeInMillis = System.currentTimeMillis()
+        val time = currentDateCalendar.time
 
         // TODO: 11.10.2022 IDEA: Pattern to settings
         // Date
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd EEEE", Locale.getDefault());
-        binding.currentDateDate.setText(dateFormat.format(time));
+        var dateFormat = SimpleDateFormat("yyyy.MM.dd EEEE", Locale.getDefault())
+        binding.currentDateDate.text = dateFormat.format(time)
 
         // Time
-        dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-        binding.currentDateTime.setText(dateFormat.format(time));
+        dateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+        binding.currentDateTime.text = dateFormat.format(time)
     }
 
     // Update checker
-    private void setupUpdateAvailableNotify() {
-        UpdateChecker.check(app, (available, url) -> runOnUiThread(() -> {
-            if (available) {
-                NotificationUpdateAvailableBinding updateAvailable = NotificationUpdateAvailableBinding.inflate(getLayoutInflater());
-                binding.notifications.addView(updateAvailable.getRoot());
-
-                viewVisible(updateAvailable.getRoot(), available, View.GONE);
-                if (url != null) {
-                    viewClick(updateAvailable.getRoot(), () -> NetworkUtil.openBrowser(MainActivity.this, url));
+    private fun setupUpdateAvailableNotify() {
+        UpdateChecker.check(app) { available: Boolean, url: String? ->
+            runOnUiThread {
+                if (available) {
+                    val updateAvailableLayout = NotificationUpdateAvailableBinding.inflate(layoutInflater)
+                    binding.notifications.addView(updateAvailableLayout.root)
+                    if (url != null) {
+                        viewClick(updateAvailableLayout.root, Runnable { NetworkUtil.openBrowser(this@MainActivity, url) })
+                    }
                 }
             }
-        }));
+        }
     }
 
     // App is DEBUG warning notify
-    private void setupAppDebugNotify() {
-        if (App.DEBUG) {
-            NotificationDebugappBinding b = NotificationDebugappBinding.inflate(getLayoutInflater());
-            binding.notifications.addView(b.getRoot());
-        }
+    private fun setupAppDebugNotify() {
+        if (!App.DEBUG) return
+
+        val b = NotificationDebugappBinding.inflate(layoutInflater)
+        binding.notifications.addView(b.root)
     }
 
-    public void toggleLogsOverlay() {
-        this.debugView = !this.debugView;
-        updateDebugView();
+    fun toggleLogsOverlay() {
+        debugView = !debugView
+        updateDebugView()
     }
 
-    private void updateDebugView() {
+    private fun updateDebugView() {
         if (debugView) {
-            binding.debugLogsSizeUp.setVisibility(View.VISIBLE);
-            binding.debugLogsSizeDown.setVisibility(View.VISIBLE);
-            binding.debugLogsSwitch.setVisibility(View.VISIBLE);
-            binding.debugLogsSwitch.setOnClickListener(fds -> {
-                boolean b = binding.debugLogsSwitch.isChecked();
-                viewVisible(binding.debugLogsScroll, b, View.GONE);
-                binding.debugLogsText.setText(Logger.getLOGS().toString());
-            });
-            binding.debugLogsText.setTextSize(debugViewSize);
-            binding.debugLogsSizeUp.setOnClickListener(rffs -> {
-                debugViewSize++;
-                binding.debugLogsText.setTextSize(debugViewSize);
-            });
-            binding.debugLogsSizeDown.setOnClickListener(fsdwe -> {
-                debugViewSize--;
-                binding.debugLogsText.setTextSize(debugViewSize);
-            });
+            binding.debugLogsSizeUp.visibility = View.VISIBLE
+            binding.debugLogsSizeDown.visibility = View.VISIBLE
+            binding.debugLogsSwitch.visibility = View.VISIBLE
+            binding.debugLogsSwitch.setOnClickListener {
+                viewVisible(binding.debugLogsScroll, binding.debugLogsSwitch.isChecked, View.GONE)
+                binding.debugLogsText.text = Logger.getLOGS().toString()
+            }
+            binding.debugLogsText.textSize = debugViewSize.toFloat()
+            binding.debugLogsSizeUp.setOnClickListener {
+                debugViewSize++
+                binding.debugLogsText.textSize = debugViewSize.toFloat()
+            }
+            binding.debugLogsSizeDown.setOnClickListener {
+                debugViewSize--
+                binding.debugLogsText.textSize = debugViewSize.toFloat()
+            }
         } else {
-            binding.debugLogsSizeUp.setVisibility(View.GONE);
-            binding.debugLogsSizeDown.setVisibility(View.GONE);
-            binding.debugLogsSwitch.setVisibility(View.GONE);
-            binding.debugLogsText.setText("");
+            binding.debugLogsSizeUp.visibility = View.GONE
+            binding.debugLogsSizeDown.visibility = View.GONE
+            binding.debugLogsSwitch.visibility = View.GONE
+            binding.debugLogsText.text = ""
         }
     }
 
-
-    public ActivitySettings getActivitySettings() {
-        return activitySettings;
+    fun pushActivitySettings(a: ActivitySettings) {
+        activitySettings = a
+        updateByActivitySettings()
     }
 
-    public void pushActivitySettings(ActivitySettings a) {
-        this.activitySettings = a;
-        updateByActivitySettings();
-    }
-
-    public void updateByActivitySettings() {
-        viewVisible(binding.currentDateDate, activitySettings.isClockVisible(), View.GONE);
-        viewVisible(binding.notifications, activitySettings.isNotificationsVisible(), View.GONE);
+    private fun updateByActivitySettings() {
+        viewVisible(binding.currentDateDate, activitySettings.isClockVisible, View.GONE)
+        viewVisible(binding.notifications, activitySettings.isNotificationsVisible, View.GONE)
     }
 }

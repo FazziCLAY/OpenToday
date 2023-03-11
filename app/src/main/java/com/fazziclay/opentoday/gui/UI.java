@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 
 import com.fazziclay.opentoday.R;
@@ -53,6 +54,10 @@ public class UI {
 
     public static void navigate(@NonNull final NavigationHost navigationHost, @NonNull final Fragment fragment, final boolean addToBackStack) {
         navigationHost.navigate(fragment, addToBackStack);
+    }
+
+    public static void setTheme(int i) {
+        AppCompatDelegate.setDefaultNightMode(i);
     }
 
     public static class Debug {
