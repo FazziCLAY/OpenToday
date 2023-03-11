@@ -308,4 +308,8 @@
     <string name="settings_firstTab_onClosed">On closed</string>
     <string name="settings_firstTab_title">Tab on open</string>
     <string name="toolbar_more_file_importFromClipboard">Import from clipboard</string>
+    <string name="toolbar_more_file_importFromClipboard_unknownError">Unknown error!</string>
+    <string name="toolbar_more_file_importFromClipboard_notImportText">This is not import text</string>
+    <string name="toolbar_more_tabs_delete_notAllowOneTabMode">Delete not allow!</string>
+    <string name="fragment_itemEditor_module_item_selected">Selected</string>
 </resources>

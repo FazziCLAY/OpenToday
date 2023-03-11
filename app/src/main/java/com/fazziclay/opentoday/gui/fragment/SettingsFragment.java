@@ -37,6 +37,7 @@ import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.databinding.ExportBinding;
 import com.fazziclay.opentoday.databinding.FragmentSettingsBinding;
+import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 
@@ -145,44 +146,7 @@ public class SettingsFragment extends Fragment {
 
         pinCodeCallback = () -> binding.pincode.setText(getString(R.string.settings_pincode, (pinCodeManager.isPinCodeSet() ? getString(R.string.settings_pincode_on) : getString(R.string.settings_pincode_off))));
         pinCodeCallback.run();
-        viewClick(binding.pincode, () -> {
-            boolean is = pinCodeManager.isPinCodeSet();
-            AlertDialog.Builder d = new AlertDialog.Builder(requireContext())
-                    .setTitle(R.string.settings_pincode_title)
-                    .setMessage(is ? getString(R.string.settings_pincode_message_on, pinCodeManager.getPinCode()) : getString(R.string.settings_pincode_message_off))
-                    .setNeutralButton(R.string.settings_pincode_cancel, null)
-                    .setPositiveButton(is ? R.string.settings_pincode_button_disable : R.string.settings_pincode_button_enable, (dialogInterface, i) -> {
-                        if (is) {
-                            pinCodeManager.disablePinCode();
-                            pinCodeCallback.run();
-                            Toast.makeText(app, R.string.settings_pincode_disable_success, Toast.LENGTH_SHORT).show();
-                        } else {
-                            EditText t = new EditText(requireContext());
-                            t.setHint(R.string.settings_pincode_enable_hint);
-                            new AlertDialog.Builder(requireContext())
-                                    .setTitle(R.string.settings_pincode_enable_title)
-                                    .setMessage(R.string.settings_pincode_enable_message)
-                                    .setView(t)
-                                    .setPositiveButton(R.string.settings_pincode_enable_apply, (fsdf, fdsfd) -> {
-                                        try {
-                                            pinCodeManager.enablePinCode(t.getText().toString());
-                                            pinCodeCallback.run();
-                                            Toast.makeText(app, R.string.settings_pincode_enable_success, Toast.LENGTH_SHORT).show();
-                                        } catch (Exception e) {
-                                            if (e instanceof PinCodeManager.ContainNonDigitChars) {
-                                                Toast.makeText(app, R.string.settings_pincode_enable_nonDigitsError, Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                Toast.makeText(app, R.string.settings_pincode_enable_unknownError, Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                    })
-                                    .setNegativeButton(R.string.settings_pincode_enable_cancel, null)
-                                    .show();
-                        }
-                    });
-
-            d.show();
-        });
+        viewClick(binding.pincode, this::showPinCodeDialog);
 
         setupFirstTabSpinner();
     }
@@ -310,57 +274,55 @@ public class SettingsFragment extends Fragment {
                 .show();
     }
 
+    private void showPinCodeDialog() {
+        boolean is = pinCodeManager.isPinCodeSet();
+        AlertDialog.Builder d = new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.settings_pincode_title)
+                .setMessage(is ? getString(R.string.settings_pincode_message_on, pinCodeManager.getPinCode()) : getString(R.string.settings_pincode_message_off))
+                .setNeutralButton(R.string.settings_pincode_cancel, null)
+                .setPositiveButton(is ? R.string.settings_pincode_button_disable : R.string.settings_pincode_button_enable, (dialogInterface, i) -> {
+                    if (is) {
+                        pinCodeManager.disablePinCode();
+                        pinCodeCallback.run();
+                        Toast.makeText(app, R.string.settings_pincode_disable_success, Toast.LENGTH_SHORT).show();
+                    } else {
+                        EditText t = new EditText(requireContext());
+                        t.setHint(R.string.settings_pincode_enable_hint);
+                        new AlertDialog.Builder(requireContext())
+                                .setTitle(R.string.settings_pincode_enable_title)
+                                .setMessage(R.string.settings_pincode_enable_message)
+                                .setView(t)
+                                .setPositiveButton(R.string.settings_pincode_enable_apply, (fsdf, fdsfd) -> {
+                                    try {
+                                        pinCodeManager.enablePinCode(t.getText().toString());
+                                        pinCodeCallback.run();
+                                        Toast.makeText(app, R.string.settings_pincode_enable_success, Toast.LENGTH_SHORT).show();
+                                    } catch (Exception e) {
+                                        if (e instanceof PinCodeManager.ContainNonDigitChars) {
+                                            Toast.makeText(app, R.string.settings_pincode_enable_nonDigitsError, Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(app, R.string.settings_pincode_enable_unknownError, Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                })
+                                .setNegativeButton(R.string.settings_pincode_enable_cancel, null)
+                                .show();
+                    }
+                });
+
+        d.show();
+    }
+
     private void experimentalFeaturesInteract() {
         if (System.currentTimeMillis() - easterEggLastClick < 1000) {
             easterEggCounter++;
             if (easterEggCounter >= 6) {
                 easterEggCounter = 0;
-                showFeatureFlagsDialog();
+                UI.Debug.showFeatureFlagsDialog(app, requireContext());
             }
         } else {
             easterEggCounter = 0;
         }
         easterEggLastClick = System.currentTimeMillis();
-    }
-
-    private void showFeatureFlagsDialog() {
-        LinearLayout view = new LinearLayout(requireContext());
-        view.setOrientation(LinearLayout.VERTICAL);
-
-        for (FeatureFlag featureFlag : FeatureFlag.values()) {
-            CheckBox c = new CheckBox(requireContext());
-            c.setText(featureFlag.name());
-            c.setChecked(app.isFeatureFlag(featureFlag));
-            viewClick(c, () -> {
-                boolean is = c.isChecked();
-                if (is) {
-                    if (!app.isFeatureFlag(featureFlag)) {
-                        app.getFeatureFlags().add(featureFlag);
-                    }
-                } else {
-                    if (app.isFeatureFlag(featureFlag)) {
-                        app.getFeatureFlags().remove(featureFlag);
-                    }
-                }
-            });
-
-            TextView textView = new TextView(requireContext());
-            textView.setText(featureFlag.getDescription());
-            textView.setTextSize(11);
-            textView.setPadding(60, 0, 0, 0);
-
-            view.addView(c);
-            view.addView(textView);
-        }
-
-        ScrollView scrollView = new ScrollView(requireContext());
-        scrollView.addView(view);
-
-        Dialog dialog = new AlertDialog.Builder(requireContext())
-                .setView(scrollView)
-                .setTitle("DEBUG: FeatureFlags")
-                .setNegativeButton(R.string.abc_cancel, null)
-                .create();
-        dialog.show();
     }
 }

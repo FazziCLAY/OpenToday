@@ -37,12 +37,13 @@
 
     </RelativeLayout>
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/groupingTitleAndEd"
         android:paddingLeft="3sp"
+        android:orientation="vertical"
         android:paddingRight="2sp" />
 
 </RelativeLayout>

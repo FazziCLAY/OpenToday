@@ -59,20 +59,7 @@ public class AboutFragment extends Fragment {
             }
             if (easterEggCounter >= 10) {
                 easterEggCounter = 0;
-                Toast.makeText(requireContext(), R.string.manuallyCrash_crash, Toast.LENGTH_SHORT).show();
-                EditText message = new EditText(requireContext());
-                message.setHint(R.string.manuallyCrash_dialog_inputHint);
-                Dialog dialog = new AlertDialog.Builder(requireContext())
-                        .setTitle(R.string.manuallyCrash_dialog_title)
-                        .setView(message)
-                        .setMessage(R.string.manuallyCrash_dialog_message)
-                        .setPositiveButton(R.string.manuallyCrash_dialog_apply, (var1, var2) -> {
-                            throw new RuntimeException("Manually AboutDialog EasterEgg crash: " + message.getText().toString());
-                        })
-                        .setNegativeButton(R.string.manuallyCrash_dialog_cancel, null)
-                        .create();
-                dialog.setCanceledOnTouchOutside(false);
-                dialog.show();
+                UI.Debug.showCrashWithMessageDialog(requireContext(), "Crash by AboutFragment easterEgg :) %s");
             }
         } else {
             easterEggCounter = 0;

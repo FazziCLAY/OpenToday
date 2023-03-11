@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:padding="5sp">
 
     <ScrollView
@@ -13,8 +12,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/itemTypeName"
@@ -25,7 +23,7 @@
                 android:gravity="center" />
 
             <LinearLayout
-                android:id="@+id/canvas"
+                android:id="@+id/modules"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/itemTypeName"
@@ -40,6 +38,7 @@
         android:drawableTop="@android:drawable/ic_menu_delete"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
+        android:layout_alignStart="@id/cancel_button"
         android:text="@string/dialogItem_delete"
         style="@style/Widget.AppCompat.Button" />
 

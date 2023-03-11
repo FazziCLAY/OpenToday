@@ -142,5 +142,10 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
         public void updateUi(Item item) {
             SimpleItemsStorage.this.onUpdateCallbacks.run((callbackStorage, callback) -> callback.onUpdated(item, getItemPosition(item)));
         }
+
+        @Override
+        public ItemsStorage getParentItemStorage(Item item) {
+            return SimpleItemsStorage.this;
+        }
     }
 }

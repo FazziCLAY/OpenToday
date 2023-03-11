@@ -8,8 +8,8 @@ android {
     defaultConfig {
         // =====
         var isDev = false
-        var verBuild = 108
-        var verName = "1.0.3"
+        var verBuild = 110
+        var verName = "1.0.4"
         // =====
 
         applicationId "com.fazziclay.opentoday" + (isDev ? ".dev" : "")

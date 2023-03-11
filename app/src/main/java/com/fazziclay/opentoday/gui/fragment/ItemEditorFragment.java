@@ -32,6 +32,7 @@ import com.fazziclay.opentoday.app.ColorHistoryManager;
 import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
+import com.fazziclay.opentoday.app.items.Selection;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
@@ -44,14 +45,14 @@ import com.fazziclay.opentoday.app.items.notification.DayItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
-import com.fazziclay.opentoday.databinding.DialogItemFrameBinding;
-import com.fazziclay.opentoday.databinding.DialogItemModuleCheckboxBinding;
-import com.fazziclay.opentoday.databinding.DialogItemModuleCounterBinding;
-import com.fazziclay.opentoday.databinding.DialogItemModuleCyclelistBinding;
-import com.fazziclay.opentoday.databinding.DialogItemModuleDayrepeatablecheckboxBinding;
-import com.fazziclay.opentoday.databinding.DialogItemModuleItemBinding;
-import com.fazziclay.opentoday.databinding.DialogItemModuleTextBinding;
+import com.fazziclay.opentoday.databinding.FragmentItemEditorBinding;
+import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleCheckboxBinding;
+import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleCounterBinding;
+import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleCyclelistBinding;
+import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleDayrepeatablecheckboxBinding;
+import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleItemBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleLongtextBinding;
+import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleTextBinding;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.dialog.DialogItemNotificationsEditor;
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
@@ -172,28 +173,28 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        DialogItemFrameBinding binding = DialogItemFrameBinding.inflate(inflater);
+        final FragmentItemEditorBinding binding = FragmentItemEditorBinding.inflate(inflater);
 
         if (item instanceof Item) {
-            binding.canvas.addView(addEditModule(new ItemEditModule()));
+            binding.modules.addView(addEditModule(new ItemEditModule()));
         }
         if (item instanceof TextItem) {
-            binding.canvas.addView(addEditModule(new TextItemEditModule()));
+            binding.modules.addView(addEditModule(new TextItemEditModule()));
         }
         if (item instanceof LongTextItem) {
-            binding.canvas.addView(addEditModule(new LongTextItemEditModule()));
+            binding.modules.addView(addEditModule(new LongTextItemEditModule()));
         }
         if (item instanceof CheckboxItem) {
-            binding.canvas.addView(addEditModule(new CheckboxItemEditModule()));
+            binding.modules.addView(addEditModule(new CheckboxItemEditModule()));
         }
         if (item instanceof DayRepeatableCheckboxItem) {
-            binding.canvas.addView(addEditModule(new DayRepeatableCheckboxItemEditModule()));
+            binding.modules.addView(addEditModule(new DayRepeatableCheckboxItemEditModule()));
         }
         if (item instanceof CycleListItem) {
-            binding.canvas.addView(addEditModule(new CycleListItemEditModule()));
+            binding.modules.addView(addEditModule(new CycleListItemEditModule()));
         }
         if (item instanceof CounterItem) {
-            binding.canvas.addView(addEditModule(new CounterItemEditModule()));
+            binding.modules.addView(addEditModule(new CounterItemEditModule()));
         }
 
         viewClick(binding.applyButton, this::applyRequest);
@@ -325,7 +326,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     }
 
     public class ItemEditModule extends BaseEditUiModule {
-        private DialogItemModuleItemBinding binding;
+        private FragmentItemEditorModuleItemBinding binding;
         private Runnable onEditStart;
 
         private int temp_backgroundColor;
@@ -337,9 +338,10 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
         @Override
         public void setup(Item item, Activity activity, View view) {
-            binding = DialogItemModuleItemBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
+            binding = FragmentItemEditorModuleItemBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
 
             // equip
+            binding.selected.setChecked(itemManager.isSelected(item));
             binding.viewMinHeight.setText(String.valueOf(item.getViewMinHeight()));
             binding.defaultBackgroundColor.setChecked(!item.isViewCustomBackgroundColor());
             temp_backgroundColor = item.getViewBackgroundColor();
@@ -448,6 +450,15 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             item.setViewBackgroundColor(temp_backgroundColor);
             item.setViewCustomBackgroundColor(!binding.defaultBackgroundColor.isChecked());
             item.setMinimize(binding.minimize.isChecked());
+            if (binding.selected.isChecked()) {
+                if (!itemManager.isSelected(item)) {
+                    itemManager.selectItem(new Selection(item.getParentItemStorage(), item));
+                }
+            } else {
+                if (itemManager.isSelected(item)) {
+                    itemManager.deselectItem(item);
+                }
+            }
         }
 
         @Override
@@ -457,7 +468,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     }
 
     public class TextItemEditModule extends BaseEditUiModule {
-        private DialogItemModuleTextBinding binding;
+        private FragmentItemEditorModuleTextBinding binding;
         private Runnable onEditStart;
 
         private int temp_textColor;
@@ -470,7 +481,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         @Override
         public void setup(Item item, Activity activity, View view) {
             TextItem textItem = (TextItem) item;
-            binding = DialogItemModuleTextBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
+            binding = FragmentItemEditorModuleTextBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
 
             // equip
             viewLong(binding.titleOfText, () -> {
@@ -680,7 +691,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     }
 
     public static class CheckboxItemEditModule extends BaseEditUiModule {
-        private DialogItemModuleCheckboxBinding binding;
+        private FragmentItemEditorModuleCheckboxBinding binding;
         private Runnable onEditStart;
 
         @Override
@@ -691,7 +702,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         @Override
         public void setup(Item item, Activity activity, View view) {
             CheckboxItem checkboxItem = (CheckboxItem) item;
-            this.binding = DialogItemModuleCheckboxBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
+            this.binding = FragmentItemEditorModuleCheckboxBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
             this.binding.isChecked.setChecked(checkboxItem.isChecked());
             this.binding.isChecked.setOnClickListener(v -> onEditStart.run());
         }
@@ -709,7 +720,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     }
 
     public static class DayRepeatableCheckboxItemEditModule extends BaseEditUiModule {
-        private DialogItemModuleDayrepeatablecheckboxBinding binding;
+        private FragmentItemEditorModuleDayrepeatablecheckboxBinding binding;
         private Runnable onEditStart;
         private boolean create = false;
 
@@ -722,7 +733,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         @Override
         public void setup(Item item, Activity activity, View view) {
             DayRepeatableCheckboxItem dayRepeatableCheckboxItem = (DayRepeatableCheckboxItem) item;
-            binding = DialogItemModuleDayrepeatablecheckboxBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
+            binding = FragmentItemEditorModuleDayrepeatablecheckboxBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
             binding.startValue.setChecked(dayRepeatableCheckboxItem.getStartValue());
             binding.startValue.setOnClickListener(v -> onEditStart.run());
 
@@ -755,7 +766,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     }
 
     public class CycleListItemEditModule extends BaseEditUiModule {
-        private DialogItemModuleCyclelistBinding binding;
+        private FragmentItemEditorModuleCyclelistBinding binding;
         private SimpleSpinnerAdapter<CycleListItem.TickBehavior> simpleSpinnerAdapter;
         private Runnable onEditStart;
         private boolean firstFlag = true;
@@ -769,7 +780,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         public void setup(Item item, Activity activity, View view) {
             CycleListItem cycleListItem = (CycleListItem) item;
 
-            binding = DialogItemModuleCyclelistBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
+            binding = FragmentItemEditorModuleCyclelistBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
             simpleSpinnerAdapter = new SimpleSpinnerAdapter<CycleListItem.TickBehavior>(activity)
                     .add(activity.getString(R.string.cycleListItem_tick_all), CycleListItem.TickBehavior.ALL)
                     .add(activity.getString(R.string.cycleListItem_tick_current), CycleListItem.TickBehavior.CURRENT);
@@ -803,7 +814,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     }
 
     private static class CounterItemEditModule extends BaseEditUiModule {
-        private DialogItemModuleCounterBinding binding;
+        private FragmentItemEditorModuleCounterBinding binding;
         private Runnable onEditStart;
 
         @Override
@@ -815,7 +826,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         public void setup(Item item, Activity activity, View view) {
             CounterItem counterItem = (CounterItem) item;
 
-            binding = DialogItemModuleCounterBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
+            binding = FragmentItemEditorModuleCounterBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
             binding.counterValue.setText(String.valueOf(counterItem.getCounter()));
             binding.counterStep.setText(String.valueOf(counterItem.getStep()));
 

@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.TickSession;
 import com.fazziclay.opentoday.app.items.ID;
+import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationIEUtil;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationUtil;
@@ -171,4 +172,10 @@ public abstract class Item implements ID {
     @Setter public void setMinimize(boolean minimize) { this.minimize = minimize; }
 
     @Getter @NonNull public List<ItemNotification> getNotifications() { return notifications; }
+    @Getter public ItemsStorage getParentItemStorage() {
+        if (isAttached()) {
+            return controller.getParentItemStorage(this);
+        }
+        return null;
+    }
 }

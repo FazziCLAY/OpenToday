@@ -5,6 +5,7 @@ import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
@@ -88,8 +89,9 @@ public class App extends Application {
     @AppInitIfNeed private SettingsManager settingsManager = null;
     @AppInitIfNeed private ColorHistoryManager colorHistoryManager = null;
     @AppInitIfNeed private Telemetry telemetry = null;
-    private PinCodeManager pinCodeManager = null;
+    private PinCodeManager pinCodeManager;
     @AppInitIfNeed private License[] openSourceLicenses = null;
+    @AppInitIfNeed private ClipboardManager clipboardManager = null;
     private final List<FeatureFlag> featureFlags = new ArrayList<>(App.DEBUG ? Arrays.asList(
             FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
             //FeatureFlag.ITEM_EDITOR_SHOW_COPY_ID_BUTTON,
@@ -308,6 +310,12 @@ public class App extends Application {
         }
     }
 
+    private void preCheckClipboardManager() {
+        if (clipboardManager == null) {
+            clipboardManager = getSystemService(ClipboardManager.class);
+        }
+    }
+
     private void preCheckInstanceId() {
         if (instanceId == null) {
             instanceId = parseInstanceId();
@@ -341,6 +349,11 @@ public class App extends Application {
     public License[] getOpenSourcesLicenses() {
         preCheckOpenSourceLicenses();
         return this.openSourceLicenses;
+    }
+
+    public ClipboardManager getClipboardManager() {
+        preCheckClipboardManager();
+        return this.clipboardManager;
     }
 
     public PinCodeManager getPinCodeManager() {

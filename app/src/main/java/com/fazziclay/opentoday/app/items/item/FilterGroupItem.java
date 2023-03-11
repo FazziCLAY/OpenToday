@@ -622,5 +622,10 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
             itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onUpdated(item, getItemPosition(item)));
             FilterGroupItem.this.visibleChanged();
         }
+
+        @Override
+        public ItemsStorage getParentItemStorage(Item item) {
+            return FilterGroupItem.this;
+        }
     }
 }

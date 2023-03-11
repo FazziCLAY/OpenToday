@@ -76,12 +76,17 @@
 
     <!-- Section: Selection -->
     <style name="OpenToday.Base.Toolbar.Section.Root.Selection" parent="OpenToday.Base.Toolbar.Section.Root" />
-    <style name="OpenToday.Base.Toolbar.Section.Button.Selection" parent="OpenToday.Base.Toolbar.Section.Button" />
+    <style name="OpenToday.Base.Toolbar.Section.Button.Selection" parent="OpenToday.Base.Toolbar.Section.Button">
+        <item name="android:textSize">13.3sp</item>
+        <item name="android:minHeight">44sp</item>
+    </style>
+    <style name="OpenToday.Base.Toolbar.Section.Text.Selection" parent="OpenToday.Base.Toolbar.Section.Text" />
 
 
     <!-- Section: Tabs -->
     <style name="OpenToday.Base.Toolbar.Section.Root.Tabs" parent="OpenToday.Base.Toolbar.Section.Root" />
     <style name="OpenToday.Base.Toolbar.Section.Button.Tabs" parent="OpenToday.Base.Toolbar.Section.Button" />
+    <style name="OpenToday.Base.Toolbar.Section.Text.Tabs" parent="OpenToday.Base.Toolbar.Section.Text" />
 
 
     <!-- Section: OpenToday -->

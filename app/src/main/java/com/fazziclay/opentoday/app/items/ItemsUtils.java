@@ -77,4 +77,12 @@ public class ItemsUtils {
             throw new RuntimeException("items already attached. Use item.delete() to detach");
         }
     }
+
+    public static UUID getId(Object o) {
+        if (o instanceof ID) {
+            ID id = (ID) o;
+            return id.getId();
+        }
+        return null;
+    }
 }
