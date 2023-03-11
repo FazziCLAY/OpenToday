@@ -134,79 +134,7 @@ public class DataFixer {
             isUpdated = true;
         }
 
-        if (dataVersion == 8) {
-            fix8versionTo9();
-            dataVersion = 9;
-            isUpdated = true;
-        }
-
         return dataVersion;
-    }
-
-    private void fix8versionTo9() {
-        final String TAG = "v8 -> v9";
-        log(TAG, "FIX START");
-
-        // DO NOT EDIT!
-        final File itemsDataFile = new File(context.getExternalFilesDir(""), "item_data.json");
-        final File itemsDataCompressFile = new File(context.getExternalFilesDir(""), "item_data.gz");
-
-        try {
-            if (FileUtil.isExist(itemsDataFile)) {
-                JSONObject j = new JSONObject(FileUtil.getText(itemsDataFile, "{}"));
-                JSONArray tabs = j.optJSONArray("tabs");
-                if (tabs == null) tabs = new JSONArray();
-
-                int i_tabs = 0;
-                while (i_tabs < tabs.length()) {
-                    JSONObject tab = tabs.optJSONObject(i_tabs);
-                    if (tab == null) continue;
-
-                    JSONArray tabItems = tab.optJSONArray("items");
-                    if (tabItems == null) continue;
-
-                    int i_tabItems = 0;
-                    while (i_tabItems < tabItems.length()) {
-                        JSONObject tabItem = tabItems.optJSONObject(i_tabItems);
-                        if (tabItem == null) continue;
-
-                        String itemType = tabItem.optString("itemType", null);
-                        if (itemType != null && itemType.equals("FilterGroupItem")) {
-                            JSONArray internalItems = tabItem.optJSONArray("items");
-                            if (internalItems == null) continue;
-
-                            int i_internalItems = 0;
-                            while (i_internalItems < internalItems.length()) {
-                                JSONObject wrapper = internalItems.optJSONObject(i_internalItems);
-                                if (wrapper == null) continue;
-                                JSONObject filter = wrapper.optJSONObject("filter");
-                                if (filter == null) continue;
-                                log(TAG, "filter " + filter + " on item " + tabItem);
-
-                                JSONObject newFilter = new JSONObject()
-                                        .put("filterType", "LogicContainerItemFilter")
-                                        .put("filters", new JSONArray().put(new JSONObject(filter.toString()).put("filterType", "DateItemFilter")));
-                                wrapper.put("filter", newFilter);
-
-                                i_internalItems++;
-                            }
-                        }
-
-
-                        i_tabItems++;
-                    }
-
-                    i_tabs++;
-                }
-
-                FileUtil.setText(itemsDataFile, j.toString(2));
-                FileUtil.delete(itemsDataCompressFile);
-            }
-        } catch (JSONException e) {
-            log(TAG, "FIX EXCEPTION", e);
-        }
-
-        log(TAG, "FIX DONE");
     }
 
     // Moved instanceId from settings to external file

@@ -12,8 +12,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.fazziclay.opentoday.R;
-import com.fazziclay.opentoday.app.items.item.filter.DateItemFilter;
-import com.fazziclay.opentoday.app.items.item.filter.ItemFilter;
+import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.databinding.DialogEditItemFilterBinding;
 import com.fazziclay.opentoday.databinding.DialogEditItemFilterRowBinding;
 import com.fazziclay.opentoday.util.MinTextWatcher;
@@ -36,9 +35,8 @@ public class DialogEditItemFilter {
     private final List<Runnable> runnableList = new ArrayList<>();
 
 
-    public DialogEditItemFilter(Activity activity, ItemFilter itemFilter, Runnable saveSignal) {
+    public DialogEditItemFilter(Activity activity, FilterGroupItem.ItemFilter itemFilter, Runnable saveSignal) {
         this.activity = activity;
-        DateItemFilter dateItemFilter = (DateItemFilter) itemFilter; // TODO: 3/10/23 owo
 
         this.binding = DialogEditItemFilterBinding.inflate(activity.getLayoutInflater());
         this.dialog = new Dialog(activity);
@@ -59,13 +57,13 @@ public class DialogEditItemFilter {
 
         setupRow(new SetupInterface() {
             @Override
-            public DateItemFilter.IntegerValue get() {
-                return dateItemFilter.getYear();
+            public FilterGroupItem.ItemFilter.IntegerValue get() {
+                return itemFilter.getYear();
             }
 
             @Override
-            public void set(DateItemFilter.IntegerValue integerValue) {
-                dateItemFilter.setYear(integerValue);
+            public void set(FilterGroupItem.ItemFilter.IntegerValue integerValue) {
+                itemFilter.setYear(integerValue);
             }
 
             @Override
@@ -75,13 +73,13 @@ public class DialogEditItemFilter {
         }, binding.year, R.string.dialog_editItemFilter_year);
         setupRow(new SetupInterface() {
             @Override
-            public DateItemFilter.IntegerValue get() {
-                return dateItemFilter.getMonth();
+            public FilterGroupItem.ItemFilter.IntegerValue get() {
+                return itemFilter.getMonth();
             }
 
             @Override
-            public void set(DateItemFilter.IntegerValue integerValue) {
-                dateItemFilter.setMonth(integerValue);
+            public void set(FilterGroupItem.ItemFilter.IntegerValue integerValue) {
+                itemFilter.setMonth(integerValue);
             }
 
 
@@ -106,13 +104,13 @@ public class DialogEditItemFilter {
         );
         setupRow(new SetupInterface() {
             @Override
-            public DateItemFilter.IntegerValue get() {
-                return dateItemFilter.getDayOfMonth();
+            public FilterGroupItem.ItemFilter.IntegerValue get() {
+                return itemFilter.getDayOfMonth();
             }
 
             @Override
-            public void set(DateItemFilter.IntegerValue integerValue) {
-                dateItemFilter.setDayOfMonth(integerValue);
+            public void set(FilterGroupItem.ItemFilter.IntegerValue integerValue) {
+                itemFilter.setDayOfMonth(integerValue);
             }
 
             @Override
@@ -122,13 +120,13 @@ public class DialogEditItemFilter {
         }, binding.dayOfMonth, R.string.dialog_editItemFilter_dayOfMonth);
         setupRow(new SetupInterface() {
             @Override
-            public DateItemFilter.IntegerValue get() {
-                return dateItemFilter.getDayOfWeek();
+            public FilterGroupItem.ItemFilter.IntegerValue get() {
+                return itemFilter.getDayOfWeek();
             }
 
             @Override
-            public void set(DateItemFilter.IntegerValue integerValue) {
-                dateItemFilter.setDayOfWeek(integerValue);
+            public void set(FilterGroupItem.ItemFilter.IntegerValue integerValue) {
+                itemFilter.setDayOfWeek(integerValue);
             }
 
 
@@ -148,13 +146,13 @@ public class DialogEditItemFilter {
         );
         setupRow(new SetupInterface() {
             @Override
-            public DateItemFilter.IntegerValue get() {
-                return dateItemFilter.getWeekOfYear();
+            public FilterGroupItem.ItemFilter.IntegerValue get() {
+                return itemFilter.getWeekOfYear();
             }
 
             @Override
-            public void set(DateItemFilter.IntegerValue integerValue) {
-                dateItemFilter.setWeekOfYear(integerValue);
+            public void set(FilterGroupItem.ItemFilter.IntegerValue integerValue) {
+                itemFilter.setWeekOfYear(integerValue);
             }
 
             @Override
@@ -164,13 +162,13 @@ public class DialogEditItemFilter {
         }, binding.weekOfYear, R.string.dialog_editItemFilter_weekOfYear);
         setupRow(new SetupInterface() {
             @Override
-            public DateItemFilter.IntegerValue get() {
-                return dateItemFilter.getDayOfYear();
+            public FilterGroupItem.ItemFilter.IntegerValue get() {
+                return itemFilter.getDayOfYear();
             }
 
             @Override
-            public void set(DateItemFilter.IntegerValue integerValue) {
-                dateItemFilter.setDayOfYear(integerValue);
+            public void set(FilterGroupItem.ItemFilter.IntegerValue integerValue) {
+                itemFilter.setDayOfYear(integerValue);
             }
 
             @Override
@@ -180,13 +178,13 @@ public class DialogEditItemFilter {
         }, binding.dayOfYear, R.string.dialog_editItemFilter_dayOfYear);
         setupRow(new SetupInterface() {
             @Override
-            public DateItemFilter.IntegerValue get() {
-                return dateItemFilter.getHour();
+            public FilterGroupItem.ItemFilter.IntegerValue get() {
+                return itemFilter.getHour();
             }
 
             @Override
-            public void set(DateItemFilter.IntegerValue integerValue) {
-                dateItemFilter.setHour(integerValue);
+            public void set(FilterGroupItem.ItemFilter.IntegerValue integerValue) {
+                itemFilter.setHour(integerValue);
             }
 
             @Override
@@ -197,13 +195,13 @@ public class DialogEditItemFilter {
 
         setupRow(new SetupInterface() {
             @Override
-            public DateItemFilter.IntegerValue get() {
-                return dateItemFilter.getMinute();
+            public FilterGroupItem.ItemFilter.IntegerValue get() {
+                return itemFilter.getMinute();
             }
 
             @Override
-            public void set(DateItemFilter.IntegerValue integerValue) {
-                dateItemFilter.setMinute(integerValue);
+            public void set(FilterGroupItem.ItemFilter.IntegerValue integerValue) {
+                itemFilter.setMinute(integerValue);
             }
 
             @Override
@@ -214,13 +212,13 @@ public class DialogEditItemFilter {
 
         setupRow(new SetupInterface() {
             @Override
-            public DateItemFilter.IntegerValue get() {
-                return dateItemFilter.getSecond();
+            public FilterGroupItem.ItemFilter.IntegerValue get() {
+                return itemFilter.getSecond();
             }
 
             @Override
-            public void set(DateItemFilter.IntegerValue integerValue) {
-                dateItemFilter.setSecond(integerValue);
+            public void set(FilterGroupItem.ItemFilter.IntegerValue integerValue) {
+                itemFilter.setSecond(integerValue);
             }
             @Override
             public int getCurrentValue() {
@@ -243,7 +241,7 @@ public class DialogEditItemFilter {
 
     private void setupRow(SetupInterface setup, TextView currentValue, TextView field, int resId, Spinner mode, EditText value, Spinner valueEnum, EditText shift, CheckBox isInvert, SimpleSpinnerAdapter<Integer> enumAdapter) {
         boolean enumMode = enumAdapter != null;
-        DateItemFilter.IntegerValue setupValue = setup.get();
+        FilterGroupItem.ItemFilter.IntegerValue setupValue = setup.get();
         value.setEnabled(setupValue != null);
         valueEnum.setEnabled(setupValue != null);
         if (enumMode) valueEnum.setAdapter(enumAdapter);
@@ -312,9 +310,9 @@ public class DialogEditItemFilter {
                 valueEnum.setEnabled(true);
                 shift.setEnabled(true);
                 isInvert.setEnabled(true);
-                DateItemFilter.IntegerValue integerValue = setup.get();
+                FilterGroupItem.ItemFilter.IntegerValue integerValue = setup.get();
                 if (integerValue == null) {
-                    setup.set(integerValue = new DateItemFilter.IntegerValue());
+                    setup.set(integerValue = new FilterGroupItem.ItemFilter.IntegerValue());
                 }
                 if (enumMode) integerValue.setValue(enumAdapter.getItem(valueEnum.getSelectedItemPosition()));
                 integerValue.setMode(selected);
@@ -340,7 +338,7 @@ public class DialogEditItemFilter {
                     } catch (Exception ignored) {
                     }
 
-                    DateItemFilter.IntegerValue integerValue = setup.get();
+                    FilterGroupItem.ItemFilter.IntegerValue integerValue = setup.get();
                     if (integerValue != null) {
                         integerValue.setValue(val);
                         saveSignal.run();
@@ -352,7 +350,7 @@ public class DialogEditItemFilter {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     int val = enumAdapter.getItem(position);
-                    DateItemFilter.IntegerValue integerValue = setup.get();
+                    FilterGroupItem.ItemFilter.IntegerValue integerValue = setup.get();
                     if (integerValue != null) {
                         integerValue.setValue(val);
                         saveSignal.run();
@@ -375,7 +373,7 @@ public class DialogEditItemFilter {
                     val = Integer.parseInt(text);
                 } catch (Exception ignored) {}
 
-                DateItemFilter.IntegerValue integerValue = setup.get();
+                FilterGroupItem.ItemFilter.IntegerValue integerValue = setup.get();
                 if (integerValue != null) {
                     integerValue.setShift(val);
                     saveSignal.run();
@@ -385,7 +383,7 @@ public class DialogEditItemFilter {
 
         isInvert.setOnClickListener(v -> {
             boolean b = isInvert.isChecked();
-            DateItemFilter.IntegerValue integerValue = setup.get();
+            FilterGroupItem.ItemFilter.IntegerValue integerValue = setup.get();
             if (integerValue != null) {
                 integerValue.setInvert(b);
                 saveSignal.run();
@@ -394,8 +392,8 @@ public class DialogEditItemFilter {
     }
 
     private interface SetupInterface {
-        DateItemFilter.IntegerValue get();
-        void set(DateItemFilter.IntegerValue integerValue);
+        FilterGroupItem.ItemFilter.IntegerValue get();
+        void set(FilterGroupItem.ItemFilter.IntegerValue integerValue);
         int getCurrentValue();
     }
 
