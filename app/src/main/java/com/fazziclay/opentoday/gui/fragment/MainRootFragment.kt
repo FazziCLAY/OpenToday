@@ -1,0 +1,88 @@
+package com.fazziclay.opentoday.gui.fragment
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import androidx.fragment.app.Fragment
+import com.fazziclay.opentoday.R
+import com.fazziclay.opentoday.app.App
+import com.fazziclay.opentoday.gui.interfaces.BackStackMember
+import com.fazziclay.opentoday.gui.interfaces.NavigationHost
+import com.fazziclay.opentoday.util.InlineUtil.nullStat
+import com.fazziclay.opentoday.util.Logger
+
+class MainRootFragment : Fragment(), NavigationHost {
+    companion object {
+        private const val TAG = "MainRootFragment"
+        private const val CONTAINER_ID = R.id.content
+        fun create(): MainRootFragment {
+            return MainRootFragment()
+        }
+    }
+
+    private val firstFragmentInterface: FirstFragmentInterface = object : FirstFragmentInterface {
+        override fun create(): Fragment {
+            val app = App.get(requireContext())
+            return if (app.isPinCodeNeed) {
+                EnterPinCodeFragment.create()
+            } else {
+                ItemsTabIncludeFragment.create()
+            }
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Logger.d(TAG, "onCreate saved=${nullStat(savedInstanceState)}")
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        Logger.d(TAG, "onCreateView inflater=${nullStat(inflater)} container=${nullStat(container)} saved=${nullStat(savedInstanceState)}")
+        val frameLayout = FrameLayout(requireContext())
+        frameLayout.id = CONTAINER_ID
+        return frameLayout
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Logger.d(TAG, "onViewCreated saved=${nullStat(savedInstanceState)}")
+        if (savedInstanceState == null) {
+            val first = firstFragmentInterface.create()
+            Logger.d(TAG, "onViewCreated", "fragment replaced to ${first.javaClass.canonicalName}")
+            childFragmentManager.beginTransaction()
+                    .replace(CONTAINER_ID, first)
+                    .commit()
+        }
+    }
+
+    override fun popBackStack(): Boolean {
+        Logger.d(TAG, "popBackStack")
+        val currentFragment = childFragmentManager.findFragmentById(CONTAINER_ID)
+        if (currentFragment is BackStackMember) {
+            Logger.d(TAG, "popBackStack", "current fragment is BackStackMember!")
+            if (currentFragment.popBackStack()) {
+                return true
+            }
+        }
+        Logger.d(TAG, "popBackStack", "pop internal")
+        if (childFragmentManager.backStackEntryCount > 0) {
+            childFragmentManager.popBackStack()
+            return true
+        }
+        return false
+    }
+
+    override fun navigate(fragment: Fragment, addToBackStack: Boolean) {
+        Logger.d(TAG, "navigate to=$fragment addToBack=$addToBackStack")
+        val transaction = childFragmentManager.beginTransaction()
+                .replace(CONTAINER_ID, fragment)
+        if (addToBackStack) transaction.addToBackStack(null)
+        transaction.commit()
+    }
+
+    internal interface FirstFragmentInterface {
+        fun create(): Fragment
+    }
+}

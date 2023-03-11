@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.License;
+import com.fazziclay.opentoday.util.License;
 
 public class OpenSourceLicensesActivity extends AppCompatActivity {
     private License[] licenses;
