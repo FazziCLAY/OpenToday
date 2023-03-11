@@ -123,17 +123,17 @@ public class ItemsEditorFragment extends Fragment {
                     .setOnItemOpenEditor((item) -> rootNavigationHost.navigate(ItemEditorFragment.edit(item.getId()), true))
                     .setStorageEditsActions(new StorageEditsActions() {
                         @Override
-                        public void onGroupEdit(GroupItem groupItem) {
+                        public void onGroupEdit(@NonNull GroupItem groupItem) {
                             navigationHost.navigate(createItem(tabId, groupItem.getId()), true);
                         }
 
                         @Override
-                        public void onCycleListEdit(CycleListItem cycleListItem) {
+                        public void onCycleListEdit(@NonNull CycleListItem cycleListItem) {
                             navigationHost.navigate(createItem(tabId, cycleListItem.getId()), true);
                         }
 
                         @Override
-                        public void onFilterGroupEdit(FilterGroupItem filterGroupItem) {
+                        public void onFilterGroupEdit(@NonNull FilterGroupItem filterGroupItem) {
                             navigationHost.navigate(createItem(tabId, filterGroupItem.getId()), true);
                         }
                     })

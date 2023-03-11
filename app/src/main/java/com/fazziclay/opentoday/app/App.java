@@ -76,7 +76,7 @@ public class App extends Application {
 
     // Instance
     private static volatile App instance = null;
-    public static App get(Context context) {
+    public static App get(@NotNull Context context) {
         return (App) context.getApplicationContext();
     }
     public static App get() {
