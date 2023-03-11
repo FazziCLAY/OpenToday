@@ -1,88 +1,82 @@
-package com.fazziclay.opentoday.gui.fragment;
+package com.fazziclay.opentoday.gui.fragment
 
-import static com.fazziclay.opentoday.util.InlineUtil.viewClick;
+import android.graphics.Color
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import com.fazziclay.opentoday.app.App
+import com.fazziclay.opentoday.databinding.FragmentEnterPincodeBinding
+import com.fazziclay.opentoday.gui.UI
+import com.fazziclay.opentoday.util.InlineUtil.viewClick
 
-import android.graphics.Color;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
-import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.databinding.FragmentEnterPincodeBinding;
-import com.fazziclay.opentoday.gui.UI;
-
-public class EnterPinCodeFragment extends Fragment {
-    private FragmentEnterPincodeBinding binding;
-    private App app;
-    private boolean isAllowed = false;
-    private int tryNumber = 0;
-    private String currentPin = "";
-    private boolean isKeyboardLock = false;
-
-    public static EnterPinCodeFragment create() {
-        return new EnterPinCodeFragment();
+class EnterPinCodeFragment : Fragment() {
+    companion object {
+        fun create(): EnterPinCodeFragment {
+            return EnterPinCodeFragment()
+        }
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        this.app = App.get(requireContext());
+    private lateinit var binding: FragmentEnterPincodeBinding
+    private lateinit var app: App
+    private var isAllowed = false
+    private var tryNumber = 0
+    private var currentPin = ""
+    private var isKeyboardLock = false
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        app = App.get(requireContext())
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = FragmentEnterPincodeBinding.inflate(getLayoutInflater());
-        setupKeyboardEmulator();
-        return binding.getRoot();
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = FragmentEnterPincodeBinding.inflate(layoutInflater)
+        setupKeyboardEmulator()
+        return binding.root
     }
 
-    private void allow() {
-        isAllowed = true;
-        UI.findFragmentInParents(this, MainRootFragment.class).navigate(ItemsTabIncludeFragment.create(), false);
+    private fun allow() {
+        isAllowed = true
+        UI.findFragmentInParents(this, MainRootFragment::class.java)!!.navigate(ItemsTabIncludeFragment.create(), false)
     }
 
-    private void setupKeyboardEmulator() {
-        viewClick(binding.number0, () -> onNumberPress((byte) 0));
-        viewClick(binding.number1, () -> onNumberPress((byte) 1));
-        viewClick(binding.number2, () -> onNumberPress((byte) 2));
-        viewClick(binding.number3, () -> onNumberPress((byte) 3));
-        viewClick(binding.number4, () -> onNumberPress((byte) 4));
-        viewClick(binding.number5, () -> onNumberPress((byte) 5));
-        viewClick(binding.number6, () -> onNumberPress((byte) 6));
-        viewClick(binding.number7, () -> onNumberPress((byte) 7));
-        viewClick(binding.number8, () -> onNumberPress((byte) 8));
-        viewClick(binding.number9, () -> onNumberPress((byte) 9));
+    private fun setupKeyboardEmulator() {
+        viewClick(binding.number0, Runnable { onNumberPress('0') })
+        viewClick(binding.number1, Runnable { onNumberPress('1') })
+        viewClick(binding.number2, Runnable { onNumberPress('2') })
+        viewClick(binding.number3, Runnable { onNumberPress('3') })
+        viewClick(binding.number4, Runnable { onNumberPress('4') })
+        viewClick(binding.number5, Runnable { onNumberPress('5') })
+        viewClick(binding.number6, Runnable { onNumberPress('6') })
+        viewClick(binding.number7, Runnable { onNumberPress('7') })
+        viewClick(binding.number8, Runnable { onNumberPress('8') })
+        viewClick(binding.number9, Runnable { onNumberPress('9') })
     }
 
-    private void onNumberPress(byte n) {
-        if (isKeyboardLock) return;
-        currentPin = currentPin + n;
-        onPinChanged();
+    private fun onNumberPress(n: Char) {
+        if (isKeyboardLock) return
+        currentPin += n
+        onPinChanged()
     }
 
-    private void onPinChanged() {
-        String s = currentPin;
-
-        binding.pin.setText(s);
-        if (s.length() == app.getPinCodeLength()) {
+    private fun onPinChanged() {
+        val s = currentPin
+        binding.pin.text = s
+        if (s.length == app.pinCodeLength) {
             if (app.isPinCodeAllow(s)) {
-                binding.pin.setTextColor(Color.GREEN);
-                allow();
+                binding.pin.setTextColor(Color.GREEN)
+                allow()
             } else {
-                tryNumber++;
+                tryNumber++
                 if (tryNumber >= 5) {
-                    isKeyboardLock = true;
-                    binding.pin.setVisibility(View.GONE);
-                    binding.timeout.setVisibility(View.VISIBLE);
+                    isKeyboardLock = true
+                    binding.pin.visibility = View.GONE
+                    binding.timeout.visibility = View.VISIBLE
                 }
-                currentPin = "";
-                onPinChanged();
+                currentPin = ""
+                onPinChanged()
             }
         }
     }
