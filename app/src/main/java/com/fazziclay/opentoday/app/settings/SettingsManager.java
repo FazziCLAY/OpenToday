@@ -177,25 +177,14 @@ public class SettingsManager {
 
 
     public enum ItemAction {
-        OPEN_EDITOR(R.string.itemAction_OPEN_EDITOR),
-        SELECT_REVERT(R.string.itemAction_SELECT_REVERT),
-        SELECT_ON(R.string.itemAction_SELECT_ON),
-        SELECT_OFF(R.string.itemAction_SELECT_OFF),
-        DELETE_REQUEST(R.string.itemAction_DELETE_REQUEST),
-        MINIMIZE_REVERT(R.string.itemAction_MINIMIZE_REVERT),
-        MINIMIZE_ON(R.string.itemAction_MINIMIZE_ON),
-        MINIMIZE_OFF(R.string.itemAction_MINIMIZE_OFF);
-
-        @StringRes
-        private final int resId;
-
-        ItemAction(@StringRes int resId) {
-            this.resId = resId;
-        }
-
-        public int nameResId() {
-            return resId;
-        }
+        OPEN_EDITOR,
+        SELECT_REVERT,
+        SELECT_ON,
+        SELECT_OFF,
+        DELETE_REQUEST,
+        MINIMIZE_REVERT,
+        MINIMIZE_ON,
+        MINIMIZE_OFF
     }
 
     public enum FirstTab {

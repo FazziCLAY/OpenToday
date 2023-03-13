@@ -14,6 +14,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
+import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.util.MinBaseAdapter;
 
 public class DialogSelectItemAction {
@@ -62,7 +63,7 @@ public class DialogSelectItemAction {
 
                 TextView textView = new TextView(DialogSelectItemAction.this.activity);
                 textView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                textView.setText((selected == itemAction ? " > " : "") + activity.getString(itemAction.nameResId()));
+                textView.setText((selected == itemAction ? " > " : "") + EnumsRegistry.INSTANCE.name(itemAction, activity));
                 textView.setTextSize(20);
                 if (itemAction == DialogSelectItemAction.this.selected) textView.setTextColor(Color.RED);
                 return textView;
