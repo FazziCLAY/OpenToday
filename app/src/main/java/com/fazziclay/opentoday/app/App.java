@@ -104,7 +104,8 @@ public class App extends Application {
             //FeatureFlag.SHOW_MAINACTIVITY_STARTUP_TIME,
             FeatureFlag.AVAILABLE_UI_PERSONAL_TICK,
             FeatureFlag.AVAILABLE_RESTART_ACTIVITY,
-            FeatureFlag.AVAILABLE_RESET_SETUP
+            FeatureFlag.AVAILABLE_RESET_SETUP,
+            FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION
     ) : Collections.emptyList());
     private long appStartupTime = 0;
 

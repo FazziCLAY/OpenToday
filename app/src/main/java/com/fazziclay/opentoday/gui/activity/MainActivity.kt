@@ -167,7 +167,7 @@ class MainActivity : AppCompatActivity() {
 
     // App is DEBUG warning notify
     private fun setupAppDebugNotify() {
-        if (!App.DEBUG) return
+        if (!App.DEBUG || app.isFeatureFlag(FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION)) return
 
         val b = NotificationDebugappBinding.inflate(layoutInflater)
         binding.notifications.addView(b.root)

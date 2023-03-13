@@ -11,7 +11,8 @@ public enum FeatureFlag {
     AVAILABLE_UI_PERSONAL_TICK("Toolbar -> OpenToday debug button"),
     DISABLE_AUTOMATIC_TICK("DISABLE ALL AUTOMATIC TICK IN ItemManager caps :)"),
     AVAILABLE_RESTART_ACTIVITY("Toolbar -> OpenToday: restart activity button"),
-    AVAILABLE_RESET_SETUP("Toolbar -> OpenToday: reset setup");
+    AVAILABLE_RESET_SETUP("Toolbar -> OpenToday: reset setup"),
+    DISABLE_DEBUG_MODE_NOTIFICATION("Disable debug-notification on mainActivity");
 
     private final String description;
 
