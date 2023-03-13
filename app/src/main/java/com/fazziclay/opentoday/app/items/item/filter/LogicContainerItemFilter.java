@@ -84,8 +84,9 @@ public class LogicContainerItemFilter extends ItemFilter {
         return reverse != isFit0(fitEquip); // apply reverse
     }
 
-    public void add(ItemFilter itemFilter) {
+    public int add(ItemFilter itemFilter) {
         filters.add(itemFilter);
+        return filters.indexOf(itemFilter);
     }
 
     public void remove(ItemFilter filter) {
