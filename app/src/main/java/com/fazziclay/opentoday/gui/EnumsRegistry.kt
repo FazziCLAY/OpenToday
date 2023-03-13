@@ -1,6 +1,7 @@
 package com.fazziclay.opentoday.gui
 
 import android.content.Context
+import androidx.annotation.StringRes
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.items.item.filter.LogicMode
 import com.fazziclay.opentoday.app.settings.SettingsManager
@@ -22,6 +23,7 @@ object EnumsRegistry {
         EnumInfo(SettingsManager.ItemAction.MINIMIZE_OFF,           R.string.itemAction_MINIMIZE_OFF),
     )
 
+    @StringRes
     fun nameResId(e: Enum<*>): Int {
         for (info in INFOS) {
             if (info.e === e) {
