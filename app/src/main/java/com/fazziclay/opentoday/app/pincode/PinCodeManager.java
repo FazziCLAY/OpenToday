@@ -45,7 +45,7 @@ public class PinCodeManager {
             }
         }
         sharedPreferences.edit().putString(App.SHARED_KEY_PINCODE, pin).apply();
-        FileUtil.setText(backupFile, pin);
+        FileUtil.setText(backupFile, pin); // TODO: 2023.05.09 make a #comment in head of backup file with text: ...This is pin-c0de backup file! Do not edit this. ...
     }
 
     public static class ContainNonDigitChars extends RuntimeException {
