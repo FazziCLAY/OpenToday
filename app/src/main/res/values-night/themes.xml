@@ -160,6 +160,9 @@
     <style name="Theme.OpenToday.Toolbar.Section.Text.Tabs.TabsListTitle" parent="OpenToday.Base.Toolbar.Section.Text.Tabs">
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">#FFFFFF</item>
+        <item name="android:background">@drawable/shape</item>
+        <item name="android:backgroundTint">#E1000000</item>
+        <item name="android:padding">2sp</item>
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Button.Tabs.Add" parent="OpenToday.Base.Toolbar.Section.Button.Tabs">
         <item name="android:backgroundTint">#1DC2F4</item>
