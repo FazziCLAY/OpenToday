@@ -167,6 +167,19 @@ public class Cherry {
         return Cherry.of(jsonObject);
     }
 
+    public Cherry getCherry(String key) {
+        if (!has(key)) return null;
+        return Cherry.of(json.optJSONObject(key));
+    }
+
+    public double optDouble(String key, double def) {
+        return json.optDouble(key, def);
+    }
+
+    public boolean has(String key) {
+        return json.has(key);
+    }
+
     public boolean isEmpty() {
         return json.length() == 0;
     }
@@ -175,5 +188,14 @@ public class Cherry {
     @Override
     public String toString() {
         return "Cherry"+json.toString();
+    }
+
+    public String getString(String key) {
+        if (!has(key)) return null;
+        try {
+            return json.getString(key);
+        } catch (Exception e) {
+            throw new CherryException("getString exception", e);
+        }
     }
 }

@@ -57,4 +57,17 @@ public class CherryOrchard {
     public String toString() {
         return "CherryOrchard" + json.toString();
     }
+
+    public void forEachCherry(CherryConsumer cherryConsumer) {
+        // make reverse loop
+        int i = 0;
+        while (i < length()) {
+            cherryConsumer.consume(getCherryAt(i));
+            i++;
+        }
+    }
+
+    public interface CherryConsumer {
+        void consume(Cherry cherry);
+    }
 }
