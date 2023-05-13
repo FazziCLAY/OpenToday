@@ -3,7 +3,7 @@ package com.fazziclay.opentoday.gui
 import android.content.Context
 import androidx.annotation.StringRes
 import com.fazziclay.opentoday.R
-import com.fazziclay.opentoday.app.items.item.filter.LogicMode
+import com.fazziclay.opentoday.app.items.item.filter.LogicContainerItemFilter.LogicMode
 import com.fazziclay.opentoday.app.settings.SettingsManager
 
 // GUI-only
