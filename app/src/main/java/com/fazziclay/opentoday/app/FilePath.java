@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.io.File;
 
+@Deprecated
 public class FilePath {
     public static final String FILES = "files";
     public static final String CACHE = "cache";
