@@ -3,19 +3,18 @@ package com.fazziclay.opentoday.app.items.item;
 import androidx.annotation.NonNull;
 
 import com.fazziclay.opentoday.app.TickSession;
+import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
 
-import org.json.JSONObject;
-
 public class DebugTickCounterItem extends TextItem {
     // START - Save
-    public final static DebugTickCounterItemIETool IE_TOOL = new DebugTickCounterItemIETool();
-    public static class DebugTickCounterItemIETool extends TextItem.TextItemIETool {
+    public final static DebugTickCounterItemCodec CODEC = new DebugTickCounterItemCodec();
+    public static class DebugTickCounterItemCodec extends TextItemCodec {
         @NonNull
         @Override
-        public JSONObject exportItem(@NonNull Item item) throws Exception {
+        public Cherry exportItem(@NonNull Item item) {
             DebugTickCounterItem debugTickCounterItem = (DebugTickCounterItem) item;
             return super.exportItem(debugTickCounterItem)
                     .put("counter", debugTickCounterItem.counter);
@@ -24,10 +23,10 @@ public class DebugTickCounterItem extends TextItem {
         private final DebugTickCounterItem defaultValues = new DebugTickCounterItem();
         @NonNull
         @Override
-        public Item importItem(@NonNull JSONObject json, Item item) throws Exception {
+        public Item importItem(@NonNull Cherry cherry, Item item) {
             DebugTickCounterItem debugTickCounterItem = item != null ? (DebugTickCounterItem) item : new DebugTickCounterItem();
-            super.importItem(json, debugTickCounterItem);
-            debugTickCounterItem.counter = json.optInt("counter", defaultValues.counter);
+            super.importItem(cherry, debugTickCounterItem);
+            debugTickCounterItem.counter = cherry.optInt("counter", defaultValues.counter);
             return debugTickCounterItem;
         }
     }
