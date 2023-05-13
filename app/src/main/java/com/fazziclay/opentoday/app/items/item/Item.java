@@ -6,18 +6,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.TickSession;
-import com.fazziclay.opentoday.app.items.ID;
+import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
+import com.fazziclay.opentoday.app.items.Unique;
+import com.fazziclay.opentoday.app.items.callback.ItemCallback;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
-import com.fazziclay.opentoday.app.items.notification.ItemNotificationIEUtil;
+import com.fazziclay.opentoday.app.items.notification.ItemNotificationCodecUtil;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationUtil;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.annotation.Setter;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.fazziclay.opentoday.util.callback.CallbackStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,44 +26,50 @@ import java.util.UUID;
 /**
  * Main app count (contain information) todo add javadoc to Item :)
  */
-public abstract class Item implements ID {
+public abstract class Item implements Unique {
     // START - Save
-    public static class ItemIETool extends ItemImportExportTool {
+    public static class ItemCodec extends AbstractItemCodec {
+        private static final String KEY_ID = "id";
+        private static final String KEY_VIEW_MIN_HEIGHT = "viewMinHeight";
+        private static final String KEY_VIEW_BACKGROUND_COLOR = "viewBackgroundColor";
+        private static final String KEY_VIEW_CUSTOM_BACKGROUND_COLOR = "viewCustomBackgroundColor";
+        private static final String KEY_NOTIFICATIONS = "notifications";
+        private static final String KEY_MINIMIZE = "minimize";
         @NonNull
         @Override
-        public JSONObject exportItem(@NonNull Item item) throws Exception {
-            return new JSONObject()
-                    .put("id", item.id.toString())
-                    .put("viewMinHeight", item.viewMinHeight)
-                    .put("viewBackgroundColor", item.viewBackgroundColor)
-                    .put("viewCustomBackgroundColor", item.viewCustomBackgroundColor)
-                    .put("minimize", item.minimize)
-                    .put("notifications", ItemNotificationIEUtil.exportNotifications(item.notifications));
+        public Cherry exportItem(@NonNull Item item) {
+            return new Cherry()
+                    .put(KEY_ID, item.id.toString())
+                    .put(KEY_VIEW_MIN_HEIGHT, item.viewMinHeight)
+                    .put(KEY_VIEW_BACKGROUND_COLOR, item.viewBackgroundColor)
+                    .put(KEY_VIEW_CUSTOM_BACKGROUND_COLOR, item.viewCustomBackgroundColor)
+                    .put(KEY_MINIMIZE, item.minimize)
+                    .put(KEY_NOTIFICATIONS, ItemNotificationCodecUtil.exportNotificationList(item.notifications));
         }
 
         private final Item defaultValues = new Item(){};
         @NonNull
         @Override
-        public Item importItem(@NonNull JSONObject json, Item item) throws Exception {
-            applyId(item, json);
-            item.viewMinHeight = json.optInt("viewMinHeight", defaultValues.viewMinHeight);
-            item.viewBackgroundColor = json.optInt("viewBackgroundColor", defaultValues.viewBackgroundColor);
-            item.viewCustomBackgroundColor = json.optBoolean("viewCustomBackgroundColor", defaultValues.viewCustomBackgroundColor);
-            item.minimize = json.optBoolean("minimize", defaultValues.minimize);
-            JSONArray jsonArray = json.optJSONArray("notifications");
-            item.notifications = ItemNotificationIEUtil.importNotifications(jsonArray != null ? jsonArray : new JSONArray());
+        public Item importItem(@NonNull Cherry cherry, Item item) {
+            if (item == null) throw new NullPointerException("item is null");
+            applyId(item, cherry);
+            item.viewMinHeight = cherry.optInt(KEY_VIEW_MIN_HEIGHT, defaultValues.viewMinHeight);
+            item.viewBackgroundColor = cherry.optInt(KEY_VIEW_BACKGROUND_COLOR, defaultValues.viewBackgroundColor);
+            item.viewCustomBackgroundColor = cherry.optBoolean(KEY_VIEW_CUSTOM_BACKGROUND_COLOR, defaultValues.viewCustomBackgroundColor);
+            item.minimize = cherry.optBoolean(KEY_MINIMIZE, defaultValues.minimize);
+            item.notifications = ItemNotificationCodecUtil.importNotificationList(cherry.optOrchard(KEY_NOTIFICATIONS));
             return item;
         }
 
-        private void applyId(Item o, JSONObject json) {
-            String stringId = json.optString("id", null);
+        private void applyId(Item item, Cherry cherry) {
+            String stringId = cherry.optString(KEY_ID, null);
             if (stringId == null) {
-                o.id = UUID.randomUUID();
+                item.id = UUID.randomUUID();
             } else {
                 try {
-                    o.id = UUID.fromString(stringId);
+                    item.id = UUID.fromString(stringId);
                 } catch (Exception e) {
-                    o.id = UUID.randomUUID();
+                    item.id = UUID.randomUUID();
                 }
             }
         }
@@ -74,6 +80,7 @@ public abstract class Item implements ID {
 
     @Nullable @RequireSave @SaveKey(key = "id") private UUID id;
     @Nullable private ItemController controller;
+    private final CallbackStorage<ItemCallback> itemCallbacks = new CallbackStorage<>();
     @SaveKey(key = "viewMinHeight") @RequireSave private int viewMinHeight = 0; // минимальная высота
     @SaveKey(key = "viewBackgroundColor") @RequireSave private int viewBackgroundColor = Color.parseColor(DEFAULT_BACKGROUND_COLOR); // фоновый цвет
     @SaveKey(key = "viewCustomBackgroundColor") @RequireSave private boolean viewCustomBackgroundColor = false; // юзаем ли фоновый цвет
@@ -107,14 +114,17 @@ public abstract class Item implements ID {
 
     public void delete() {
         if (isAttached()) controller.delete(this);
+        itemCallbacks.run((callbackStorage, callback) -> callback.delete(Item.this));
     }
 
     public void save() {
         if (isAttached()) controller.save(this);
+        itemCallbacks.run((callbackStorage, callback) -> callback.save(Item.this));
     }
 
     public void visibleChanged() {
         if (isAttached()) controller.updateUi(this);
+        itemCallbacks.run((callbackStorage, callback) -> callback.updateUi(Item.this));
     }
 
     public boolean isAttached() {
@@ -128,20 +138,27 @@ public abstract class Item implements ID {
     public void attach(ItemController itemController) {
         this.controller = itemController;
         regenerateId();
+        itemCallbacks.run((callbackStorage, callback) -> callback.attached(Item.this));
     }
 
     public void detach() {
         this.controller = null;
         this.id = null;
+        itemCallbacks.run((callbackStorage, callback) -> callback.detached(Item.this));
     }
 
     public void tick(TickSession tickSession) {
         ItemNotificationUtil.tick(tickSession, notifications, this);
+        itemCallbacks.run((callbackStorage, callback) -> callback.tick(Item.this));
     }
 
     public Item regenerateId() {
         this.id = UUID.randomUUID();
         return this;
+    }
+
+    public CallbackStorage<ItemCallback> getItemCallbacks() {
+        return itemCallbacks;
     }
 
     /**
@@ -172,9 +189,9 @@ public abstract class Item implements ID {
     @Setter public void setMinimize(boolean minimize) { this.minimize = minimize; }
 
     @Getter @NonNull public List<ItemNotification> getNotifications() { return notifications; }
-    @Getter public ItemsStorage getParentItemStorage() {
+    @Getter public ItemsStorage getParentItemsStorage() {
         if (isAttached()) {
-            return controller.getParentItemStorage(this);
+            return controller.getParentItemsStorage(this);
         }
         return null;
     }
