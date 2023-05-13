@@ -64,12 +64,12 @@ public class App extends Application {
     // DEBUG
     public static final boolean SHADOW_RELEASE = false;
     public static final boolean DEBUG = !SHADOW_RELEASE && CustomBuildConfig.DEBUG;
-    public static final boolean LOG = (DEBUG || false);
-    public static final boolean DEBUG_TICK_NOTIFICATION = (DEBUG & false);
-    public static final int DEBUG_MAIN_ACTIVITY_START_SLEEP = (DEBUG & false) ? 6000 : 0;
-    public static final int DEBUG_APP_START_SLEEP = (DEBUG & false) ? 8000 : 0;
-    public static Class<? extends Activity> DEBUG_MAIN_ACTIVITY = (DEBUG & false) ? OpenSourceLicensesActivity.class : null;
-    public static final boolean DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY = (DEBUG && false);
+    public static final boolean LOG = debug(false);
+    public static final boolean DEBUG_TICK_NOTIFICATION = debug(false);
+    public static final int DEBUG_MAIN_ACTIVITY_START_SLEEP = debug(false) ? 6000 : 0;
+    public static final int DEBUG_APP_START_SLEEP = debug(false) ? 8000 : 0;
+    public static Class<? extends Activity> DEBUG_MAIN_ACTIVITY = debug(false) ? OpenSourceLicensesActivity.class : null;
+    public static final boolean DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY = debug(false);
 
     private static Thread.UncaughtExceptionHandler androidUncaughtHandler;
     private static Thread.UncaughtExceptionHandler appUncaughtHandler;
@@ -81,6 +81,10 @@ public class App extends Application {
     }
     public static App get() {
         return instance;
+    }
+
+    public static boolean debug(boolean b) {
+        return (DEBUG && b);
     }
 
     // Application
@@ -109,6 +113,15 @@ public class App extends Application {
     ) : Collections.emptyList());
     private long appStartupTime = 0;
 
+    /**
+     * OPENTODAY APPLICATION INITIALIZE
+     * <p>1. Setup {@link #instance} variable to this object</p>
+     * <p>2. Setup UncaughtExceptionHandler to CrashReport</p>
+     * <p>3. {@link DataFixer} run</p>
+     * <p>4. (Android) Registry notification channels</p>
+     * <p>5. (TODO) setup PinCodeManager</p>
+     * <p>6. {@link #updateVersionFile()} if {@link FixResult} return true and send Telemetry signal about datafixer work</p>
+     */
     @Override
     public void onCreate() {
         long start = System.currentTimeMillis();
@@ -123,7 +136,7 @@ public class App extends Application {
 
             registryNotificationsChannels();
 
-            this.pinCodeManager = new PinCodeManager(this);
+            this.pinCodeManager = new PinCodeManager(this); // TODO: 2023.05.09 init if needed!
 
             if (fixResult.isVersionFileUpdateRequired()) updateVersionFile();
             if (fixResult.isFixed()) {
