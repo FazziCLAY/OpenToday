@@ -2,20 +2,19 @@ package com.fazziclay.opentoday.app.items.item;
 
 import androidx.annotation.NonNull;
 
+import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.annotation.Setter;
 
-import org.json.JSONObject;
-
 public class CounterItem extends TextItem {
     // START - Save
-    public final static CounterItemIETool IE_TOOL = new CounterItemIETool();
-    public static class CounterItemIETool extends TextItem.TextItemIETool {
+    public final static CounterItemCodec CODEC = new CounterItemCodec();
+    public static class CounterItemCodec extends TextItemCodec {
         @NonNull
         @Override
-        public JSONObject exportItem(@NonNull Item item) throws Exception {
+        public Cherry exportItem(@NonNull Item item) {
             CounterItem counterItem = (CounterItem) item;
             return super.exportItem(item)
                     .put("counter", counterItem.counter)
@@ -25,11 +24,11 @@ public class CounterItem extends TextItem {
         private final CounterItem defaultValues = new CounterItem();
         @NonNull
         @Override
-        public Item importItem(@NonNull JSONObject json, Item item) throws Exception {
+        public Item importItem(@NonNull Cherry cherry, Item item) {
             CounterItem counterItem = item != null ? (CounterItem) item : new CounterItem();
-            super.importItem(json, counterItem);
-            counterItem.counter = json.optDouble("counter", defaultValues.counter);
-            counterItem.step = json.optDouble("step", defaultValues.step);
+            super.importItem(cherry, counterItem);
+            counterItem.counter = cherry.optDouble("counter", defaultValues.counter);
+            counterItem.step = cherry.optDouble("step", defaultValues.step);
             return counterItem;
         }
     }
