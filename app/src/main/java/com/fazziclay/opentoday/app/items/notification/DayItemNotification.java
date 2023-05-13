@@ -9,19 +9,18 @@ import androidx.core.app.NotificationCompat;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.TickSession;
+import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.item.Item;
-
-import org.json.JSONObject;
 
 import java.util.Calendar;
 
 public class DayItemNotification implements ItemNotification {
-    public static final ItemNotificationIETool IE_TOOL = new IeTool();
-    private static class IeTool extends ItemNotificationIETool {
+    public static final ItemNotificationCodec IE_TOOL = new Codec();
+    private static class Codec extends ItemNotificationCodec {
         @Override
-        public JSONObject exportNotification(ItemNotification itemNotification) throws Exception {
+        public Cherry exportNotification(ItemNotification itemNotification) {
             DayItemNotification d = (DayItemNotification) itemNotification;
-            return new JSONObject()
+            return new Cherry()
                     .put("notificationId", d.notificationId)
                     .put("notifyTitle", d.notifyTitle)
                     .put("notifyTitleFromItemText", d.notifyTitleFromItemText)
@@ -33,16 +32,16 @@ public class DayItemNotification implements ItemNotification {
         }
 
         @Override
-        public ItemNotification importNotification(JSONObject json) {
+        public ItemNotification importNotification(Cherry cherry) {
             DayItemNotification o = new DayItemNotification();
-            o.notificationId = json.optInt("notificationId", 543);
-            o.notifyTitle = json.optString("notifyTitle", "");
-            o.notifyTitleFromItemText = json.optBoolean("notifyTitleFromItemText", true);
-            o.notifyText = json.optString("notifyText", "");
-            o.notifyTextFromItemText = json.optBoolean("notifyTextFromItemText", true);
-            o.notifySubText = json.optString("notifySubText", "");
-            o.latestDayOfYear = json.optInt("latestDayOfYear", 0);
-            o.time = json.optInt("time", 0);
+            o.notificationId = cherry.optInt("notificationId", 543);
+            o.notifyTitle = cherry.optString("notifyTitle", "");
+            o.notifyTitleFromItemText = cherry.optBoolean("notifyTitleFromItemText", true);
+            o.notifyText = cherry.optString("notifyText", "");
+            o.notifyTextFromItemText = cherry.optBoolean("notifyTextFromItemText", true);
+            o.notifySubText = cherry.optString("notifySubText", "");
+            o.latestDayOfYear = cherry.optInt("latestDayOfYear", 0);
+            o.time = cherry.optInt("time", 0);
 
             return o;
         }

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.TickSession;
+import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.ItemsUtils;
 import com.fazziclay.opentoday.app.items.SimpleItemsStorage;
@@ -12,34 +13,26 @@ import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.UUID;
 
 public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
     // START - Save
-    public final static GroupItemIETool IE_TOOL = new GroupItemIETool();
-    public static class GroupItemIETool extends TextItem.TextItemIETool {
+    public final static GroupItemCodec CODEC = new GroupItemCodec();
+    public static class GroupItemCodec extends TextItemCodec {
         @NonNull
         @Override
-        public JSONObject exportItem(@NonNull Item item) throws Exception {
+        public Cherry exportItem(@NonNull Item item) {
             GroupItem groupItem = (GroupItem) item;
             return super.exportItem(item)
-                    .put("items", ItemIEUtil.exportItemList(groupItem.getAllItems()));
+                    .put("items", ItemCodecUtil.exportItemList(groupItem.getAllItems()));
         }
 
         @NonNull
         @Override
-        public Item importItem(@NonNull JSONObject json, Item item) throws Exception {
+        public Item importItem(@NonNull Cherry cherry, Item item) {
             GroupItem groupItem = item != null ? (GroupItem) item : new GroupItem();
-            super.importItem(json, groupItem);
-
-            // Items
-            JSONArray jsonItems = json.optJSONArray("items");
-            if (jsonItems == null) jsonItems = new JSONArray();
-            groupItem.itemsStorage.importData(ItemIEUtil.importItemList(jsonItems));
-
+            super.importItem(cherry, groupItem);
+            groupItem.itemsStorage.importData(ItemCodecUtil.importItemList(cherry.optOrchard("items")));
             return groupItem;
         }
     }
@@ -104,6 +97,11 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
     }
 
     @Override
+    public boolean isEmpty() {
+        return itemsStorage.isEmpty();
+    }
+
+    @Override
     public Item getItemById(UUID itemId) {
         return itemsStorage.getItemById(itemId);
     }
@@ -150,12 +148,6 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
         @Override
         public void save() {
             GroupItem.this.save();
-        }
-
-        @Override
-        public void deleteItem(Item item) {
-            App.get().getItemManager().deselectItem(item); // TODO: 31.08.2022 other fix??  !!BUGFIX!!
-            super.deleteItem(item);
         }
     }
 }

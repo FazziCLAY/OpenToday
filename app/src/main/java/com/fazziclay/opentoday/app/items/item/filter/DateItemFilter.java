@@ -2,50 +2,54 @@ package com.fazziclay.opentoday.app.items.item.filter;
 
 import androidx.annotation.NonNull;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.fazziclay.opentoday.app.data.Cherry;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class DateItemFilter extends ItemFilter implements Cloneable {
-    public static final FilterImportExportTool IE_TOOL = new FilterImportExportTool() {
-        @Override
-        public JSONObject exportFilter(ItemFilter filter) throws Exception {
-            DateItemFilter f = (DateItemFilter) filter;
-            JSONObject j = new JSONObject();
-            j.put("description", f.description);
-            if (f.year != null) j.put("year", f.year.exportI());
-            if (f.month != null) j.put("month", f.month.exportI());
-            if (f.dayOfWeek != null) j.put("dayOfWeek", f.dayOfWeek.exportI());
-            if (f.dayOfMonth != null) j.put("dayOfMonth", f.dayOfMonth.exportI());
-            if (f.weekOfYear != null) j.put("weekOfYear", f.weekOfYear.exportI());
-            if (f.dayOfYear != null) j.put("dayOfYear", f.dayOfYear.exportI());
-            if (f.hour != null) j.put("hour", f.hour.exportI());
-            if (f.minute != null) j.put("minute", f.minute.exportI());
-            if (f.second != null) j.put("second", f.second.exportI());
+    public static final FilterCodec CODEC = new DateItemFilterCodec();
+    private static class DateItemFilterCodec extends FilterCodec {
+        private final static String KEY_DESCRIPTION = "description";
 
-            return j;
+        @NonNull
+        @Override
+        public Cherry exportFilter(@NonNull ItemFilter filter) {
+            DateItemFilter f = (DateItemFilter) filter;
+            return new Cherry()
+                    .put(KEY_DESCRIPTION, f.description)
+                    .put("year", f.year == null ? null : f.year.exportCherry())
+                    .put("month", f.month == null ? null : f.month.exportCherry())
+                    .put("dayOfWeek", f.dayOfWeek == null ? null : f.dayOfWeek.exportCherry())
+                    .put("dayOfMonth", f.dayOfMonth == null ? null : f.dayOfMonth.exportCherry())
+                    .put("weekOfYear", f.weekOfYear == null ? null : f.weekOfYear.exportCherry())
+                    .put("dayOfYear", f.dayOfYear == null ? null : f.dayOfYear.exportCherry())
+                    .put("hour", f.hour == null ? null : f.hour.exportCherry())
+                    .put("minute", f.minute == null ? null : f.minute.exportCherry())
+                    .put("second", f.second == null ? null : f.second.exportCherry());
         }
 
+        @NonNull
         @Override
-        public ItemFilter importFilter(JSONObject json, ItemFilter d) {
+        public ItemFilter importFilter(@NonNull Cherry cherry, ItemFilter d) {
             DateItemFilter i = new DateItemFilter();
 
-            i.description = json.optString("description", i.description);
-            i.year = IntegerValue.importI(json.optJSONObject("year"));
-            i.month = IntegerValue.importI(json.optJSONObject("month"));
-            i.dayOfWeek = IntegerValue.importI(json.optJSONObject("dayOfWeek"));
-            i.dayOfMonth = IntegerValue.importI(json.optJSONObject("dayOfMonth"));
-            i.weekOfYear = IntegerValue.importI(json.optJSONObject("weekOfYear"));
-            i.dayOfYear = IntegerValue.importI(json.optJSONObject("dayOfYear"));
-            i.hour = IntegerValue.importI(json.optJSONObject("hour"));
-            i.minute = IntegerValue.importI(json.optJSONObject("minute"));
-            i.second = IntegerValue.importI(json.optJSONObject("second"));
+            // TODO: 2023.05.12  memory leak in getCherry while new objects creating...
+            i.description = cherry.optString(KEY_DESCRIPTION, i.description);
+            i.year = IntegerValue.importCherry(cherry.getCherry("year"));
+            i.month = IntegerValue.importCherry(cherry.getCherry("month"));
+            i.dayOfWeek = IntegerValue.importCherry(cherry.getCherry("dayOfWeek"));
+            i.dayOfMonth = IntegerValue.importCherry(cherry.getCherry("dayOfMonth"));
+            i.weekOfYear = IntegerValue.importCherry(cherry.getCherry("weekOfYear"));
+            i.dayOfYear = IntegerValue.importCherry(cherry.getCherry("dayOfYear"));
+            i.hour = IntegerValue.importCherry(cherry.getCherry("hour"));
+            i.minute = IntegerValue.importCherry(cherry.getCherry("minute"));
+            i.second = IntegerValue.importCherry(cherry.getCherry("second"));
 
             return i;
         }
-    };
+    }
+
     private String description = "";
     private IntegerValue year = null;
     private IntegerValue month = null;
@@ -88,10 +92,11 @@ public class DateItemFilter extends ItemFilter implements Cloneable {
 
     @Override
     public void setDescription(String s) {
+        if (description == null) throw new NullPointerException("description can't be null!");
         description = s;
     }
 
-    public boolean check(Calendar calendar, IntegerValue integerValue, int field) {
+    private boolean check(Calendar calendar, IntegerValue integerValue, int field) {
         if (integerValue != null) {
             return integerValue.isFit(calendar.get(field));
         }
@@ -109,8 +114,8 @@ public class DateItemFilter extends ItemFilter implements Cloneable {
             isInvert = invert;
         }
 
-        public JSONObject exportI() throws JSONException {
-            return new JSONObject()
+        public Cherry exportCherry() {
+            return new Cherry()
                     .put("isInvert", isInvert);
         }
 
@@ -166,22 +171,22 @@ public class DateItemFilter extends ItemFilter implements Cloneable {
             return (isInvert() != isFit);
         }
 
-        public JSONObject exportI() throws JSONException {
-            return super.exportI()
+        public Cherry exportCherry() {
+            return super.exportCherry()
                     .put("value", value)
                     .put("mode", mode)
                     .put("shift", shift);
         }
 
-        public static IntegerValue importI(JSONObject json) {
-            if (json == null) {
+        public static IntegerValue importCherry(Cherry cherry) {
+            if (cherry == null || cherry.isEmpty()) {
                 return null;
             }
             IntegerValue integerValue = new IntegerValue();
-            integerValue.value = json.optInt("value", 0);
-            integerValue.setInvert(json.optBoolean("isInvert", false));
-            integerValue.mode = json.optString("mode", "==");
-            integerValue.shift = json.optInt("shift", 0);
+            integerValue.value = cherry.optInt("value", 0);
+            integerValue.setInvert(cherry.optBoolean("isInvert", false));
+            integerValue.mode = cherry.optString("mode", "==");
+            integerValue.shift = cherry.optInt("shift", 0);
             return integerValue;
         }
 

@@ -4,20 +4,19 @@ import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 
+import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.annotation.Setter;
 
-import org.json.JSONObject;
-
 public class LongTextItem extends TextItem {
     // START - Save
-    public final static LongTextItemIETool IE_TOOL = new LongTextItemIETool();
-    public static class LongTextItemIETool extends TextItemIETool {
+    public final static LongTextItemCodec CODEC = new LongTextItemCodec();
+    public static class LongTextItemCodec extends TextItemCodec {
         @NonNull
         @Override
-        public JSONObject exportItem(@NonNull Item item) throws Exception {
+        public Cherry exportItem(@NonNull Item item) {
             LongTextItem longTextItem = (LongTextItem) item;
             return super.exportItem(longTextItem)
                     .put("longText", longTextItem.longText)
@@ -31,15 +30,15 @@ public class LongTextItem extends TextItem {
         private final LongTextItem defaultValues = new LongTextItem();
         @NonNull
         @Override
-        public Item importItem(@NonNull JSONObject json, Item item) throws Exception {
+        public Item importItem(@NonNull Cherry cherry, Item item) {
             LongTextItem longTextItem = item != null ? (LongTextItem) item : new LongTextItem();
-            super.importItem(json, longTextItem);
-            longTextItem.longText = json.optString("longText", defaultValues.longText);
-            longTextItem.longTextColor = json.optInt("longTextColor", defaultValues.longTextColor);
-            longTextItem.isCustomLongTextColor = json.optBoolean("isCustomLongTextColor", defaultValues.isCustomLongTextColor);
-            longTextItem.isLongTextClickableUrls = json.optBoolean("isLongTextClickableUrls", defaultValues.isLongTextClickableUrls);
-            longTextItem.longTextSize = json.optInt("longTextSize", defaultValues.longTextSize);
-            longTextItem.isCustomLongTextSize = json.optBoolean("isCustomLongTextSize", defaultValues.isCustomLongTextSize);
+            super.importItem(cherry, longTextItem);
+            longTextItem.longText = cherry.optString("longText", defaultValues.longText);
+            longTextItem.longTextColor = cherry.optInt("longTextColor", defaultValues.longTextColor);
+            longTextItem.isCustomLongTextColor = cherry.optBoolean("isCustomLongTextColor", defaultValues.isCustomLongTextColor);
+            longTextItem.isLongTextClickableUrls = cherry.optBoolean("isLongTextClickableUrls", defaultValues.isLongTextClickableUrls);
+            longTextItem.longTextSize = cherry.optInt("longTextSize", defaultValues.longTextSize);
+            longTextItem.isCustomLongTextSize = cherry.optBoolean("isCustomLongTextSize", defaultValues.isCustomLongTextSize);
             return longTextItem;
         }
     }
