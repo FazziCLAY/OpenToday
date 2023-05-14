@@ -23,6 +23,18 @@ public class Logger {
         return val;
     }
 
+    public static void dur(String tag, String message, Runnable runnable) {
+        if (!App.LOG) {
+            runnable.run();
+            return;
+        }
+
+        long start = System.currentTimeMillis();
+        runnable.run();
+        long duration = System.currentTimeMillis() - start;
+        i(tag, String.format("%sms: %s", duration, message));
+    }
+
     private static void log(String s) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd EEEE HH:mm:ss", Locale.getDefault());
         String time = dateFormat.format(GregorianCalendar.getInstance().getTime());
