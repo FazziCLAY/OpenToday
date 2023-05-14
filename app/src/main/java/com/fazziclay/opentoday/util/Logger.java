@@ -7,11 +7,21 @@ import com.fazziclay.opentoday.app.App;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.function.Supplier;
 
 public class Logger {
     private static final String ANDROID_LOG_TAG = "OpenTodayLogger";
     private static final StringBuilder LOGS = new StringBuilder();
 
+    public static <T> T dur(String tag, String message, Supplier<T> supplier) {
+        if (!App.LOG) return supplier.get();
+
+        long start = System.currentTimeMillis();
+        T val = supplier.get();
+        long duration = System.currentTimeMillis() - start;
+        i(tag, String.format("%sms: %s", duration, message));
+        return val;
+    }
 
     private static void log(String s) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd EEEE HH:mm:ss", Locale.getDefault());
