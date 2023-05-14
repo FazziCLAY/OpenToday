@@ -46,7 +46,7 @@ public class TestItemViewGenerator extends Activity {
             }
         };
 
-        ItemViewGenerator itemViewGenerator = ItemViewGenerator.builder(this, itemManager, settingsManager)
+        ItemViewGenerator itemViewGenerator = ItemViewGenerator.builder(this, itemManager, settingsManager, itemManager.getSelectionManager())
                 .setOnItemClick(itemClick)
                 .setStorageEditsActions(edits)
                 .setOnItemOpenEditor(itemEditor)

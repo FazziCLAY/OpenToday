@@ -49,6 +49,7 @@ public class TestItemStorageDrawer extends Activity {
         ItemStorageDrawer itemStorageDrawer = new ItemStorageDrawer(this,
                 itemManager,
                 new SettingsManager(null),
+                itemManager.getSelectionManager(),
                 itemManager.getTab(new UUID(0, 0)),
                 onClick,
                 item -> Toast.makeText(TestItemStorageDrawer.this, "unsupported", Toast.LENGTH_SHORT).show(),
