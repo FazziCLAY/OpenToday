@@ -23,6 +23,10 @@ android {
     }
 
     buildTypes {
+        if (isDev) {
+            verReleaseTime = (long) (new Date().time / 1000)
+        }
+
         release {
             buildConfigField "long", "VERSION_RELEASE_TIME", verReleaseTime.toString()
             minifyEnabled false
