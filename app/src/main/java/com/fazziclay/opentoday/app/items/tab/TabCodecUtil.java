@@ -36,13 +36,13 @@ public class TabCodecUtil {
 
     @NonNull
     public static Tab importTab(@NonNull Cherry cherry) {
-        final AbstractTabCodec codec = TABS_REGISTRY.getTabInfoByStringName(cherry.getString(KEY_TABTYPE)).getCodec();
+        final AbstractTabCodec codec = TABS_REGISTRY.get(cherry.getString(KEY_TABTYPE)).getCodec();
         return codec.importTab(cherry, null);
     }
 
     @NonNull
     public static Cherry exportTab(@NonNull Tab tab) {
-        final TabsRegistry.TabInfo tabInfo = TABS_REGISTRY.getTabInfoByClass(tab.getClass());
+        final TabsRegistry.TabInfo tabInfo = TABS_REGISTRY.get(tab.getClass());
         final AbstractTabCodec codec = tabInfo.getCodec();
         return codec.exportTab(tab)
                 .put(KEY_TABTYPE, tabInfo.getStringType());

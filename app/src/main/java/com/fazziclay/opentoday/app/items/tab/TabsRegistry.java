@@ -18,7 +18,7 @@ public class TabsRegistry {
     }
 
     @Nullable
-    public TabInfo getTabInfoByStringName(@NonNull String s) {
+    public TabInfo get(@NonNull String s) {
         for (TabInfo tab : TABS) {
             if (s.equals(tab.stringType)) return tab;
         }
@@ -26,7 +26,7 @@ public class TabsRegistry {
     }
 
     @Nullable
-    public TabInfo getTabInfoByClass(Class<? extends Tab> s) {
+    public TabInfo get(Class<? extends Tab> s) {
         for (TabInfo tab : TABS) {
             if (s == tab.classType) return tab;
         }
@@ -38,9 +38,9 @@ public class TabsRegistry {
         private final String stringType;
         private final AbstractTabCodec codec;
 
-        public TabInfo(Class<? extends Tab> c, String v, AbstractTabCodec codec) {
-            this.classType = c;
-            this.stringType = v;
+        public TabInfo(Class<? extends Tab> classType, String stringType, AbstractTabCodec codec) {
+            this.classType = classType;
+            this.stringType = stringType;
             this.codec = codec;
         }
 
