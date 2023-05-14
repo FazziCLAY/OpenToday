@@ -22,7 +22,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.items.ItemManager;
-import com.fazziclay.opentoday.app.items.SelectionManager;
+import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;

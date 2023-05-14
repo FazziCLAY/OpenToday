@@ -20,7 +20,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.ImportWrapper;
-import com.fazziclay.opentoday.app.items.SelectionManager;
+import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;

@@ -21,7 +21,7 @@ import com.fazziclay.opentoday.app.datafixer.DataFixer;
 import com.fazziclay.opentoday.app.datafixer.FixResult;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
-import com.fazziclay.opentoday.app.items.SelectionManager;
+import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.gui.activity.CrashReportActivity;
 import com.fazziclay.opentoday.gui.activity.OpenSourceLicensesActivity;
 import com.fazziclay.opentoday.util.DebugUtil;

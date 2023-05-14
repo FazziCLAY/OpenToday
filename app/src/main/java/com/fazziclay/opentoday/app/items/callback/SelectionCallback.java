@@ -1,6 +1,6 @@
 package com.fazziclay.opentoday.app.items.callback;
 
-import com.fazziclay.opentoday.app.items.Selection;
+import com.fazziclay.opentoday.app.items.selection.Selection;
 import com.fazziclay.opentoday.util.callback.Callback;
 import com.fazziclay.opentoday.util.callback.Status;
 
