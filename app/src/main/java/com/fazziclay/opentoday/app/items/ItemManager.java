@@ -418,8 +418,8 @@ public class ItemManager {
         }
 
         List<Tab> tabs = new ArrayList<>();
-        addTab(new LocalItemsTab("Debug1", tab1items.toArray(new Item[0])));
-        addTab(new LocalItemsTab("Debug2", tab2items.toArray(new Item[0])));
+        //addTab(new LocalItemsTab("Debug1", tab1items.toArray(new Item[0])));
+        //addTab(new LocalItemsTab("Debug2", tab2items.toArray(new Item[0])));
         return tabs;
     }
 }
