@@ -282,8 +282,6 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
             tickList.get(i).item.tick(tickSession);
             i--;
         }
-
-        if (App.DEBUG) Logger.d(FilterGroupItem.class.getSimpleName(), "FitEquip recycle="+fitEquip.getRecycle());
     }
 
     public boolean recalculate(final GregorianCalendar gregorianCalendar) {
