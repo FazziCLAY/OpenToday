@@ -230,9 +230,8 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
                 }
 
                 @Override
-                public Status onDeleted(Item item, int pos) {
-                    // TODO: 01.11.2022 WTF This?
-                    new Handler(Looper.getMainLooper()).postDelayed(() -> onCurrentItemStorageUpdateCallback.run((callbackStorage, callback) -> callback.onCurrentChanged(getCurrentItem())), 250);
+                public Status onPostDeleted(Item item, int pos) {
+                    onCurrentItemStorageUpdateCallback.run((callbackStorage, callback) -> callback.onCurrentChanged(getCurrentItem()));
                     return Status.NONE;
                 }
 
