@@ -23,6 +23,12 @@ public class Logger {
         return val;
     }
 
+    public static int countOnlyDur(Runnable r) {
+        long start = System.currentTimeMillis();
+        r.run();
+        return (int) (System.currentTimeMillis() - start);
+    }
+
     public static void dur(String tag, String message, Runnable runnable) {
         if (!App.LOG) {
             runnable.run();

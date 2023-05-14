@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 
 import com.fazziclay.javaneoutil.FileUtil;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.Debug;
 import com.fazziclay.opentoday.app.TickSession;
 import com.fazziclay.opentoday.app.data.CherryOrchard;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
@@ -25,6 +26,7 @@ import com.fazziclay.opentoday.app.items.tab.LocalItemsTab;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.items.tab.TabCodecUtil;
 import com.fazziclay.opentoday.app.items.tab.TabController;
+import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
@@ -34,11 +36,11 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -48,6 +50,7 @@ import java.util.zip.GZIPOutputStream;
 
 public class ItemManager {
     private static final boolean DEBUG_ITEMS_SET = App.debug(false);
+    private static final String TAG = "ItemManager";
 
     @NonNull private final File dataOriginalFile;
     @NonNull private final File dataCompressFile;
@@ -296,10 +299,12 @@ public class ItemManager {
     }
 
     public void tick(TickSession tickSession) {
-        for (Tab tab : tabs) {
-            if (tab == null) continue;
-            tab.tick(tickSession);
-        }
+        Debug.latestTickDuration = Logger.countOnlyDur(() -> {
+            for (Tab tab : tabs) {
+                if (tab == null) continue;
+                tab.tick(tickSession);
+            }
+        });
     }
 
     public void queueSave() {
@@ -322,7 +327,7 @@ public class ItemManager {
 
                 FileUtil.setText(dataOriginalFile, originalData);
 
-                GZIPOutputStream gz = new GZIPOutputStream(new FileOutputStream(dataCompressFile));
+                GZIPOutputStream gz = new GZIPOutputStream(Files.newOutputStream(dataCompressFile.toPath()));
                 Writer writer = new OutputStreamWriter(gz);
                 writer.write(originalData);
                 writer.flush();
@@ -334,6 +339,7 @@ public class ItemManager {
                     new Handler(App.get().getMainLooper()).post(() -> Toast.makeText(App.get(), "Success save", Toast.LENGTH_SHORT).show());
                 } catch (Exception ignored) {}
             }
+            Debug.saved();
             return true;
         } catch (Exception e) {
             Log.e("ItemManager", "SaveThread exception", e);
@@ -360,7 +366,7 @@ public class ItemManager {
             while (!isInterrupted()) {
                 if (request) {
                     request = false;
-                    requestsCount = 0;
+                    requestsCount = Debug.latestSaveRequestsCount = 0;
                     firstRequestTime = 0;
                     latestRequestTime = 0;
 
@@ -394,7 +400,7 @@ public class ItemManager {
             }
             request = true;
             latestRequestTime = System.currentTimeMillis();
-            requestsCount = requestsCount + 1;
+            requestsCount = Debug.latestSaveRequestsCount = requestsCount + 1;
         }
     }
 

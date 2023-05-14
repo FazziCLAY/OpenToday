@@ -27,6 +27,8 @@ import java.util.UUID;
 public class FilterGroupItem extends TextItem implements ContainerItem, ItemsStorage {
     // START - Save
     public final static FilterGroupItemCodec CODEC = new FilterGroupItemCodec();
+    private static final String TAG = "FilterGroupItem";
+
     public static class FilterGroupItemCodec extends TextItemCodec {
         @NonNull
         @Override
@@ -269,7 +271,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
 
     @Override
     public Item getItemById(UUID itemId) {
-        return ItemsUtils.getItemById(getAllItems(), itemId); // TODO: 5/13/23 Use here a getItemByIdRoot
+        return Logger.dur(TAG, "getItemById (recursive)", () -> ItemsUtils.getItemByIdRecursive(getAllItems(), itemId));
     }
 
     @Override

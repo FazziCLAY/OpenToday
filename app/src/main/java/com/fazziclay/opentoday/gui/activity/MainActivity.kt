@@ -4,19 +4,17 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.fazziclay.opentoday.R
-import com.fazziclay.opentoday.app.ActivitySettings
-import com.fazziclay.opentoday.app.App
-import com.fazziclay.opentoday.app.FeatureFlag
+import com.fazziclay.opentoday.app.*
 import com.fazziclay.opentoday.app.Telemetry.UiClosedLPacket
 import com.fazziclay.opentoday.app.Telemetry.UiOpenLPacket
 import com.fazziclay.opentoday.app.receiver.ItemsTickReceiver
 import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver
-import com.fazziclay.opentoday.app.UpdateChecker
 import com.fazziclay.opentoday.databinding.ActivityMainBinding
 import com.fazziclay.opentoday.databinding.NotificationDebugappBinding
 import com.fazziclay.opentoday.databinding.NotificationUpdateAvailableBinding
@@ -45,6 +43,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var currentDateCalendar: GregorianCalendar
     private var activitySettings: ActivitySettings = ActivitySettings().setClockVisible(true).setNotificationsVisible(true)
     private var debugView = false
+    private var debugHandler: Handler? = null
+    private lateinit var debugRunnable: Runnable
     private var debugViewSize = 13
 
     // Activity overrides
@@ -57,6 +57,12 @@ class MainActivity : AppCompatActivity() {
         app.telemetry.send(UiOpenLPacket())
         binding = ActivityMainBinding.inflate(layoutInflater)
         supportActionBar!!.hide()
+        debugRunnable = Runnable {
+            binding.debugInfo.text = Debug.getDebugInfoText()
+            if (debugView && debugHandler != null) {
+                debugHandler!!.postDelayed(this.debugRunnable, 99)
+            }
+        };
         setContentView(binding.root)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
@@ -180,6 +186,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateDebugView() {
         if (debugView) {
+            if (debugHandler == null) {
+                debugHandler = Handler(Looper.getMainLooper())
+            }
+            debugHandler?.post(debugRunnable)
+            binding.debugInfo.visibility = View.VISIBLE
             binding.debugLogsSizeUp.visibility = View.VISIBLE
             binding.debugLogsSizeDown.visibility = View.VISIBLE
             binding.debugLogsSwitch.visibility = View.VISIBLE
@@ -197,6 +208,8 @@ class MainActivity : AppCompatActivity() {
                 binding.debugLogsText.textSize = debugViewSize.toFloat()
             }
         } else {
+            debugHandler?.removeCallbacks(debugRunnable)
+            binding.debugInfo.visibility = View.GONE
             binding.debugLogsSizeUp.visibility = View.GONE
             binding.debugLogsSizeDown.visibility = View.GONE
             binding.debugLogsSwitch.visibility = View.GONE
