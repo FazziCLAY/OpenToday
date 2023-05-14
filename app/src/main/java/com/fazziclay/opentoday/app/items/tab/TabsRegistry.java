@@ -3,6 +3,12 @@ package com.fazziclay.opentoday.app.items.tab;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+/**
+ * Registry of tabs. Contains links between the following:
+ * <p>* Java class. E.g. LocalItemsTab.class</p>
+ * <p>* String type. E.g. "LocalItemsTab"</p>
+ * <p>* Codec. see {@link AbstractTabCodec}</p>
+ */
 public class TabsRegistry {
     public static final TabsRegistry REGISTRY = new TabsRegistry();
 
