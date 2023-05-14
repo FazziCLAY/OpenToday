@@ -12,6 +12,13 @@ import com.fazziclay.opentoday.app.receiver.ItemsTickReceiver;
 import java.util.GregorianCalendar;
 
 public class TickSession {
+    private static GregorianCalendar latestGregorianCalendar = null;
+
+    // Life-hacks :)
+    public static GregorianCalendar getLatestGregorianCalendar() {
+        return latestGregorianCalendar;
+    }
+
     private final Context context;
     private final GregorianCalendar gregorianCalendar;
     private final GregorianCalendar noTimeCalendar;
@@ -21,7 +28,7 @@ public class TickSession {
 
     public TickSession(Context context, GregorianCalendar gregorianCalendar, GregorianCalendar noTimeCalendar, int dayTime, boolean isPersonalTick) {
         this.context = context;
-        this.gregorianCalendar = gregorianCalendar;
+        this.gregorianCalendar = latestGregorianCalendar = gregorianCalendar;
         this.noTimeCalendar = noTimeCalendar;
         this.dayTime = dayTime;
         this.isPersonalTick = isPersonalTick;
