@@ -1,8 +1,10 @@
 package com.fazziclay.opentoday.gui.part
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Rect
+import android.os.Handler
 import android.text.Editable
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -10,12 +12,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem
 import com.fazziclay.opentoday.app.items.item.filter.DateItemFilter
+import com.fazziclay.opentoday.app.items.item.filter.FitEquip
+import com.fazziclay.opentoday.app.items.item.filter.ItemFilter
 import com.fazziclay.opentoday.app.items.item.filter.LogicContainerItemFilter
 import com.fazziclay.opentoday.app.items.item.filter.LogicContainerItemFilter.LogicMode
 import com.fazziclay.opentoday.databinding.PartLogicContainerItemFilterEditorBinding
@@ -24,6 +29,7 @@ import com.fazziclay.opentoday.gui.fragment.FilterGroupItemFilterEditorFragment
 import com.fazziclay.opentoday.gui.interfaces.Destroy
 import com.fazziclay.opentoday.util.MinTextWatcher
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter
+import java.util.*
 import kotlin.random.Random
 
 class LogicContainerItemFilterPartEditor(private val context: Context, layoutInflater: LayoutInflater, private val parentFilterGroup: FilterGroupItem, private val logicContainerItemFilter: LogicContainerItemFilter, private val saveSignal: Runnable) : Destroy {
@@ -37,9 +43,24 @@ class LogicContainerItemFilterPartEditor(private val context: Context, layoutInf
     }
 
 
-    private var binding: PartLogicContainerItemFilterEditorBinding = PartLogicContainerItemFilterEditorBinding.inflate(layoutInflater)
+    private val binding: PartLogicContainerItemFilterEditorBinding = PartLogicContainerItemFilterEditorBinding.inflate(layoutInflater)
+    private var handler: Handler = Handler(context.mainLooper)
+    private var runnable: Runnable? = null
+    private var destroyed = false
+    private var cached: HashMap<ItemFilter, View> = HashMap()
 
     init {
+        runnable = Runnable {
+            if (destroyed) return@Runnable
+
+            cached.forEach { (t, u) ->
+                val isFit = t.isFit(FitEquip(GregorianCalendar()))
+                u.backgroundTintList = ColorStateList.valueOf(if (isFit) Color.GREEN else Color.RED)
+            }
+            handler.postDelayed(runnable!!, 1000)
+        }
+        handler.post(runnable!!)
+
         // DESCRIPTION
         binding.description.setText(logicContainerItemFilter.description)
         binding.description.addTextChangedListener(object : MinTextWatcher() {
@@ -104,7 +125,7 @@ class LogicContainerItemFilterPartEditor(private val context: Context, layoutInf
     }
 
     override fun destroy() {
-
+        destroyed = true;
     }
 
     fun getRootView(): View {
@@ -122,6 +143,7 @@ class LogicContainerItemFilterPartEditor(private val context: Context, layoutInf
                 frameLayout.setBackgroundColor(FILTERS_ITEM_BACKGROUND)
                 frameLayout.addView(description)
                 description.textSize = FILTERS_ITEM_TEXT_SIZE
+                description.background = AppCompatResources.getDrawable(context, R.drawable.shape)
             }
         }
 
@@ -152,6 +174,7 @@ class LogicContainerItemFilterPartEditor(private val context: Context, layoutInf
                 popup.show()
                 return@setOnLongClickListener true
             }
+            cached[itemFilter] = viewHolder.description
         }
 
         // Return the size of your dataset (invoked by the layout manager)

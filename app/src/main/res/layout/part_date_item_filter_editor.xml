@@ -38,6 +38,8 @@
                     android:layout_height="wrap_content">
 
                     <TextView
+                        android:id="@+id/currentValueTitle"
+                        android:background="@drawable/shape"
                         android:layout_width="40sp"
                         android:layout_height="wrap_content"
                         android:textStyle="bold"

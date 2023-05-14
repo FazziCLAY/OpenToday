@@ -1,6 +1,8 @@
 package com.fazziclay.opentoday.gui.part;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.items.item.filter.DateItemFilter;
+import com.fazziclay.opentoday.app.items.item.filter.FitEquip;
 import com.fazziclay.opentoday.databinding.PartDateItemFilterEditorBinding;
 import com.fazziclay.opentoday.databinding.PartDateItemFilterEditorRowBinding;
 import com.fazziclay.opentoday.gui.interfaces.Destroy;
@@ -26,6 +29,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 public class DateItemFilterPartEditor implements Destroy {
     private final Context context;
@@ -239,6 +243,17 @@ public class DateItemFilterPartEditor implements Destroy {
             }
         }, binding.second, R.string.dialog_editItemFilter_second);
 
+        runnableList.add(new Runnable() {
+            @Override
+            public void run() {
+                if (!runnableList.contains(this)) return;
+
+                boolean isFitGlobal = dateItemFilter.isFit(new FitEquip(new GregorianCalendar()));
+                binding.currentValueTitle.setBackgroundTintList(ColorStateList.valueOf(isFitGlobal ? Color.GREEN : Color.RED));
+
+                handler.postDelayed(this, 1000);
+            }
+        });
         for (Runnable runnable : runnableList) {
             handler.post(runnable);
         }
@@ -268,8 +283,12 @@ public class DateItemFilterPartEditor implements Destroy {
             @Override
             public void run() {
                 if (!runnableList.contains(this)) return;
+                DateItemFilter.IntegerValue val = setup.get();
+                ColorStateList background = val == null ? null : (val.isFit(setup.getCurrentValue()) ? ColorStateList.valueOf(Color.GREEN) : ColorStateList.valueOf(Color.RED));
+
                 calendar = new GregorianCalendar();
                 currentValue.setText(String.valueOf(setup.getCurrentValue()));
+                currentValue.setBackgroundTintList(background);
                 handler.postDelayed(this, 1000);
             }
         });
