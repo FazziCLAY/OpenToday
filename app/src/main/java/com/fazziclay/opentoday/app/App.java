@@ -240,10 +240,10 @@ public class App extends Application {
         // === Android.Log ===
         try {
             final String CRASH_TAG = "OpenToday-Crash";
-            Log.e(CRASH_TAG, "=== Crash " + crashReport.getID() + " === (S)");
+            Log.e(CRASH_TAG, "=== Crash " + crashReport.getID() + " === (Start)");
             Log.e(CRASH_TAG, "Crash saved to: " + crashReportFile.getAbsolutePath());
             Log.e(CRASH_TAG, crashReport.convertToText(), crashReport.getThrowable());
-            Log.e(CRASH_TAG, "=== Crash " + crashReport.getID() + " === (E)");
+            Log.e(CRASH_TAG, "=== Crash " + crashReport.getID() + " === (End)");
         } catch (Exception ignored) {}
 
         // === If fatal: notify user ===
