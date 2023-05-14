@@ -1,4 +1,4 @@
-package com.fazziclay.opentoday;
+package com.fazziclay.opentoday.app;
 
 import static android.content.Context.MODE_PRIVATE;
 
