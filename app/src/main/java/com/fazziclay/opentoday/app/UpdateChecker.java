@@ -1,10 +1,9 @@
-package com.fazziclay.opentoday.app.updatechecker;
+package com.fazziclay.opentoday.app;
 
 import android.content.Context;
 import android.util.Log;
 
 import com.fazziclay.javaneoutil.FileUtil;
-import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.util.NetworkUtil;
 
 import org.json.JSONObject;
