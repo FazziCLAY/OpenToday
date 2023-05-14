@@ -13,6 +13,8 @@ import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.gui.activity.OpenSourceLicensesActivity
 import com.fazziclay.opentoday.util.InlineUtil.viewClick
 import com.fazziclay.opentoday.util.NetworkUtil
+import java.text.SimpleDateFormat
+import java.util.*
 
 class AboutFragment : Fragment() {
     companion object {
@@ -30,7 +32,7 @@ class AboutFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentAboutBinding.inflate(inflater)
-        binding.textVersion.text = App.VERSION_NAME
+        binding.textVersion.text = App.VERSION_NAME + " " + getReleaseTime()
         binding.textPackage.text = App.APPLICATION_ID
         viewClick(binding.title, this::manuallyCrashInteract)
         viewClick(binding.sourceCode, Runnable { NetworkUtil.openBrowser(requireActivity(), LINK_OPENSOURCE) })
@@ -38,6 +40,10 @@ class AboutFragment : Fragment() {
         viewClick(binding.licenses, Runnable { requireActivity().startActivity(OpenSourceLicensesActivity.createLaunchIntent(requireContext())) })
         viewClick(binding.ok, Runnable { UI.rootBack(this) })
         return binding.root
+    }
+
+    private fun getReleaseTime(): String? {
+        return SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(Date(App.VERSION_RELEASE_TIME * 1000))
     }
 
     private fun manuallyCrashInteract() {

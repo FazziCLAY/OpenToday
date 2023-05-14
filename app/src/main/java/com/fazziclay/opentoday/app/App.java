@@ -47,6 +47,7 @@ public class App extends Application {
     public static final int APPLICATION_DATA_VERSION = 9;
     public static final String VERSION_NAME = CustomBuildConfig.VERSION_NAME;
     public static final int VERSION_CODE = CustomBuildConfig.VERSION_CODE;
+    public static final long VERSION_RELEASE_TIME = CustomBuildConfig.VERSION_RELEASE_TIME;
     public static final String APPLICATION_ID = CustomBuildConfig.APPLICATION_ID;
 
     // Notifications

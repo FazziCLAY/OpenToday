@@ -3,16 +3,16 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+// =====
+var isDev = true
+var verBuild = 111
+var verName = "1.0.5 dev"
+var verReleaseTime = 1684068997
+// =====
+
 android {
     compileSdk 33
-
     defaultConfig {
-        // =====
-        var isDev = true
-        var verBuild = 111
-        var verName = "1.0.5 dev"
-        // =====
-
         applicationId "com.fazziclay.opentoday" + (isDev ? ".dev" : "")
         minSdk 26
         targetSdk 33
@@ -24,10 +24,12 @@ android {
 
     buildTypes {
         release {
+            buildConfigField "long", "VERSION_RELEASE_TIME", verReleaseTime.toString()
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
+            buildConfigField "long", "VERSION_RELEASE_TIME", verReleaseTime.toString()
             versionNameSuffix ' (debug)'
         }
     }
