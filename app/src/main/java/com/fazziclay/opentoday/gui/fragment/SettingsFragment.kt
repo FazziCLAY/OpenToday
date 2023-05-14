@@ -20,8 +20,8 @@ import com.fazziclay.opentoday.app.ColorHistoryManager
 import com.fazziclay.opentoday.app.ImportWrapper
 import com.fazziclay.opentoday.app.items.item.Item
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry
-import com.fazziclay.opentoday.app.pincode.PinCodeManager
-import com.fazziclay.opentoday.app.pincode.PinCodeManager.ContainNonDigitChars
+import com.fazziclay.opentoday.PinCodeManager
+import com.fazziclay.opentoday.PinCodeManager.ContainNonDigitChars
 import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver
 import com.fazziclay.opentoday.app.settings.SettingsManager
 import com.fazziclay.opentoday.app.settings.SettingsManager.FirstTab

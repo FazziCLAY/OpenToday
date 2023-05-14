@@ -1,4 +1,4 @@
-package com.fazziclay.opentoday.app.pincode;
+package com.fazziclay.opentoday;
 
 import static android.content.Context.MODE_PRIVATE;
 

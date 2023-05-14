@@ -20,7 +20,7 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.datafixer.DataFixer;
 import com.fazziclay.opentoday.app.datafixer.FixResult;
 import com.fazziclay.opentoday.app.items.ItemManager;
-import com.fazziclay.opentoday.app.pincode.PinCodeManager;
+import com.fazziclay.opentoday.PinCodeManager;
 import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.gui.activity.CrashReportActivity;
