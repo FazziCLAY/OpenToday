@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.items.CurrentItemStorage;
 import com.fazziclay.opentoday.app.items.ItemManager;
+import com.fazziclay.opentoday.app.items.SelectionManager;
 import com.fazziclay.opentoday.app.items.callback.OnCurrentItemStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.SettingsManager;
@@ -22,19 +23,21 @@ import com.fazziclay.opentoday.util.callback.Status;
 public class CurrentItemStorageDrawer {
     private final Activity activity;
     private final ItemManager itemManager;
+    private final SelectionManager selectionManager;
     private final LinearLayout view;
     private final CurrentItemStorage currentItemStorage;
     private final ItemViewGenerator itemViewGenerator;
     private final OnUpdateListener listener = new OnUpdateListener();
     private OnCurrentItemStorageUpdate userListener = null;
 
-    public CurrentItemStorageDrawer(Activity activity, ItemManager itemManager, SettingsManager settingsManager, CurrentItemStorage currentItemStorage, boolean previewMode, ItemInterface onItemClick, ItemInterface onItemEditor, StorageEditsActions storageEdits) {
+    public CurrentItemStorageDrawer(Activity activity, ItemManager itemManager, SettingsManager settingsManager, SelectionManager selectionManager, CurrentItemStorage currentItemStorage, boolean previewMode, ItemInterface onItemClick, ItemInterface onItemEditor, StorageEditsActions storageEdits) {
         this.activity = activity;
         this.view = new LinearLayout(activity);
         this.itemManager = itemManager;
+        this.selectionManager = selectionManager;
         this.view.setOrientation(LinearLayout.VERTICAL);
         this.currentItemStorage = currentItemStorage;
-        this.itemViewGenerator = new ItemViewGenerator(activity, itemManager, settingsManager, previewMode, onItemClick, onItemEditor, storageEdits);
+        this.itemViewGenerator = new ItemViewGenerator(activity, itemManager, settingsManager, selectionManager, previewMode, onItemClick, onItemEditor, storageEdits);
     }
 
     public void create() {
@@ -58,7 +61,7 @@ public class CurrentItemStorageDrawer {
             userListener.onCurrentChanged(currentItem);
         }
         if (currentItem != null) view.addView(itemViewGenerator.generate(currentItem, view));
-        if (itemManager.isSelected(currentItem)) {
+        if (selectionManager.isSelected(currentItem)) {
             view.setForeground(new ColorDrawable(ResUtil.getAttrColor(activity, R.attr.item_selectionForegroundColor)));
         } else {
             view.setForeground(null);

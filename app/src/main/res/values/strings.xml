@@ -312,4 +312,15 @@
     <string name="toolbar_more_file_importFromClipboard_notImportText">This is not import text</string>
     <string name="toolbar_more_tabs_delete_notAllowOneTabMode">Delete not allow!</string>
     <string name="fragment_itemEditor_module_item_selected">Selected</string>
+    <string name="logic_container_item_filter_part_editor_name_empty"><![CDATA[<No description>]]></string>
+    <string name="logic_container_logicMode_OR">Or</string>
+    <string name="logic_container_logicMode_AND">And</string>
+    <string name="part_logic_container_item_filter_editor_description">Description</string>
+    <string name="part_logic_container_item_filter_editor_invert">Invert</string>
+    <string name="part_logic_container_item_filter_editor_logicMode_title">Logic mode:</string>
+    <string name="filter_group_item_filter_editor_replaceRoot">Replace root</string>
+    <string name="filter_group_item_filter_editor_rootTypeTitle">Root filter type:</string>
+    <string name="filter_group_item_filter_editor_rootFilterEditor_title">Root filter editor:</string>
+    <string name="part_date_item_filter_editor_description">Description</string>
+    <string name="filter_group_item_filter_editor_error_unknownFilter">Unknown filter! This is a bug. Report to developer.\nCanonical: %s</string>
 </resources>

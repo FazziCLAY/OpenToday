@@ -3,6 +3,7 @@ package com.fazziclay.opentoday.gui.part;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,8 +14,8 @@ import android.widget.TextView;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.items.item.filter.DateItemFilter;
-import com.fazziclay.opentoday.databinding.DialogEditItemFilterBinding;
-import com.fazziclay.opentoday.databinding.DialogEditItemFilterRowBinding;
+import com.fazziclay.opentoday.databinding.PartDateItemFilterEditorBinding;
+import com.fazziclay.opentoday.databinding.PartDateItemFilterEditorRowBinding;
 import com.fazziclay.opentoday.gui.interfaces.Destroy;
 import com.fazziclay.opentoday.util.MinTextWatcher;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
@@ -28,7 +29,7 @@ import java.util.Locale;
 
 public class DateItemFilterPartEditor implements Destroy {
     private final Context context;
-    private final DialogEditItemFilterBinding binding;
+    private final PartDateItemFilterEditorBinding binding;
     private final Runnable saveSignal;
     private GregorianCalendar calendar;
     private final Handler handler;
@@ -49,10 +50,19 @@ public class DateItemFilterPartEditor implements Destroy {
 
     public DateItemFilterPartEditor(Context context, LayoutInflater layoutInflater, DateItemFilter dateItemFilter, Runnable saveSignal) {
         this.context = context;
-        this.binding = DialogEditItemFilterBinding.inflate(layoutInflater);
+        this.binding = PartDateItemFilterEditorBinding.inflate(layoutInflater);
         this.saveSignal = saveSignal;
         this.calendar = new GregorianCalendar();
         this.handler = new Handler(Looper.getMainLooper());
+
+        binding.description.setText(dateItemFilter.getDescription());
+        binding.description.addTextChangedListener(new MinTextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                dateItemFilter.setDescription(s.toString());
+                saveSignal.run();
+            }
+        });
 
         DateFormatSymbols dfs = DateFormatSymbols.getInstance(Locale.getDefault());
         String[] months = dfs.getMonths();
@@ -234,11 +244,11 @@ public class DateItemFilterPartEditor implements Destroy {
         }
     }
 
-    private void setupRow(SetupInterface setup, DialogEditItemFilterRowBinding binding, int resId) {
+    private void setupRow(SetupInterface setup, PartDateItemFilterEditorRowBinding binding, int resId) {
         setupRow(setup, binding, resId, null);
     }
 
-    private void setupRow(SetupInterface setup, DialogEditItemFilterRowBinding binding, int resId, SimpleSpinnerAdapter<Integer> s) {
+    private void setupRow(SetupInterface setup, PartDateItemFilterEditorRowBinding binding, int resId, SimpleSpinnerAdapter<Integer> s) {
         setupRow(setup, binding.currentValue, binding.field, resId, binding.mode, binding.value, binding.valueEnum, binding.shift, binding.invert, s);
     }
 

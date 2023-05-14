@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/description_textInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/part_logic_container_item_filter_editor_description" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/invert"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/description_textInputLayout"
+                android:text="@string/part_logic_container_item_filter_editor_invert" />
+
+            <TextView
+                android:id="@+id/logicMode_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/invert"
+                android:minHeight="45sp"
+                android:gravity="center"
+                android:text="@string/part_logic_container_item_filter_editor_logicMode_title" />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/logicMode"
+                android:layout_width="match_parent"
+                android:layout_toEndOf="@id/logicMode_title"
+                android:layout_height="wrap_content"
+                android:minHeight="45sp"
+                android:layout_alignTop="@id/logicMode_title" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_below="@id/logicMode"
+                android:id="@+id/filters"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </RelativeLayout>
+    </ScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="5sp"
+        android:src="@android:drawable/ic_menu_add"
+        android:contentDescription="Add new filter"
+        tools:ignore="HardcodedText" />
+
+</RelativeLayout>

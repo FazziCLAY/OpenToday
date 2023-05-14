@@ -7,7 +7,7 @@ public class TabsRegistry {
     public static final TabsRegistry REGISTRY = new TabsRegistry();
 
     private static final TabInfo[] TABS = new TabInfo[]{
-            new TabInfo(LocalItemsTab.class, "LocalItemsTab", LocalItemsTab.IE_TOOL)
+            new TabInfo(LocalItemsTab.class, "LocalItemsTab", LocalItemsTab.CODEC)
     };
 
     private TabsRegistry() {}
@@ -36,12 +36,12 @@ public class TabsRegistry {
     public static class TabInfo {
         private final Class<? extends Tab> classType;
         private final String stringType;
-        private final TabImportExportTool importExportTool;
+        private final AbstractTabCodec codec;
 
-        public TabInfo(Class<? extends Tab> c, String v, TabImportExportTool importExportTool) {
+        public TabInfo(Class<? extends Tab> c, String v, AbstractTabCodec codec) {
             this.classType = c;
             this.stringType = v;
-            this.importExportTool = importExportTool;
+            this.codec = codec;
         }
 
         public Class<? extends Tab> getClassType() {
@@ -52,8 +52,8 @@ public class TabsRegistry {
             return stringType;
         }
 
-        public TabImportExportTool getImportExportTool() {
-            return importExportTool;
+        public AbstractTabCodec getCodec() {
+            return codec;
         }
     }
 }

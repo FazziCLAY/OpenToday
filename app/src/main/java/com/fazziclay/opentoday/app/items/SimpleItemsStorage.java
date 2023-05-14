@@ -39,6 +39,11 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
     }
 
     @Override
+    public boolean isEmpty() {
+        return items.isEmpty();
+    }
+
+    @Override
     public void addItem(Item item) {
         addItem(item, items.size());
     }
@@ -60,9 +65,14 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
 
     @Override
     public void deleteItem(Item item) {
-        onUpdateCallbacks.run((callbackStorage, callback) -> callback.onDeleted(item, getItemPosition(item)));
+        int position = getItemPosition(item);
+        onUpdateCallbacks.run((callbackStorage, callback) -> callback.onDeleted(item, position)); // TODO: 5/9/23 Remove deprecated
+        onUpdateCallbacks.run((callbackStorage, callback) -> callback.onPreDeleted(item, position));
+
         items.remove(item);
         item.detach();
+
+        onUpdateCallbacks.run((callbackStorage, callback) -> callback.onPostDeleted(item, position));
         save();
     }
 
@@ -144,7 +154,7 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
         }
 
         @Override
-        public ItemsStorage getParentItemStorage(Item item) {
+        public ItemsStorage getParentItemsStorage(Item item) {
             return SimpleItemsStorage.this;
         }
     }

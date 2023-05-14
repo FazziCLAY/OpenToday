@@ -36,7 +36,8 @@ import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.ItemsUtils;
 import com.fazziclay.opentoday.app.items.Selection;
-import com.fazziclay.opentoday.app.items.callback.OnSelectionChanged;
+import com.fazziclay.opentoday.app.items.SelectionManager;
+import com.fazziclay.opentoday.app.items.callback.SelectionCallback;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
@@ -81,10 +82,11 @@ public class AppToolbar {
     private final App app;
     private final ItemManager itemManager;
     private final SettingsManager settingsManager;
+    private final SelectionManager selectionManager;
     private ItemsStorage itemsStorage; // For context toolbar work
     private View currentToolbarButton = null; // Current active button. If none: null
-    private OnSelectionChanged onSelectionChanged = null; // (Selection TAB) On selection changed. For runtime update selection information
-    private OnSelectionChanged onSelectionChangedTab = null; // (Selection TAB) On selection changed. For runtime update selection information
+    private SelectionCallback selectionCallback = null; // (Selection TAB) On selection changed. For runtime update selection information
+    private SelectionCallback selectionCallbackTab = null; // (Selection TAB) On selection changed. For runtime update selection information
     private OnTabsChanged onTabsChanged = null;
 
     // Cache
@@ -99,6 +101,7 @@ public class AppToolbar {
     public AppToolbar(final Activity activity,
                       final ItemManager itemManager,
                       final SettingsManager settingsManager,
+                      final SelectionManager selectionManager,
                       final ItemsStorage itemsStorage,
                       final NavigationHost rootNavigationHost,
                       final ViewGroup toolbarView,
@@ -107,6 +110,7 @@ public class AppToolbar {
         this.activity = activity;
         this.itemManager = itemManager;
         this.settingsManager = settingsManager;
+        this.selectionManager = selectionManager;
         this.itemsStorage = itemsStorage;
         this.rootNavigationHost = rootNavigationHost;
         this.toolbarView = toolbarView;
@@ -130,15 +134,18 @@ public class AppToolbar {
         setupButtonCallback(binding.toolbarOpentoday, this::onOpenTodayClick);
 
         // Selection button
-        onSelectionChangedTab = selections -> {
-            boolean visible = !selections.isEmpty();
-            viewVisible(binding.toolbarSelection, visible, View.GONE);
-            if (!visible && currentToolbarButton == binding.toolbarSelection) {
-                closeMoreView();
+        selectionCallbackTab = new SelectionCallback() {
+            @Override
+            public void onSelectionChanged(List<Selection> selections) {
+                boolean visible = !selections.isEmpty();
+                viewVisible(binding.toolbarSelection, visible, View.GONE);
+                if (!visible && currentToolbarButton == binding.toolbarSelection) {
+                    closeMoreView();
+                }
             }
         };
-        itemManager.getOnSelectionUpdated().addCallback(CallbackImportance.DEFAULT, onSelectionChangedTab);
-        viewVisible(binding.toolbarSelection, !itemManager.isSelectionEmpty(), View.GONE);
+        selectionManager.getOnSelectionUpdated().addCallback(CallbackImportance.DEFAULT, selectionCallbackTab);
+        viewVisible(binding.toolbarSelection, !selectionManager.isSelectionEmpty(), View.GONE);
     }
 
 
@@ -149,8 +156,8 @@ public class AppToolbar {
         }
         Logger.d(TAG, "destroy");
         destroyed = true;
-        if (onSelectionChanged != null) itemManager.getOnSelectionUpdated().deleteCallback(onSelectionChanged);
-        if (onSelectionChangedTab != null) itemManager.getOnSelectionUpdated().deleteCallback(onSelectionChangedTab);
+        if (selectionCallback != null) selectionManager.getOnSelectionUpdated().deleteCallback(selectionCallback);
+        if (selectionCallbackTab != null) selectionManager.getOnSelectionUpdated().deleteCallback(selectionCallbackTab);
         if (onTabsChanged != null) itemManager.getOnTabsChanged().deleteCallback(onTabsChanged);
         toolbarView.removeAllViews();
         toolbarMoreView.removeAllViews();
@@ -178,7 +185,7 @@ public class AppToolbar {
         if (currentToolbarButton != null) {
             backgroundTintFromStyle(R.style.Theme_OpenToday_Toolbar_Button, currentToolbarButton);
         }
-        if (onSelectionChanged != null) itemManager.getOnSelectionUpdated().deleteCallback(onSelectionChanged);
+        if (selectionCallback != null) selectionManager.getOnSelectionUpdated().deleteCallback(selectionCallback);
         if (onTabsChanged != null) itemManager.getOnTabsChanged().deleteCallback(onTabsChanged);
     }
 
@@ -493,15 +500,15 @@ public class AppToolbar {
         viewLong(localBinding.exportSelected, this::showExportSelectedWithMessageDialog);
 
         // Deselect all
-        viewClick(localBinding.deselectAll, itemManager::deselectAll);
+        viewClick(localBinding.deselectAll, selectionManager::deselectAll);
 
         // Move selected to this
         viewClick(localBinding.moveSelectedHere, () -> {
             if (checkSelectionEmpty()) return;
 
-            for (Selection selection : itemManager.getSelections()) {
+            for (Selection selection : selectionManager.getSelections()) {
                 selection.moveToStorage(itemsStorage);
-                itemManager.deselectItem(selection);
+                selectionManager.deselectItem(selection);
             }
         });
 
@@ -509,9 +516,9 @@ public class AppToolbar {
         viewClick(localBinding.copySelectedHere, () -> {
             if (checkSelectionEmpty()) return;
 
-            for (Selection selection : itemManager.getSelections()) {
+            for (Selection selection : selectionManager.getSelections()) {
                 selection.copyToStorage(itemsStorage);
-                itemManager.deselectItem(selection);
+                selectionManager.deselectItem(selection);
             }
         });
 
@@ -520,7 +527,7 @@ public class AppToolbar {
             if (checkSelectionEmpty()) return;
 
             List<Item> items = new ArrayList<>();
-            for (Selection selection : itemManager.getSelections()) {
+            for (Selection selection : selectionManager.getSelections()) {
                 items.add(selection.getItem());
             }
 
@@ -529,22 +536,25 @@ public class AppToolbar {
         });
 
         viewClick(localBinding.editSelected, () -> {
-            if (itemManager.getSelections().length > 0) {
-                Item item = itemManager.getSelections()[0].getItem();
+            if (selectionManager.getSelections().length > 0) {
+                Item item = selectionManager.getSelections()[0].getItem();
                 rootNavigationHost.navigate(ItemEditorFragment.edit(item.getId()), true);
             }
         });
         // Add selection listener
-        onSelectionChanged = (selections) -> {
-            localBinding.selectedInfo.setText(activity.getString(R.string.toolbar_more_selection_info, String.valueOf(selections.size())));
-            viewVisible(localBinding.editSelected, selections.size() == 1, View.GONE);
+        selectionCallback = new SelectionCallback() {
+            @Override
+            public void onSelectionChanged(List<Selection> selections) {
+                localBinding.selectedInfo.setText(activity.getString(R.string.toolbar_more_selection_info, String.valueOf(selections.size())));
+                viewVisible(localBinding.editSelected, selections.size() == 1, View.GONE);
+            }
         };
-        onSelectionChanged.onSelectionChanged(Arrays.asList(itemManager.getSelections())); // First run
-        itemManager.getOnSelectionUpdated().addCallback(CallbackImportance.MIN, onSelectionChanged); // Add to callbackStorage
+        selectionCallback.onSelectionChanged(Arrays.asList(selectionManager.getSelections())); // First run
+        selectionManager.getOnSelectionUpdated().addCallback(CallbackImportance.MIN, selectionCallback); // Add to callbackStorage
     }
 
     private boolean checkSelectionEmpty() {
-        if (itemManager.isSelectionEmpty()) {
+        if (selectionManager.isSelectionEmpty()) {
             Toast.makeText(activity, R.string.toolbar_more_selection_nothingSelected, Toast.LENGTH_SHORT).show();
             return true;
         }
@@ -554,7 +564,7 @@ public class AppToolbar {
     private void exportSelected() {
         try {
             ImportWrapper.Builder builder = ImportWrapper.createImport(ImportWrapper.Permission.ADD_ITEMS_TO_CURRENT);
-            for (Selection selection : itemManager.getSelections()) {
+            for (Selection selection : selectionManager.getSelections()) {
                 builder.addItem(selection.getItem());
             }
             ImportWrapper importWrapper = builder.build();
@@ -578,7 +588,7 @@ public class AppToolbar {
 
                     try {
                         ImportWrapper.Builder builder = ImportWrapper.createImport(ImportWrapper.Permission.ADD_ITEMS_TO_CURRENT, ImportWrapper.Permission.PRE_IMPORT_SHOW_DIALOG);
-                        for (Selection selection : itemManager.getSelections()) {
+                        for (Selection selection : selectionManager.getSelections()) {
                             builder.addItem(selection.getItem());
                         }
                         builder.setDialogMessage(msg);

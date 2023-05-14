@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.items.ItemManager;
+import com.fazziclay.opentoday.app.items.SelectionManager;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.databinding.FragmentDeleteItemsBinding;
@@ -50,9 +51,11 @@ public class DeleteItemsFragment extends Fragment {
         return result;
     }
 
+
     private FragmentDeleteItemsBinding binding;
     private ItemManager itemManager;
     private SettingsManager settingsManager;
+    private SelectionManager selectionManager;
     private ItemViewGenerator itemViewGenerator;
     private Item[] itemsToDelete;
 
@@ -62,6 +65,7 @@ public class DeleteItemsFragment extends Fragment {
         App app = App.get(requireContext());
         itemManager = app.getItemManager();
         settingsManager = app.getSettingsManager();
+        selectionManager = app.getSelectionManager();
 
         // parse
         String[] r = getArguments().getStringArray("itemsToDelete");
@@ -72,7 +76,7 @@ public class DeleteItemsFragment extends Fragment {
         itemsToDelete = u.toArray(new Item[0]);
         //
 
-        itemViewGenerator = ItemViewGenerator.builder(requireActivity(), itemManager, settingsManager)
+        itemViewGenerator = ItemViewGenerator.builder(requireActivity(), itemManager, settingsManager, selectionManager)
                 .setPreviewMode()
                 .build();
 
@@ -103,7 +107,7 @@ public class DeleteItemsFragment extends Fragment {
                 .setNegativeButton(R.string.dialog_previewDeleteItems_delete_cancel, null)
                 .setPositiveButton(R.string.dialog_previewDeleteItems_delete_apply, ((dialog1, which) -> {
                     for (Item item : itemsToDelete) {
-                        itemManager.deselectItem(item);
+                        selectionManager.deselectItem(item);
                         item.delete();
                     }
                     UI.rootBack(this);

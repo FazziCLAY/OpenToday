@@ -24,7 +24,7 @@ import com.fazziclay.opentoday.app.ColorHistoryManager;
 import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
-import com.fazziclay.opentoday.app.items.Selection;
+import com.fazziclay.opentoday.app.items.SelectionManager;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.SettingsManager;
@@ -38,7 +38,6 @@ public class ImportFragment extends Fragment {
     private static final String KEY_ITEMS_STORAGE = "importFragment:itemsStorageId";
     private static final String KEY_START_TEXT = "importFragment:startImportText";
     private static final String KEY_AUTORUN = "importFragment:autoRun";
-
     @NonNull
     public static ImportFragment create(@NonNull final UUID itemsStorageId) {
         final ImportFragment f = new ImportFragment();
@@ -63,10 +62,12 @@ public class ImportFragment extends Fragment {
         return f;
     }
 
+
     private FragmentImportBinding binding;
     private Activity activity;
     private App app;
     private ItemManager itemManager;
+    private SelectionManager selectionManager;
     private ItemsStorage itemsStorage;
     private boolean autoRun = false;
 
@@ -76,6 +77,7 @@ public class ImportFragment extends Fragment {
         activity = requireActivity();
         app = App.get(requireContext());
         itemManager = app.getItemManager();
+        selectionManager = app.getSelectionManager();
         itemsStorage = itemManager.getItemStorageById(UUID.fromString(getArguments().getString(KEY_ITEMS_STORAGE)));
 
         if (getArguments().containsKey(KEY_START_TEXT)) {
@@ -231,7 +233,7 @@ public class ImportFragment extends Fragment {
         if (importWrapper.isPerm(ImportWrapper.Permission.ADD_ITEMS_TO_CURRENT)) {
             for (Item item : importWrapper.getItems()) {
                 itemsStorage.addItem(item);
-                itemManager.selectItem(new Selection(itemsStorage, item));
+                selectionManager.selectItem(item);
             }
         }
 

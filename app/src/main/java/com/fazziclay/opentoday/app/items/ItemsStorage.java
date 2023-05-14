@@ -115,4 +115,6 @@ public interface ItemsStorage {
      * @see CallbackStorage
      */
     @NonNull CallbackStorage<OnItemsStorageUpdate> getOnUpdateCallbacks();
+
+    boolean isEmpty();
 }

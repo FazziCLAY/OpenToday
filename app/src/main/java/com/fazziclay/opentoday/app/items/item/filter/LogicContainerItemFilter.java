@@ -1,45 +1,60 @@
 package com.fazziclay.opentoday.app.items.item.filter;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import androidx.annotation.NonNull;
+
+import com.fazziclay.opentoday.app.data.Cherry;
+import com.fazziclay.opentoday.util.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
+// 2023.05.12 quality control passed.
 public class LogicContainerItemFilter extends ItemFilter {
-    public static final FilterImportExportTool IE_TOOL = new FilterImportExportTool() {
-        @Override
-        public JSONObject exportFilter(ItemFilter filter) throws Exception {
-            LogicContainerItemFilter l = (LogicContainerItemFilter) filter;
-            JSONArray filters = new JSONArray();
-            for (ItemFilter itemFilter : l.filters) {
-                filters.put(FilterIEUtil.exportFilter(itemFilter));
-            }
+    private static final String TAG = LogicContainerItemFilter.class.getSimpleName();
+    /**
+     * Logic of data storage
+     * <pre>
+     * <code>
+     *     {
+     *         "reverse": true, // true / false
+     *         "logicMode": "OR", // "OR" / "AND"
+     *         "description": "This is user-editable description",
+     *         "filters": [
+     *              // It contains a ItemFilter export Cherry objects. Like a this object (recurse), DataItemFilter and etc...
+     *         ]
+     *     }
+     * </code>
+     * </pre>
+     */
+    public static final FilterCodec CODEC = new LogicContainerItemFilterCodec();
+    private static class LogicContainerItemFilterCodec extends FilterCodec {
+        private static final String KEY_FILTERS = "filters";
+        private static final String KEY_DESCRIPTION = "description";
+        private static final String KEY_REVERSE = "reverse";
+        private static final String KEY_LOGIC_MODE = "logicMode";
 
-            return new JSONObject()
-                    .put("filters", filters)
-                    .put("description", l.description);
+        @NonNull
+        @Override
+        public Cherry exportFilter(@NonNull ItemFilter filter) {
+            final LogicContainerItemFilter l = (LogicContainerItemFilter) filter;
+            return new Cherry()
+                    .put(KEY_FILTERS, FilterCodecUtil.exportFiltersList(l.filters))
+                    .put(KEY_DESCRIPTION, l.description)
+                    .put(KEY_REVERSE, l.reverse)
+                    .put(KEY_LOGIC_MODE, l.logicMode);
         }
 
+        @NonNull
         @Override
-        public ItemFilter importFilter(JSONObject json, ItemFilter d) throws Exception {
-            LogicContainerItemFilter l = new LogicContainerItemFilter();
-
-            JSONArray filters = json.optJSONArray("filters");
-            if (filters == null) filters = new JSONArray();
-
-            int i = 0;
-            while (i < filters.length()) {
-                JSONObject j = filters.getJSONObject(i);
-                l.filters.add(FilterIEUtil.importFilter(j));
-                i++;
-            }
-
-            l.description = json.optString("description", l.description);
-
+        public ItemFilter importFilter(@NonNull Cherry cherry, ItemFilter d) {
+            final LogicContainerItemFilter l = new LogicContainerItemFilter();
+            l.filters.addAll(FilterCodecUtil.importFiltersList(cherry.optOrchard(KEY_FILTERS)));
+            l.description = cherry.optString(KEY_DESCRIPTION, l.description);
+            l.reverse = cherry.optBoolean(KEY_REVERSE, l.reverse);
+            l.logicMode = cherry.optEnum(KEY_LOGIC_MODE, l.logicMode);
             return l;
         }
-    };
+    }
 
     private final List<ItemFilter> filters = new ArrayList<>();
     private LogicMode logicMode = LogicMode.AND;
@@ -49,6 +64,7 @@ public class LogicContainerItemFilter extends ItemFilter {
     public LogicContainerItemFilter() {
     }
 
+    // Copy constructor
     public LogicContainerItemFilter(LogicContainerItemFilter copy) {
         this.reverse = copy.reverse;
         this.logicMode = copy.logicMode;
@@ -58,7 +74,8 @@ public class LogicContainerItemFilter extends ItemFilter {
         this.description = copy.description;
     }
 
-    private boolean isFit0(FitEquip fitEquip) {
+    private boolean _isFitInternalNoReverse(final FitEquip fitEquip) {
+        if (filters.isEmpty()) return false; // ALWAYS return FALSE for empty logic containers
         if (logicMode == LogicMode.AND) {
             for (ItemFilter filter : filters) {
                 if (!filter.isFit(fitEquip)) {
@@ -76,21 +93,32 @@ public class LogicContainerItemFilter extends ItemFilter {
 
             return false;
         }
-        return true;
+
+        // Crash if logic mode not supported
+        final RuntimeException exception = new RuntimeException("Unknown logicMode in TAG:" + TAG + " currently="+logicMode+" Setting mode to default(first in enum) and crash(this exception)");
+        Logger.e(TAG, "Unknown logic mode! Setting to a default. And crash.", exception);
+        logicMode = LogicMode.values()[0];
+        throw exception;
     }
 
     @Override
-    public boolean isFit(FitEquip fitEquip) {
-        return reverse != isFit0(fitEquip); // apply reverse
+    public boolean isFit(final FitEquip fitEquip) {
+        return reverse != _isFitInternalNoReverse(fitEquip); // apply reverse
+    }
+
+    public int getFilterPosition(ItemFilter filter) {
+        return filters.indexOf(filter);
     }
 
     public int add(ItemFilter itemFilter) {
         filters.add(itemFilter);
-        return filters.indexOf(itemFilter);
+        return getFilterPosition(itemFilter);
     }
 
-    public void remove(ItemFilter filter) {
+    public int remove(ItemFilter filter) {
+        final int i = getFilterPosition(filter);
         filters.remove(filter);
+        return i;
     }
 
     public ItemFilter[] getFilters() {
@@ -98,6 +126,7 @@ public class LogicContainerItemFilter extends ItemFilter {
     }
 
     public void setLogicMode(LogicMode logicMode) {
+        if (logicMode == null) throw new NullPointerException("loginMode can't be null!");
         this.logicMode = logicMode;
     }
 
@@ -125,6 +154,12 @@ public class LogicContainerItemFilter extends ItemFilter {
 
     @Override
     public void setDescription(String s) {
+        if (s == null) throw new NullPointerException("description can't be null!");
         this.description = s;
+    }
+
+    public enum LogicMode {
+        AND,
+        OR
     }
 }

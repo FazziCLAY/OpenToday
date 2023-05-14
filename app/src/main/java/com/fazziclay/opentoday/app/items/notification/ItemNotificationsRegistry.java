@@ -14,12 +14,12 @@ public class ItemNotificationsRegistry {
     public static class ItemNotificationInfo {
         private final Class<? extends ItemNotification> clazz;
         private final String stringType;
-        private final ItemNotificationIETool ieTool;
+        private final ItemNotificationCodec codec;
 
-        public ItemNotificationInfo(Class<? extends ItemNotification> clazz, String v, ItemNotificationIETool ieTool) {
+        public ItemNotificationInfo(Class<? extends ItemNotification> clazz, String v, ItemNotificationCodec codec) {
             this.clazz = clazz;
-            stringType = v;
-            this.ieTool = ieTool;
+            this.stringType = v;
+            this.codec = codec;
         }
 
         public Class<? extends ItemNotification> getClazz() {
@@ -30,8 +30,8 @@ public class ItemNotificationsRegistry {
             return stringType;
         }
 
-        public ItemNotificationIETool getIeTool() {
-            return ieTool;
+        public ItemNotificationCodec getCodec() {
+            return codec;
         }
     }
 

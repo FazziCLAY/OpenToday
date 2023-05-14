@@ -22,7 +22,7 @@ import com.fazziclay.opentoday.app.datafixer.FixResult;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.PinCodeManager;
 import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
-import com.fazziclay.opentoday.app.settings.SettingsManager;
+import com.fazziclay.opentoday.app.items.SelectionManager;
 import com.fazziclay.opentoday.gui.activity.CrashReportActivity;
 import com.fazziclay.opentoday.gui.activity.OpenSourceLicensesActivity;
 import com.fazziclay.opentoday.util.DebugUtil;
@@ -76,6 +76,7 @@ public class App extends Application {
 
     // Instance
     private static volatile App instance = null;
+
     public static App get(@NotNull Context context) {
         return (App) context.getApplicationContext();
     }
@@ -98,6 +99,7 @@ public class App extends Application {
     private PinCodeManager pinCodeManager;
     @AppInitIfNeed private License[] openSourceLicenses = null;
     @AppInitIfNeed private ClipboardManager clipboardManager = null;
+    @AppInitIfNeed private SelectionManager selectionManager = null;
     private final List<FeatureFlag> featureFlags = new ArrayList<>(App.DEBUG ? Arrays.asList(
             FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
             //FeatureFlag.ITEM_EDITOR_SHOW_COPY_ID_BUTTON,
@@ -338,6 +340,12 @@ public class App extends Application {
         }
     }
 
+    private void preCheckSelectionManager() {
+        if (selectionManager == null) {
+            selectionManager = getItemManager().getSelectionManager();
+        }
+    }
+
     // getters & setters
     public JSONObject getVersionData() { return versionData; }
     public long getAppStartupTime() {return appStartupTime;}
@@ -387,6 +395,12 @@ public class App extends Application {
     @NotNull
     public PinCodeManager getPinCodeManager() {
         return pinCodeManager;
+    }
+
+    @NotNull
+    public SelectionManager getSelectionManager() {
+        preCheckSelectionManager();
+        return this.selectionManager;
     }
 
     public boolean isAppInForeground() { return appInForeground; }

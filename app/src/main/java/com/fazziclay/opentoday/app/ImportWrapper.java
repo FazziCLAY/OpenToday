@@ -1,9 +1,10 @@
 package com.fazziclay.opentoday.app;
 
+import com.fazziclay.opentoday.app.data.CherryOrchard;
 import com.fazziclay.opentoday.app.items.item.Item;
-import com.fazziclay.opentoday.app.items.item.ItemIEUtil;
+import com.fazziclay.opentoday.app.items.item.ItemCodecUtil;
 import com.fazziclay.opentoday.app.items.tab.Tab;
-import com.fazziclay.opentoday.app.items.tab.TabIEUtil;
+import com.fazziclay.opentoday.app.items.tab.TabCodecUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -68,11 +69,11 @@ public class ImportWrapper {
                 .put("permissions", exportPermissions());
 
         if (isPerm(Permission.ADD_ITEMS_TO_CURRENT)) {
-            jsonObject.put("items", ItemIEUtil.exportItemList(items));
+            jsonObject.put("items", ItemCodecUtil.exportItemList(items));
         }
 
         if (isPerm(Permission.ADD_TABS)) {
-            jsonObject.put("tabs", TabIEUtil.exportTabs(tabs));
+            jsonObject.put("tabs", TabCodecUtil.exportTabList(tabs));
         }
 
         if (isPerm(Permission.PRE_IMPORT_SHOW_DIALOG)) {
@@ -142,7 +143,7 @@ public class ImportWrapper {
             throw new Exception("Version not compatible");
         }
 
-        List<Item> items = ItemIEUtil.importItemList(jsonObject.getJSONArray("items"));
+        List<Item> items = ItemCodecUtil.importItemList(CherryOrchard.of(jsonObject.getJSONArray("items")));
         return new ImportWrapper(new Permission[]{Permission.ADD_ITEMS_TO_CURRENT}, null, items, null, null, null);
     }
 
@@ -155,7 +156,7 @@ public class ImportWrapper {
             throw new Exception("Version not compatible");
         }
 
-        List<Item> items = ItemIEUtil.importItemList(jsonObject.getJSONArray("items"));
+        List<Item> items = ItemCodecUtil.importItemList(CherryOrchard.of(jsonObject.getJSONArray("items")));
         return new ImportWrapper(new Permission[]{Permission.ADD_ITEMS_TO_CURRENT}, null, items, null, null, null);
     }
 
@@ -176,11 +177,11 @@ public class ImportWrapper {
         JSONObject colorHistory = null;
 
         if (isPerm(perms, Permission.ADD_TABS)) {
-            tabs = new ArrayList<>(TabIEUtil.importTabs(jsonObject.getJSONArray("tabs")));
+            tabs = new ArrayList<>(TabCodecUtil.importTabList(CherryOrchard.of(jsonObject.getJSONArray("tabs"))));
         }
 
         if (isPerm(perms, Permission.ADD_ITEMS_TO_CURRENT)) {
-            items = new ArrayList<>(ItemIEUtil.importItemList(jsonObject.getJSONArray("items")));
+            items = new ArrayList<>(ItemCodecUtil.importItemList(CherryOrchard.of(jsonObject.getJSONArray("items"))));
         }
 
         if (isPerm(perms, Permission.PRE_IMPORT_SHOW_DIALOG)) {

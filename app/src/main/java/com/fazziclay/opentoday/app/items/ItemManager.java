@@ -10,8 +10,9 @@ import androidx.annotation.Nullable;
 import com.fazziclay.javaneoutil.FileUtil;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.TickSession;
-import com.fazziclay.opentoday.app.items.callback.OnSelectionChanged;
+import com.fazziclay.opentoday.app.data.CherryOrchard;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
+import com.fazziclay.opentoday.app.items.callback.SelectionCallback;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
@@ -20,14 +21,13 @@ import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.TextItem;
-import com.fazziclay.opentoday.app.items.tab.ItemsTabController;
 import com.fazziclay.opentoday.app.items.tab.LocalItemsTab;
 import com.fazziclay.opentoday.app.items.tab.Tab;
-import com.fazziclay.opentoday.app.items.tab.TabIEUtil;
+import com.fazziclay.opentoday.app.items.tab.TabCodecUtil;
+import com.fazziclay.opentoday.app.items.tab.TabController;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
-import com.fazziclay.opentoday.util.callback.Status;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -47,11 +47,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class ItemManager {
-    private static final boolean DEBUG_ITEMS_SET = (App.DEBUG && false);
-
-    // Selection
-    private final List<Selection> selections = new ArrayList<>();
-    private final CallbackStorage<OnSelectionChanged> onSelectionUpdated = new CallbackStorage<>();
+    private static final boolean DEBUG_ITEMS_SET = App.debug(false);
 
     @NonNull private final File dataOriginalFile;
     @NonNull private final File dataCompressFile;
@@ -59,13 +55,20 @@ public class ItemManager {
     private SaveThread saveThread = null;
     @NonNull @RequireSave
     @SaveKey(key = "tabs") private final List<Tab> tabs = new ArrayList<>();
-    @NonNull private final ItemsTabController itemsTabController = new LocalItemTabsController();
+    @NonNull private final TabController tabController = new LocalItemTabsController();
     @NonNull private final CallbackStorage<OnTabsChanged> onTabsChangedCallbacks = new CallbackStorage<>();
+    @NonNull private final SelectionManager selectionManager;
 
     public ItemManager(@NonNull final File dataOriginalFile, @NonNull final File dataCompressFile) {
         this.dataOriginalFile = dataOriginalFile;
         this.dataCompressFile = dataCompressFile;
+        this.selectionManager = new SelectionManager();
         load();
+    }
+
+    @NonNull
+    public SelectionManager getSelectionManager() {
+        return selectionManager;
     }
 
     public void setDebugPrintSaveStatusAlways(boolean b) {
@@ -110,9 +113,9 @@ public class ItemManager {
                     } else {
                         jsonTabs = new JSONArray();
                     }
-                    List<Tab> tabs = TabIEUtil.importTabs(jsonTabs);
+                    List<Tab> tabs = TabCodecUtil.importTabList(CherryOrchard.of(jsonTabs));
                     for (Tab tab : tabs) {
-                        tab.setController(itemsTabController);
+                        tab.setController(tabController);
                     }
                     this.tabs.addAll(tabs);
                 } catch (Exception e) {
@@ -221,7 +224,7 @@ public class ItemManager {
 
     public void addTab(@NonNull Tab tab) {
         tab.setId(UUID.randomUUID());
-        tab.setController(itemsTabController);
+        tab.setController(tabController);
         this.tabs.add(tab);
         internalOnTabChanged();
         queueSave();
@@ -263,7 +266,7 @@ public class ItemManager {
         return null;
     }
 
-    private class LocalItemTabsController implements ItemsTabController {
+    private class LocalItemTabsController implements TabController {
         @Override
         public void save(@NonNull Tab tab) {
             ItemManager.this.queueSave();
@@ -294,71 +297,6 @@ public class ItemManager {
         }
     }
 
-    public CallbackStorage<OnSelectionChanged> getOnSelectionUpdated() {
-        return onSelectionUpdated;
-    }
-
-    public boolean isSelectionEmpty() {
-        return selections.isEmpty();
-    }
-
-    public Selection[] getSelections() {
-        return selections.toArray(new Selection[0]);
-    }
-
-    public void selectItem(Selection selection) {
-        if (isSelected(selection.getItem())) return;
-        this.selections.add(selection);
-        this.onSelectionUpdated.run((callbackStorage, callback) -> {
-            callback.onSelectionChanged(this.selections);
-            return new Status.Builder().build();
-        });
-    }
-
-    public void deselectItem(Item item) {
-        if (!isSelected(item)) return;
-        Selection toDelete = null;
-        for (Selection selection : this.selections) {
-            if (selection.getItem() == item) toDelete = selection;
-        }
-        selections.remove(toDelete);
-
-        this.onSelectionUpdated.run((callbackStorage, callback) -> {
-            callback.onSelectionChanged(this.selections);
-            return new Status.Builder().build();
-        });
-    }
-
-    public void deselectItem(Selection se) {
-        if (!isSelected(se.getItem())) return;
-        Selection toDelete = null;
-        for (Selection selection : this.selections) {
-            if (selection == se) toDelete = selection;
-        }
-        selections.remove(toDelete);
-
-        this.onSelectionUpdated.run((callbackStorage, callback) -> {
-            callback.onSelectionChanged(this.selections);
-            return new Status.Builder().build();
-        });
-    }
-
-    public void deselectAll() {
-        selections.clear();
-
-        this.onSelectionUpdated.run((callbackStorage, callback) -> {
-            callback.onSelectionChanged(this.selections);
-            return new Status.Builder().build();
-        });
-    }
-
-    public boolean isSelected(Item item) {
-        for (Selection selection : selections) {
-            if (selection.getItem() == item) return true;
-        }
-        return false;
-    }
-
     public void queueSave() {
         if (saveThread == null) {
             saveThread = new SaveThread();
@@ -373,9 +311,9 @@ public class ItemManager {
             // Save
             {
                 JSONObject jRoot = new JSONObject();
-                JSONArray jTabs = TabIEUtil.exportTabs(this.tabs);
+                JSONArray jTabs = TabCodecUtil.exportTabList(this.tabs).toJSONArray();
                 jRoot.put("tabs", jTabs);
-                String originalData = jRoot.toString();
+                String originalData = jRoot.toString(2);
 
                 FileUtil.setText(dataOriginalFile, originalData);
 

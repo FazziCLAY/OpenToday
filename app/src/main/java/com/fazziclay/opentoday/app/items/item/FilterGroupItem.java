@@ -5,19 +5,19 @@ import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.TickSession;
+import com.fazziclay.opentoday.app.data.Cherry;
+import com.fazziclay.opentoday.app.data.CherryOrchard;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.ItemsUtils;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
-import com.fazziclay.opentoday.app.items.item.filter.FilterIEUtil;
+import com.fazziclay.opentoday.app.items.item.filter.FilterCodecUtil;
 import com.fazziclay.opentoday.app.items.item.filter.FitEquip;
 import com.fazziclay.opentoday.app.items.item.filter.ItemFilter;
 import com.fazziclay.opentoday.app.items.item.filter.LogicContainerItemFilter;
+import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -26,35 +26,34 @@ import java.util.UUID;
 
 public class FilterGroupItem extends TextItem implements ContainerItem, ItemsStorage {
     // START - Save
-    public final static FilterGroupItemIETool IE_TOOL = new FilterGroupItemIETool();
-    public static class FilterGroupItemIETool extends TextItem.TextItemIETool {
+    public final static FilterGroupItemCodec CODEC = new FilterGroupItemCodec();
+    public static class FilterGroupItemCodec extends TextItemCodec {
         @NonNull
         @Override
-        public JSONObject exportItem(@NonNull Item item) throws Exception {
+        public Cherry exportItem(@NonNull Item item) {
             FilterGroupItem filterGroupItem = (FilterGroupItem) item;
 
-            JSONArray itemsArray = new JSONArray();
+            CherryOrchard orchard = new CherryOrchard();
             for (ItemFilterWrapper wrapper : filterGroupItem.items) {
-                itemsArray.put(wrapper.exportWrapper());
+                orchard.put(wrapper.exportWrapper());
             }
 
             return super.exportItem(filterGroupItem)
-                    .put("items", itemsArray);
+                    .put("items", orchard);
         }
 
         @NonNull
         @Override
-        public Item importItem(@NonNull JSONObject json, Item item) throws Exception {
+        public Item importItem(@NonNull Cherry cherry, Item item) {
             FilterGroupItem filterGroupItem = item != null ? (FilterGroupItem) item : new FilterGroupItem();
-            super.importItem(json, filterGroupItem);
+            super.importItem(cherry, filterGroupItem);
 
             // Items
-            JSONArray itemsArray = json.optJSONArray("items");
-            if (itemsArray == null) itemsArray = new JSONArray();
+            CherryOrchard itemsArray = cherry.optOrchard("items");
             int i = 0;
             while (i < itemsArray.length()) {
-                JSONObject jsonWrapper = itemsArray.getJSONObject(i);
-                ItemFilterWrapper wrapper = ItemFilterWrapper.importWrapper(jsonWrapper);
+                Cherry cherryWrapper = itemsArray.getCherryAt(i);
+                ItemFilterWrapper wrapper = ItemFilterWrapper.importWrapper(cherryWrapper);
                 wrapper.item.setController(filterGroupItem.groupItemController);
                 filterGroupItem.items.add(wrapper);
                 i++;
@@ -74,6 +73,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     @NonNull private final List<ItemFilterWrapper> activeItems = new ArrayList<>();
     @NonNull private final ItemController groupItemController = new FilterGroupItemController();
     @NonNull private final CallbackStorage<OnItemsStorageUpdate> itemStorageUpdateCallbacks = new CallbackStorage<>();
+    @NonNull private final FitEquip fitEquip = new FitEquip();
 
     protected FilterGroupItem() {
         super();
@@ -138,6 +138,14 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         return ret.toArray(new Item[0]);
     }
 
+
+    public boolean isActiveItem(Item item) {
+        for (ItemFilterWrapper activeItem : activeItems) {
+            if (activeItem.item == item) return true;
+        }
+        return false;
+    }
+
     @NonNull
     @Override
     public Item[] getAllItems() {
@@ -173,7 +181,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         item.item.attach(groupItemController);
         items.add(position, item);
         itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onAdded(item.item, getItemPosition(item.item)));
-        if (!recalculate(new GregorianCalendar())) {
+        if (!recalculate(TickSession.getLatestGregorianCalendar())) {
             visibleChanged();
         }
         save();
@@ -191,7 +199,6 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
 
     @Override
     public void deleteItem(Item item) {
-        App.get().getItemManager().deselectItem(item); // TODO: 31.08.2022 other fix??  !!BUGFIX!!
         itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onDeleted(item, getItemPosition(item)));
 
         ItemFilterWrapper toDel = null;
@@ -202,7 +209,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         item.detach();
         items.remove(toDel);
 
-        if (!recalculate(new GregorianCalendar())) {
+        if (!recalculate(TickSession.getLatestGregorianCalendar())) {
             visibleChanged();
         }
         save();
@@ -229,7 +236,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         //Collections.swap(items, positionFrom, positionTo);
         itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onMoved(item.item, positionFrom, positionTo));
 
-        if (!recalculate(new GregorianCalendar())) {
+        if (!recalculate(TickSession.getLatestGregorianCalendar())) {
             visibleChanged();
         }
         save();
@@ -254,8 +261,13 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     }
 
     @Override
+    public boolean isEmpty() {
+        return items.isEmpty();
+    }
+
+    @Override
     public Item getItemById(UUID itemId) {
-        return ItemsUtils.getItemById(getAllItems(), itemId);
+        return ItemsUtils.getItemById(getAllItems(), itemId); // TODO: 5/13/23 Use here a getItemByIdRoot
     }
 
     @Override
@@ -270,13 +282,16 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
             tickList.get(i).item.tick(tickSession);
             i--;
         }
+
+        if (App.DEBUG) Logger.d(FilterGroupItem.class.getSimpleName(), "FitEquip recycle="+fitEquip.getRecycle());
     }
 
-    public boolean recalculate(GregorianCalendar gregorianCalendar) {
+    public boolean recalculate(final GregorianCalendar gregorianCalendar) {
         List<ItemFilterWrapper> temps = new ArrayList<>();
+        fitEquip.recycle(gregorianCalendar);
 
         for (ItemFilterWrapper wrapper : items) {
-            boolean fit = wrapper.filter.isFit(new FitEquip(gregorianCalendar));
+            boolean fit = wrapper.filter.isFit(fitEquip);
             if (fit) {
                 temps.add(wrapper);
             }
@@ -312,22 +327,20 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
             this.filter = filter;
         }
 
-        public JSONObject exportWrapper() throws Exception {
-            return new JSONObject()
-                    .put("item", ItemIEUtil.exportItem(item))
-                    .put("filter", FilterIEUtil.exportFilter(filter));
+        public Cherry exportWrapper() {
+            return new Cherry()
+                    .put("item", ItemCodecUtil.exportItem(item))
+                    .put("filter", FilterCodecUtil.exportFilter(filter));
         }
 
-        public static ItemFilterWrapper importWrapper(JSONObject json) throws Exception {
-            return new ItemFilterWrapper(ItemIEUtil.importItem(json.getJSONObject("item")), FilterIEUtil.importFilter(json.getJSONObject("filter")));
+        public static ItemFilterWrapper importWrapper(Cherry cherry) {
+            return new ItemFilterWrapper(ItemCodecUtil.importItem(cherry.getCherry("item")), FilterCodecUtil.importFilter(cherry.getCherry("filter")));
         }
     }
 
     private class FilterGroupItemController extends ItemController {
         @Override
         public void delete(Item item) {
-            App.get().getItemManager().deselectItem(item); // TODO: 31.08.2022 other fix??  !!BUGFIX!!
-
             itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onDeleted(item, getItemPosition(item)));
 
 
@@ -338,7 +351,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
                     break;
                 }
             }
-            recalculate(new GregorianCalendar());
+            recalculate(TickSession.getLatestGregorianCalendar());
 
             items.remove(toDelete);
             activeItems.remove(toDelete);
@@ -358,7 +371,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         }
 
         @Override
-        public ItemsStorage getParentItemStorage(Item item) {
+        public ItemsStorage getParentItemsStorage(Item item) {
             return FilterGroupItem.this;
         }
     }

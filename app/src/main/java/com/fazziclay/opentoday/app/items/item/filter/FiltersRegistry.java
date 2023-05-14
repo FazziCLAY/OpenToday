@@ -3,28 +3,30 @@ package com.fazziclay.opentoday.app.items.item.filter;
 public class FiltersRegistry {
     public static final FiltersRegistry REGISTRY = new FiltersRegistry();
 
-    private static final FilterInfo[] INFOS = new FilterInfo[]{
-            new FilterInfo(DateItemFilter.class,           "DateItemFilter",           DateItemFilter.IE_TOOL,           DateItemFilter::new),
-            new FilterInfo(LogicContainerItemFilter.class, "LogicContainerItemFilter", LogicContainerItemFilter.IE_TOOL, LogicContainerItemFilter::new),
+    private static final FilterInfo[] OBJECTS = new FilterInfo[]{
+            new FilterInfo(DateItemFilter.class,           "DateItemFilter",           DateItemFilter.CODEC,              DateItemFilter::new),
+            new FilterInfo(LogicContainerItemFilter.class, "LogicContainerItemFilter", LogicContainerItemFilter.CODEC,    LogicContainerItemFilter::new),
     };
 
+    private FiltersRegistry() {}
+
     public FilterInfo[] getAllFilters() {
-        return INFOS.clone();
+        return OBJECTS.clone();
     }
 
     public int count() {
-        return INFOS.length;
+        return OBJECTS.length;
     }
 
     public FilterInfo getByClass(Class<? extends ItemFilter> c) {
-        for (FilterInfo info : INFOS) {
+        for (FilterInfo info : OBJECTS) {
             if (info.clazz == c) return info;
         }
         return null;
     }
 
     public FilterInfo getByType(String c) {
-        for (FilterInfo info : INFOS) {
+        for (FilterInfo info : OBJECTS) {
             if (info.stringType.equals(c)) return info;
         }
         return null;
@@ -33,13 +35,13 @@ public class FiltersRegistry {
     public static class FilterInfo {
         private final Class<? extends ItemFilter> clazz;
         private final String stringType;
-        private final FilterImportExportTool ietool;
+        private final FilterCodec codec;
         private final CreateFilterInterface createFilterInterface;
 
-        public FilterInfo(Class<? extends ItemFilter> clazz, String stringType, FilterImportExportTool ietool, CreateFilterInterface createFilterInterface) {
+        public FilterInfo(Class<? extends ItemFilter> clazz, String stringType, FilterCodec codec, CreateFilterInterface createFilterInterface) {
             this.clazz = clazz;
             this.stringType = stringType;
-            this.ietool = ietool;
+            this.codec = codec;
             this.createFilterInterface = createFilterInterface;
         }
 
@@ -51,8 +53,8 @@ public class FiltersRegistry {
             return stringType;
         }
 
-        public FilterImportExportTool getIETool() {
-            return ietool;
+        public FilterCodec getCodec() {
+            return codec;
         }
 
         public CreateFilterInterface getCreateFilterInterface() {

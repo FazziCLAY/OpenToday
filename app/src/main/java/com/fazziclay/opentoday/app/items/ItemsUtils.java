@@ -6,7 +6,7 @@ import androidx.annotation.Nullable;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.ContainerItem;
 import com.fazziclay.opentoday.app.items.item.Item;
-import com.fazziclay.opentoday.app.items.item.ItemIEUtil;
+import com.fazziclay.opentoday.app.items.item.ItemCodecUtil;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 
 import java.util.ArrayList;
@@ -15,13 +15,12 @@ import java.util.List;
 import java.util.UUID;
 
 public class ItemsUtils {
+    /**
+     * <h1>WARNING! Coping include ID!!!!!</h1>
+     */
     @NonNull
     public static List<Item> copy(Item[] items) {
-        try {
-            return ItemIEUtil.importItemList(ItemIEUtil.exportItemList(items));
-        } catch (Exception e) {
-            throw new RuntimeException("Clone exception!", e);
-        }
+        return ItemCodecUtil.importItemList(ItemCodecUtil.exportItemList(items));
     }
 
     @NonNull
@@ -79,8 +78,8 @@ public class ItemsUtils {
     }
 
     public static UUID getId(Object o) {
-        if (o instanceof ID) {
-            ID id = (ID) o;
+        if (o instanceof Unique) {
+            Unique id = (Unique) o;
             return id.getId();
         }
         return null;

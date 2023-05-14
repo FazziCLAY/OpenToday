@@ -6,7 +6,7 @@ import com.fazziclay.opentoday.util.callback.Status;
 /**
  * @see OnItemsStorageUpdate
  */
-public class OnItemsStorageUpdateImpl implements OnItemsStorageUpdate {
+public class OnItemsStorageUpdateImpl extends OnItemsStorageUpdate {
     private final Runnable runnable;
 
     public OnItemsStorageUpdateImpl(Runnable runnable) {

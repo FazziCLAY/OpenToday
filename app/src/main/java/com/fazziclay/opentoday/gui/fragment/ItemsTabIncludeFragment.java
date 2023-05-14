@@ -20,7 +20,8 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.ImportWrapper;
-import com.fazziclay.opentoday.app.items.ID;
+import com.fazziclay.opentoday.app.items.SelectionManager;
+import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
@@ -48,16 +49,17 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     private static final String TAG = "ItemsTabIncludeFragment";
 
     public static final ItemsTabIncludeFragment.QuickNoteInterface QUICK_NOTE_NOTIFICATIONS_PARSE = QuickNote.QUICK_NOTE_NOTIFICATIONS_PARSE;
-
     public static ItemsTabIncludeFragment create() {
         return new ItemsTabIncludeFragment();
     }
+
 
 
     private FragmentItemsTabIncludeBinding binding;
     private App app;
     private ItemManager itemManager;
     private SettingsManager settingsManager;
+    private SelectionManager selectionManager;
     private AppToolbar toolbar;
     private NavigationHost rootNavigationHost;
     private ItemsStorage currentItemsStorage; // <-------------------------- this generic current item storage
@@ -76,6 +78,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         this.app = App.get(requireContext());
         this.itemManager = app.getItemManager();
         this.settingsManager = app.getSettingsManager();
+        this.selectionManager = app.getSelectionManager();
         this.rootNavigationHost = UI.findFragmentInParents(this, MainRootFragment.class);
         binding = FragmentItemsTabIncludeBinding.inflate(getLayoutInflater());
 
@@ -94,7 +97,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
             throw new RuntimeException("Unknown firstTab settings!");
         }
 
-        this.toolbar = new AppToolbar(requireActivity(), itemManager, settingsManager, currentItemsStorage, rootNavigationHost, binding.toolbar, binding.toolbarMore);
+        this.toolbar = new AppToolbar(requireActivity(), itemManager, settingsManager, selectionManager, currentItemsStorage, rootNavigationHost, binding.toolbar, binding.toolbarMore);
 
         // Tabs
         itemManager.getOnTabsChanged().addCallback(CallbackImportance.DEFAULT, localOnTabChanged);
@@ -186,8 +189,8 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
             binding.quickNoteText.setText("");
 
             if (ImportWrapper.isImportText(text)) {
-                if (currentItemsStorage instanceof ID) {
-                    UUID id = ((ID) currentItemsStorage).getId();
+                if (currentItemsStorage instanceof Unique) {
+                    UUID id = ((Unique) currentItemsStorage).getId();
                     rootNavigationHost.navigate(ImportFragment.create(id, text.trim(), true), true);
                 } else {
                     Toast.makeText(requireContext(), R.string.toolbar_more_file_import_unsupported, Toast.LENGTH_SHORT).show();

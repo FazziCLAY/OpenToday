@@ -32,7 +32,7 @@ import com.fazziclay.opentoday.app.ColorHistoryManager;
 import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
-import com.fazziclay.opentoday.app.items.Selection;
+import com.fazziclay.opentoday.app.items.SelectionManager;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
@@ -82,7 +82,6 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     private static final String KEY_EDIT_ITEM_ID = "edit:itemId";
     private static final String KEY_CREATE_ITEM_STORAGE_ID = "create:itemStorageId";
     private static final String KEY_CREATE_ITEM_TYPE = "create:itemType";
-
     public static ItemEditorFragment create(UUID itemStorageId, Class<? extends Item> itemType) {
         ItemEditorFragment result = new ItemEditorFragment();
         Bundle a = new Bundle();
@@ -118,10 +117,12 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         return result;
     }
 
+
     private App app;
     private ItemManager itemManager;
     private SettingsManager settingsManager;
     private ColorHistoryManager colorHistoryManager;
+    private SelectionManager selectionManager;
     private boolean unsavedChanges = false;
     private Item item;
 
@@ -146,6 +147,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         itemManager = app.getItemManager();
         settingsManager = app.getSettingsManager();
         colorHistoryManager = app.getColorHistoryManager();
+        selectionManager = app.getSelectionManager();
         mode = getArguments().getInt("mode", MODE_UNKNOWN);
         
         if (mode == MODE_EDIT) {
@@ -341,7 +343,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding = FragmentItemEditorModuleItemBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
 
             // equip
-            binding.selected.setChecked(itemManager.isSelected(item));
+            binding.selected.setChecked(selectionManager.isSelected(item));
             binding.viewMinHeight.setText(String.valueOf(item.getViewMinHeight()));
             binding.defaultBackgroundColor.setChecked(!item.isViewCustomBackgroundColor());
             temp_backgroundColor = item.getViewBackgroundColor();
@@ -451,12 +453,12 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             item.setViewCustomBackgroundColor(!binding.defaultBackgroundColor.isChecked());
             item.setMinimize(binding.minimize.isChecked());
             if (binding.selected.isChecked()) {
-                if (!itemManager.isSelected(item)) {
-                    itemManager.selectItem(new Selection(item.getParentItemStorage(), item));
+                if (!selectionManager.isSelected(item)) {
+                    selectionManager.selectItem(item);
                 }
             } else {
-                if (itemManager.isSelected(item)) {
-                    itemManager.deselectItem(item);
+                if (selectionManager.isSelected(item)) {
+                    selectionManager.deselectItem(item);
                 }
             }
         }

@@ -54,6 +54,7 @@ public class ItemsTickReceiver extends BroadcastReceiver {
         if (tickSession.isSaveNeeded()) {
             itemManager.saveAllDirect();
         }
+
     }
 
     private void debugNotification(Context context) {
