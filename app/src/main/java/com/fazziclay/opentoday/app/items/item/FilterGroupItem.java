@@ -199,7 +199,8 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
 
     @Override
     public void deleteItem(Item item) {
-        itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onDeleted(item, getItemPosition(item)));
+        int position = getItemPosition(item);
+        itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onPreDeleted(item, position));
 
         ItemFilterWrapper toDel = null;
         for (ItemFilterWrapper wrapper : items) {
@@ -212,6 +213,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         if (!recalculate(TickSession.getLatestGregorianCalendar())) {
             visibleChanged();
         }
+        itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onPostDeleted(item, position));
         save();
     }
 
@@ -339,22 +341,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     private class FilterGroupItemController extends ItemController {
         @Override
         public void delete(Item item) {
-            itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onDeleted(item, getItemPosition(item)));
-
-
-            ItemFilterWrapper toDelete = null;
-            for (ItemFilterWrapper wrapper : items) {
-                if (wrapper.item == item) {
-                    toDelete = wrapper;
-                    break;
-                }
-            }
-            recalculate(TickSession.getLatestGregorianCalendar());
-
-            items.remove(toDelete);
-            activeItems.remove(toDelete);
-            FilterGroupItem.this.visibleChanged();
-            FilterGroupItem.this.save();
+            FilterGroupItem.this.deleteItem(item);
         }
 
         @Override
