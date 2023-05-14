@@ -13,7 +13,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 
 import com.fazziclay.opentoday.R;
-import com.fazziclay.opentoday.app.settings.SettingsManager;
+import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.util.MinBaseAdapter;
 

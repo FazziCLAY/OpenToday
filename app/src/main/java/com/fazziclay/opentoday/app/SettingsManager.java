@@ -1,4 +1,4 @@
-package com.fazziclay.opentoday.app.settings;
+package com.fazziclay.opentoday.app;
 
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatDelegate;

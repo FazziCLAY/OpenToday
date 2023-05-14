@@ -41,7 +41,7 @@ import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.tab.Tab;
-import com.fazziclay.opentoday.app.settings.SettingsManager;
+import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.databinding.ToolbarBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreFileBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreItemsBinding;

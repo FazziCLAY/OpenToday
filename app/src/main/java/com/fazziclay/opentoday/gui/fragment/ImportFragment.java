@@ -27,7 +27,7 @@ import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Selection;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.tab.Tab;
-import com.fazziclay.opentoday.app.settings.SettingsManager;
+import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.databinding.FragmentImportBinding;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.util.NetworkUtil;

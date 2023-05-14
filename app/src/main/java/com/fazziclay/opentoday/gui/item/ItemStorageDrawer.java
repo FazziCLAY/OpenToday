@@ -25,7 +25,7 @@ import com.fazziclay.opentoday.app.items.callback.OnSelectionChanged;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.item.Transform;
-import com.fazziclay.opentoday.app.settings.SettingsManager;
+import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType;
 import com.fazziclay.opentoday.gui.dialog.DialogTextItemEditText;
 import com.fazziclay.opentoday.gui.fragment.ItemEditorFragment;
