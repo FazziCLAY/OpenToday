@@ -42,16 +42,14 @@ public class ItemsUtils {
     * Get item in rootArray and subItems (recursive)
     * */
     @Nullable
-    public static Item getItemByIdRoot(Item[] rootArray, UUID id) {
+    public static Item getItemByIdRecursive(Item[] rootArray, UUID id) {
         return getItemById(getAllItemsInTree(rootArray), id);
     }
 
     @Nullable
-    public static Item getItemById(@NonNull Item[] allItems, UUID id) {
+    public static Item getItemById(@NonNull Item[] allItems, @NonNull UUID id) {
         for (Item item : allItems) {
-            if (item.getId().equals(id)) {
-                return item;
-            }
+            if (id.equals(item.getId())) return item;
         }
         return null;
     }
