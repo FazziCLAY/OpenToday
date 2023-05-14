@@ -116,6 +116,7 @@ public class ItemManager {
                     List<Tab> tabs = TabCodecUtil.importTabList(CherryOrchard.of(jsonTabs));
                     for (Tab tab : tabs) {
                         tab.setController(tabController);
+                        tab.validateId();
                     }
                     this.tabs.addAll(tabs);
                 } catch (Exception e) {
@@ -217,14 +218,13 @@ public class ItemManager {
         if (name.trim().isEmpty()) {
             throw new RuntimeException("Empty name for tab is not allowed!");
         }
-        addTab(new LocalItemsTab(UUID.randomUUID(), name));
+        addTab(new LocalItemsTab(name));
         internalOnTabChanged();
         queueSave();
     }
 
     public void addTab(@NonNull Tab tab) {
-        tab.setId(UUID.randomUUID());
-        tab.setController(tabController);
+        tab.attach(tabController);
         this.tabs.add(tab);
         internalOnTabChanged();
         queueSave();
@@ -275,6 +275,11 @@ public class ItemManager {
         public void nameChanged(@NonNull final Tab tab) {
             ItemManager.this.internalOnTabChanged();
             ItemManager.this.queueSave();
+        }
+
+        @Override
+        public UUID generateId() {
+            return UUID.randomUUID();
         }
     }
 
@@ -413,8 +418,8 @@ public class ItemManager {
         }
 
         List<Tab> tabs = new ArrayList<>();
-        addTab(new LocalItemsTab(UUID.randomUUID(), "Debug1", tab1items.toArray(new Item[0])));
-        addTab(new LocalItemsTab(UUID.randomUUID(), "Debug2", tab2items.toArray(new Item[0])));
+        addTab(new LocalItemsTab("Debug1", tab1items.toArray(new Item[0])));
+        addTab(new LocalItemsTab("Debug2", tab2items.toArray(new Item[0])));
         return tabs;
     }
 }

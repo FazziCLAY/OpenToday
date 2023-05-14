@@ -37,12 +37,9 @@ public class LocalItemsTab extends Tab {
 
     private final SimpleItemsStorage itemsStorage;
 
-    public LocalItemsTab(UUID id, String name) {
-        this(id, name, new Item[0]);
-    }
 
-    public LocalItemsTab(UUID id, String name, Item[] data) {
-        super(id, name);
+    public LocalItemsTab(String name, Item[] data) {
+        super(name);
         itemsStorage = new SimpleItemsStorage(new ArrayList<>(Arrays.asList(data))) {
             @Override
             public void save() {
@@ -52,6 +49,16 @@ public class LocalItemsTab extends Tab {
     }
 
     protected LocalItemsTab() {
+        itemsStorage = new SimpleItemsStorage() {
+            @Override
+            public void save() {
+                LocalItemsTab.this.save();
+            }
+        };
+    }
+
+    public LocalItemsTab(String name) {
+        super(name);
         itemsStorage = new SimpleItemsStorage() {
             @Override
             public void save() {
