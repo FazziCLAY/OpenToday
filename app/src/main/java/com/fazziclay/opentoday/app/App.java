@@ -63,7 +63,7 @@ public class App extends Application {
     // DEBUG
     public static final boolean SHADOW_RELEASE = false;
     public static final boolean DEBUG = !SHADOW_RELEASE && CustomBuildConfig.DEBUG;
-    public static final boolean LOG = debug(false);
+    public static final boolean LOG = debug(true);
     public static final boolean DEBUG_TICK_NOTIFICATION = debug(false);
     public static final int DEBUG_MAIN_ACTIVITY_START_SLEEP = debug(false) ? 6000 : 0;
     public static final int DEBUG_APP_START_SLEEP = debug(false) ? 8000 : 0;
