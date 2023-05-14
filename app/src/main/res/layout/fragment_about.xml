@@ -109,6 +109,14 @@
         </LinearLayout>
 
         <Button
+            android:id="@+id/changelog"
+            android:backgroundTint="#720FD4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/aboutapp_text_changelog"
+            android:layout_gravity="center_horizontal" />
+
+        <Button
             android:id="@+id/sourceCode"
             app:drawableEndCompat="@android:drawable/ic_menu_set_as"
             android:layout_width="wrap_content"

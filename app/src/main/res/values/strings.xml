@@ -323,4 +323,5 @@
     <string name="filter_group_item_filter_editor_rootFilterEditor_title">Root filter editor:</string>
     <string name="part_date_item_filter_editor_description">Description</string>
     <string name="filter_group_item_filter_editor_error_unknownFilter">Unknown filter! This is a bug. Report to developer.\nCanonical: %s</string>
+    <string name="aboutapp_text_changelog">What\'s new?</string>
 </resources>

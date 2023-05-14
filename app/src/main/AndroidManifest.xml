@@ -38,6 +38,9 @@
             android:name="com.fazziclay.opentoday.gui.activity.MainActivity"
             android:exported="false" />
         <activity
+            android:name="com.fazziclay.opentoday.gui.activity.ChangelogActivity"
+            android:exported="false" />
+        <activity
             android:name="com.fazziclay.opentoday.debug.TestItemViewGenerator"
             android:exported="false" />
         <activity
