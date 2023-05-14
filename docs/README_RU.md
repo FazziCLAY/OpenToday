@@ -1,5 +1,7 @@
 # OpenToday
-English | [Русский](https://github.com/FazziCLAY/OpenToday/blob/main/docs/README_RU.md)
+# TODO: Translate russian README...
+[English](https://github.com/FazziCLAY/OpenToday/blob/main/README.md) | Русский
+Android-приложение для организации жизни, многофункциональные заметки и напоминалка
 Android application for the organization of life, pro notes and reminder
 
 [![license](https://img.shields.io/github/license/fazziclay/opentoday?color=%2300bb00&style=plastic)](https://github.com/FazziCLAY/OpenToday/blob/main/LICENSE)
