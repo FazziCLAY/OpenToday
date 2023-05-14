@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.fazziclay.javaneoutil.FileUtil;
-import com.fazziclay.opentoday.app.App;
 
 import java.io.File;
 

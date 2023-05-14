@@ -96,7 +96,7 @@ public class App extends Application {
     @AppInitIfNeed private SettingsManager settingsManager = null;
     @AppInitIfNeed private ColorHistoryManager colorHistoryManager = null;
     @AppInitIfNeed private Telemetry telemetry = null;
-    private PinCodeManager pinCodeManager;
+    @AppInitIfNeed private PinCodeManager pinCodeManager;
     @AppInitIfNeed private License[] openSourceLicenses = null;
     @AppInitIfNeed private ClipboardManager clipboardManager = null;
     @AppInitIfNeed private SelectionManager selectionManager = null;
@@ -138,8 +138,6 @@ public class App extends Application {
 
             registryNotificationsChannels();
 
-            this.pinCodeManager = new PinCodeManager(this); // TODO: 2023.05.09 init if needed!
-
             if (fixResult.isVersionFileUpdateRequired()) updateVersionFile();
             if (fixResult.isFixed()) {
                 getTelemetry().send(new Telemetry.DataFixerLogsLPacket(fixResult.getDataVersion(), fixResult.getLogs()));
@@ -151,15 +149,15 @@ public class App extends Application {
     }
 
     public boolean isPinCodeNeed() {
-        return this.pinCodeManager.isPinCodeSet();
+        return this.getPinCodeManager().isPinCodeSet();
     }
 
     public boolean isPinCodeAllow(String p) {
-        return p.equals(this.pinCodeManager.getPinCode());
+        return p.equals(this.getPinCodeManager().getPinCode());
     }
 
     public int getPinCodeLength() {
-        return this.pinCodeManager.getPinCode().length();
+        return this.getPinCodeManager().getPinCode().length();
     }
 
     private void registryNotificationsChannels() {
@@ -346,6 +344,12 @@ public class App extends Application {
         }
     }
 
+    private void preCheckPinCodeManager() {
+        if (pinCodeManager == null) {
+            pinCodeManager = new PinCodeManager(this);
+        }
+    }
+
     // getters & setters
     public JSONObject getVersionData() { return versionData; }
     public long getAppStartupTime() {return appStartupTime;}
@@ -394,6 +398,7 @@ public class App extends Application {
 
     @NotNull
     public PinCodeManager getPinCodeManager() {
+        preCheckPinCodeManager();
         return pinCodeManager;
     }
 
