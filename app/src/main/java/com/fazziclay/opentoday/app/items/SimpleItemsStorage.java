@@ -7,6 +7,7 @@ import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemController;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
+import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 
 import java.util.ArrayList;
@@ -14,17 +15,15 @@ import java.util.List;
 import java.util.UUID;
 
 public abstract class SimpleItemsStorage implements ItemsStorage {
+    private static final String TAG = "SimpleItemsStorage";
     private final List<Item> items;
     private final ItemController simpleItemController;
     private final CallbackStorage<OnItemsStorageUpdate> onUpdateCallbacks = new CallbackStorage<>();
 
-    public SimpleItemsStorage(List<Item> items) {
-        this.items = items;
-        this.simpleItemController = new SimpleItemController();
-    }
 
     public SimpleItemsStorage() {
-        this(new ArrayList<>());
+        this.items = new ArrayList<>();
+        this.simpleItemController = new SimpleItemController();
     }
 
     @NonNull
@@ -60,13 +59,12 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
 
     @Override
     public Item getItemById(UUID id) {
-        return ItemsUtils.getItemByIdRoot(getAllItems(), id);
+        return Logger.dur(TAG, "getItemById (recursive)", () -> ItemsUtils.getItemByIdRecursive(getAllItems(), id));
     }
 
     @Override
     public void deleteItem(Item item) {
         int position = getItemPosition(item);
-        onUpdateCallbacks.run((callbackStorage, callback) -> callback.onDeleted(item, position)); // TODO: 5/9/23 Remove deprecated
         onUpdateCallbacks.run((callbackStorage, callback) -> callback.onPreDeleted(item, position));
 
         items.remove(item);
