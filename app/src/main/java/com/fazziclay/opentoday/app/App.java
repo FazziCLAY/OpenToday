@@ -29,6 +29,7 @@ import com.fazziclay.opentoday.util.License;
 import com.fazziclay.opentoday.util.annotation.AppInitIfNeed;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -80,18 +81,21 @@ public class App extends Application {
     public static App get(@NotNull Context context) {
         return (App) context.getApplicationContext();
     }
+
     public static App get() {
         return instance;
     }
-
     public static boolean debug(boolean b) {
         return (DEBUG && b);
     }
 
+
     // Application
+    private long startTime;
     @AppInitIfNeed private UUID instanceId;
     private JSONObject versionData;
     private boolean appInForeground = false;
+    private DataFixer dataFixer;
     @AppInitIfNeed private ItemManager itemManager = null;
     @AppInitIfNeed private SettingsManager settingsManager = null;
     @AppInitIfNeed private ColorHistoryManager colorHistoryManager = null;
@@ -126,14 +130,14 @@ public class App extends Application {
      */
     @Override
     public void onCreate() {
-        long start = System.currentTimeMillis();
+        startTime = System.currentTimeMillis();
         try {
             super.onCreate();
             instance = this;
             setupCrashReporter();
             DebugUtil.sleep(DEBUG_APP_START_SLEEP);
 
-            final DataFixer dataFixer = new DataFixer(this);
+            dataFixer = new DataFixer(this);
             final FixResult fixResult = dataFixer.fixToCurrentVersion();
 
             registryNotificationsChannels();
@@ -145,7 +149,7 @@ public class App extends Application {
         } catch (Exception e) {
             crash(this, CrashReport.create(new RuntimeException(getClass().getName() + " onCreate exception: " + e, e)), false);
         }
-        this.appStartupTime = System.currentTimeMillis() - start;
+        this.appStartupTime = System.currentTimeMillis() - startTime;
     }
 
     public boolean isPinCodeNeed() {
@@ -189,15 +193,33 @@ public class App extends Application {
         return instanceId;
     }
 
-    private void updateVersionFile() {
+    public JSONObject generateVersionDataMinimal() {
         try {
-            this.versionData = new JSONObject()
+            return new JSONObject()
                     .put("product", "OpenToday")
                     .put("developer", "FazziCLAY ( https://fazziclay.github.io )")
                     .put("licence", "GNU GPLv3")
                     .put("data_version", APPLICATION_DATA_VERSION)
                     .put("application_version", VERSION_CODE)
-                    .put("latest_start", System.currentTimeMillis());
+                    .put("application_versionName", VERSION_NAME)
+                    .put("application_releaseTime", VERSION_RELEASE_TIME);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public JSONObject versionDataPutLatestStart(JSONObject j) {
+        try {
+            j.put("latest_start", startTime);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return j;
+    }
+
+    private void updateVersionFile() {
+        try {
+            this.versionData = versionDataPutLatestStart(generateVersionDataMinimal());
             FileUtil.setText(new File(getExternalFilesDir(""), "version"), versionData.toString());
         } catch (Exception e) {
             throw new RuntimeException("Exception!", e);
@@ -351,7 +373,12 @@ public class App extends Application {
     }
 
     // getters & setters
-    public JSONObject getVersionData() { return versionData; }
+    public JSONObject getVersionData() {
+        if (versionData == null) {
+            versionData = generateVersionDataMinimal();
+        }
+        return versionData;
+    }
     public long getAppStartupTime() {return appStartupTime;}
 
     @NotNull
@@ -411,5 +438,10 @@ public class App extends Application {
     public boolean isAppInForeground() { return appInForeground; }
     public void setAppInForeground(boolean appInForeground) { this.appInForeground = appInForeground; }
     public List<FeatureFlag> getFeatureFlags() {return featureFlags;}
+
+    @NotNull
+    public DataFixer getDataFixer() {
+        return dataFixer;
+    }
     // not getters & setters :)
 }
