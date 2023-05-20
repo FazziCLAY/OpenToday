@@ -7,3 +7,5 @@ Toolbar optimize
 Add 'Selected' checkbox to ItemEditor
 Optimize ImportFragment (no render text if is by autoRun initiative)
 Icon on ItemsEditor FilterGroupItem-mode changed
+
+TODO: Add encrypt EncryptItemGroup
