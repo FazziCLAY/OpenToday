@@ -326,4 +326,6 @@
     <string name="aboutapp_text_changelog">What\'s new?</string>
     <string name="fragment_filter_group_item_filter_editor_outdatedItemFilterSchemeTitle">This item uses outdated item-filter scheme.</string>
     <string name="fragment_filter_group_item_filter_editor_outdatedItemFilterScheme_FixButton">Merge to new</string>
+    <string name="importWrapper_errorCode_NOT_IMPORT_TEXT">This is not a OpenToday import text.</string>
+    <string name="importWrapper_errorCode_VERSION_NOT_COMPATIBLE">This import text version not compatible with current version</string>
 </resources>

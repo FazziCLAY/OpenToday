@@ -29,6 +29,7 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.databinding.FragmentImportBinding;
+import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.util.NetworkUtil;
 
@@ -147,6 +148,13 @@ public class ImportFragment extends Fragment {
     }
 
     private void importWrapper(ImportWrapper importWrapper) {
+        if (importWrapper.isError()) {
+            ImportWrapper.ErrorCode errorCode = importWrapper.getErrorCode();
+            Toast.makeText(activity, activity.getString(R.string.toolbar_more_file_import_exception, getString(EnumsRegistry.INSTANCE.nameResId(errorCode))), Toast.LENGTH_LONG).show();
+            UI.rootBack(this);
+            return;
+        }
+
         StringBuilder perms = new StringBuilder();
         String info = "";
         final boolean ONLY_DESCRIPTION = true;

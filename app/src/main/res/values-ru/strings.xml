@@ -323,4 +323,7 @@
     <string name="aboutapp_text_changelog">Что нового?</string>
     <string name="fragment_filter_group_item_filter_editor_outdatedItemFilterSchemeTitle">Этот айтем использует устаревшую схему Айтем-Фильтра.</string>
     <string name="fragment_filter_group_item_filter_editor_outdatedItemFilterScheme_FixButton">Мигрировать на новую</string>
+
+    <string name="importWrapper_errorCode_NOT_IMPORT_TEXT">Это не импорт-текст приложения OpenToday.</string>
+    <string name="importWrapper_errorCode_VERSION_NOT_COMPATIBLE">Версия данного импорт-текста не совместима с текущей версией приложения</string>
 </resources>
