@@ -341,4 +341,28 @@ public class DataFixer {
 
         log(TAG, "FIX DONE");
     }
+
+    public JSONArray fixItems(int from, JSONArray items) throws Exception {
+        if (from < 8) throw new RuntimeException("Oldest dataVersion for this functional");
+
+        JSONArray result = items;
+        if (from == 8) {
+            Scheme8Fix9.itemsListFix(context, items);
+            result = items;
+            from = 9;
+        }
+        return result;
+    }
+
+    public JSONArray fixTabs(int from, JSONArray tabs) throws Exception {
+        if (from < 8) throw new RuntimeException("Oldest dataVersion for this functional");
+
+        JSONArray result = tabs;
+        if (from == 8) {
+            Scheme8Fix9.tabsListFix(context, tabs);
+            result = tabs;
+            from = 9;
+        }
+        return result;
+    }
 }
