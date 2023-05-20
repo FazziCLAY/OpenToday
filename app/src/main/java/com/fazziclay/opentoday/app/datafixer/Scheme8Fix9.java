@@ -21,14 +21,7 @@ public class Scheme8Fix9 {
                 JSONArray tabs = j.optJSONArray("tabs");
                 if (tabs == null) tabs = new JSONArray();
 
-                int i = 0;
-                while (i < tabs.length()) {
-                    JSONObject tab = tabs.optJSONObject(i);
-                    if (tab == null) continue;
-
-                    tabFix(context, tab);
-                    i++;
-                }
+                tabsListFix(context, tabs);
 
                 FileUtil.setText(itemsDataFile, j.toString(2));
                 FileUtil.delete(itemsDataCompressFile);
@@ -38,14 +31,14 @@ public class Scheme8Fix9 {
         }
     }
 
-    private static void tabFix(Context context, JSONObject tab) throws Exception {
+    public static void tabFix(Context context, JSONObject tab) throws Exception {
         JSONArray tabItems = tab.optJSONArray("items");
         if (tabItems == null) return;
 
         itemsListFix(context, tabItems);
     }
 
-    private static void itemsListFix(Context context, JSONArray items) throws Exception {
+    public static void itemsListFix(Context context, JSONArray items) throws Exception {
         if (items == null) return;
         int i = 0;
         while (i < items.length()) {
@@ -58,7 +51,7 @@ public class Scheme8Fix9 {
         }
     }
 
-    private static void itemFix(Context context, JSONObject item) throws Exception {
+    public static void itemFix(Context context, JSONObject item) throws Exception {
         String itemType = item.optString("itemType", null);
         if (itemType == null) return;
 
@@ -96,6 +89,17 @@ public class Scheme8Fix9 {
 
                 i++;
             }
+        }
+    }
+
+    public static void tabsListFix(Context context, JSONArray tabs) throws Exception {
+        int i = 0;
+        while (i < tabs.length()) {
+            JSONObject tab = tabs.optJSONObject(i);
+            if (tab == null) continue;
+
+            tabFix(context, tab);
+            i++;
         }
     }
 }
