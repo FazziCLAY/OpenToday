@@ -308,4 +308,19 @@
     <string name="toolbar_more_file_importFromClipboard_notImportText">Это не импорт-текст</string>
     <string name="toolbar_more_tabs_delete_notAllowOneTabMode">Удаление невозможно</string>
     <string name="fragment_itemEditor_module_item_selected">Выделен</string>
+
+    <string name="logic_container_item_filter_part_editor_name_empty"><![CDATA[<Без описания>]]></string>
+    <string name="logic_container_logicMode_OR">ИЛИ (||)</string>
+    <string name="logic_container_logicMode_AND">И (&amp;&amp;)</string>
+    <string name="part_logic_container_item_filter_editor_description">Описание</string>
+    <string name="part_logic_container_item_filter_editor_invert">Инвертировать</string>
+    <string name="part_logic_container_item_filter_editor_logicMode_title">Режим логики:</string>
+    <string name="filter_group_item_filter_editor_replaceRoot">Заменить корень</string>
+    <string name="filter_group_item_filter_editor_rootTypeTitle">Тип корневого фильтра:</string>
+    <string name="filter_group_item_filter_editor_rootFilterEditor_title">Редактор корневого фильтра:</string>
+    <string name="part_date_item_filter_editor_description">Описание</string>
+    <string name="filter_group_item_filter_editor_error_unknownFilter">Неизвестный фильтр! Это баг. Сообщите разработчику.\nCanonical: %s</string>
+    <string name="aboutapp_text_changelog">Что нового?</string>
+    <string name="fragment_filter_group_item_filter_editor_outdatedItemFilterSchemeTitle">Этот айтем использует устаревшую схему Айтем-Фильтра.</string>
+    <string name="fragment_filter_group_item_filter_editor_outdatedItemFilterScheme_FixButton">Мигрировать на новую</string>
 </resources>
