@@ -15,16 +15,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.fazziclay.opentoday.R
-import com.fazziclay.opentoday.app.App
-import com.fazziclay.opentoday.app.ColorHistoryManager
-import com.fazziclay.opentoday.app.ImportWrapper
+import com.fazziclay.opentoday.app.*
+import com.fazziclay.opentoday.app.PinCodeManager.ContainNonDigitChars
+import com.fazziclay.opentoday.app.SettingsManager.FirstTab
 import com.fazziclay.opentoday.app.items.item.Item
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry
-import com.fazziclay.opentoday.app.PinCodeManager
-import com.fazziclay.opentoday.app.PinCodeManager.ContainNonDigitChars
 import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver
-import com.fazziclay.opentoday.app.SettingsManager
-import com.fazziclay.opentoday.app.SettingsManager.FirstTab
 import com.fazziclay.opentoday.databinding.ExportBinding
 import com.fazziclay.opentoday.databinding.FragmentSettingsBinding
 import com.fazziclay.opentoday.gui.EnumsRegistry
@@ -130,6 +126,11 @@ class SettingsFragment : Fragment() {
             settingsManager.isTelemetry = isTelemetry
             settingsManager.save()
             app.telemetry.setEnabled(isTelemetry)
+            if (isTelemetry) AlertDialog.Builder(requireContext())
+                .setTitle(R.string.setup_telemetry)
+                .setMessage(R.string.setup_telemetry_details)
+                .setPositiveButton(R.string.abc_ok, null)
+                .show()
         })
         binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(settingsManager.defaultQuickNoteType.nameResId))
         viewClick(binding.defaultQuickNoteType, Runnable {
