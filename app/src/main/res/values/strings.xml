@@ -329,4 +329,5 @@
     <string name="fragment_filter_group_item_filter_editor_outdatedItemFilterScheme_FixButton">Merge to new</string>
     <string name="importWrapper_errorCode_NOT_IMPORT_TEXT">This is not a OpenToday import text.</string>
     <string name="importWrapper_errorCode_VERSION_NOT_COMPATIBLE">This import text version not compatible with current version</string>
+    <string name="settings_dateAndTime_format"><![CDATA[Date&Time format]]></string>
 </resources>

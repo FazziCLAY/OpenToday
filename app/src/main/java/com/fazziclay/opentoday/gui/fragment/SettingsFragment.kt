@@ -9,9 +9,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.*
+import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.fazziclay.opentoday.R
@@ -31,6 +30,7 @@ import com.fazziclay.opentoday.util.Logger
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter
 import org.json.JSONException
 import java.text.DateFormatSymbols
+import java.text.SimpleDateFormat
 import java.util.*
 
 class SettingsFragment : Fragment() {
@@ -72,6 +72,42 @@ class SettingsFragment : Fragment() {
         setupThemeSpinner()
         setupFirstDayOfWeekSpinner()
         setupFirstTabSpinner()
+
+        viewClick(binding.dateAndTimeFormat, Runnable {
+            val preview = TextView(requireContext())
+            val spinner = Spinner(requireContext())
+            val adapter = SimpleSpinnerAdapter<SettingsManager.DateAndTimePreset>(requireContext())
+            spinner.adapter = adapter;
+            for (value in SettingsManager.DateAndTimePreset.values()) {
+                adapter.add(value.name, value)
+            }
+            spinner.onItemSelectedListener = object : OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>?, view123: View?, position: Int, id: Long) {
+                    val t = adapter.getItem(position)
+                    settingsManager.applyDateAndTimePreset(t)
+                    settingsManager.save()
+
+                    val current = GregorianCalendar().time
+                    val dateFormat = SimpleDateFormat(settingsManager.datePattern, Locale.getDefault())
+                    val timeFormat = SimpleDateFormat(settingsManager.timePattern, Locale.getDefault())
+
+                    val previewText = dateFormat.format(current) + "  " + timeFormat.format(current)
+
+                    preview.text = previewText
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
+            }
+
+            val view = LinearLayout(requireContext())
+            view.orientation = LinearLayout.VERTICAL
+            view.addView(preview)
+            view.addView(spinner)
+
+            AlertDialog.Builder(requireContext())
+                .setView(view)
+                .show()
+        })
 
         // Debug
         viewClick(binding.themeTitle, Runnable { experimentalFeaturesInteract() })
@@ -151,7 +187,7 @@ class SettingsFragment : Fragment() {
                 .add(EnumsRegistry.name(FirstTab.TAB_ON_CLOSING, requireContext()), FirstTab.TAB_ON_CLOSING)
         binding.firstTab.adapter = firstTabSimpleSpinnerAdapter
         binding.firstTab.setSelection(firstTabSimpleSpinnerAdapter.getValuePosition(settingsManager.firstTab))
-        binding.firstTab.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.firstTab.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val t = firstTabSimpleSpinnerAdapter.getItem(position)
                 settingsManager.firstTab = t
@@ -169,7 +205,7 @@ class SettingsFragment : Fragment() {
                 .add(requireContext().getString(R.string.settings_theme_night), AppCompatDelegate.MODE_NIGHT_YES)
         binding.themeSpinner.adapter = adapter
         binding.themeSpinner.setSelection(adapter.getValuePosition(settingsManager.theme))
-        binding.themeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.themeSpinner.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val theme = adapter.getItem(position)
                 UI.setTheme(theme)
@@ -188,7 +224,7 @@ class SettingsFragment : Fragment() {
                 .add(weekdays[Calendar.MONDAY], Calendar.MONDAY)
         binding.firstDayOfWeekSpinner.adapter = adapter
         binding.firstDayOfWeekSpinner.setSelection(adapter.getValuePosition(settingsManager.firstDayOfWeek))
-        binding.firstDayOfWeekSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.firstDayOfWeekSpinner.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val day = adapter.getItem(position)
                 settingsManager.firstDayOfWeek = day

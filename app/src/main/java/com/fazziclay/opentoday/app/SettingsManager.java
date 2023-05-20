@@ -1,11 +1,8 @@
 package com.fazziclay.opentoday.app;
 
-import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.fazziclay.javaneoutil.FileUtil;
-import com.fazziclay.opentoday.R;
-import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.util.Logger;
@@ -52,6 +49,8 @@ public class SettingsManager {
     private boolean isTelemetry = true;
     private ItemsRegistry.ItemInfo defaultQuickNoteType = ItemsRegistry.REGISTRY.get(TextItem.class);
     private FirstTab firstTab = FirstTab.TAB_ON_CLOSING;
+    private String datePattern = "yyyy.MM.dd EE";
+    private String timePattern = "HH:mm:ss";
 
 
     public SettingsManager(File saveFile) {
@@ -83,6 +82,14 @@ public class SettingsManager {
     @Setter public void setDefaultQuickNoteType(ItemsRegistry.ItemInfo defaultQuickNoteType) {this.defaultQuickNoteType = defaultQuickNoteType;}
     @Getter public FirstTab getFirstTab() {return firstTab;}
     @Setter public void setFirstTab(FirstTab firstTab) {this.firstTab = firstTab;}
+    @Getter public String getDatePattern() {return datePattern;}
+    @Setter public void setDatePattern(String datePattern) {this.datePattern = datePattern;}
+    @Getter public String getTimePattern() {return timePattern;}
+    @Setter public void setTimePattern(String timePattern) {this.timePattern = timePattern;}
+    public void applyDateAndTimePreset(DateAndTimePreset p) {
+        setDatePattern(p.getDate());
+        setTimePattern(p.getTime());
+    }
 
     private void load() {
         if (!FileUtil.isExist(saveFile)) {
@@ -130,6 +137,8 @@ public class SettingsManager {
             try {
                 this.firstTab = FirstTab.valueOf(j.getString("firstTab"));
             } catch (Exception ignored) {}
+            datePattern = j.optString("datePattern", datePattern);
+            timePattern = j.optString("timePattern", timePattern);
 
         } catch (Exception e) {
             Logger.d(TAG, "load", e);
@@ -167,6 +176,8 @@ public class SettingsManager {
         j.put("isTelemetry", this.isTelemetry);
         j.put("defaultQuickNoteType", this.defaultQuickNoteType.getStringType());
         j.put("firstTab", this.firstTab.name());
+        j.put("datePattern", this.datePattern);
+        j.put("timePattern", this.timePattern);
         return j;
     }
 
@@ -190,5 +201,31 @@ public class SettingsManager {
     public enum FirstTab {
         FIRST,
         TAB_ON_CLOSING
+    }
+
+    public enum DateAndTimePreset {
+        DEFAULT("HH:mm:ss", "yyyy.MM.dd EE"),
+        DEFAULT_FULLY_WEEKDAY("HH:mm:ss", "yyyy.MM.dd EEEE"),
+        NO_SECONDS("HH:mm", "yyyy.MM.dd EE"),
+        NO_SECONDS_FULLY_WEEKDAY("HH:mm", "yyyy.MM.dd EEEE"),
+        INVERT_DATE("HH:mm:ss", "dd.MM.yyyy EE"),
+        INVERT_DATE_FULLY_WEEKDAY("HH:mm:ss", "dd.MM.yyyy EEEE"),
+        ;
+
+        private final String time;
+        private final String date;
+
+        DateAndTimePreset(String time, String date) {
+            this.time = time;
+            this.date = date;
+        }
+
+        public String getTime() {
+            return time;
+        }
+
+        public String getDate() {
+            return date;
+        }
     }
 }

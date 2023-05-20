@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var app: App
+    private lateinit var settingsManager: SettingsManager;
     private var lastExitClick: Long = 0
 
     // Current Date
@@ -54,7 +55,8 @@ class MainActivity : AppCompatActivity() {
         Logger.d(TAG, "onCreate", nullStat(savedInstanceState))
         if (App.DEBUG) EnumsRegistry.missingChecks()
         app = App.get(this)
-        UI.setTheme(app.settingsManager.theme)
+        settingsManager = app.settingsManager;
+        UI.setTheme(settingsManager.theme)
         app.isAppInForeground = true
         app.telemetry.send(UiOpenLPacket())
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -73,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         }
         setupNotifications()
         setupCurrentDate()
-        if (app.settingsManager.isQuickNoteNotification) {
+        if (settingsManager.isQuickNoteNotification) {
             QuickNoteReceiver.sendQuickNoteNotification(this)
         }
         updateDebugView()
@@ -150,11 +152,11 @@ class MainActivity : AppCompatActivity() {
 
         // TODO: 11.10.2022 IDEA: Pattern to settings
         // Date
-        var dateFormat = SimpleDateFormat("yyyy.MM.dd EEEE", Locale.getDefault())
+        var dateFormat = SimpleDateFormat(settingsManager.datePattern, Locale.getDefault())
         binding.currentDateDate.text = dateFormat.format(time)
 
         // Time
-        dateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+        dateFormat = SimpleDateFormat(settingsManager.timePattern, Locale.getDefault())
         binding.currentDateTime.text = dateFormat.format(time)
     }
 
