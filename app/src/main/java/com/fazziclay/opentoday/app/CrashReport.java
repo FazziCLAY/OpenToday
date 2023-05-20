@@ -122,7 +122,7 @@ public class CrashReport {
 
         String versionFileText;
         try {
-            versionFileText = App.get().getVersionData().toString(2);
+            versionFileText = App.get().versionDataPutLatestStart(App.get().getVersionData()).toString(2);
             String[] r = versionFileText.split("\n");
             StringBuilder temp = new StringBuilder();
             for (String s : r) {
