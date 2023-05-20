@@ -189,10 +189,11 @@ public class ImportWrapper {
             return error(ErrorCode.VERSION_NOT_COMPATIBLE);
         }
 
-        List<Item> items = ItemCodecUtil.importItemList(CherryOrchard.of(jsonObject.getJSONArray("items")));
+        List<Item> items = ItemCodecUtil.importItemList(CherryOrchard.of(fixItems(8, jsonObject.getJSONArray("items"))));
         return new ImportWrapper(new Permission[]{Permission.ADD_ITEMS_TO_CURRENT}, null, items, null, null, null, false, null);
     }
 
+    // uses GZip
     private static ImportWrapper importV1(byte[] bytes) throws Exception {
         String data = fromGzip(bytes);
         JSONObject jsonObject = new JSONObject(data);
@@ -202,10 +203,11 @@ public class ImportWrapper {
             return error(ErrorCode.VERSION_NOT_COMPATIBLE);
         }
 
-        List<Item> items = ItemCodecUtil.importItemList(CherryOrchard.of(jsonObject.getJSONArray("items")));
+        List<Item> items = ItemCodecUtil.importItemList(CherryOrchard.of(fixItems(8, jsonObject.getJSONArray("items"))));
         return new ImportWrapper(new Permission[]{Permission.ADD_ITEMS_TO_CURRENT}, null, items, null, null, null, false, null);
     }
 
+    // Add tabs, settings, colorHistory, permissions, dialogMessage
     private static ImportWrapper importV2(byte[] bytes) throws Exception {
         String data = fromGzip(bytes);
         JSONObject jsonObject = new JSONObject(data);
@@ -256,6 +258,7 @@ public class ImportWrapper {
         return new ImportWrapper(perms, tabs, items, dialogMessage, settings, colorHistory, false, null);
     }
 
+    // Add datafixer & more info while creating (e.g. dataVersion, appVersion and etc...)
     private static ImportWrapper importV3(byte[] bytes) throws Exception {
         String data = fromGzip(bytes);
         JSONObject jsonObject = new JSONObject(data);
