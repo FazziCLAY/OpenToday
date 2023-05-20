@@ -127,6 +127,8 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     }
 
     public void setItemFilter(Item item, ItemFilter itemFilter) {
+        if (itemFilter == null) throw new NullPointerException("filter can't be null");
+
         for (ItemFilterWrapper wrapper : items) {
             if (wrapper.item == item) wrapper.filter = itemFilter;
         }

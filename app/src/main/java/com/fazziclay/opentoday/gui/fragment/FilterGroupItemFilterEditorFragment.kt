@@ -113,6 +113,18 @@ class FilterGroupItemFilterEditorFragment : Fragment() {
 
     private fun setupView() {
         reloadPartEditor()
+
+        if (rootFilter !is LogicContainerItemFilter) {
+            binding.outdatedItemFilterScheme.visibility = View.VISIBLE
+            binding.mergeToNew.setOnClickListener {
+                val newFilter = LogicContainerItemFilter();
+                newFilter.add(rootFilter)
+                filterGroup.setItemFilter(item, newFilter)
+                rootFilter = newFilter
+                reloadPartEditor()
+                binding.outdatedItemFilterScheme.visibility = View.GONE
+            }
+        }
     }
 
     private fun reloadPartEditor() {
