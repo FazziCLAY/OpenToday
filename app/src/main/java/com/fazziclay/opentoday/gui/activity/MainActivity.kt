@@ -18,6 +18,7 @@ import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver
 import com.fazziclay.opentoday.databinding.ActivityMainBinding
 import com.fazziclay.opentoday.databinding.NotificationDebugappBinding
 import com.fazziclay.opentoday.databinding.NotificationUpdateAvailableBinding
+import com.fazziclay.opentoday.gui.EnumsRegistry
 import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember
@@ -51,6 +52,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Logger.d(TAG, "onCreate", nullStat(savedInstanceState))
+        if (App.DEBUG) EnumsRegistry.missingChecks()
         app = App.get(this)
         UI.setTheme(app.settingsManager.theme)
         app.isAppInForeground = true

@@ -3,14 +3,15 @@ package com.fazziclay.opentoday.gui
 import android.content.Context
 import androidx.annotation.StringRes
 import com.fazziclay.opentoday.R
-import com.fazziclay.opentoday.app.items.item.filter.LogicContainerItemFilter.LogicMode
+import com.fazziclay.opentoday.app.ImportWrapper
 import com.fazziclay.opentoday.app.SettingsManager
+import com.fazziclay.opentoday.app.items.item.filter.LogicContainerItemFilter
 
 // GUI-only
 object EnumsRegistry {
     private val INFOS = arrayOf(
-        EnumInfo(LogicMode.AND,                                     R.string.logic_container_logicMode_AND),
-        EnumInfo(LogicMode.OR,                                      R.string.logic_container_logicMode_OR),
+        EnumInfo(LogicContainerItemFilter.LogicMode.AND,            R.string.logic_container_logicMode_AND),
+        EnumInfo(LogicContainerItemFilter.LogicMode.OR,             R.string.logic_container_logicMode_OR),
         EnumInfo(SettingsManager.FirstTab.FIRST,                    R.string.settings_firstTab_first),
         EnumInfo(SettingsManager.FirstTab.TAB_ON_CLOSING,           R.string.settings_firstTab_onClosed),
         EnumInfo(SettingsManager.ItemAction.OPEN_EDITOR,            R.string.itemAction_OPEN_EDITOR),
@@ -21,16 +22,35 @@ object EnumsRegistry {
         EnumInfo(SettingsManager.ItemAction.MINIMIZE_REVERT,        R.string.itemAction_MINIMIZE_REVERT),
         EnumInfo(SettingsManager.ItemAction.MINIMIZE_ON,            R.string.itemAction_MINIMIZE_ON),
         EnumInfo(SettingsManager.ItemAction.MINIMIZE_OFF,           R.string.itemAction_MINIMIZE_OFF),
+        EnumInfo(ImportWrapper.ErrorCode.NOT_IMPORT_TEXT,           R.string.importWrapper_errorCode_NOT_IMPORT_TEXT),
+        EnumInfo(ImportWrapper.ErrorCode.VERSION_NOT_COMPATIBLE,    R.string.importWrapper_errorCode_VERSION_NOT_COMPATIBLE),
     )
 
-    @StringRes
-    fun nameResId(e: Enum<*>): Int {
+    fun missingChecks() {
+        missingCheck(LogicContainerItemFilter.LogicMode.values().toList())
+        missingCheck(SettingsManager.FirstTab.values().toList())
+        missingCheck(SettingsManager.ItemAction.values().toList())
+        missingCheck(ImportWrapper.ErrorCode.values().toList())
+    }
+
+    private fun missingCheck(values: List<Enum<*>>) {
+        for (value in values) {
+            getInfo(value)
+        }
+    }
+
+    private fun getInfo(e: Enum<*>): EnumInfo {
         for (info in INFOS) {
             if (info.e === e) {
-                return info.nameResId
+                return info
             }
         }
         throw RuntimeException("EnumsRegistry: enum $e not found!")
+    }
+
+    @StringRes
+    fun nameResId(e: Enum<*>): Int {
+        return getInfo(e).nameResId
     }
 
     fun name(e: Enum<*>, context: Context): String = context.getString(nameResId(e))
