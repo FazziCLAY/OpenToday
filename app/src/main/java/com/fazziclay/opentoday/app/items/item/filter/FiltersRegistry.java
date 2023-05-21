@@ -4,8 +4,8 @@ public class FiltersRegistry {
     public static final FiltersRegistry REGISTRY = new FiltersRegistry();
 
     private static final FilterInfo[] OBJECTS = new FilterInfo[]{
-            new FilterInfo(DateItemFilter.class,           "DateItemFilter",           DateItemFilter.CODEC,              DateItemFilter::new),
-            new FilterInfo(LogicContainerItemFilter.class, "LogicContainerItemFilter", LogicContainerItemFilter.CODEC,    LogicContainerItemFilter::new),
+            new FilterInfo(DateItemFilter.class,           "DateItemFilter",           FilterType.DATE,             DateItemFilter.CODEC,              DateItemFilter::new),
+            new FilterInfo(LogicContainerItemFilter.class, "LogicContainerItemFilter", FilterType.LOGIC_CONTAINER,  LogicContainerItemFilter.CODEC,    LogicContainerItemFilter::new),
     };
 
     private FiltersRegistry() {}
@@ -34,13 +34,15 @@ public class FiltersRegistry {
 
     public static class FilterInfo {
         private final Class<? extends ItemFilter> clazz;
+        private final FilterType type;
         private final String stringType;
         private final FilterCodec codec;
         private final CreateFilterInterface createFilterInterface;
 
-        public FilterInfo(Class<? extends ItemFilter> clazz, String stringType, FilterCodec codec, CreateFilterInterface createFilterInterface) {
+        public FilterInfo(Class<? extends ItemFilter> clazz, String stringType, FilterType type, FilterCodec codec, CreateFilterInterface createFilterInterface) {
             this.clazz = clazz;
             this.stringType = stringType;
+            this.type = type;
             this.codec = codec;
             this.createFilterInterface = createFilterInterface;
         }
@@ -60,9 +62,18 @@ public class FiltersRegistry {
         public CreateFilterInterface getCreateFilterInterface() {
             return createFilterInterface;
         }
+
+        public FilterType getType() {
+            return type;
+        }
     }
 
     public interface CreateFilterInterface {
         ItemFilter create();
+    }
+
+    public enum FilterType {
+        DATE,
+        LOGIC_CONTAINER
     }
 }
