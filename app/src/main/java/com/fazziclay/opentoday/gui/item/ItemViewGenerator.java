@@ -328,20 +328,21 @@ public class ItemViewGenerator {
     }
 
     private void applyLongTextItemToLongTextView(final LongTextItem item, final TextView view) {
+        final int longTextColor = item.isCustomLongTextColor() ? item.getLongTextColor() : ResUtil.getAttrColor(activity, R.attr.item_textColor);
+        final SpannableString visibleText = item.isParagraphColorize() ? ColorUtil.colorize(item.getLongText(), longTextColor, Color.TRANSPARENT, Typeface.NORMAL) : SpannableString.valueOf(item.getLongText());
         final int MAX = 150;
         if (!previewMode && item.isMinimize()) {
-            final String text = item.getLongText();
-            if (text.length() > MAX) {
-                view.setText(text.substring(0, MAX-3).concat("..."));
+            if (visibleText.length() > MAX) {
+                view.setText(new SpannableStringBuilder().append(visibleText.subSequence(0, MAX-3)).append("..."));
             } else {
-                view.setText(text);
+                view.setText(visibleText);
             }
         } else {
-            view.setText(item.getLongText());
+            view.setText(visibleText);
         }
         if (item.isCustomLongTextSize()) view.setTextSize(item.getLongTextSize());
         if (item.isCustomLongTextColor()) {
-            view.setTextColor(ColorStateList.valueOf(item.getLongTextColor()));
+            view.setTextColor(ColorStateList.valueOf(longTextColor));
         }
         if (item.isLongTextClickableUrls()) Linkify.addLinks(view, Linkify.ALL);
     }
