@@ -230,7 +230,6 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     private View addEditModule(BaseEditUiModule editUiModule) {
         editUiModule.setup(this.item, requireActivity(), null);
         editUiModule.setOnStartEditListener(() -> {
-            new Exception().printStackTrace();
             unsavedChanges = true;
         });
         editModules.add(editUiModule);
