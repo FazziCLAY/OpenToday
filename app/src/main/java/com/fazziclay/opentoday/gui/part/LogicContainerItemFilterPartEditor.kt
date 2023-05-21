@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem
-import com.fazziclay.opentoday.app.items.item.filter.DateItemFilter
+import com.fazziclay.opentoday.app.items.item.filter.FiltersRegistry
 import com.fazziclay.opentoday.app.items.item.filter.FitEquip
 import com.fazziclay.opentoday.app.items.item.filter.ItemFilter
 import com.fazziclay.opentoday.app.items.item.filter.LogicContainerItemFilter
@@ -30,7 +30,6 @@ import com.fazziclay.opentoday.gui.interfaces.Destroy
 import com.fazziclay.opentoday.util.MinTextWatcher
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter
 import java.util.*
-import kotlin.random.Random
 
 class LogicContainerItemFilterPartEditor(private val context: Context, layoutInflater: LayoutInflater, private val parentFilterGroup: FilterGroupItem, private val logicContainerItemFilter: LogicContainerItemFilter, private val saveSignal: Runnable) : Destroy {
     companion object {
@@ -109,14 +108,17 @@ class LogicContainerItemFilterPartEditor(private val context: Context, layoutInf
         // ADD BUTTON (FAB)
         binding.add.setOnClickListener {
             val p = PopupMenu(context, binding.add, Gravity.CENTER)
-            p.show()
+            for (filterInfo in FiltersRegistry.REGISTRY.allFilters) {
+                val menuItem = p.menu.add(EnumsRegistry.nameResId(filterInfo.type))
+                menuItem.setOnMenuItemClickListener {
+                    val addPos = logicContainerItemFilter.add(filterInfo.createFilterInterface.create())
+                    binding.filters.adapter!!.notifyItemInserted(addPos)
+                    save()
 
-            var addPos = logicContainerItemFilter.add(DateItemFilter())
-            if (Random.nextBoolean()) {
-                addPos = logicContainerItemFilter.add(LogicContainerItemFilter())
+                    return@setOnMenuItemClickListener true
+                }
             }
-            binding.filters.adapter!!.notifyItemInserted(addPos)
-            save()
+            p.show()
         }
     }
 
