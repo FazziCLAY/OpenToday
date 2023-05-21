@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.ImportWrapper
 import com.fazziclay.opentoday.app.SettingsManager
+import com.fazziclay.opentoday.app.items.item.filter.FiltersRegistry
 import com.fazziclay.opentoday.app.items.item.filter.LogicContainerItemFilter
 
 // GUI-only
@@ -24,6 +25,8 @@ object EnumsRegistry {
         EnumInfo(SettingsManager.ItemAction.MINIMIZE_OFF,           R.string.itemAction_MINIMIZE_OFF),
         EnumInfo(ImportWrapper.ErrorCode.NOT_IMPORT_TEXT,           R.string.importWrapper_errorCode_NOT_IMPORT_TEXT),
         EnumInfo(ImportWrapper.ErrorCode.VERSION_NOT_COMPATIBLE,    R.string.importWrapper_errorCode_VERSION_NOT_COMPATIBLE),
+        EnumInfo(FiltersRegistry.FilterType.DATE,                   R.string.filterRegistry_filterType_DATE),
+        EnumInfo(FiltersRegistry.FilterType.LOGIC_CONTAINER,        R.string.filterRegistry_filterType_LOGIC_CONTAINER),
     )
 
     fun missingChecks() {
@@ -31,6 +34,7 @@ object EnumsRegistry {
         missingCheck(SettingsManager.FirstTab.values().toList())
         missingCheck(SettingsManager.ItemAction.values().toList())
         missingCheck(ImportWrapper.ErrorCode.values().toList())
+        missingCheck(FiltersRegistry.FilterType.values().toList())
     }
 
     private fun missingCheck(values: List<Enum<*>>) {

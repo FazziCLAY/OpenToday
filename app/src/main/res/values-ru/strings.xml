@@ -329,4 +329,6 @@
     <string name="importWrapper_errorCode_VERSION_NOT_COMPATIBLE">Версия данного импорт-текста не совместима с текущей версией приложения</string>
     <string name="settings_dateAndTime_format">Формат времени и даты</string>
     <string name="fragment_itemEditor_text_paragraphColorize">Поддержка форматирования</string>
+    <string name="filterRegistry_filterType_DATE">Дата и Время</string>
+    <string name="filterRegistry_filterType_LOGIC_CONTAINER">Контейнер</string>
 </resources>

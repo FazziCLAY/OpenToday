@@ -331,4 +331,6 @@
     <string name="importWrapper_errorCode_VERSION_NOT_COMPATIBLE">This import text version not compatible with current version</string>
     <string name="settings_dateAndTime_format"><![CDATA[Date&Time format]]></string>
     <string name="fragment_itemEditor_text_paragraphColorize">Formatting support</string>
+    <string name="filterRegistry_filterType_DATE"><![CDATA[Date&Time]]></string>
+    <string name="filterRegistry_filterType_LOGIC_CONTAINER">Container</string>
 </resources>
