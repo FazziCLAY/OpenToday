@@ -22,7 +22,7 @@
         <item name="updateAvailable_backgroundColor">#4D0000</item>
         <item name="updateAvailable_textColor">#FFFFFF</item>
 
-        <!-- Entries -->
+        <!-- Items -->
         <item name="item_backgroundColor">#80252525</item>
         <item name="item_textColor">#FFFDFF</item>
 
