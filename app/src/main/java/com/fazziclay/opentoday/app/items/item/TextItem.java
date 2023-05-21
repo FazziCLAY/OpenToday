@@ -26,7 +26,8 @@ public class TextItem extends Item {
                     .put("text", textItem.text)
                     .put("textColor", textItem.textColor)
                     .put("customTextColor", textItem.customTextColor)
-                    .put("clickableUrls", textItem.clickableUrls);
+                    .put("clickableUrls", textItem.clickableUrls)
+                    .put("paragraphColorize", textItem.paragraphColorize);
         }
 
         private final TextItem defaultValues = new TextItem();
@@ -39,6 +40,7 @@ public class TextItem extends Item {
             textItem.textColor = cherry.optInt("textColor", defaultValues.textColor);
             textItem.customTextColor = cherry.optBoolean("customTextColor", defaultValues.customTextColor);
             textItem.clickableUrls = cherry.optBoolean("clickableUrls", defaultValues.clickableUrls);
+            textItem.paragraphColorize = cherry.optBoolean("paragraphColorize", defaultValues.paragraphColorize);
             return textItem;
         }
     }
@@ -53,6 +55,7 @@ public class TextItem extends Item {
     @SaveKey(key = "textColor") @RequireSave private int textColor = Color.parseColor(DEFAULT_TEXT_COLOR);
     @SaveKey(key = "customTextColor") @RequireSave private boolean customTextColor = false;
     @SaveKey(key = "clickableUrls") @RequireSave private boolean clickableUrls = false;
+    @SaveKey(key = "paragraphColorize") private boolean paragraphColorize = true;
 
     protected TextItem() {}
 
@@ -73,6 +76,7 @@ public class TextItem extends Item {
         this.textColor = copy.textColor;
         this.customTextColor = copy.customTextColor;
         this.clickableUrls = copy.clickableUrls;
+        this.paragraphColorize = copy.paragraphColorize;
     }
 
     @Override @Getter @NonNull public String getText() { return text; }
@@ -83,4 +87,6 @@ public class TextItem extends Item {
     @Setter public void setCustomTextColor(boolean v) { this.customTextColor = v; }
     @Getter public boolean isClickableUrls() { return clickableUrls; }
     @Setter public void setClickableUrls(boolean clickableUrls) { this.clickableUrls = clickableUrls; }
+    @Getter public boolean isParagraphColorize() {return paragraphColorize;}
+    @Setter public void setParagraphColorize(boolean v) {this.paragraphColorize = v;}
 }

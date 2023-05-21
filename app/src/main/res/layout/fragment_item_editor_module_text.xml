@@ -21,6 +21,14 @@
         android:inputType="textMultiLine" />
 
     <CheckBox
+        android:id="@+id/paragraphColorize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="0sp"
+        android:text="@string/fragment_itemEditor_text_paragraphColorize" />
+
+    <!-- TODO: 2023.05.21 Rename @string id's -->
+    <CheckBox
         android:id="@+id/clickableUrls"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -531,7 +531,8 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
                         .show();
             });
 
-            binding.clickableUrls.setChecked(textItem.isClickableUrls());
+            binding.paragraphColorize.setChecked(textItem.isParagraphColorize());
+            binding.paragraphColorize.setOnClickListener(v -> onEditStart.run());
 
             // On edit start
             binding.text.addTextChangedListener(new MinTextWatcher() {
@@ -544,6 +545,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
                 updateTextColorIndicator(activity);
                 onEditStart.run();
             });
+            binding.clickableUrls.setChecked(textItem.isClickableUrls());
             binding.clickableUrls.setOnClickListener(v -> onEditStart.run());
             //
         }
@@ -568,6 +570,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             textItem.setTextColor(temp_textColor);
             textItem.setCustomTextColor(!binding.defaultTextColor.isChecked());
             textItem.setClickableUrls(binding.clickableUrls.isChecked());
+            textItem.setParagraphColorize(binding.paragraphColorize.isChecked());
         }
 
         @Override

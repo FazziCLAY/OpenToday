@@ -330,4 +330,5 @@
     <string name="importWrapper_errorCode_NOT_IMPORT_TEXT">This is not a OpenToday import text.</string>
     <string name="importWrapper_errorCode_VERSION_NOT_COMPATIBLE">This import text version not compatible with current version</string>
     <string name="settings_dateAndTime_format"><![CDATA[Date&Time format]]></string>
+    <string name="fragment_itemEditor_text_paragraphColorize">Formatting support</string>
 </resources>

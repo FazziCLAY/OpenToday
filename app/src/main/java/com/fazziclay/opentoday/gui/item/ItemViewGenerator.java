@@ -6,7 +6,10 @@ import static com.fazziclay.opentoday.util.InlineUtil.viewVisible;
 import android.app.Activity;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,6 +48,7 @@ import com.fazziclay.opentoday.databinding.ItemTextBinding;
 import com.fazziclay.opentoday.gui.interfaces.ContentInterface;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.gui.interfaces.StorageEditsActions;
+import com.fazziclay.opentoday.util.ColorUtil;
 import com.fazziclay.opentoday.util.DebugUtil;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.annotation.ForItem;
@@ -304,19 +308,21 @@ public class ItemViewGenerator {
 
     //
     private void applyTextItemToTextView(final TextItem item, final TextView view) {
+        final int textColor = item.isCustomTextColor() ? item.getTextColor() : ResUtil.getAttrColor(activity, R.attr.item_textColor);
+        final SpannableString visibleText = item.isParagraphColorize() ? ColorUtil.colorize(item.getText(), textColor, Color.TRANSPARENT, Typeface.NORMAL) : SpannableString.valueOf(item.getText());
         final int MAX = 60;
         if (!previewMode && item.isMinimize()) {
-            final String text = item.getText().split("\n")[0];
+            final String text = visibleText.toString().split("\n")[0];
             if (text.length() > MAX) {
-                view.setText(text.substring(0, MAX-3).concat("..."));
+                view.setText(new SpannableStringBuilder().append(visibleText.subSequence(0, MAX-3)).append("..."));
             } else {
-                view.setText(text);
+                view.setText(visibleText);
             }
         } else {
-            view.setText(item.getText());
+            view.setText(visibleText);
         }
         if (item.isCustomTextColor()) {
-            view.setTextColor(ColorStateList.valueOf(item.getTextColor()));
+            view.setTextColor(ColorStateList.valueOf(textColor));
         }
         if (item.isClickableUrls()) Linkify.addLinks(view, Linkify.ALL);
     }
