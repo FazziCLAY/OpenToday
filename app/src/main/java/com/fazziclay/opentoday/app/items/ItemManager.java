@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 
 import com.fazziclay.javaneoutil.FileUtil;
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.Debug;
+import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.app.TickSession;
 import com.fazziclay.opentoday.app.data.CherryOrchard;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;

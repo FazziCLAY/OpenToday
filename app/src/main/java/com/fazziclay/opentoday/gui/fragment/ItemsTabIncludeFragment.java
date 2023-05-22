@@ -3,6 +3,7 @@ package com.fazziclay.opentoday.gui.fragment;
 import static com.fazziclay.opentoday.util.InlineUtil.nullStat;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -19,6 +20,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.Unique;
@@ -143,6 +145,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Logger.d(TAG, "onCreateView", nullStat(savedInstanceState));
+        if (Debug.CUSTOM_ITEMSTABINCLUDE_BACKGROUND) binding.getRoot().setBackgroundColor(Color.parseColor("#ffff00"));
         return binding.getRoot();
     }
 

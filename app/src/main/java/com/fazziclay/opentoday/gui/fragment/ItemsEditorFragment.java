@@ -197,6 +197,7 @@ public class ItemsEditorFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Logger.d(TAG, "onCreateView", nullStat(savedInstanceState));
+        if (settingsManager.isColorizeItemsEditorBackgroundByItemBackground() && item != null) layout.setBackgroundColor(item.getViewBackgroundColor());
         return layout;
     }
 

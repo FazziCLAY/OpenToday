@@ -2,6 +2,7 @@ package com.fazziclay.opentoday.gui.fragment;
 
 import static com.fazziclay.opentoday.util.InlineUtil.nullStat;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -85,8 +87,14 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
         l.setOrientation(LinearLayout.VERTICAL);
         l.addView(path);
         l.addView(frameLayout);
+        l.setBackground(getBackgroundDrawable());
 
         return l;
+    }
+
+    private Drawable getBackgroundDrawable() {
+        // TODO: 2023.05.22 Add tab background
+        return tab.getName().equalsIgnoreCase("FAZZICLAY TAB") ? AppCompatResources.getDrawable(requireContext(), R.mipmap.ic_launcher) : null;
     }
 
     private String getPath() {
@@ -105,7 +113,7 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
     }
 
     @Override
-    public void navigate(Fragment fragment, boolean addToBackStack) {
+    public void navigate(@NonNull Fragment fragment, boolean addToBackStack) {
         Logger.d(TAG, "navigate", "to=", fragment, "back=", addToBackStack);
         if (!(fragment instanceof ItemsEditorFragment)) throw new RuntimeException("Other fragments not allowed.");
         ItemsEditorFragment ief = (ItemsEditorFragment) fragment;

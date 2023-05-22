@@ -186,6 +186,10 @@ public class SettingsManager {
         load();
     }
 
+    public boolean isColorizeItemsEditorBackgroundByItemBackground() {
+        return false; // TODO: 5/22/23 owo
+    }
+
 
     public enum ItemAction {
         OPEN_EDITOR,

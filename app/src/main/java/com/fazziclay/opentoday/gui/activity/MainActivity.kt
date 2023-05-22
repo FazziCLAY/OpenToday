@@ -2,6 +2,7 @@ package com.fazziclay.opentoday.gui.activity
 
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -9,6 +10,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import com.fazziclay.opentoday.Debug
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.*
 import com.fazziclay.opentoday.app.Telemetry.UiClosedLPacket
@@ -66,8 +68,9 @@ class MainActivity : AppCompatActivity() {
             if (debugView && debugHandler != null) {
                 debugHandler!!.postDelayed(this.debugRunnable, 99)
             }
-        };
+        }
         setContentView(binding.root)
+        if (Debug.CUSTOM_MAINACTIVITY_BACKGROUND) binding.root.setBackgroundColor(Color.parseColor("#00ffff"))
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                     .replace(CONTAINER_ID, MainRootFragment.create(), "MainRootFragment")
