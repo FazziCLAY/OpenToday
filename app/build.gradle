@@ -5,9 +5,9 @@ plugins {
 
 // =====
 var isDev = true
-var verBuild = 111
-var verName = "1.0.5 dev"
-var verReleaseTime = 1684068997
+var verBuild = 113
+var verName = "1.1 dev"
+var verReleaseTime = 1684068997 // in seconds
 // =====
 
 android {

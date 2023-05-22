@@ -9,3 +9,16 @@ Optimize ImportFragment (no render text if is by autoRun initiative)
 Icon on ItemsEditor FilterGroupItem-mode changed
 
 TODO: Add encrypt EncryptItemGroup
+
+== (Draft) 1.1 ==
+* Add colorize support for TextItem. Example: Hello $[-#ffffff;=#000000;@bolditalic]World
+* Add what's new button on AboutFragment
+* Add releaseTime to AboutFragment
+* New filter-system. Now available 2 filter types: Date and LogicContainer.
+* Fixing memory usage for filters tick
+* Uses new data format (internal-only): Cherry(JSON wrap) & CherryOrchard(JSONArray wrap)
+* Fix translates
+* Advanced debug tools
+* Refactoring: rename IE_TOOL -> Codec
+* Fixing selection crunches & bugs. And move selection to SelectionManager
+* ImportExport now use DataFixer for fixing imports generated in old version
