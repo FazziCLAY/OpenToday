@@ -125,6 +125,15 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         }
     }
 
+    public void setTickBehavior(@NonNull TickBehavior tickBehavior) {
+        this.tickBehavior = tickBehavior;
+    }
+
+    @NonNull
+    public TickBehavior getTickBehavior() {
+        return tickBehavior;
+    }
+
     @Nullable
     public ItemFilter getItemFilter(Item item) {
         for (ItemFilterWrapper wrapper : items) {

@@ -333,4 +333,9 @@
     <string name="fragment_itemEditor_text_paragraphColorize">Formatting support</string>
     <string name="filterRegistry_filterType_DATE"><![CDATA[Date&Time]]></string>
     <string name="filterRegistry_filterType_LOGIC_CONTAINER">Container</string>
+    <string name="filter_group_item_filter_tickBehavoir_ALL">All</string>
+    <string name="filter_group_item_filter_tickBehavoir_NOTHING">Nothing</string>
+    <string name="filter_group_item_filter_tickBehavoir_ACTIVE">Active only</string>
+    <string name="filter_group_item_filter_tickBehavoir_NOT_ACTIVE">Not-active only</string>
+    <string name="fragment_itemEditor_filterGroup_tickBehavior">Tick behavoir</string>
 </resources>

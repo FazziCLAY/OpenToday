@@ -331,4 +331,9 @@
     <string name="fragment_itemEditor_text_paragraphColorize">Поддержка форматирования</string>
     <string name="filterRegistry_filterType_DATE">Дата и Время</string>
     <string name="filterRegistry_filterType_LOGIC_CONTAINER">Контейнер</string>
+    <string name="filter_group_item_filter_tickBehavoir_ALL">Все</string>
+    <string name="filter_group_item_filter_tickBehavoir_NOTHING">Ничего</string>
+    <string name="filter_group_item_filter_tickBehavoir_ACTIVE">Только активных</string>
+    <string name="filter_group_item_filter_tickBehavoir_NOT_ACTIVE">Только не активных</string>
+    <string name="fragment_itemEditor_filterGroup_tickBehavior">Поведение тика</string>
 </resources>

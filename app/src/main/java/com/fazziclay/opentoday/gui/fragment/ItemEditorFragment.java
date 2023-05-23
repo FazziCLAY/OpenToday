@@ -32,6 +32,7 @@ import com.fazziclay.opentoday.app.ColorHistoryManager;
 import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
+import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
@@ -50,6 +51,7 @@ import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleCheckboxBindi
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleCounterBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleCyclelistBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleDayrepeatablecheckboxBinding;
+import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleFiltergroupBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleItemBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleLongtextBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleTextBinding;
@@ -198,6 +200,9 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         }
         if (item instanceof CounterItem) {
             binding.modules.addView(addEditModule(new CounterItemEditModule()));
+        }
+        if (item instanceof FilterGroupItem) {
+            binding.modules.addView(addEditModule(new FilterGroupItemEditModule()));
         }
 
         viewClick(binding.applyButton, this::applyRequest);
@@ -879,20 +884,51 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     }
 
     private static class FilterGroupItemEditModule extends BaseEditUiModule {
+        private FragmentItemEditorModuleFiltergroupBinding binding;
+        private Runnable onEditStart = null;
+        private SimpleSpinnerAdapter<FilterGroupItem.TickBehavior> simpleSpinnerAdapter;
+
         @Override
         public View getView() {
-            return null;
+            return binding.getRoot();
         }
 
         @Override
         public void setup(Item item, Activity activity, View view) {
+            final FilterGroupItem filterGroupItem = (FilterGroupItem) item;
+            binding = FragmentItemEditorModuleFiltergroupBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
 
+            simpleSpinnerAdapter = new SimpleSpinnerAdapter<>(activity);
+            for (FilterGroupItem.TickBehavior value : FilterGroupItem.TickBehavior.values()) {
+                simpleSpinnerAdapter.add(EnumsRegistry.INSTANCE.name(value, activity), value);
+            }
+            binding.tickBehavior.setAdapter(simpleSpinnerAdapter);
+            binding.tickBehavior.setSelection(simpleSpinnerAdapter.getValuePosition(filterGroupItem.getTickBehavior()));
+            binding.tickBehavior.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                int counter = 0;
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    if (counter > 0) {
+                        if (onEditStart != null) onEditStart.run();
+                    }
+                    counter++;
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {}
+            });
         }
 
         @Override
-        public void commit(Item item) {}
+        public void commit(Item item) {
+            final FilterGroupItem filterGroupItem = (FilterGroupItem) item;
+
+            filterGroupItem.setTickBehavior(simpleSpinnerAdapter.getItem(binding.tickBehavior.getSelectedItemPosition()));
+        }
 
         @Override
-        public void setOnStartEditListener(Runnable o) { }
+        public void setOnStartEditListener(Runnable o) {
+            this.onEditStart = o;
+        }
     }
 }
