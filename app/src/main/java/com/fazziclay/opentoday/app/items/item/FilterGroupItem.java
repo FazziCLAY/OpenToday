@@ -3,7 +3,6 @@ package com.fazziclay.opentoday.app.items.item;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.TickSession;
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.data.CherryOrchard;
@@ -20,38 +19,45 @@ import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
 
 public class FilterGroupItem extends TextItem implements ContainerItem, ItemsStorage {
     // START - Save
-    public final static FilterGroupItemCodec CODEC = new FilterGroupItemCodec();
     private static final String TAG = "FilterGroupItem";
-
+    public final static FilterGroupItemCodec CODEC = new FilterGroupItemCodec();
     public static class FilterGroupItemCodec extends TextItemCodec {
+        private static final String KEY_ITEMS = "items";
+        private static final String KEY_TICK_BEHAVIOR = "tickBehavior";
+
         @NonNull
         @Override
         public Cherry exportItem(@NonNull Item item) {
-            FilterGroupItem filterGroupItem = (FilterGroupItem) item;
+            final FilterGroupItem filterGroupItem = (FilterGroupItem) item;
 
-            CherryOrchard orchard = new CherryOrchard();
+            final CherryOrchard orchard = new CherryOrchard();
             for (ItemFilterWrapper wrapper : filterGroupItem.items) {
                 orchard.put(wrapper.exportWrapper());
             }
 
             return super.exportItem(filterGroupItem)
-                    .put("items", orchard);
+                    .put(KEY_ITEMS, orchard)
+                    .put(KEY_TICK_BEHAVIOR, filterGroupItem.tickBehavior);
         }
 
+        private final FilterGroupItem defaultValues = new FilterGroupItem();
         @NonNull
         @Override
         public Item importItem(@NonNull Cherry cherry, Item item) {
-            FilterGroupItem filterGroupItem = item != null ? (FilterGroupItem) item : new FilterGroupItem();
+            final FilterGroupItem filterGroupItem = item != null ? (FilterGroupItem) item : new FilterGroupItem();
             super.importItem(cherry, filterGroupItem);
 
+            filterGroupItem.tickBehavior = cherry.optEnum(KEY_TICK_BEHAVIOR, defaultValues.tickBehavior);
+
             // Items
-            CherryOrchard itemsArray = cherry.optOrchard("items");
+            final CherryOrchard itemsArray = cherry.optOrchard(KEY_ITEMS);
             int i = 0;
             while (i < itemsArray.length()) {
                 Cherry cherryWrapper = itemsArray.getCherryAt(i);
@@ -72,6 +78,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     }
 
     @NonNull @SaveKey(key = "items") @RequireSave private final List<ItemFilterWrapper> items = new ArrayList<>();
+    @NonNull @SaveKey(key = "tickBehavior") @RequireSave private TickBehavior tickBehavior = TickBehavior.ALL;
     @NonNull private final List<ItemFilterWrapper> activeItems = new ArrayList<>();
     @NonNull private final ItemController groupItemController = new FilterGroupItemController();
     @NonNull private final CallbackStorage<OnItemsStorageUpdate> itemStorageUpdateCallbacks = new CallbackStorage<>();
@@ -106,6 +113,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     // Copy
     public FilterGroupItem(FilterGroupItem copy) {
         super(copy);
+        this.tickBehavior = copy.tickBehavior;
         for (ItemFilterWrapper copyWrapper : copy.items) {
             try {
                 ItemFilterWrapper newWrapper = ItemFilterWrapper.importWrapper(copyWrapper.exportWrapper());
@@ -256,7 +264,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
             i++;
         }
 
-        return -1; // List.indexOf()
+        return -1; // like as List.indexOf() not found result
     }
 
     @NonNull
@@ -280,8 +288,29 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         super.tick(tickSession);
         recalculate(tickSession.getGregorianCalendar());
 
+        final List<ItemFilterWrapper> tickList;
+        switch (tickBehavior) {
+            case ALL:
+                tickList = items;
+                break;
+            case ACTIVE:
+                tickList = activeItems;
+                break;
+            case NOTHING:
+                tickList = Collections.emptyList();
+                break;
+            case NOT_ACTIVE:
+                tickList = new ArrayList<>(items);
+                for (ItemFilterWrapper activeItem : activeItems) {
+                    tickList.remove(activeItem);
+                }
+                break;
+
+            default:
+                throw new RuntimeException(TAG + ": Unexpected tickBehavior: " + tickBehavior);
+        }
+
         // NOTE: No use 'for-loop' (self-delete item in tick => ConcurrentModificationException)
-        List<ItemFilterWrapper> tickList = activeItems; // TODO: 24.08.2022 add tick behavior
         int i = tickList.size() - 1;
         while (i >= 0) {
             tickList.get(i).item.tick(tickSession);
@@ -294,11 +323,13 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         fitEquip.recycle(gregorianCalendar);
 
         for (ItemFilterWrapper wrapper : items) {
+            fitEquip.setCurrentItem(wrapper.item);
             boolean fit = wrapper.filter.isFit(fitEquip);
             if (fit) {
                 temps.add(wrapper);
             }
         }
+        fitEquip.clearCurrentItem();
 
         boolean isUpdated = activeItems.size() != temps.size();
         if (!isUpdated) {
@@ -362,5 +393,12 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         public ItemsStorage getParentItemsStorage(Item item) {
             return FilterGroupItem.this;
         }
+    }
+
+    public enum TickBehavior {
+        ALL,
+        NOTHING,
+        ACTIVE,
+        NOT_ACTIVE
     }
 }
