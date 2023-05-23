@@ -24,6 +24,7 @@ import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.tab.Tab;
+import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.util.Logger;
 
@@ -127,7 +128,7 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
         Item item = tab.getItemById(itemId);
         if (item != null) {
             backStackName = item.getText().split("\n")[0];
-            if (backStackName.isEmpty()) backStackName = getString(ItemsRegistry.REGISTRY.get(item.getClass()).getNameResId());
+            if (backStackName.isEmpty()) backStackName = getString(EnumsRegistry.INSTANCE.nameResId(ItemsRegistry.REGISTRY.get(item.getClass()).getItemType()));
             updateItemStorageContext((ItemsStorage) item);
         }
 

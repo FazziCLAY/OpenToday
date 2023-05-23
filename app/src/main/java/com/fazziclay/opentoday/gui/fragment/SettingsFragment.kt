@@ -77,7 +77,7 @@ class SettingsFragment : Fragment() {
             val preview = TextView(requireContext())
             val spinner = Spinner(requireContext())
             val adapter = SimpleSpinnerAdapter<SettingsManager.DateAndTimePreset>(requireContext())
-            spinner.adapter = adapter;
+            spinner.adapter = adapter
             for (value in SettingsManager.DateAndTimePreset.values()) {
                 adapter.add(value.name, value)
             }
@@ -168,11 +168,11 @@ class SettingsFragment : Fragment() {
                 .setPositiveButton(R.string.abc_ok, null)
                 .show()
         })
-        binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(settingsManager.defaultQuickNoteType.nameResId))
+        binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(EnumsRegistry.nameResId(settingsManager.defaultQuickNoteType.itemType)))
         viewClick(binding.defaultQuickNoteType, Runnable {
             DialogSelectItemType(context) { type: Class<out Item?> ->
                 settingsManager.defaultQuickNoteType = ItemsRegistry.REGISTRY.get(type)
-                binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(settingsManager.defaultQuickNoteType.nameResId))
+                binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(EnumsRegistry.nameResId(settingsManager.defaultQuickNoteType.itemType)))
                 settingsManager.save()
             }.show()
         })

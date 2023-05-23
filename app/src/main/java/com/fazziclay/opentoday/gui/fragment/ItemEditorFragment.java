@@ -53,6 +53,7 @@ import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleDayrepeatable
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleItemBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleLongtextBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleTextBinding;
+import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.dialog.DialogItemNotificationsEditor;
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
@@ -203,7 +204,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         viewClick(binding.cancelButton, this::cancelRequest);
         viewClick(binding.deleteButton, this::deleteRequest);
         viewVisible(binding.deleteButton, item.isAttached(), View.GONE);
-        binding.itemTypeName.setText(ItemsRegistry.REGISTRY.get(item.getClass()).getNameResId());
+        binding.itemTypeName.setText(EnumsRegistry.INSTANCE.nameResId(ItemsRegistry.REGISTRY.get(item.getClass()).getItemType()));
 
         return binding.getRoot();
     }
@@ -229,9 +230,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
     private View addEditModule(BaseEditUiModule editUiModule) {
         editUiModule.setup(this.item, requireActivity(), null);
-        editUiModule.setOnStartEditListener(() -> {
-            unsavedChanges = true;
-        });
+        editUiModule.setOnStartEditListener(() -> unsavedChanges = true);
         editModules.add(editUiModule);
 
         View view = editUiModule.getView();
@@ -769,7 +768,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         }
     }
 
-    public class CycleListItemEditModule extends BaseEditUiModule {
+    public static class CycleListItemEditModule extends BaseEditUiModule {
         private FragmentItemEditorModuleCyclelistBinding binding;
         private SimpleSpinnerAdapter<CycleListItem.TickBehavior> simpleSpinnerAdapter;
         private Runnable onEditStart;
@@ -861,7 +860,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         }
     }
 
-    private class GroupItemEditModule extends BaseEditUiModule {
+    private static class GroupItemEditModule extends BaseEditUiModule {
         @Override
         public View getView() {
             return null;
@@ -879,7 +878,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         public void setOnStartEditListener(Runnable o) { }
     }
 
-    private class FilterGroupItemEditModule extends BaseEditUiModule {
+    private static class FilterGroupItemEditModule extends BaseEditUiModule {
         @Override
         public View getView() {
             return null;

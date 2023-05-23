@@ -10,6 +10,7 @@ import android.widget.Spinner;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
+import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 
 public class DialogSelectItemType {
@@ -39,7 +40,7 @@ public class DialogSelectItemType {
 
         this.simpleSpinnerAdapter = new SimpleSpinnerAdapter<>(context);
         for (ItemsRegistry.ItemInfo itemInfo : ItemsRegistry.REGISTRY.getAllItems()) {
-            this.simpleSpinnerAdapter.add(context.getString(itemInfo.getNameResId()), itemInfo.getClassType());
+            this.simpleSpinnerAdapter.add(context.getString(EnumsRegistry.INSTANCE.nameResId(itemInfo.getItemType())), itemInfo.getClassType());
         }
 
         final byte MODE = 2; // 1 - spinner; 2 - list

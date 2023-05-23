@@ -50,6 +50,7 @@ import com.fazziclay.opentoday.databinding.ToolbarMoreItemsItemBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreOpentodayBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreSelectionBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreTabsBinding;
+import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.activity.MainActivity;
 import com.fazziclay.opentoday.gui.activity.SetupActivity;
@@ -225,6 +226,7 @@ public class AppToolbar {
         registerMoreView(localBinding.getRoot());
 
         // Import from clipboard button
+        // TODO: 2023.05.23 add ClipboardUtil
         viewVisible(localBinding.importDataFromClipboard, ImportWrapper.isImportText(String.valueOf(app.getClipboardManager().getText())), View.GONE);
         viewClick(localBinding.importDataFromClipboard, () -> {
             try {
@@ -328,6 +330,8 @@ public class AppToolbar {
 
         onTabsChanged = tabs -> {
             if (System.currentTimeMillis() - lastTabReorder >= 1000) {
+                // TODO: 2023.05.23 add specific for OnTabsChanged
+                // TODO: 2023.05.23 add TabsManager
                 localBinding.tabsRecycleView.getAdapter().notifyDataSetChanged();
             }
             return Status.NONE;
@@ -434,7 +438,7 @@ public class AppToolbar {
                 ItemsRegistry.ItemInfo itemInfo = ItemsRegistry.REGISTRY.getAllItems()[position];
 
                 if (itemInfo.isCompatibility(app.getFeatureFlags())) {
-                    holder.name.setText(itemInfo.getNameResId());
+                    holder.name.setText(EnumsRegistry.INSTANCE.nameResId(itemInfo.getItemType()));
                     viewClick(holder.create, () -> rootNavigationHost.navigate(ItemEditorFragment.create(ItemsUtils.getId(itemsStorage), itemInfo.getClassType()), true));
                     viewClick(holder.add, () -> itemsStorage.addItem(ItemsRegistry.REGISTRY.get(itemInfo.getClassType()).create()));
                 } else {

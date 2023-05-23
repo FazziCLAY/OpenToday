@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.ImportWrapper
 import com.fazziclay.opentoday.app.SettingsManager
+import com.fazziclay.opentoday.app.items.item.ItemType
 import com.fazziclay.opentoday.app.items.item.filter.FiltersRegistry
 import com.fazziclay.opentoday.app.items.item.filter.LogicContainerItemFilter
 
@@ -27,6 +28,16 @@ object EnumsRegistry {
         EnumInfo(ImportWrapper.ErrorCode.VERSION_NOT_COMPATIBLE,    R.string.importWrapper_errorCode_VERSION_NOT_COMPATIBLE),
         EnumInfo(FiltersRegistry.FilterType.DATE,                   R.string.filterRegistry_filterType_DATE),
         EnumInfo(FiltersRegistry.FilterType.LOGIC_CONTAINER,        R.string.filterRegistry_filterType_LOGIC_CONTAINER),
+
+        EnumInfo(ItemType.DEBUG_TICK_COUNTER,            R.string.item_debugTickCounter),
+        EnumInfo(ItemType.TEXT,                          R.string.item_text),
+        EnumInfo(ItemType.LONG_TEXT,                     R.string.item_longTextItem),
+        EnumInfo(ItemType.CHECKBOX,                      R.string.item_checkbox),
+        EnumInfo(ItemType.CHECKBOX_DAY_REPEATABLE,       R.string.item_checkboxDayRepeatable),
+        EnumInfo(ItemType.COUNTER,                       R.string.item_counter),
+        EnumInfo(ItemType.CYCLE_LIST,                    R.string.item_cycleList),
+        EnumInfo(ItemType.GROUP,                         R.string.item_group),
+        EnumInfo(ItemType.FILTER_GROUP,                  R.string.item_filterGroup),
     )
 
     fun missingChecks() {
@@ -35,6 +46,7 @@ object EnumsRegistry {
         missingCheck(SettingsManager.ItemAction.values().toList())
         missingCheck(ImportWrapper.ErrorCode.values().toList())
         missingCheck(FiltersRegistry.FilterType.values().toList())
+        missingCheck(ItemType.values().toList())
     }
 
     private fun missingCheck(values: List<Enum<*>>) {

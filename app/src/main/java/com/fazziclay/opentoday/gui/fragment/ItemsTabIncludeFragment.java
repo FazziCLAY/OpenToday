@@ -34,6 +34,7 @@ import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.databinding.FragmentItemsTabIncludeBinding;
+import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.interfaces.CurrentItemsTab;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
@@ -213,7 +214,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
                 if (!registryItem.isCompatibility(app.getFeatureFlags())) {
                     continue;
                 }
-                MenuItem menuItem = popupMenu.getMenu().add(registryItem.getNameResId());
+                MenuItem menuItem = popupMenu.getMenu().add(EnumsRegistry.INSTANCE.nameResId(registryItem.getItemType()));
                 menuItem.setOnMenuItemClickListener(clicked -> {
                     String text = binding.quickNoteText.getText().toString();
                     Item item = registryItem.create();
@@ -266,11 +267,13 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         binding.tabs.addOnTabSelectedListener(uiOnTabSelectedListener);
     }
 
+    @NonNull
     @Override
     public UUID getCurrentTabId() {
         return currentTab;
     }
 
+    @NonNull
     @Override
     public Tab getCurrentTab() {
         return itemManager.getTab(getCurrentTabId());
@@ -301,7 +304,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     }
 
     @Override
-    public void navigate(Fragment navigateTo, boolean addToBackStack) {
+    public void navigate(@NonNull Fragment navigateTo, boolean addToBackStack) {
         Logger.d(TAG, "navigate", "to=", navigateTo, "addToBack=", addToBackStack);
         ItemsEditorRootFragment fragment = getCurrentViewPagerFragment();
         if (navigateTo != null) {
