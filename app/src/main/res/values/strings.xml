@@ -48,9 +48,11 @@
     <string name="dialog_item_module_item_minimize">Minimize</string>
     <string name="menuItem_minimize">Minimize</string>
     <string name="uidialog_edit_textentry_clickableUrls">Clickable URLs</string>
-    <string name="cycleListItem_tick_all">All items</string>
-    <string name="cycleListItem_tick_current">Current</string>
-    <string name="dayRepeatable_latestRegenerate">Latest regenerate: %s</string>
+    <string name="cycleListItem_tickBehavior_all">All items</string>
+    <string name="cycleListItem_tickBehavior_current">Current</string>
+    <string name="cycleListItem_tickBehavior_nothing">Nothing</string>
+    <string name="cycleListItem_tickBehavior_notCurrent">Not current</string>
+    <string name="dayRepeatable_latestRegenerate">Latest reset: %s</string>
     <string name="selectItemTypeDialog_create">Create</string>
     <string name="dialog_item_module_cyclelist_tickMode">Tick mode</string>
     <string name="menuItem_copy">Copy</string>
@@ -337,5 +339,5 @@
     <string name="filter_group_item_filter_tickBehavoir_NOTHING">Nothing</string>
     <string name="filter_group_item_filter_tickBehavoir_ACTIVE">Active only</string>
     <string name="filter_group_item_filter_tickBehavoir_NOT_ACTIVE">Not-active only</string>
-    <string name="fragment_itemEditor_filterGroup_tickBehavior">Tick behavoir</string>
+    <string name="fragment_itemEditor_filterGroup_tickBehavior">Tick behavior</string>
 </resources>

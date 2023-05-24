@@ -59,6 +59,7 @@ import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.dialog.DialogItemNotificationsEditor;
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
+import com.fazziclay.opentoday.util.EnumUtil;
 import com.fazziclay.opentoday.util.MinTextWatcher;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
@@ -789,9 +790,8 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             CycleListItem cycleListItem = (CycleListItem) item;
 
             binding = FragmentItemEditorModuleCyclelistBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
-            simpleSpinnerAdapter = new SimpleSpinnerAdapter<CycleListItem.TickBehavior>(activity)
-                    .add(activity.getString(R.string.cycleListItem_tick_all), CycleListItem.TickBehavior.ALL)
-                    .add(activity.getString(R.string.cycleListItem_tick_current), CycleListItem.TickBehavior.CURRENT);
+            simpleSpinnerAdapter = new SimpleSpinnerAdapter<>(activity);
+            EnumUtil.addToSimpleSpinnerAdapter(activity, simpleSpinnerAdapter, CycleListItem.TickBehavior.values());
 
             binding.itemsCycleBackgroundWork.setAdapter(simpleSpinnerAdapter);
             binding.itemsCycleBackgroundWork.setSelection(simpleSpinnerAdapter.getValuePosition(cycleListItem.getTickBehavior()));

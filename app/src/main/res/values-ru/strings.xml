@@ -49,9 +49,11 @@
     <string name="dialog_item_module_item_minimize">Уменьшить</string>
     <string name="uidialog_edit_textentry_clickableUrls">Выделять ссылки</string>
     <string name="menuItem_minimize">Уменьшить</string>
+    <string name="cycleListItem_tickBehavior_notCurrent">Не текущий</string>
+    <string name="cycleListItem_tickBehavior_all">Все айтемы</string>
+    <string name="cycleListItem_tickBehavior_current">Текущий выбранный</string>
+    <string name="cycleListItem_tickBehavior_nothing">Ничего</string>
     <string name="dayRepeatable_latestRegenerate">Последний сброс: %s</string>
-    <string name="cycleListItem_tick_all">Все айтемы</string>
-    <string name="cycleListItem_tick_current">Текущий выбранный</string>
     <string name="selectItemTypeDialog_create">Создать</string>
     <string name="dialog_item_module_cyclelist_tickMode">Поведение тика</string>
     <string name="menuItem_selected">Выделенный</string>

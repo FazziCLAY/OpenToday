@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.ImportWrapper
 import com.fazziclay.opentoday.app.SettingsManager
+import com.fazziclay.opentoday.app.items.item.CycleListItem
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem
 import com.fazziclay.opentoday.app.items.item.ItemType
 import com.fazziclay.opentoday.app.items.item.filter.FiltersRegistry
@@ -45,6 +46,12 @@ object EnumsRegistry {
         EnumInfo(FilterGroupItem.TickBehavior.ACTIVE,        R.string.filter_group_item_filter_tickBehavoir_ACTIVE),
         EnumInfo(FilterGroupItem.TickBehavior.NOT_ACTIVE,    R.string.filter_group_item_filter_tickBehavoir_NOT_ACTIVE),
 
+        EnumInfo(CycleListItem.TickBehavior.ALL,            R.string.cycleListItem_tickBehavior_all),
+        EnumInfo(CycleListItem.TickBehavior.NOTHING,        R.string.cycleListItem_tickBehavior_nothing),
+        EnumInfo(CycleListItem.TickBehavior.CURRENT,        R.string.cycleListItem_tickBehavior_current),
+        EnumInfo(CycleListItem.TickBehavior.NOT_CURRENT,    R.string.cycleListItem_tickBehavior_notCurrent),
+
+
     )
 
     fun missingChecks() {
@@ -55,6 +62,7 @@ object EnumsRegistry {
         missingCheck(FiltersRegistry.FilterType.values().toList())
         missingCheck(ItemType.values().toList())
         missingCheck(FilterGroupItem.TickBehavior.values().toList())
+        missingCheck(CycleListItem.TickBehavior.values().toList())
     }
 
     private fun missingCheck(values: List<Enum<*>>) {

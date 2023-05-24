@@ -134,6 +134,11 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
         } else if (tickBehavior == TickBehavior.CURRENT) {
             Item c = getCurrentItem();
             if (c != null) c.tick(tickSession);
+        } else if (tickBehavior == TickBehavior.NOT_CURRENT) {
+            Item c = getCurrentItem();
+            for (Item item : getAllItems()) {
+                if (item != c) item.tick(tickSession);
+            }
         }
     }
 
@@ -257,6 +262,8 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
 
     public enum TickBehavior {
         ALL,
-        CURRENT
+        NOTHING,
+        CURRENT,
+        NOT_CURRENT
     }
 }
