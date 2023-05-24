@@ -13,6 +13,7 @@ import com.fazziclay.opentoday.app.items.callback.ItemCallback;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationCodecUtil;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationUtil;
+import com.fazziclay.opentoday.app.items.stat.ItemStat;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
@@ -81,6 +82,7 @@ public abstract class Item implements Unique {
     @Nullable @RequireSave @SaveKey(key = "id") private UUID id;
     @Nullable private ItemController controller;
     private final CallbackStorage<ItemCallback> itemCallbacks = new CallbackStorage<>();
+    private final ItemStat stat = new ItemStat();
     @SaveKey(key = "viewMinHeight") @RequireSave private int viewMinHeight = 0; // минимальная высота
     @SaveKey(key = "viewBackgroundColor") @RequireSave private int viewBackgroundColor = Color.parseColor(DEFAULT_BACKGROUND_COLOR); // фоновый цвет
     @SaveKey(key = "viewCustomBackgroundColor") @RequireSave private boolean viewCustomBackgroundColor = false; // юзаем ли фоновый цвет
@@ -157,6 +159,10 @@ public abstract class Item implements Unique {
         return this;
     }
 
+    protected void updateStat() {
+        stat.tick();
+    }
+
     public CallbackStorage<ItemCallback> getItemCallbacks() {
         return itemCallbacks;
     }
@@ -189,6 +195,11 @@ public abstract class Item implements Unique {
     @Setter public void setMinimize(boolean minimize) { this.minimize = minimize; }
 
     @Getter @NonNull public List<ItemNotification> getNotifications() { return notifications; }
+
+    @Getter @NonNull public ItemStat getStat() {
+        return stat;
+    }
+
     @Getter public ItemsStorage getParentItemsStorage() {
         if (isAttached()) {
             return controller.getParentItemsStorage(this);
