@@ -2,13 +2,11 @@ package com.fazziclay.opentoday.app.items.item;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 
 import com.fazziclay.opentoday.app.FeatureFlag;
-import com.fazziclay.opentoday.gui.EnumsRegistry;
-import com.fazziclay.opentoday.util.Logger;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Registry of items. Contains links between the following:
@@ -61,6 +59,14 @@ public class ItemsRegistry {
             if (classType == item.classType) return item;
         }
         return null;
+    }
+
+    @NonNull
+    public ItemInfo get(@NonNull ItemType itemType) {
+        for (ItemInfo itemInfo : ITEMS) {
+            if (itemType == itemInfo.itemType) return itemInfo;
+        }
+        throw new NoSuchElementException("Not found item for ItemType: " + itemType);
     }
 
     public static class ItemInfo {

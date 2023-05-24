@@ -899,9 +899,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding = FragmentItemEditorModuleFiltergroupBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
 
             simpleSpinnerAdapter = new SimpleSpinnerAdapter<>(activity);
-            for (FilterGroupItem.TickBehavior value : FilterGroupItem.TickBehavior.values()) {
-                simpleSpinnerAdapter.add(EnumsRegistry.INSTANCE.name(value, activity), value);
-            }
+            EnumUtil.addToSimpleSpinnerAdapter(activity, simpleSpinnerAdapter, FilterGroupItem.TickBehavior.values());
             binding.tickBehavior.setAdapter(simpleSpinnerAdapter);
             binding.tickBehavior.setSelection(simpleSpinnerAdapter.getValuePosition(filterGroupItem.getTickBehavior()));
             binding.tickBehavior.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

@@ -27,6 +27,7 @@ import com.fazziclay.opentoday.databinding.PartLogicContainerItemFilterEditorBin
 import com.fazziclay.opentoday.gui.EnumsRegistry
 import com.fazziclay.opentoday.gui.fragment.FilterGroupItemFilterEditorFragment
 import com.fazziclay.opentoday.gui.interfaces.Destroy
+import com.fazziclay.opentoday.util.EnumUtil
 import com.fazziclay.opentoday.util.MinTextWatcher
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter
 import java.util.*
@@ -77,9 +78,8 @@ class LogicContainerItemFilterPartEditor(private val context: Context, layoutInf
         }
 
         // LOGIC MODE
-        val adapter: SimpleSpinnerAdapter<LogicMode> = SimpleSpinnerAdapter<LogicMode>(context)
-            .add(EnumsRegistry.name(LogicMode.AND, context), LogicMode.AND)
-            .add(EnumsRegistry.name(LogicMode.OR, context), LogicMode.OR)
+        val adapter: SimpleSpinnerAdapter<LogicMode> = SimpleSpinnerAdapter<LogicMode>(context);
+        EnumUtil.addToSimpleSpinnerAdapter(context, adapter, LogicMode.values())
         binding.logicMode.adapter = adapter
         binding.logicMode.setSelection(adapter.getValuePosition(logicContainerItemFilter.logicMode))
         binding.logicMode.onItemSelectedListener = object : OnItemSelectedListener {
