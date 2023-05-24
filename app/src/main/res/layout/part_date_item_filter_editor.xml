@@ -86,39 +86,39 @@
 
                 <include
                     android:id="@+id/year"
-                    layout="@layout/part_date_item_filter_editor_row" />
+                    layout="@layout/integer_value_row" />
 
                 <include
                     android:id="@+id/month"
-                    layout="@layout/part_date_item_filter_editor_row" />
+                    layout="@layout/integer_value_row" />
 
                 <include
                     android:id="@+id/dayOfMonth"
-                    layout="@layout/part_date_item_filter_editor_row" />
+                    layout="@layout/integer_value_row" />
 
                 <include
                     android:id="@+id/dayOfWeek"
-                    layout="@layout/part_date_item_filter_editor_row" />
+                    layout="@layout/integer_value_row" />
 
                 <include
                     android:id="@+id/weekOfYear"
-                    layout="@layout/part_date_item_filter_editor_row" />
+                    layout="@layout/integer_value_row" />
 
                 <include
                     android:id="@+id/dayOfYear"
-                    layout="@layout/part_date_item_filter_editor_row" />
+                    layout="@layout/integer_value_row" />
 
                 <include
                     android:id="@+id/hour"
-                    layout="@layout/part_date_item_filter_editor_row" />
+                    layout="@layout/integer_value_row" />
 
                 <include
                     android:id="@+id/minute"
-                    layout="@layout/part_date_item_filter_editor_row" />
+                    layout="@layout/integer_value_row" />
 
                 <include
                     android:id="@+id/second"
-                    layout="@layout/part_date_item_filter_editor_row" />
+                    layout="@layout/integer_value_row" />
 
             </LinearLayout>
         </HorizontalScrollView>
