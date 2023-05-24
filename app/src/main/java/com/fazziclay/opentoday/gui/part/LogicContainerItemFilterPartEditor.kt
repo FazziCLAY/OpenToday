@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem
+import com.fazziclay.opentoday.app.items.item.Item
 import com.fazziclay.opentoday.app.items.item.filter.FiltersRegistry
 import com.fazziclay.opentoday.app.items.item.filter.FitEquip
 import com.fazziclay.opentoday.app.items.item.filter.ItemFilter
@@ -32,7 +33,7 @@ import com.fazziclay.opentoday.util.MinTextWatcher
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter
 import java.util.*
 
-class LogicContainerItemFilterPartEditor(private val context: Context, layoutInflater: LayoutInflater, private val parentFilterGroup: FilterGroupItem, private val logicContainerItemFilter: LogicContainerItemFilter, private val saveSignal: Runnable) : Destroy {
+class LogicContainerItemFilterPartEditor(private val context: Context, layoutInflater: LayoutInflater, private val parentFilterGroup: FilterGroupItem, private val logicContainerItemFilter: LogicContainerItemFilter, private val item: Item?, private val saveSignal: Runnable) : Destroy {
     companion object {
         private const val FILTERS_DECOR_LEFT = 0
         private const val FILTERS_DECOR_TOP = 5
@@ -54,10 +55,12 @@ class LogicContainerItemFilterPartEditor(private val context: Context, layoutInf
             if (destroyed) return@Runnable
 
             cached.forEach { (t, u) ->
-                val isFit = t.isFit(FitEquip(GregorianCalendar()))
+                val fitEquip = FitEquip(GregorianCalendar());
+                fitEquip.currentItem = item
+                val isFit = t.isFit(fitEquip)
                 u.backgroundTintList = ColorStateList.valueOf(if (isFit) Color.GREEN else Color.RED)
             }
-            handler.postDelayed(runnable!!, 1000)
+            handler.postDelayed(runnable!!, 1000 / 4)
         }
         handler.post(runnable!!)
 
@@ -158,7 +161,7 @@ class LogicContainerItemFilterPartEditor(private val context: Context, layoutInf
             val itemFilter = logicContainerItemFilter.filters[position]
             viewHolder.description.text = itemFilter.description.ifBlank { context.getString(R.string.logic_container_item_filter_part_editor_name_empty) }
             viewHolder.frameLayout.setOnClickListener {
-                FilterGroupItemFilterEditorFragment.openEditFilterDialog(context, itemFilter, {
+                FilterGroupItemFilterEditorFragment.openEditFilterDialog(context, itemFilter, item, {
                     notifyItemChanged(logicContainerItemFilter.getFilterPosition(itemFilter))
                     save()
                 }, parentFilterGroup)

@@ -341,4 +341,6 @@
     <string name="filter_group_item_filter_tickBehavoir_NOT_ACTIVE">Not-active only</string>
     <string name="fragment_itemEditor_filterGroup_tickBehavior">Tick behavior</string>
     <string name="toolbar_debug">Debug</string>
+    <string name="filterRegistry_filterType_ITEM_STAT">Item stat</string>
+    <string name="dialog_editItemFilter_activeItems">Active items</string>
 </resources>

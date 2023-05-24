@@ -339,4 +339,6 @@
     <string name="filter_group_item_filter_tickBehavoir_NOT_ACTIVE">Только не активных</string>
     <string name="fragment_itemEditor_filterGroup_tickBehavior">Поведение тика</string>
     <string name="toolbar_debug">Отладка</string>
+    <string name="filterRegistry_filterType_ITEM_STAT">Статистика айтема</string>
+    <string name="dialog_editItemFilter_activeItems">Активные айтемы</string>
 </resources>

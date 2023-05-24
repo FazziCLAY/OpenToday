@@ -16,25 +16,24 @@ import android.widget.TextView;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.items.item.Item;
-import com.fazziclay.opentoday.app.items.item.filter.DateItemFilter;
 import com.fazziclay.opentoday.app.items.item.filter.FitEquip;
 import com.fazziclay.opentoday.app.items.item.filter.IntegerValue;
+import com.fazziclay.opentoday.app.items.item.filter.ItemStatItemFilter;
 import com.fazziclay.opentoday.databinding.IntegerValueRowBinding;
-import com.fazziclay.opentoday.databinding.PartDateItemFilterEditorBinding;
+import com.fazziclay.opentoday.databinding.PartItemStatItemFilterBinding;
 import com.fazziclay.opentoday.gui.interfaces.Destroy;
 import com.fazziclay.opentoday.util.MinTextWatcher;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
-public class DateItemFilterPartEditor implements Destroy {
+public class ItemStatFilterPartEditor implements Destroy {
     private final Context context;
-    private final PartDateItemFilterEditorBinding binding;
+    private final PartItemStatItemFilterBinding binding;
     private final Runnable saveSignal;
     private GregorianCalendar calendar;
     private final Handler handler;
@@ -53,18 +52,18 @@ public class DateItemFilterPartEditor implements Destroy {
         return binding.getRoot();
     }
 
-    public DateItemFilterPartEditor(Context context, LayoutInflater layoutInflater, DateItemFilter dateItemFilter, Item item, Runnable saveSignal) {
+    public ItemStatFilterPartEditor(Context context, LayoutInflater layoutInflater, ItemStatItemFilter itemStatItemFilter, Item item, Runnable saveSignal) {
         this.context = context;
-        this.binding = PartDateItemFilterEditorBinding.inflate(layoutInflater);
+        this.binding = PartItemStatItemFilterBinding.inflate(layoutInflater);
         this.saveSignal = saveSignal;
         this.calendar = new GregorianCalendar();
         this.handler = new Handler(Looper.getMainLooper());
 
-        binding.description.setText(dateItemFilter.getDescription());
+        binding.description.setText(itemStatItemFilter.getDescription());
         binding.description.addTextChangedListener(new MinTextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
-                dateItemFilter.setDescription(s.toString());
+                itemStatItemFilter.setDescription(s.toString());
                 saveSignal.run();
             }
         });
@@ -76,180 +75,28 @@ public class DateItemFilterPartEditor implements Destroy {
         setupRow(new SetupInterface() {
             @Override
             public IntegerValue get() {
-                return dateItemFilter.getYear();
+                return itemStatItemFilter.getActiveItems();
             }
 
             @Override
             public void set(IntegerValue integerValue) {
-                dateItemFilter.setYear(integerValue);
+                itemStatItemFilter.setActiveItems(integerValue);
             }
 
             @Override
             public int getCurrentValue() {
-                return calendar.get(Calendar.YEAR);
+                return item == null ? 0 : item.getStat().getActiveItems();
             }
-        }, binding.year, R.string.dialog_editItemFilter_year);
-        setupRow(new SetupInterface() {
-            @Override
-            public IntegerValue get() {
-                return dateItemFilter.getMonth();
-            }
-
-            @Override
-            public void set(IntegerValue integerValue) {
-                dateItemFilter.setMonth(integerValue);
-            }
-
-
-            @Override
-            public int getCurrentValue() {
-                return calendar.get(Calendar.MONTH);
-            }
-        }, binding.month, R.string.dialog_editItemFilter_month, new SimpleSpinnerAdapter<Integer>(context)
-                .add("(0) " + months[0], 0)
-                .add("(1) " + months[1], 1)
-                .add("(2) " + months[2], 2)
-                .add("(3) " + months[3], 3)
-                .add("(4) " + months[4], 4)
-                .add("(5) " + months[5], 5)
-                .add("(6) " + months[6], 6)
-                .add("(7) " + months[7], 7)
-                .add("(8) " + months[8], 8)
-                .add("(9) " + months[9], 9)
-                .add("(10) " + months[10], 10)
-                .add("(11) " + months[11], 11)
-
-        );
-        setupRow(new SetupInterface() {
-            @Override
-            public IntegerValue get() {
-                return dateItemFilter.getDayOfMonth();
-            }
-
-            @Override
-            public void set(IntegerValue integerValue) {
-                dateItemFilter.setDayOfMonth(integerValue);
-            }
-
-            @Override
-            public int getCurrentValue() {
-                return calendar.get(Calendar.DAY_OF_MONTH);
-            }
-        }, binding.dayOfMonth, R.string.dialog_editItemFilter_dayOfMonth);
-        setupRow(new SetupInterface() {
-            @Override
-            public IntegerValue get() {
-                return dateItemFilter.getDayOfWeek();
-            }
-
-            @Override
-            public void set(IntegerValue integerValue) {
-                dateItemFilter.setDayOfWeek(integerValue);
-            }
-
-
-            @Override
-            public int getCurrentValue() {
-                return calendar.get(Calendar.DAY_OF_WEEK);
-            }
-        }, binding.dayOfWeek, R.string.dialog_editItemFilter_dayOfWeek, new SimpleSpinnerAdapter<Integer>(context)
-                .add("(1) " + weekdays[1], 1)
-                .add("(2) " + weekdays[2], 2)
-                .add("(3) " + weekdays[3], 3)
-                .add("(4) " + weekdays[4], 4)
-                .add("(5) " + weekdays[5], 5)
-                .add("(6) " + weekdays[6], 6)
-                .add("(7) " + weekdays[7], 7)
-
-        );
-        setupRow(new SetupInterface() {
-            @Override
-            public IntegerValue get() {
-                return dateItemFilter.getWeekOfYear();
-            }
-
-            @Override
-            public void set(IntegerValue integerValue) {
-                dateItemFilter.setWeekOfYear(integerValue);
-            }
-
-            @Override
-            public int getCurrentValue() {
-                return calendar.get(Calendar.WEEK_OF_YEAR);
-            }
-        }, binding.weekOfYear, R.string.dialog_editItemFilter_weekOfYear);
-        setupRow(new SetupInterface() {
-            @Override
-            public IntegerValue get() {
-                return dateItemFilter.getDayOfYear();
-            }
-
-            @Override
-            public void set(IntegerValue integerValue) {
-                dateItemFilter.setDayOfYear(integerValue);
-            }
-
-            @Override
-            public int getCurrentValue() {
-                return calendar.get(Calendar.DAY_OF_YEAR);
-            }
-        }, binding.dayOfYear, R.string.dialog_editItemFilter_dayOfYear);
-        setupRow(new SetupInterface() {
-            @Override
-            public IntegerValue get() {
-                return dateItemFilter.getHour();
-            }
-
-            @Override
-            public void set(IntegerValue integerValue) {
-                dateItemFilter.setHour(integerValue);
-            }
-
-            @Override
-            public int getCurrentValue() {
-                return calendar.get(Calendar.HOUR_OF_DAY);
-            }
-        }, binding.hour, R.string.dialog_editItemFilter_hour);
-
-        setupRow(new SetupInterface() {
-            @Override
-            public IntegerValue get() {
-                return dateItemFilter.getMinute();
-            }
-
-            @Override
-            public void set(IntegerValue integerValue) {
-                dateItemFilter.setMinute(integerValue);
-            }
-
-            @Override
-            public int getCurrentValue() {
-                return calendar.get(Calendar.MINUTE);
-            }
-        }, binding.minute, R.string.dialog_editItemFilter_minute);
-
-        setupRow(new SetupInterface() {
-            @Override
-            public IntegerValue get() {
-                return dateItemFilter.getSecond();
-            }
-
-            @Override
-            public void set(IntegerValue integerValue) {
-                dateItemFilter.setSecond(integerValue);
-            }
-            @Override
-            public int getCurrentValue() {
-                return calendar.get(Calendar.SECOND);
-            }
-        }, binding.second, R.string.dialog_editItemFilter_second);
+        }, binding.activeItems, R.string.dialog_editItemFilter_activeItems);
 
         runnableList.add(new Runnable() {
             @Override
             public void run() {
                 if (!runnableList.contains(this)) return;
 
-                boolean isFitGlobal = dateItemFilter.isFit(new FitEquip(new GregorianCalendar()));
+                FitEquip fitEquip = new FitEquip(new GregorianCalendar());
+                fitEquip.setCurrentItem(item);
+                boolean isFitGlobal = itemStatItemFilter.isFit(fitEquip);
                 binding.currentValueTitle.setBackgroundTintList(ColorStateList.valueOf(isFitGlobal ? Color.GREEN : Color.RED));
 
                 handler.postDelayed(this, 1000 / 4);

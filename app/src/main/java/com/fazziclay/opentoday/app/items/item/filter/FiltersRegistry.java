@@ -6,6 +6,7 @@ public class FiltersRegistry {
     private static final FilterInfo[] OBJECTS = new FilterInfo[]{
             new FilterInfo(DateItemFilter.class,           "DateItemFilter",           FilterType.DATE,             DateItemFilter.CODEC,              DateItemFilter::new),
             new FilterInfo(LogicContainerItemFilter.class, "LogicContainerItemFilter", FilterType.LOGIC_CONTAINER,  LogicContainerItemFilter.CODEC,    LogicContainerItemFilter::new),
+            new FilterInfo(ItemStatItemFilter.class,       "ItemStatItemFilter",       FilterType.ITEM_STAT,        ItemStatItemFilter.CODEC,          ItemStatItemFilter::new),
     };
 
     private FiltersRegistry() {}
@@ -74,6 +75,7 @@ public class FiltersRegistry {
 
     public enum FilterType {
         DATE,
-        LOGIC_CONTAINER
+        LOGIC_CONTAINER,
+        ITEM_STAT
     }
 }

@@ -16,10 +16,12 @@ import com.fazziclay.opentoday.app.items.item.FilterGroupItem
 import com.fazziclay.opentoday.app.items.item.Item
 import com.fazziclay.opentoday.app.items.item.filter.DateItemFilter
 import com.fazziclay.opentoday.app.items.item.filter.ItemFilter
+import com.fazziclay.opentoday.app.items.item.filter.ItemStatItemFilter
 import com.fazziclay.opentoday.app.items.item.filter.LogicContainerItemFilter
 import com.fazziclay.opentoday.databinding.FragmentFilterGroupItemFilterEditorBinding
 import com.fazziclay.opentoday.gui.interfaces.Destroy
 import com.fazziclay.opentoday.gui.part.DateItemFilterPartEditor
+import com.fazziclay.opentoday.gui.part.ItemStatFilterPartEditor
 import com.fazziclay.opentoday.gui.part.LogicContainerItemFilterPartEditor
 import kotlinx.coroutines.Runnable
 import java.util.*
@@ -42,20 +44,25 @@ class FilterGroupItemFilterEditorFragment : Fragment() {
             return fragment
         }
 
-        fun openEditFilterDialog(context: Context, itemFilter: ItemFilter?, saveSignal: Runnable, parentFilterGroup: FilterGroupItem) {
+        fun openEditFilterDialog(context: Context, itemFilter: ItemFilter?, item: Item?, saveSignal: Runnable, parentFilterGroup: FilterGroupItem) {
             val view: View
             val destroy: Destroy
             when (itemFilter) {
                 is DateItemFilter -> {
-                    val part = DateItemFilterPartEditor(context, LayoutInflater.from(context), itemFilter, saveSignal)
-                    destroy = part;
+                    val part = DateItemFilterPartEditor(context, LayoutInflater.from(context), itemFilter, item, saveSignal)
+                    destroy = part
                     view = part.rootView
 
                 }
                 is LogicContainerItemFilter -> {
-                    val part = LogicContainerItemFilterPartEditor(context, LayoutInflater.from(context), parentFilterGroup, itemFilter, saveSignal)
-                    destroy = part;
+                    val part = LogicContainerItemFilterPartEditor(context, LayoutInflater.from(context), parentFilterGroup, itemFilter, item, saveSignal)
+                    destroy = part
                     view = part.getRootView()
+                }
+                is ItemStatItemFilter -> {
+                    val part = ItemStatFilterPartEditor(context, LayoutInflater.from(context), itemFilter, item, saveSignal)
+                    destroy = part
+                    view = part.rootView;
                 }
                 else -> {
                     val part = TextView(context)
@@ -72,7 +79,7 @@ class FilterGroupItemFilterEditorFragment : Fragment() {
             AlertDialog.Builder(context)
                 .setView(view)
                 .setOnCancelListener { destroy.destroy() }
-                .setPositiveButton("OK", null) // TODO: make translatable
+                .setPositiveButton(R.string.abc_ok, null)
                 .show()
         }
     }
@@ -117,7 +124,7 @@ class FilterGroupItemFilterEditorFragment : Fragment() {
         if (rootFilter !is LogicContainerItemFilter) {
             binding.outdatedItemFilterScheme.visibility = View.VISIBLE
             binding.mergeToNew.setOnClickListener {
-                val newFilter = LogicContainerItemFilter();
+                val newFilter = LogicContainerItemFilter()
                 newFilter.add(rootFilter)
                 filterGroup.setItemFilter(item, newFilter)
                 rootFilter = newFilter
@@ -130,15 +137,23 @@ class FilterGroupItemFilterEditorFragment : Fragment() {
     private fun reloadPartEditor() {
         binding.itemFilterRootContainer.removeAllViews()
 
-        if (rootFilter is LogicContainerItemFilter) {
-            val editor = LogicContainerItemFilterPartEditor(requireContext(), layoutInflater, filterGroup, rootFilter as LogicContainerItemFilter) { filterGroup.save() }
-            binding.itemFilterRootContainer.addView(editor.getRootView())
-            part = editor
+        when (rootFilter) {
+            is LogicContainerItemFilter -> {
+                val editor = LogicContainerItemFilterPartEditor(requireContext(), layoutInflater, filterGroup, rootFilter as LogicContainerItemFilter, item) { filterGroup.save() }
+                binding.itemFilterRootContainer.addView(editor.getRootView())
+                part = editor
 
-        } else if (rootFilter is DateItemFilter) {
-            val editor = DateItemFilterPartEditor(requireContext(), layoutInflater, rootFilter as DateItemFilter) { filterGroup.save() }
-            binding.itemFilterRootContainer.addView(editor.rootView)
-            part = editor
+            }
+            is DateItemFilter -> {
+                val editor = DateItemFilterPartEditor(requireContext(), layoutInflater, rootFilter as DateItemFilter, item) { filterGroup.save() }
+                binding.itemFilterRootContainer.addView(editor.rootView)
+                part = editor
+            }
+            is ItemStatItemFilter -> {
+                val editor = ItemStatFilterPartEditor(requireContext(), layoutInflater, rootFilter as ItemStatItemFilter, item) { filterGroup.save() }
+                binding.itemFilterRootContainer.addView(editor.rootView)
+                part = editor
+            }
         }
     }
 }

@@ -30,6 +30,7 @@ object EnumsRegistry {
         EnumInfo(ImportWrapper.ErrorCode.VERSION_NOT_COMPATIBLE,    R.string.importWrapper_errorCode_VERSION_NOT_COMPATIBLE),
         EnumInfo(FiltersRegistry.FilterType.DATE,                   R.string.filterRegistry_filterType_DATE),
         EnumInfo(FiltersRegistry.FilterType.LOGIC_CONTAINER,        R.string.filterRegistry_filterType_LOGIC_CONTAINER),
+        EnumInfo(FiltersRegistry.FilterType.ITEM_STAT,              R.string.filterRegistry_filterType_ITEM_STAT),
 
         EnumInfo(ItemType.DEBUG_TICK_COUNTER,            R.string.item_debugTickCounter),
         EnumInfo(ItemType.TEXT,                          R.string.item_text),

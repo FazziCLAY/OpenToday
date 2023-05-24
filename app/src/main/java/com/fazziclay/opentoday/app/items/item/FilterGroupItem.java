@@ -276,6 +276,13 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         return -1; // like as List.indexOf() not found result
     }
 
+    @Override
+    protected void updateStat() {
+        super.updateStat();
+        getStat().setActiveItems(activeItems.size());
+        getStat().setContainerItems(items.size());
+    }
+
     @NonNull
     @Override
     public CallbackStorage<OnItemsStorageUpdate> getOnUpdateCallbacks() {
@@ -296,6 +303,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     public void tick(TickSession tickSession) {
         super.tick(tickSession);
         recalculate(tickSession.getGregorianCalendar());
+        updateStat();
 
         final List<ItemFilterWrapper> tickList;
         switch (tickBehavior) {
@@ -322,9 +330,15 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         // NOTE: No use 'for-loop' (self-delete item in tick => ConcurrentModificationException)
         int i = tickList.size() - 1;
         while (i >= 0) {
-            tickList.get(i).item.tick(tickSession);
+            Item item = tickList.get(i).item;
+            if (item != null && item.isAttached()) {
+                item.tick(tickSession);
+            }
             i--;
         }
+
+        recalculate(tickSession.getGregorianCalendar());
+        updateStat();
     }
 
     public boolean recalculate(final GregorianCalendar gregorianCalendar) {
