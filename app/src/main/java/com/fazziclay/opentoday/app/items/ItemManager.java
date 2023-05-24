@@ -308,11 +308,15 @@ public class ItemManager {
     }
 
     public void queueSave() {
+        queueSave(SaveInitiator.USER);
+    }
+
+    public void queueSave(SaveInitiator initiator) {
         if (saveThread == null) {
             saveThread = new SaveThread();
             saveThread.start();
         }
-        saveThread.request();
+        saveThread.request(initiator);
     }
 
     public boolean saveAllDirect() {
@@ -353,6 +357,7 @@ public class ItemManager {
 
     private class SaveThread extends Thread {
         public boolean request = false;
+        private byte requestImportance = 0;
         public int requestsCount = 0;
         public long firstRequestTime = 0;
         public long latestRequestTime = 0;
@@ -364,18 +369,19 @@ public class ItemManager {
         @Override
         public void run() {
             while (!isInterrupted()) {
-                if (request) {
+                if (request && (requestImportance > 0 || ((System.currentTimeMillis() - firstRequestTime) > 1000 * 10))) {
                     request = false;
                     requestsCount = Debug.latestSaveRequestsCount = 0;
                     firstRequestTime = 0;
                     latestRequestTime = 0;
+                    requestImportance = 0;
 
                     // Save
                     internalSave();
-                    Log.i("SaveThread", String.format("requestCount=%s\nfirstTime=%s\nlatestTime=%s", requestsCount, firstRequestTime, latestRequestTime));
+                    if (App.LOG) Log.i("SaveThread", String.format("requestCount=%s\nfirstTime=%s\nlatestTime=%s", requestsCount, firstRequestTime, latestRequestTime));
                 }
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(1000);
                 } catch (InterruptedException ignored) {}
             }
         }
@@ -394,10 +400,11 @@ public class ItemManager {
             }
         }
 
-        public void request() {
+        public void request(SaveInitiator initiator) {
             if (!request) {
                 firstRequestTime = System.currentTimeMillis();
             }
+            if (requestImportance == 0 && initiator == SaveInitiator.USER) requestImportance = 1;
             request = true;
             latestRequestTime = System.currentTimeMillis();
             requestsCount = Debug.latestSaveRequestsCount = requestsCount + 1;

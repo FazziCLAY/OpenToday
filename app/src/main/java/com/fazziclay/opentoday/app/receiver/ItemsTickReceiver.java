@@ -11,6 +11,7 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.TickSession;
 import com.fazziclay.opentoday.app.items.ItemManager;
+import com.fazziclay.opentoday.app.items.SaveInitiator;
 import com.fazziclay.opentoday.util.Logger;
 
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public class ItemsTickReceiver extends BroadcastReceiver {
 
         // Post tick commands
         if (tickSession.isSaveNeeded()) {
-            itemManager.saveAllDirect();
+            itemManager.queueSave(SaveInitiator.TICK);
         }
 
     }
