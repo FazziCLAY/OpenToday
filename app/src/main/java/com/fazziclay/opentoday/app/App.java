@@ -115,7 +115,8 @@ public class App extends Application {
             FeatureFlag.AVAILABLE_UI_PERSONAL_TICK,
             FeatureFlag.AVAILABLE_RESTART_ACTIVITY,
             FeatureFlag.AVAILABLE_RESET_SETUP,
-            FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION
+            FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION,
+            FeatureFlag.TOOLBAR_DEBUG
     ) : Collections.emptyList());
     private long appStartupTime = 0;
 
@@ -125,8 +126,7 @@ public class App extends Application {
      * <p>2. Setup UncaughtExceptionHandler to CrashReport</p>
      * <p>3. {@link DataFixer} run</p>
      * <p>4. (Android) Registry notification channels</p>
-     * <p>5. (TODO) setup PinCodeManager</p>
-     * <p>6. {@link #updateVersionFile()} if {@link FixResult} return true and send Telemetry signal about datafixer work</p>
+     * <p>5. {@link #updateVersionFile()} if {@link FixResult} return true and send Telemetry signal about datafixer work</p>
      */
     @Override
     public void onCreate() {

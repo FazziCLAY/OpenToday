@@ -12,12 +12,17 @@ import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.App
 import com.fazziclay.opentoday.app.FeatureFlag
 import com.fazziclay.opentoday.app.receiver.ItemsTickReceiver
+import com.fazziclay.opentoday.gui.callbacks.UIDebugCallback
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost
 import com.fazziclay.opentoday.util.InlineUtil
+import com.fazziclay.opentoday.util.callback.CallbackStorage
+import com.fazziclay.opentoday.util.callback.Status
 import java.util.*
 
 object UI {
+    private val debugCallbacks: CallbackStorage<UIDebugCallback> = CallbackStorage()
+
     @JvmStatic
     fun <T : Fragment?> findFragmentInParents(fragment: Fragment, find: Class<T>): T? {
         var parent = fragment.parentFragment
@@ -36,6 +41,11 @@ object UI {
     fun rootBack(fragment: Fragment) {
         val host = findFragmentInParents(fragment, MainRootFragment::class.java) ?: throw RuntimeException("Fragment is not contains MainRootFragment in parents!")
         host.popBackStack()
+    }
+
+    @JvmStatic
+    fun getDebugCallbacks(): CallbackStorage<UIDebugCallback> {
+        return debugCallbacks;
     }
 
     @JvmStatic
@@ -98,6 +108,12 @@ object UI {
                         if (app.isFeatureFlag(featureFlag)) {
                             app.featureFlags.remove(featureFlag)
                         }
+                    }
+                    if (featureFlag == FeatureFlag.TOOLBAR_DEBUG) {
+                        debugCallbacks.run(CallbackStorage.RunCallbackInterface { _, callback ->
+                            callback.debugChange(`is`)
+                            return@RunCallbackInterface Status.NONE
+                        })
                     }
                 })
                 val textView = TextView(context)

@@ -32,17 +32,17 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.FeatureFlag;
 import com.fazziclay.opentoday.app.ImportWrapper;
+import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.ItemsUtils;
-import com.fazziclay.opentoday.app.items.selection.Selection;
-import com.fazziclay.opentoday.app.items.selection.SelectionManager;
-import com.fazziclay.opentoday.app.items.callback.SelectionCallback;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
+import com.fazziclay.opentoday.app.items.callback.SelectionCallback;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
+import com.fazziclay.opentoday.app.items.selection.Selection;
+import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.Tab;
-import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.databinding.ToolbarBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreFileBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreItemsBinding;
@@ -54,6 +54,7 @@ import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.activity.MainActivity;
 import com.fazziclay.opentoday.gui.activity.SetupActivity;
+import com.fazziclay.opentoday.gui.callbacks.UIDebugCallback;
 import com.fazziclay.opentoday.gui.dialog.DialogSelectItemAction;
 import com.fazziclay.opentoday.gui.fragment.AboutFragment;
 import com.fazziclay.opentoday.gui.fragment.DeleteItemsFragment;
@@ -65,10 +66,12 @@ import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 public class AppToolbar {
@@ -89,6 +92,7 @@ public class AppToolbar {
     private SelectionCallback selectionCallback = null; // (Selection TAB) On selection changed. For runtime update selection information
     private SelectionCallback selectionCallbackTab = null; // (Selection TAB) On selection changed. For runtime update selection information
     private OnTabsChanged onTabsChanged = null;
+    private UIDebugCallback debugCallback = null;
 
     // Cache
     private View itemsSectionCacheView = null;
@@ -133,6 +137,7 @@ public class AppToolbar {
         setupButtonCallback(binding.toolbarSelection, this::onSelectionClick);
         setupButtonCallback(binding.toolbarTabs, this::onTabsClick);
         setupButtonCallback(binding.toolbarOpentoday, this::onOpenTodayClick);
+        setupButtonCallback(binding.toolbarDebug, this::onDebugClick);
 
         // Selection button
         selectionCallbackTab = new SelectionCallback() {
@@ -147,6 +152,18 @@ public class AppToolbar {
         };
         selectionManager.getOnSelectionUpdated().addCallback(CallbackImportance.DEFAULT, selectionCallbackTab);
         viewVisible(binding.toolbarSelection, !selectionManager.isSelectionEmpty(), View.GONE);
+
+        debugCallback = new UIDebugCallback() {
+            @Override
+            public void debugChange(boolean visible) {
+                viewVisible(binding.toolbarDebug, visible, View.GONE);
+                if (!visible && currentToolbarButton == binding.toolbarDebug) {
+                    closeMoreView();
+                }
+            }
+        };
+        UI.getDebugCallbacks().addCallback(CallbackImportance.DEFAULT, debugCallback);
+        viewVisible(binding.toolbarDebug, app.isFeatureFlag(FeatureFlag.TOOLBAR_DEBUG), View.GONE);
     }
 
 
@@ -160,6 +177,7 @@ public class AppToolbar {
         if (selectionCallback != null) selectionManager.getOnSelectionUpdated().deleteCallback(selectionCallback);
         if (selectionCallbackTab != null) selectionManager.getOnSelectionUpdated().deleteCallback(selectionCallbackTab);
         if (onTabsChanged != null) itemManager.getOnTabsChanged().deleteCallback(onTabsChanged);
+        if (debugCallback != null) UI.getDebugCallbacks().deleteCallback(debugCallback);
         toolbarView.removeAllViews();
         toolbarMoreView.removeAllViews();
         this.binding = null;
@@ -220,6 +238,54 @@ public class AppToolbar {
     private void registerMoreView(View root) {
         toolbarMoreView.addView(root);
     }
+
+
+    private void onDebugClick() {
+        LinearLayout layout = new LinearLayout(activity);
+        layout.setPadding(10, 0, 10, 0);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        registerMoreView(layout);
+        layout.setBackgroundColor(new Random().nextInt());
+
+        Button overlay = new Button(activity);
+        overlay.setText("Logs Overlay");
+        viewClick(overlay, () -> ((MainActivity) activity).toggleLogsOverlay());
+
+        Button personalTick = new Button(activity);
+        personalTick.setText("Personal tick");
+        viewClick(personalTick, () -> UI.Debug.showPersonalTickDialog(activity));
+
+        Button restartActivity = new Button(activity);
+        restartActivity.setText("Restart activity");
+        viewClick(restartActivity, () -> {
+            activity.finish();
+            Intent intent = new Intent(activity, activity.getClass());
+            try {
+                intent.replaceExtras(activity.getIntent().getExtras());
+            } catch (Exception ignored) {}
+            activity.startActivity(intent);
+        });
+
+
+        MaterialButton resetSetup = new MaterialButton(activity);
+        resetSetup.setText("Reset setup");
+        viewClick(resetSetup, () -> {
+            activity.getSharedPreferences(App.SHARED_NAME, Context.MODE_PRIVATE).edit().putBoolean(App.SHARED_KEY_IS_SETUP_DONE, false).apply();
+            activity.finish();
+            activity.startActivity(new Intent(activity, SetupActivity.class));
+        });
+
+        // Position
+        layout.addView(overlay);
+        layout.addView(personalTick);
+        layout.addView(restartActivity);
+        layout.addView(resetSetup);
+
+        TextView textView = new TextView(activity);
+        layout.addView(textView);
+        textView.setText("FazziCLAY is god.");
+    }
+
 
     private void onFileClick() {
         final ToolbarMoreFileBinding localBinding = ToolbarMoreFileBinding.inflate(activity.getLayoutInflater(), toolbarMoreView, false);
@@ -468,25 +534,6 @@ public class AppToolbar {
         ToolbarMoreOpentodayBinding localBinding = ToolbarMoreOpentodayBinding.inflate(activity.getLayoutInflater());
         registerMoreView(localBinding.getRoot());
 
-        viewVisible(localBinding.debugToggleDebugOverlayText, app.isFeatureFlag(FeatureFlag.AVAILABLE_LOGS_OVERLAY), View.GONE);
-        viewVisible(localBinding.debugPersonalTick, app.isFeatureFlag(FeatureFlag.AVAILABLE_UI_PERSONAL_TICK), View.GONE);
-        viewVisible(localBinding.debugRestartActivity, app.isFeatureFlag(FeatureFlag.AVAILABLE_RESTART_ACTIVITY), View.GONE);
-        viewVisible(localBinding.debugResetSetup, app.isFeatureFlag(FeatureFlag.AVAILABLE_RESET_SETUP), View.GONE);
-        viewClick(localBinding.debugToggleDebugOverlayText, () -> ((MainActivity) activity).toggleLogsOverlay());
-        viewClick(localBinding.debugPersonalTick, () -> UI.Debug.showPersonalTickDialog(activity));
-        viewClick(localBinding.debugRestartActivity, () -> {
-            activity.finish();
-            Intent intent = new Intent(activity, activity.getClass());
-            try {
-                intent.replaceExtras(activity.getIntent().getExtras());
-            } catch (Exception ignored) {}
-            activity.startActivity(intent);
-        });
-        viewClick(localBinding.debugResetSetup, () -> {
-            activity.getSharedPreferences(App.SHARED_NAME, Context.MODE_PRIVATE).edit().putBoolean(App.SHARED_KEY_IS_SETUP_DONE, false).apply();
-            activity.finish();
-            activity.startActivity(new Intent(activity, SetupActivity.class));
-        });
         viewClick(localBinding.about, () -> rootNavigationHost.navigate(AboutFragment.create(), true));
         viewClick(localBinding.settings, () -> rootNavigationHost.navigate(SettingsFragment.create(), true));
         viewClick(localBinding.calendar, () -> {

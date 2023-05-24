@@ -338,4 +338,5 @@
     <string name="filter_group_item_filter_tickBehavoir_ACTIVE">Только активных</string>
     <string name="filter_group_item_filter_tickBehavoir_NOT_ACTIVE">Только не активных</string>
     <string name="fragment_itemEditor_filterGroup_tickBehavior">Поведение тика</string>
+    <string name="toolbar_debug">Отладка</string>
 </resources>
