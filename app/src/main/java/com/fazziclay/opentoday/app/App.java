@@ -66,6 +66,7 @@ public class App extends Application {
     public static final boolean SHADOW_RELEASE = false;
     public static final boolean DEBUG = !SHADOW_RELEASE && CustomBuildConfig.DEBUG;
     public static final boolean LOG = debug(true);
+    public static final boolean LOGS_SAVE = debug(true);
     public static final boolean DEBUG_TICK_NOTIFICATION = debug(false);
     public static final int DEBUG_MAIN_ACTIVITY_START_SLEEP = debug(false) ? 6000 : 0;
     public static final int DEBUG_APP_START_SLEEP = debug(false) ? 8000 : 0;
@@ -96,6 +97,7 @@ public class App extends Application {
     private JSONObject versionData;
     private boolean appInForeground = false;
     private DataFixer dataFixer;
+    private File logsFile;
     @AppInitIfNeed private ItemManager itemManager = null;
     @AppInitIfNeed private SettingsManager settingsManager = null;
     @AppInitIfNeed private ColorHistoryManager colorHistoryManager = null;
@@ -137,6 +139,7 @@ public class App extends Application {
             setupCrashReporter();
             DebugUtil.sleep(DEBUG_APP_START_SLEEP);
 
+            logsFile = new File(getExternalCacheDir(), "latest.log");
             dataFixer = new DataFixer(this);
             final FixResult fixResult = dataFixer.fixToCurrentVersion();
 
@@ -442,6 +445,10 @@ public class App extends Application {
     @NotNull
     public DataFixer getDataFixer() {
         return dataFixer;
+    }
+
+    public File getLogsFile() {
+        return logsFile;
     }
     // not getters & setters :)
 }

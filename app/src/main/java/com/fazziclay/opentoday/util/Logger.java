@@ -2,8 +2,10 @@ package com.fazziclay.opentoday.util;
 
 import android.util.Log;
 
+import com.fazziclay.javaneoutil.FileUtil;
 import com.fazziclay.opentoday.app.App;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Locale;
@@ -45,6 +47,19 @@ public class Logger {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd EEEE HH:mm:ss", Locale.getDefault());
         String time = dateFormat.format(GregorianCalendar.getInstance().getTime());
         LOGS.append("[").append(time).append("] ").append(s).append("\n");
+
+        logToFile("[" + time + "] " + s + "\n");
+    }
+
+    private static void logToFile(String s) {
+        if (!App.LOGS_SAVE) return;
+
+        final App app = App.get();
+        if (app == null) return;
+        final File file = app.getLogsFile();
+        if (file == null) return;
+
+        FileUtil.addText(file, s);
     }
 
     public static void e(String tag, String m, Throwable e) {
