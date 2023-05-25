@@ -1,4 +1,4 @@
-package com.fazziclay.opentoday.app;
+package com.fazziclay.opentoday.app.tick;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.Build;
 
 import com.fazziclay.opentoday.app.items.item.Item;
-import com.fazziclay.opentoday.app.receiver.ItemsTickReceiver;
 
 import java.util.GregorianCalendar;
 

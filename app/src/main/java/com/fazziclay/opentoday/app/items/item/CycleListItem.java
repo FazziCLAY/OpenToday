@@ -1,11 +1,8 @@
 package com.fazziclay.opentoday.app.items.item;
 
-import android.os.Handler;
-import android.os.Looper;
-
 import androidx.annotation.NonNull;
 
-import com.fazziclay.opentoday.app.TickSession;
+import com.fazziclay.opentoday.app.tick.TickSession;
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.CurrentItemStorage;
 import com.fazziclay.opentoday.app.items.ItemsStorage;

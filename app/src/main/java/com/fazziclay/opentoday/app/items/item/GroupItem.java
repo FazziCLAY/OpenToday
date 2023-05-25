@@ -2,8 +2,7 @@ package com.fazziclay.opentoday.app.items.item;
 
 import androidx.annotation.NonNull;
 
-import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.TickSession;
+import com.fazziclay.opentoday.app.tick.TickSession;
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.ItemsUtils;

@@ -3,7 +3,6 @@ package com.fazziclay.opentoday.app.tick;
 import android.content.Context;
 
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.TickSession;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.SaveInitiator;
 import com.fazziclay.opentoday.util.Logger;

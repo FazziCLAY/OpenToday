@@ -67,11 +67,11 @@
         </activity> <!-- Services -->
         <!-- Receivers -->
         <receiver
-            android:name="com.fazziclay.opentoday.app.receiver.ItemsTickReceiver"
+            android:name="com.fazziclay.opentoday.app.tick.ItemsTickReceiver"
             android:enabled="true"
             android:exported="false" />
         <receiver
-            android:name="com.fazziclay.opentoday.app.receiver.QuickNoteReceiver"
+            android:name="com.fazziclay.opentoday.app.items.QuickNoteReceiver"
             android:enabled="true"
             android:exported="false" />
     </application>

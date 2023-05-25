@@ -1,4 +1,4 @@
-package com.fazziclay.opentoday.app.receiver;
+package com.fazziclay.opentoday.app.tick;
 
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -9,7 +9,6 @@ import androidx.core.app.NotificationCompat;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.tick.TickThread;
 import com.fazziclay.opentoday.util.Logger;
 
 import java.util.ArrayList;

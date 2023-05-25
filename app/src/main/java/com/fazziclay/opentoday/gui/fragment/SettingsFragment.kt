@@ -19,7 +19,7 @@ import com.fazziclay.opentoday.app.PinCodeManager.ContainNonDigitChars
 import com.fazziclay.opentoday.app.SettingsManager.FirstTab
 import com.fazziclay.opentoday.app.items.item.Item
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry
-import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver
+import com.fazziclay.opentoday.app.items.QuickNoteReceiver
 import com.fazziclay.opentoday.databinding.ExportBinding
 import com.fazziclay.opentoday.databinding.FragmentSettingsBinding
 import com.fazziclay.opentoday.gui.EnumsRegistry

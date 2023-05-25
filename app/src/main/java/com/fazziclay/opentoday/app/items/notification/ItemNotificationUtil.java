@@ -1,6 +1,6 @@
 package com.fazziclay.opentoday.app.items.notification;
 
-import com.fazziclay.opentoday.app.TickSession;
+import com.fazziclay.opentoday.app.tick.TickSession;
 import com.fazziclay.opentoday.app.items.item.Item;
 
 import java.util.ArrayList;

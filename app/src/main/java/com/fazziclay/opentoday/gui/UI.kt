@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.App
 import com.fazziclay.opentoday.app.FeatureFlag
-import com.fazziclay.opentoday.app.receiver.ItemsTickReceiver
+import com.fazziclay.opentoday.app.tick.ItemsTickReceiver
 import com.fazziclay.opentoday.gui.callbacks.UIDebugCallback
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost
@@ -68,7 +68,8 @@ object UI {
                         // TODO: 3/10/23 review
                         try {
                             val id = UUID.fromString(view.text.toString())
-                            context.sendBroadcast(Intent(context, ItemsTickReceiver::class.java).putExtra(ItemsTickReceiver.EXTRA_PERSONAL_TICK, arrayOf(id.toString())).putExtra("debugMessage", "Debug personal tick is work!"))
+                            context.sendBroadcast(Intent(context, ItemsTickReceiver::class.java).putExtra(
+                                ItemsTickReceiver.EXTRA_PERSONAL_TICK, arrayOf(id.toString())).putExtra("debugMessage", "Debug personal tick is work!"))
                         } catch (e: Exception) {
                             Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show()
                         }
