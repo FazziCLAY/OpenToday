@@ -28,7 +28,6 @@ import com.fazziclay.opentoday.gui.activity.OpenSourceLicensesActivity;
 import com.fazziclay.opentoday.util.DebugUtil;
 import com.fazziclay.opentoday.util.License;
 import com.fazziclay.opentoday.util.Logger;
-import com.fazziclay.opentoday.util.annotation.AppInitIfNeed;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -44,7 +43,6 @@ import java.util.UUID;
 
 import ru.fazziclay.opentoday.telemetry.OpenTodayTelemetry;
 
-@SuppressWarnings("PointlessBooleanExpression") // for debug variables
 public class App extends Application {
     // Application
     public static final int APPLICATION_DATA_VERSION = 9;
@@ -75,6 +73,11 @@ public class App extends Application {
     public static Class<? extends Activity> DEBUG_MAIN_ACTIVITY = debug(false) ? OpenSourceLicensesActivity.class : null;
     public static final boolean DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY = debug(false);
 
+    public static boolean debug(boolean b) {
+        return (DEBUG && b);
+    }
+
+    // Crash-report exception handler
     private static Thread.UncaughtExceptionHandler androidUncaughtHandler;
     private static Thread.UncaughtExceptionHandler appUncaughtHandler;
 
@@ -88,27 +91,22 @@ public class App extends Application {
     public static App get() {
         return instance;
     }
-    public static boolean debug(boolean b) {
-        return (DEBUG && b);
-    }
-
 
     // Application
     private long startTime;
-    @AppInitIfNeed private UUID instanceId;
     private JSONObject versionData;
-    private boolean appInForeground = false;
-    private DataFixer dataFixer;
     private File logsFile;
-    @AppInitIfNeed private ItemManager itemManager = null;
-    @AppInitIfNeed private SettingsManager settingsManager = null;
-    @AppInitIfNeed private ColorHistoryManager colorHistoryManager = null;
-    @AppInitIfNeed private Telemetry telemetry = null;
-    @AppInitIfNeed private PinCodeManager pinCodeManager;
-    @AppInitIfNeed private License[] openSourceLicenses = null;
-    @AppInitIfNeed private ClipboardManager clipboardManager = null;
-    @AppInitIfNeed private SelectionManager selectionManager = null;
-    @AppInitIfNeed private TickThread tickThread = null;
+    private final OptionalField<UUID> instanceId = new OptionalField<>(this::parseInstanceId);
+    private final OptionalField<License[]> openSourceLicenses = new OptionalField<>(this::createOpenSourceLicensesArray);
+    private final OptionalField<DataFixer> dataFixer = new OptionalField<>(() -> new DataFixer(this));
+    private final OptionalField<ItemManager> itemManager = new OptionalField<>(this::preCheckItemManager, ItemManager::destroy);
+    private final OptionalField<SettingsManager> settingsManager = new OptionalField<>(() -> new SettingsManager(new File(getExternalFilesDir(""), "settings.json")));
+    private final OptionalField<ColorHistoryManager> colorHistoryManager = new OptionalField<>(() -> new ColorHistoryManager(new File(getExternalFilesDir(""), "color_history.json"), 10));
+    private final OptionalField<PinCodeManager> pinCodeManager = new OptionalField<>(() -> new PinCodeManager(this));
+    private final OptionalField<ClipboardManager> clipboardManager = new OptionalField<>(() -> getSystemService(ClipboardManager.class));
+    private final OptionalField<SelectionManager> selectionManager = new OptionalField<>(() -> getItemManager().getSelectionManager());
+    private final OptionalField<Telemetry> telemetry = new OptionalField<>(() -> new Telemetry(this, getSettingsManager().isTelemetry()));
+    private final OptionalField<TickThread> tickThread = new OptionalField<>(this::preCheckTickThread, TickThread::requestTerminate);
     private final List<FeatureFlag> featureFlags = new ArrayList<>(App.DEBUG ? Arrays.asList(
             FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
             FeatureFlag.SHOW_APP_STARTUP_TIME_IN_PREMAIN_ACTIVITY,
@@ -137,8 +135,7 @@ public class App extends Application {
             DebugUtil.sleep(DEBUG_APP_START_SLEEP);
 
             logsFile = new File(getExternalCacheDir(), "latest.log");
-            dataFixer = new DataFixer(this);
-            final FixResult fixResult = dataFixer.fixToCurrentVersion();
+            final FixResult fixResult = getDataFixer().fixToCurrentVersion();
 
             registryNotificationsChannels();
 
@@ -156,17 +153,16 @@ public class App extends Application {
     public void onLowMemory() {
         super.onLowMemory();
         Logger.i("App", "onLowMemory.");
-        pinCodeManager = null;
-        openSourceLicenses = null;
-        colorHistoryManager = null;
-        telemetry = null;
-        clipboardManager = null;
-        selectionManager = null;
-        if (tickThread != null) tickThread.requestTerminate();
-        tickThread = null;
-        settingsManager = null;
-        if (itemManager != null) itemManager.destroy();
-        itemManager = null;
+        openSourceLicenses.free();
+        dataFixer.free();
+        itemManager.free();
+        settingsManager.free();
+        colorHistoryManager.free();
+        pinCodeManager.free();
+        clipboardManager.free();
+        selectionManager.free();
+        telemetry.free();
+        tickThread.free();
     }
 
     public boolean isPinCodeNeed() {
@@ -331,63 +327,7 @@ public class App extends Application {
 
     }
 
-    private void preCheckOpenSourceLicenses() {
-        if (openSourceLicenses == null) {
-            openSourceLicenses = createOpenSourceLicensesArray();
-        }
-    }
 
-    private void preCheckTelemetry() {
-        if (telemetry == null) {
-            telemetry = new Telemetry(this, getSettingsManager().isTelemetry());
-        }
-    }
-
-    private void preCheckItemManager() {
-        if (itemManager == null) {
-            final File externalFiles = getExternalFilesDir("");
-            itemManager = new ItemManager(new File(externalFiles, "item_data.json"), new File(externalFiles, "item_data.gz"));
-            itemManager.setDebugPrintSaveStatusAlways(isFeatureFlag(FeatureFlag.ALWAYS_SHOW_SAVE_STATUS));
-        }
-    }
-
-    private void preCheckSettingsManager() {
-        if (settingsManager == null) {
-            final File externalFiles = getExternalFilesDir("");
-            settingsManager = new SettingsManager(new File(externalFiles, "settings.json"));
-        }
-    }
-
-    private void preCheckColorHistoryManager() {
-        if (colorHistoryManager == null) {
-            final File externalFiles = getExternalFilesDir("");
-            colorHistoryManager = new ColorHistoryManager(new File(externalFiles, "color_history.json"), 10);
-        }
-    }
-
-    private void preCheckClipboardManager() {
-        if (clipboardManager == null) {
-            clipboardManager = getSystemService(ClipboardManager.class);
-        }
-    }
-
-    private void preCheckInstanceId() {
-        if (instanceId == null) {
-            instanceId = parseInstanceId();
-        }
-    }
-
-    private void preCheckSelectionManager() {
-        if (selectionManager == null) {
-            selectionManager = getItemManager().getSelectionManager();
-        }
-    }
-
-    private void preCheckPinCodeManager() {
-        if (pinCodeManager == null) {
-            pinCodeManager = new PinCodeManager(this);
-        }
-    }
 
     // getters & setters
     public JSONObject getVersionData() {
@@ -396,86 +336,85 @@ public class App extends Application {
         }
         return versionData;
     }
-    public long getAppStartupTime() {return appStartupTime;}
-
-    @NotNull
-    public UUID getInstanceId() {
-        preCheckInstanceId();
-        return instanceId;
-    }
-
-    @NotNull
-    public Telemetry getTelemetry() {
-        preCheckTelemetry();
-        return telemetry;
-    }
-
-    @NotNull
-    public ItemManager getItemManager() {
-        preCheckItemManager();
-        return itemManager;
-    }
-
-    @NotNull
-    public SettingsManager getSettingsManager() {
-        preCheckSettingsManager();
-        return this.settingsManager;
-    }
-
-    @NotNull
-    public ColorHistoryManager getColorHistoryManager() {
-        preCheckColorHistoryManager();
-        return colorHistoryManager;
+    public long getAppStartupTime() {
+        return appStartupTime;
     }
 
     @NotNull
     public License[] getOpenSourcesLicenses() {
-        preCheckOpenSourceLicenses();
-        return this.openSourceLicenses;
+        return openSourceLicenses.get();
     }
 
     @NotNull
-    public ClipboardManager getClipboardManager() {
-        preCheckClipboardManager();
-        return this.clipboardManager;
+    public UUID getInstanceId() {
+        return instanceId.get();
+    }
+
+    @NotNull
+    public Telemetry getTelemetry() {
+        return telemetry.get();
+    }
+
+    private ItemManager preCheckItemManager() {
+        final File externalFiles = getExternalFilesDir("");
+        ItemManager itemManager = new ItemManager(new File(externalFiles, "item_data.json"), new File(externalFiles, "item_data.gz"));
+        itemManager.setDebugPrintSaveStatusAlways(isFeatureFlag(FeatureFlag.ALWAYS_SHOW_SAVE_STATUS));
+        return itemManager;
+    }
+
+    @NotNull
+    public ItemManager getItemManager() {
+        return itemManager.get();
+    }
+
+    @NotNull
+    public SettingsManager getSettingsManager() {
+        return settingsManager.get();
+    }
+
+    @NotNull
+    public ColorHistoryManager getColorHistoryManager() {
+        return colorHistoryManager.get();
     }
 
     @NotNull
     public PinCodeManager getPinCodeManager() {
-        preCheckPinCodeManager();
-        return pinCodeManager;
+        return pinCodeManager.get();
+    }
+
+    @NotNull
+    public ClipboardManager getClipboardManager() {
+        return clipboardManager.get();
     }
 
     @NotNull
     public SelectionManager getSelectionManager() {
-        preCheckSelectionManager();
-        return this.selectionManager;
+        return selectionManager.get();
     }
 
-    private void preCheckTickThread() {
-        if (tickThread == null) {
-            tickThread = new TickThread(getApplicationContext(), getItemManager());
-            tickThread.start();
-        }
+    private TickThread preCheckTickThread() {
+        TickThread tickThread = new TickThread(getApplicationContext(), getItemManager());
+        tickThread.start();
+        return tickThread;
     }
 
     @NotNull
     public TickThread getTickThread() {
-        preCheckTickThread();
-        return tickThread;
+        return tickThread.get();
     }
-
-    public boolean isAppInForeground() { return appInForeground; }
-    public void setAppInForeground(boolean appInForeground) { this.appInForeground = appInForeground; }
-    public List<FeatureFlag> getFeatureFlags() {return featureFlags;}
 
     @NotNull
     public DataFixer getDataFixer() {
-        return dataFixer;
+        return dataFixer.get();
     }
 
+    @NotNull
+    public List<FeatureFlag> getFeatureFlags() {
+        return featureFlags;
+    }
+
+    @NotNull
     public File getLogsFile() {
         return logsFile;
     }
-    // not getters & setters :)
 }
