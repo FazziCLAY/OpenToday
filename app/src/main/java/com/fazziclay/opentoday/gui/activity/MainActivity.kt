@@ -59,7 +59,6 @@ class MainActivity : AppCompatActivity() {
         app = App.get(this)
         settingsManager = app.settingsManager;
         UI.setTheme(settingsManager.theme)
-        app.isAppInForeground = true
         app.telemetry.send(UiOpenLPacket())
         binding = ActivityMainBinding.inflate(layoutInflater)
         supportActionBar!!.hide()
@@ -113,7 +112,6 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         Logger.d(TAG, "onDestroy")
-        app.isAppInForeground = false
         app.telemetry.send(UiClosedLPacket())
         currentDateHandler.removeCallbacks(currentDateRunnable)
     }
