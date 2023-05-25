@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
+import com.fazziclay.opentoday.app.items.Readonly;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.callback.ItemCallback;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
@@ -74,12 +75,12 @@ public class ItemsEditorFragment extends Fragment {
     private OnItemsStorageUpdate onItemStorageChangeCallback;
     private ItemCallback itemCallback;
 
-    public static ItemsEditorFragment createRoot(UUID tab) {
-        return ItemsEditorFragment.create(tab, null, false);
+    public static ItemsEditorFragment createRoot(UUID tab, boolean previewMode) {
+        return ItemsEditorFragment.create(tab, null, previewMode);
     }
 
-    public static ItemsEditorFragment createItem(UUID tab, UUID item) {
-        return ItemsEditorFragment.create(tab, item, false);
+    public static ItemsEditorFragment createItem(UUID tab, UUID item, boolean previewMode) {
+        return ItemsEditorFragment.create(tab, item, previewMode);
     }
 
     private static ItemsEditorFragment create(UUID tab, UUID item, boolean previewMode) {
@@ -134,17 +135,17 @@ public class ItemsEditorFragment extends Fragment {
                     .setStorageEditsActions(new StorageEditsActions() {
                         @Override
                         public void onGroupEdit(@NonNull GroupItem groupItem) {
-                            navigationHost.navigate(createItem(tabId, groupItem.getId()), true);
+                            navigationHost.navigate(createItem(tabId, groupItem.getId(), (groupItem instanceof Readonly)), true);
                         }
 
                         @Override
                         public void onCycleListEdit(@NonNull CycleListItem cycleListItem) {
-                            navigationHost.navigate(createItem(tabId, cycleListItem.getId()), true);
+                            navigationHost.navigate(createItem(tabId, cycleListItem.getId(), (cycleListItem instanceof Readonly)), true);
                         }
 
                         @Override
                         public void onFilterGroupEdit(@NonNull FilterGroupItem filterGroupItem) {
-                            navigationHost.navigate(createItem(tabId, filterGroupItem.getId()), true);
+                            navigationHost.navigate(createItem(tabId, filterGroupItem.getId(), (filterGroupItem instanceof Readonly)), true);
                         }
                     })
                     .build();

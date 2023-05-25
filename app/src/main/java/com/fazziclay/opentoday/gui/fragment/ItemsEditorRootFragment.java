@@ -21,6 +21,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
+import com.fazziclay.opentoday.app.items.Readonly;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.tab.Tab;
@@ -60,7 +61,7 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
         if (savedInstanceState == null) {
             getChildFragmentManager()
                     .beginTransaction()
-                    .replace(ROOT_CONTAINER_ID, ItemsEditorFragment.createRoot(tabId))
+                    .replace(ROOT_CONTAINER_ID, ItemsEditorFragment.createRoot(tabId, (tab instanceof Readonly)))
                     .commit();
 
             getChildFragmentManager().addOnBackStackChangedListener(() -> {
