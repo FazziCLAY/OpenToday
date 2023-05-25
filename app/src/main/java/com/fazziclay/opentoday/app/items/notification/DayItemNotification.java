@@ -75,9 +75,6 @@ public class DayItemNotification implements ItemNotification {
         int dayOfYear = tickSession.getGregorianCalendar().get(Calendar.DAY_OF_YEAR);
         if (dayOfYear != latestDayOfYear) {
             boolean isTime = tickSession.getDayTime() >= time;
-            if (tickSession.isPersonalTick() && !isTime) {
-                isTime = time - tickSession.getDayTime() < 10;
-            }
 
             if (isTime) {
                 sendNotify(tickSession.getContext(), item);
