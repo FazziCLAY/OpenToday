@@ -42,6 +42,7 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.selection.Selection;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
+import com.fazziclay.opentoday.app.items.tab.Debug202305RandomTab;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.databinding.ToolbarBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreFileBinding;
@@ -275,11 +276,18 @@ public class AppToolbar {
             activity.startActivity(new Intent(activity, SetupActivity.class));
         });
 
+        MaterialButton debugTabCreate = new MaterialButton(activity);
+        debugTabCreate.setText("Create Debug202305RandomTab tab");
+        viewClick(debugTabCreate, () -> {
+            itemManager.addTab(new Debug202305RandomTab());
+        });
+
         // Position
         layout.addView(overlay);
         layout.addView(personalTick);
         layout.addView(restartActivity);
         layout.addView(resetSetup);
+        layout.addView(debugTabCreate);
 
         TextView textView = new TextView(activity);
         layout.addView(textView);

@@ -13,7 +13,8 @@ public class TabsRegistry {
     public static final TabsRegistry REGISTRY = new TabsRegistry();
 
     private static final TabInfo[] TABS = new TabInfo[]{
-            new TabInfo(LocalItemsTab.class, "LocalItemsTab", LocalItemsTab.CODEC)
+            new TabInfo(LocalItemsTab.class, "LocalItemsTab", LocalItemsTab.CODEC),
+            new TabInfo(Debug202305RandomTab.class, "Debug202305RandomTab", Debug202305RandomTab.CODEC),
     };
 
     private TabsRegistry() {}
