@@ -1,7 +1,6 @@
 package com.fazziclay.opentoday.app.items;
 
 import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -398,7 +397,7 @@ public class ItemManager {
             Debug.saved();
             return true;
         } catch (Exception e) {
-            Log.e("ItemManager", "SaveThread exception", e);
+            Logger.e(TAG, "saveAllDirect", e);
             App.exception(null, e);
             try {
                 new Handler(App.get().getMainLooper()).post(() -> Toast.makeText(App.get(), "Error: Save exception: " + e + "; cause: " + e.getCause(), Toast.LENGTH_LONG).show());
@@ -431,7 +430,7 @@ public class ItemManager {
 
                     // Save
                     internalSave();
-                    if (App.LOG) Log.i("SaveThread", String.format("requestCount=%s\nfirstTime=%s\nlatestTime=%s", requestsCount, firstRequestTime, latestRequestTime));
+                    if (App.LOG) Logger.i(TAG, String.format("SaveThread: requestCount=%s\nfirstTime=%s\nlatestTime=%s", requestsCount, firstRequestTime, latestRequestTime));
                 }
                 try {
                     Thread.sleep(1000);
@@ -444,7 +443,7 @@ public class ItemManager {
             try {
                 ItemManager.this.saveAllDirect();
             } catch (Exception e) {
-                Log.e("ItemManager", "SaveThread exception", e);
+                Logger.e(TAG, "SaveThread internalSave", e);
                 try {
                     new Handler(App.get().getMainLooper()).post(() -> Toast.makeText(App.get(), "Error: Save exception: " + e + "; cause: " + e.getCause(), Toast.LENGTH_LONG).show());
                 } catch (Exception ignored) {}

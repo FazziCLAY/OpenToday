@@ -141,7 +141,7 @@ public class SettingsManager {
             timePattern = j.optString("timePattern", timePattern);
 
         } catch (Exception e) {
-            Logger.d(TAG, "load", e);
+            Logger.e(TAG, "load", e);
             App.exception(null, e);
         }
     }
@@ -151,7 +151,7 @@ public class SettingsManager {
             JSONObject j = exportJSONSettings();
             FileUtil.setText(saveFile, j.toString());
         } catch (Exception e) {
-            Logger.d(TAG, "save", e);
+            Logger.e(TAG, "save", e);
             App.exception(null, e);
         }
     }
