@@ -15,7 +15,7 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import java.util.Calendar;
 
 public class DayItemNotification implements ItemNotification {
-    public static final ItemNotificationCodec IE_TOOL = new Codec();
+    public static final ItemNotificationCodec CODEC = new Codec();
     private static class Codec extends ItemNotificationCodec {
         @Override
         public Cherry exportNotification(ItemNotification itemNotification) {
