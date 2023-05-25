@@ -1,9 +1,7 @@
 package com.fazziclay.opentoday.app.data;
 
 public class CherryException extends RuntimeException {
-    public CherryException() {
-
-    }
+    public CherryException() {}
 
     public CherryException(String s) {
         super(s);
