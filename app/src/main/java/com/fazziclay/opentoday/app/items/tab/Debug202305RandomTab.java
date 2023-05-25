@@ -11,7 +11,7 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemType;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.item.TextItem;
-import com.fazziclay.opentoday.app.tick.TickSession;
+import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 
 import java.util.Random;

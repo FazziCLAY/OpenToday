@@ -24,7 +24,7 @@ import com.fazziclay.opentoday.app.items.tab.LocalItemsTab;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.items.tab.TabCodecUtil;
 import com.fazziclay.opentoday.app.items.tab.TabController;
-import com.fazziclay.opentoday.app.tick.TickSession;
+import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;

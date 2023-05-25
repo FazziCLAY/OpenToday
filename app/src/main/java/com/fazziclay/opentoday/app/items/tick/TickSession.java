@@ -1,4 +1,4 @@
-package com.fazziclay.opentoday.app.tick;
+package com.fazziclay.opentoday.app.items.tick;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;

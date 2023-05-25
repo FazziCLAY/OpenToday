@@ -13,7 +13,7 @@ import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationCodecUtil;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationUtil;
 import com.fazziclay.opentoday.app.items.stat.ItemStat;
-import com.fazziclay.opentoday.app.tick.TickSession;
+import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;

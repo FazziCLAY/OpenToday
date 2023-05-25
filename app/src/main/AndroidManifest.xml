@@ -67,7 +67,7 @@
         </activity> <!-- Services -->
         <!-- Receivers -->
         <receiver
-            android:name="com.fazziclay.opentoday.app.tick.ItemsTickReceiver"
+            android:name="com.fazziclay.opentoday.app.items.tick.ItemsTickReceiver"
             android:enabled="true"
             android:exported="false" />
         <receiver

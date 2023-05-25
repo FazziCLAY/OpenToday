@@ -6,7 +6,7 @@ import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemController;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
-import com.fazziclay.opentoday.app.tick.TickSession;
+import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 

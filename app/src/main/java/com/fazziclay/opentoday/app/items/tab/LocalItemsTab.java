@@ -8,7 +8,7 @@ import com.fazziclay.opentoday.app.items.SimpleItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemCodecUtil;
-import com.fazziclay.opentoday.app.tick.TickSession;
+import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 
 import java.util.UUID;

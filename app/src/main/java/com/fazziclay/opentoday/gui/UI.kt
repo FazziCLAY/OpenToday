@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.App
 import com.fazziclay.opentoday.app.FeatureFlag
-import com.fazziclay.opentoday.app.tick.ItemsTickReceiver
+import com.fazziclay.opentoday.app.items.tick.ItemsTickReceiver
 import com.fazziclay.opentoday.gui.callbacks.UIDebugCallback
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost
