@@ -22,10 +22,12 @@ import com.fazziclay.opentoday.app.datafixer.FixResult;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
+import com.fazziclay.opentoday.app.tick.TickThread;
 import com.fazziclay.opentoday.gui.activity.CrashReportActivity;
 import com.fazziclay.opentoday.gui.activity.OpenSourceLicensesActivity;
 import com.fazziclay.opentoday.util.DebugUtil;
 import com.fazziclay.opentoday.util.License;
+import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.annotation.AppInitIfNeed;
 
 import org.jetbrains.annotations.NotNull;
@@ -106,6 +108,7 @@ public class App extends Application {
     @AppInitIfNeed private License[] openSourceLicenses = null;
     @AppInitIfNeed private ClipboardManager clipboardManager = null;
     @AppInitIfNeed private SelectionManager selectionManager = null;
+    @AppInitIfNeed private TickThread tickThread = null;
     private final List<FeatureFlag> featureFlags = new ArrayList<>(App.DEBUG ? Arrays.asList(
             FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
             //FeatureFlag.ITEM_EDITOR_SHOW_COPY_ID_BUTTON,
@@ -115,6 +118,7 @@ public class App extends Application {
             //FeatureFlag.ALWAYS_SHOW_SAVE_STATUS,
             //FeatureFlag.SHOW_MAINACTIVITY_STARTUP_TIME,
             FeatureFlag.AVAILABLE_UI_PERSONAL_TICK,
+            FeatureFlag.DISABLE_AUTOMATIC_TICK,
             FeatureFlag.AVAILABLE_RESTART_ACTIVITY,
             FeatureFlag.AVAILABLE_RESET_SETUP,
             FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION,
@@ -153,6 +157,23 @@ public class App extends Application {
             crash(this, CrashReport.create(new RuntimeException(getClass().getName() + " onCreate exception: " + e, e)), false);
         }
         this.appStartupTime = System.currentTimeMillis() - startTime;
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        Logger.i("App", "onLowMemory.");
+        pinCodeManager = null;
+        openSourceLicenses = null;
+        colorHistoryManager = null;
+        telemetry = null;
+        clipboardManager = null;
+        selectionManager = null;
+        if (tickThread != null) tickThread.requestTerminate();
+        tickThread = null;
+        settingsManager = null;
+        if (itemManager != null) itemManager.destroy();
+        itemManager = null;
     }
 
     public boolean isPinCodeNeed() {
@@ -436,6 +457,19 @@ public class App extends Application {
     public SelectionManager getSelectionManager() {
         preCheckSelectionManager();
         return this.selectionManager;
+    }
+
+    private void preCheckTickThread() {
+        if (tickThread == null) {
+            tickThread = new TickThread(getApplicationContext(), getItemManager());
+            tickThread.start();
+        }
+    }
+
+    @NotNull
+    public TickThread getTickThread() {
+        preCheckTickThread();
+        return tickThread;
     }
 
     public boolean isAppInForeground() { return appInForeground; }

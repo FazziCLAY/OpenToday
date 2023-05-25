@@ -3,7 +3,6 @@ package com.fazziclay.opentoday.app;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 
 import com.fazziclay.opentoday.app.items.item.Item;
@@ -20,10 +19,10 @@ public class TickSession {
     }
 
     private final Context context;
-    private final GregorianCalendar gregorianCalendar;
-    private final GregorianCalendar noTimeCalendar;
-    private final int dayTime;
-    private final boolean isPersonalTick;
+    private GregorianCalendar gregorianCalendar;
+    private GregorianCalendar noTimeCalendar;
+    private int dayTime;
+    private boolean isPersonalTick;
     private boolean saveNeeded = false;
 
     public TickSession(Context context, GregorianCalendar gregorianCalendar, GregorianCalendar noTimeCalendar, int dayTime, boolean isPersonalTick) {
@@ -64,7 +63,7 @@ public class TickSession {
 
     public void setAlarmDayOfTimeInSeconds(int time, Item item) {
         // TODO: 30.10.2022 rewrite
-        final long shift = getDayTime() >= time ? (24*60*60*1000L) : 0;
+        final long shift = getDayTime() >= time ? (24*60*60*1000L) : 0; // IN MILLIS!!
         final AlarmManager alarmManager = getContext().getSystemService(AlarmManager.class);
         final int flags;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -72,7 +71,27 @@ public class TickSession {
         } else {
             flags = PendingIntent.FLAG_UPDATE_CURRENT;
         }
-        alarmManager.set(AlarmManager.RTC_WAKEUP, getNoTimeCalendar().getTimeInMillis() + shift + (time * 1000L) - 5000, PendingIntent.getBroadcast(getContext(), 0, new Intent(getContext(), ItemsTickReceiver.class).putExtra(ItemsTickReceiver.EXTRA_PERSONAL_TICK, new String[]{item.getId().toString()}).putExtra("debugMessage", "dayItemNotification is work :)"), flags));
+        long triggerAtMs = getNoTimeCalendar().getTimeInMillis() + shift + (time * 1000L) + 599;
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerAtMs, PendingIntent.getBroadcast(getContext(), 0, ItemsTickReceiver.createIntent(context, item.getId()).putExtra("debugMessage", "dayItemNotification is work :)"), flags));
+    }
 
+    public void recyclePersonal(boolean b) {
+        this.isPersonalTick = b;
+    }
+
+    public void recycleDaySeconds(int t) {
+        this.dayTime = t;
+    }
+
+    public void recycleNoTimeCalendar(GregorianCalendar c) {
+        this.noTimeCalendar = c;
+    }
+
+    public void recycleGregorianCalendar(GregorianCalendar c) {
+        this.gregorianCalendar = c;
+    }
+
+    public void recycleSaveNeeded() {
+        this.saveNeeded = false;
     }
 }

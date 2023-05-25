@@ -52,6 +52,7 @@ public class ItemManager {
     private static final boolean DEBUG_ITEMS_SET = App.debug(false);
     private static final String TAG = "ItemManager";
 
+    private boolean destroyed = false;
     @NonNull private final File dataOriginalFile;
     @NonNull private final File dataCompressFile;
     private boolean debugPrintSaveStatusAlways = false;
@@ -134,6 +135,8 @@ public class ItemManager {
 
     @Nullable
     public ItemsStorage getItemStorageById(UUID id) {
+        checkDestroy();
+
         Tab tab = getTab(id);
         if (tab != null) return tab;
         Item item = null;
@@ -152,6 +155,8 @@ public class ItemManager {
 
     // ==== Path ====
     public Item getItemByPath(ItemPath itemPath) {
+        checkDestroy();
+
         UUID tabId = itemPath.getTabId();
         Tab tab = getTab(tabId);
         if (tab == null) {
@@ -180,22 +185,32 @@ public class ItemManager {
     // ==== TABS ====
     @NonNull
     public List<Tab> getTabs() {
+        checkDestroy();
+
         return tabs;
     }
 
     public boolean isOneTabMode() {
+        checkDestroy();
+
         return getTabsCount() == 1;
     }
 
     public int getTabsCount() {
+        checkDestroy();
+
         return tabs.size();
     }
 
     public Tab getTabAt(int i) {
+        checkDestroy();
+
         return tabs.get(i);
     }
 
     public int getTabPosition(UUID tabId) {
+        checkDestroy();
+
         Tab tab = getTab(tabId);
         if (tab == null) {
             return -1;
@@ -204,6 +219,8 @@ public class ItemManager {
     }
 
     public Tab getTab(UUID uuid) {
+        checkDestroy();
+
         for (Tab tab : getTabs()) {
             if (tab.getId().equals(uuid)) {
                 return tab;
@@ -218,15 +235,17 @@ public class ItemManager {
     }
 
     public void createTab(@NonNull String name) {
+        checkDestroy();
+
         if (name.trim().isEmpty()) {
             throw new RuntimeException("Empty name for tab is not allowed!");
         }
         addTab(new LocalItemsTab(name));
-        internalOnTabChanged();
-        queueSave();
     }
 
     public void addTab(@NonNull Tab tab) {
+        checkDestroy();
+
         tab.attach(tabController);
         this.tabs.add(tab);
         internalOnTabChanged();
@@ -234,6 +253,8 @@ public class ItemManager {
     }
 
     public void deleteTab(Tab tab) {
+        checkDestroy();
+
         if (getTabsCount() == 1) {
             throw new SecurityException("Not allowed one tab (after delete tabs count == 0)");
         }
@@ -243,6 +264,8 @@ public class ItemManager {
     }
 
     public void moveTabs(int positionFrom, int positionTo) {
+        checkDestroy();
+
         Tab from = tabs.get(positionFrom);
         tabs.remove(from);
         tabs.add(positionTo, from);
@@ -262,11 +285,34 @@ public class ItemManager {
 
     @Nullable
     public Item getItemById(@NonNull UUID id) {
+        checkDestroy();
+
         for (Tab tab : getTabs()) {
             Item i = tab.getItemById(id);
             if (i != null) return i;
         }
         return null;
+    }
+
+    public void destroy() {
+        saveAllDirect();
+        saveThread.disable();
+
+        for (Tab tab : tabs) {
+            tab.detach();
+        }
+
+        destroyed = true;
+    }
+
+    private void checkDestroy() {
+        if (destroyed) {
+            throw new RuntimeException("This ItemManager destroyed!");
+        }
+    }
+
+    public boolean isDestroyed() {
+        return destroyed;
     }
 
     private class LocalItemTabsController implements TabController {
@@ -288,17 +334,23 @@ public class ItemManager {
 
     // ==== Tick ====
     public void tick(TickSession tickSession, List<UUID> uuids) {
-        for (UUID uuid : uuids) {
-            for (Tab tab : tabs) {
-                Item i = tab.getItemById(uuid);
-                if (i != null) {
-                    i.tick(tickSession);
+        checkDestroy();
+
+        Debug.latestPersonalTickDuration = Logger.countOnlyDur(() -> {
+            for (UUID uuid : uuids) {
+                for (Tab tab : tabs) {
+                    Item i = tab.getItemById(uuid);
+                    if (i != null) {
+                        i.tick(tickSession);
+                    }
                 }
             }
-        }
+        });
     }
 
     public void tick(TickSession tickSession) {
+        checkDestroy();
+
         Debug.latestTickDuration = Logger.countOnlyDur(() -> {
             for (Tab tab : tabs) {
                 if (tab == null) continue;
@@ -356,6 +408,7 @@ public class ItemManager {
     }
 
     private class SaveThread extends Thread {
+        public boolean enabled = true;
         public boolean request = false;
         private byte requestImportance = 0;
         public int requestsCount = 0;
@@ -368,7 +421,7 @@ public class ItemManager {
 
         @Override
         public void run() {
-            while (!isInterrupted()) {
+            while (!isInterrupted() && enabled) {
                 if (request && (requestImportance > 0 || ((System.currentTimeMillis() - firstRequestTime) > 1000 * 10))) {
                     request = false;
                     requestsCount = Debug.latestSaveRequestsCount = 0;
@@ -384,6 +437,7 @@ public class ItemManager {
                     Thread.sleep(1000);
                 } catch (InterruptedException ignored) {}
             }
+            interrupt();
         }
 
         private void internalSave() {
@@ -408,6 +462,10 @@ public class ItemManager {
             request = true;
             latestRequestTime = System.currentTimeMillis();
             requestsCount = Debug.latestSaveRequestsCount = requestsCount + 1;
+        }
+
+        public void disable() {
+            this.enabled = false;
         }
     }
 
