@@ -24,8 +24,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 
 import com.fazziclay.opentoday.R;
+import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemManager;
-import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
@@ -36,7 +36,7 @@ import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.LongTextItem;
 import com.fazziclay.opentoday.app.items.item.TextItem;
-import com.fazziclay.opentoday.app.SettingsManager;
+import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.databinding.ItemCheckboxBinding;
 import com.fazziclay.opentoday.databinding.ItemCounterBinding;
 import com.fazziclay.opentoday.databinding.ItemCycleListBinding;

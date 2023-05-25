@@ -3,7 +3,6 @@ package com.fazziclay.opentoday.app.items.tab;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.fazziclay.opentoday.app.tick.TickSession;
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.Readonly;
 import com.fazziclay.opentoday.app.items.SimpleItemsStorage;
@@ -12,6 +11,7 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemType;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.item.TextItem;
+import com.fazziclay.opentoday.app.tick.TickSession;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 
 import java.util.Random;

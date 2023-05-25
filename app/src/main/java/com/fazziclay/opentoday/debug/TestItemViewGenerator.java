@@ -8,12 +8,12 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.app.items.item.TextItem;
-import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.gui.interfaces.StorageEditsActions;
 import com.fazziclay.opentoday.gui.item.ItemViewGenerator;

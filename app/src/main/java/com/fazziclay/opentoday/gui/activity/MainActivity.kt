@@ -15,8 +15,8 @@ import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.*
 import com.fazziclay.opentoday.app.Telemetry.UiClosedLPacket
 import com.fazziclay.opentoday.app.Telemetry.UiOpenLPacket
-import com.fazziclay.opentoday.app.tick.ItemsTickReceiver
 import com.fazziclay.opentoday.app.items.QuickNoteReceiver
+import com.fazziclay.opentoday.app.tick.ItemsTickReceiver
 import com.fazziclay.opentoday.databinding.ActivityMainBinding
 import com.fazziclay.opentoday.databinding.NotificationDebugappBinding
 import com.fazziclay.opentoday.databinding.NotificationUpdateAvailableBinding

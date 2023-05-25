@@ -3,7 +3,6 @@ package com.fazziclay.opentoday.app.data;
 import androidx.annotation.NonNull;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
 public class CherryOrchard {
     public static CherryOrchard of(JSONArray array) {

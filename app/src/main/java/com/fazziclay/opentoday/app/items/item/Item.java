@@ -5,7 +5,6 @@ import android.graphics.Color;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.fazziclay.opentoday.app.tick.TickSession;
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Unique;
@@ -14,6 +13,7 @@ import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationCodecUtil;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationUtil;
 import com.fazziclay.opentoday.app.items.stat.ItemStat;
+import com.fazziclay.opentoday.app.tick.TickSession;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
