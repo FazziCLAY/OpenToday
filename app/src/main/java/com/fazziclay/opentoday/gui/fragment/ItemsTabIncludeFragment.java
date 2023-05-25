@@ -86,8 +86,8 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         binding = FragmentItemsTabIncludeBinding.inflate(getLayoutInflater());
 
         if (settingsManager.getFirstTab() == SettingsManager.FirstTab.TAB_ON_CLOSING) {
-            currentTab = getOldTabId();
-            if (itemManager.getTab(currentTab) == null) {
+            currentTab = getLastTabId();
+            if (currentTab == null || itemManager.getTab(currentTab) == null) {
                 currentTab = itemManager.getMainTab().getId();
                 currentItemsStorage = itemManager.getMainTab();
             } else {
@@ -129,7 +129,10 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         setupQuickNote();
     }
 
-    private UUID getOldTabId() {
+    /**
+     * Get latest active tab (saved)
+     */
+    private UUID getLastTabId() {
         String s = requireContext().getSharedPreferences(App.SHARED_NAME, Context.MODE_PRIVATE).getString(App.SHARED_KEY_LAST_TAB, "");
         try {
             return UUID.fromString(s);
@@ -138,7 +141,11 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         }
     }
 
-    private void setOldTabId(UUID id) {
+    /**
+     * Save latest tab id for {@link #getLastTabId()}
+     * @param id data for save
+     */
+    private void setLastTabId(final UUID id) {
         requireContext().getSharedPreferences(App.SHARED_NAME, Context.MODE_PRIVATE).edit().putString(App.SHARED_KEY_LAST_TAB, id.toString()).apply();
     }
 
@@ -282,7 +289,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     @Override
     public void setCurrentTab(UUID id) {
         currentTab = id;
-        setOldTabId(id);
+        setLastTabId(id);
     }
 
     @Override
