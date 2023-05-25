@@ -111,16 +111,9 @@ public class App extends Application {
     @AppInitIfNeed private TickThread tickThread = null;
     private final List<FeatureFlag> featureFlags = new ArrayList<>(App.DEBUG ? Arrays.asList(
             FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
-            //FeatureFlag.ITEM_EDITOR_SHOW_COPY_ID_BUTTON,
-            FeatureFlag.AVAILABLE_LOGS_OVERLAY,
-            FeatureFlag.NONE,
-            //FeatureFlag.SHOW_APP_STARTUP_TIME_IN_PREMAIN_ACTIVITY,
-            //FeatureFlag.ALWAYS_SHOW_SAVE_STATUS,
-            //FeatureFlag.SHOW_MAINACTIVITY_STARTUP_TIME,
-            FeatureFlag.AVAILABLE_UI_PERSONAL_TICK,
+            FeatureFlag.SHOW_APP_STARTUP_TIME_IN_PREMAIN_ACTIVITY,
+            FeatureFlag.ALWAYS_SHOW_SAVE_STATUS,
             FeatureFlag.DISABLE_AUTOMATIC_TICK,
-            FeatureFlag.AVAILABLE_RESTART_ACTIVITY,
-            FeatureFlag.AVAILABLE_RESET_SETUP,
             FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION,
             FeatureFlag.TOOLBAR_DEBUG
     ) : Collections.emptyList());
