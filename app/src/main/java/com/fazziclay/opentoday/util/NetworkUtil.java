@@ -21,6 +21,10 @@ public class NetworkUtil {
     private static final String TAG = "NetworkUtil";
     public static final List<LogInterface> NETWORK_LISTENERS = new ArrayList<>();
 
+    static {
+        NETWORK_LISTENERS.add((logKey, state, url, result) -> Logger.d(TAG, "Networking '"+logKey+"' State: " + state + " URL: " + url + " Result: " + result));
+    }
+
     /**
      * @return text of site
      * **/
