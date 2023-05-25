@@ -338,7 +338,7 @@ public class ItemManager {
 
         Debug.latestPersonalTickDuration = Logger.countOnlyDur(() -> {
             for (UUID uuid : uuids) {
-                for (Tab tab : tabs) {
+                for (Tab tab : tabs.toArray(new Tab[0])) {
                     Item i = tab.getItemById(uuid);
                     if (i != null) {
                         i.tick(tickSession);
@@ -352,7 +352,7 @@ public class ItemManager {
         checkDestroy();
 
         Debug.latestTickDuration = Logger.countOnlyDur(() -> {
-            for (Tab tab : tabs) {
+            for (Tab tab : tabs.toArray(new Tab[0])) {
                 if (tab == null) continue;
                 tab.tick(tickSession);
             }
