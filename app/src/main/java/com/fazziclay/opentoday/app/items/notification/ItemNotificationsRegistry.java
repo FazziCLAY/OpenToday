@@ -4,7 +4,7 @@ public class ItemNotificationsRegistry {
     public static final ItemNotificationsRegistry REGISTRY = new ItemNotificationsRegistry();
 
     private static final ItemNotificationInfo[] INFOS = new ItemNotificationInfo[] {
-        new ItemNotificationInfo(DayItemNotification.class, "DayItemNotification", DayItemNotification.IE_TOOL)
+        new ItemNotificationInfo(DayItemNotification.class, "DayItemNotification", DayItemNotification.CODEC)
     };
 
     public ItemNotificationInfo[] getAllNotifications() {
