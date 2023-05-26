@@ -41,6 +41,7 @@ public class ItemsTickReceiver extends BroadcastReceiver {
 
         if (intent != null && intent.getExtras() != null && intent.getExtras().containsKey("debugMessage")) {
             String s = intent.getExtras().getString("debugMessage", "none");
+            //Toast.makeText(context, "ItemsTickReceive: " + s, Toast.LENGTH_SHORT).show();
             Logger.d("ItemsTickReceiver", "DebugMessage! " + s);
         }
 
