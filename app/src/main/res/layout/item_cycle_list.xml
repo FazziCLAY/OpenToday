@@ -62,7 +62,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingTop="1sp"
         android:paddingLeft="3sp"
+        android:paddingBottom="2sp"
         android:paddingRight="2sp">
 
         <TextView
