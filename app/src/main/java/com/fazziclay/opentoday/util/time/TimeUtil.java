@@ -2,8 +2,10 @@ package com.fazziclay.opentoday.util.time;
 
 import androidx.annotation.NonNull;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 /**
  * Utility class, Utils of Time
@@ -84,5 +86,10 @@ public class TimeUtil {
 
     public static long getUnixSeconds() {
         return System.currentTimeMillis() / 1000;
+    }
+
+    public static String getDebugDate(long t) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd EEEE HH:mm:ss", Locale.getDefault());
+        return dateFormat.format(t);
     }
 }
