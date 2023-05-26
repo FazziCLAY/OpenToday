@@ -29,6 +29,7 @@ import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
+import com.fazziclay.opentoday.util.time.TimeUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -422,6 +423,8 @@ public class ItemManager {
         public void run() {
             while (!isInterrupted() && enabled) {
                 if (request && (requestImportance > 0 || ((System.currentTimeMillis() - firstRequestTime) > 1000 * 10))) {
+                    if (App.LOG) Logger.i(TAG, String.format("SaveThread: requestCount=%s\nfirstTime=%s\nlatestTime=%s", requestsCount, TimeUtil.getDebugDate(firstRequestTime), TimeUtil.getDebugDate(latestRequestTime)));
+
                     request = false;
                     requestsCount = Debug.latestSaveRequestsCount = 0;
                     firstRequestTime = 0;
@@ -430,7 +433,6 @@ public class ItemManager {
 
                     // Save
                     internalSave();
-                    if (App.LOG) Logger.i(TAG, String.format("SaveThread: requestCount=%s\nfirstTime=%s\nlatestTime=%s", requestsCount, firstRequestTime, latestRequestTime));
                 }
                 try {
                     Thread.sleep(1000);
