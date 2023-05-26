@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public class TickThread extends Thread {
     private static final String TAG = "TickThread";
-    private static final boolean LOG = App.debug(true);
+    private static final boolean LOG = App.debug(false);
 
 
     private boolean enabled = true;
