@@ -28,6 +28,7 @@ import com.fazziclay.opentoday.gui.activity.OpenSourceLicensesActivity;
 import com.fazziclay.opentoday.util.DebugUtil;
 import com.fazziclay.opentoday.util.License;
 import com.fazziclay.opentoday.util.Logger;
+import com.fazziclay.opentoday.util.time.TimeUtil;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -163,6 +164,8 @@ public class App extends Application {
         selectionManager.free();
         telemetry.free();
         tickThread.free();
+
+        TimeUtil.SIMPLE_DATE_FORMAT.free();
     }
 
     public boolean isPinCodeNeed() {
