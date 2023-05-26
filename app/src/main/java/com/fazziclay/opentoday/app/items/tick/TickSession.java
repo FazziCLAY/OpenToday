@@ -5,16 +5,15 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.os.Build;
 
+import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.items.item.Item;
 
 import java.util.GregorianCalendar;
 
 public class TickSession {
-    private static GregorianCalendar latestGregorianCalendar = null;
-
     // Life-hacks :)
     public static GregorianCalendar getLatestGregorianCalendar() {
-        return latestGregorianCalendar;
+        return App.get().getTickThread().getGregorianCalendar();
     }
 
     private final Context context;
@@ -26,7 +25,6 @@ public class TickSession {
 
     public TickSession(Context context, GregorianCalendar gregorianCalendar, GregorianCalendar noTimeCalendar, int dayTime, boolean isPersonalTick) {
         this.context = context;
-        this.gregorianCalendar = latestGregorianCalendar = gregorianCalendar;
         this.noTimeCalendar = noTimeCalendar;
         this.dayTime = dayTime;
         this.isPersonalTick = isPersonalTick;
