@@ -14,7 +14,6 @@
 * FilterGroup now support Tick behavior
 * CycleList now support 2 new types of Tick behavior
 * New time format setting at the top of the screen
-TODO: Move nearby to 'FirstDay of week' setting
 
 * Fixes bugs:
     - Data break while importing data from oldest version
