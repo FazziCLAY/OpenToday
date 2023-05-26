@@ -63,7 +63,7 @@ public class TickThread extends Thread {
                 }
 
                 if (defaultTickSession.isSaveNeeded()) {
-                    itemManager.queueSave(SaveInitiator.TICK);
+                    itemManager.queueSave(!personals.isEmpty() ? SaveInitiator.TICK_PERSONAL : SaveInitiator.TICK);
                 }
 
                 // reset requests
