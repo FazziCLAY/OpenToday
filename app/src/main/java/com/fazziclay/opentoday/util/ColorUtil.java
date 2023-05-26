@@ -121,7 +121,7 @@ public class ColorUtil {
                                         style = Typeface.ITALIC;
                                     }
                                     if (systemValue.contains("bold")) {
-                                        style = Typeface.ITALIC;
+                                        style = Typeface.BOLD;
                                     }
                                     if (systemValue.contains("bolditalic") || systemValue.contains("italicbold")) {
                                         style = Typeface.BOLD_ITALIC;
