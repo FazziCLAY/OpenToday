@@ -456,6 +456,8 @@ public class ItemManager {
         }
 
         public void request(SaveInitiator initiator) {
+            if (initiator == SaveInitiator.TICK_PERSONAL) initiator = SaveInitiator.USER; // TODO: 2023.05.26 handle TICK_PERSONAL!
+
             if (!request) {
                 firstRequestTime = System.currentTimeMillis();
             }
