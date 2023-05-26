@@ -144,6 +144,7 @@ public class App extends Application {
             if (fixResult.isFixed()) {
                 getTelemetry().send(new Telemetry.DataFixerLogsLPacket(fixResult.getDataVersion(), fixResult.getLogs()));
             }
+            Logger.i("App", "== onCreate successfully ==");
         } catch (Exception e) {
             crash(this, CrashReport.create(new RuntimeException(getClass().getName() + " onCreate exception: " + e, e)), false);
         }
