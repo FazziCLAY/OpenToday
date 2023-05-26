@@ -138,12 +138,12 @@ public class ItemStatFilterPartEditor implements Destroy {
             public void run() {
                 if (!runnableList.contains(this)) return;
                 IntegerValue val = setup.get();
-                ColorStateList background = val == null ? null : (val.isFit(setup.getCurrentValue()) ? ColorStateList.valueOf(Color.GREEN) : ColorStateList.valueOf(Color.RED));
+                ColorStateList background = val == null ? null : (val.isFit(setup.getCurrentValue()) ? ColorStateList.valueOf(COLOR_FILTER_GROUP_ACTIVE) : ColorStateList.valueOf(COLOR_FILTER_GROUP_INACTIVE));
 
                 calendar = new GregorianCalendar();
                 currentValue.setText(String.valueOf(setup.getCurrentValue()));
                 currentValue.setBackgroundTintList(background);
-                handler.postDelayed(this, 1000);
+                handler.postDelayed(this, 1000 / 4);
             }
         });
 
