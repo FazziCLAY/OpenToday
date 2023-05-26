@@ -23,6 +23,7 @@ import com.fazziclay.opentoday.databinding.IntegerValueRowBinding;
 import com.fazziclay.opentoday.databinding.PartDateItemFilterEditorBinding;
 import com.fazziclay.opentoday.gui.interfaces.Destroy;
 import com.fazziclay.opentoday.util.MinTextWatcher;
+import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 
 import java.text.DateFormatSymbols;
@@ -33,6 +34,8 @@ import java.util.List;
 import java.util.Locale;
 
 public class DateItemFilterPartEditor implements Destroy {
+    private final int COLOR_FILTER_GROUP_ACTIVE;
+    private final int COLOR_FILTER_GROUP_INACTIVE;
     private final Context context;
     private final PartDateItemFilterEditorBinding binding;
     private final Runnable saveSignal;
@@ -59,6 +62,9 @@ public class DateItemFilterPartEditor implements Destroy {
         this.saveSignal = saveSignal;
         this.calendar = new GregorianCalendar();
         this.handler = new Handler(Looper.getMainLooper());
+
+        COLOR_FILTER_GROUP_ACTIVE = ResUtil.getAttrColor(context, R.attr.itemFilterState_true);
+        COLOR_FILTER_GROUP_INACTIVE = ResUtil.getAttrColor(context, R.attr.itemFilterState_false);
 
         binding.description.setText(dateItemFilter.getDescription());
         binding.description.addTextChangedListener(new MinTextWatcher() {
@@ -250,7 +256,7 @@ public class DateItemFilterPartEditor implements Destroy {
                 if (!runnableList.contains(this)) return;
 
                 boolean isFitGlobal = dateItemFilter.isFit(new FitEquip(new GregorianCalendar()));
-                binding.currentValueTitle.setBackgroundTintList(ColorStateList.valueOf(isFitGlobal ? Color.GREEN : Color.RED));
+                binding.currentValueTitle.setBackgroundTintList(ColorStateList.valueOf(isFitGlobal ? COLOR_FILTER_GROUP_ACTIVE : COLOR_FILTER_GROUP_INACTIVE));
 
                 handler.postDelayed(this, 1000 / 4);
             }

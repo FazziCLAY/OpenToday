@@ -36,5 +36,8 @@
 
     <attr format="color" type="color" name="item_selectionForegroundColor" />
     <attr format="color" type="color" name="toolbar_background" />
-    <attr format="color" type="color" name="toolbar_more_items_item_textColor" />
+
+    <attr format="color" type="color" name="itemFilterState_true" />
+    <attr format="color" type="color" name="itemFilterState_false" />
+
 </resources>

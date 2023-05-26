@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemManager;
@@ -36,6 +37,7 @@ import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.gui.interfaces.StorageEditsActions;
 import com.fazziclay.opentoday.gui.item.ItemStorageDrawer;
 import com.fazziclay.opentoday.util.Logger;
+import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
 
@@ -46,13 +48,13 @@ import java.util.UUID;
 
 public class ItemsEditorFragment extends Fragment {
     private static final int RES_FILTER_BUTTON_IMAGE = android.R.drawable.ic_menu_manage;
-    private static final int COLOR_FILTER_GROUP_ACTIVE = Color.GREEN;
-    private static final int COLOR_FILTER_GROUP_INACTIVE = Color.RED;
     private static final String EXTRA_TAB_ID = "items_editor_fragment_tabId";
     private static final String EXTRA_ITEM_ID = "items_editor_fragment_itemId";
     private static final String EXTRA_PREVIEW_MODE = "items_editor_fragment_previewMode";
     private static final String TAG = "ItemsEditorFragment";
 
+    private int COLOR_FILTER_GROUP_ACTIVE;
+    private int COLOR_FILTER_GROUP_INACTIVE;
     private MainActivity activity;
     private NavigationHost navigationHost;
     private NavigationHost rootNavigationHost;
@@ -104,6 +106,9 @@ public class ItemsEditorFragment extends Fragment {
         itemManager = app.getItemManager();
         settingsManager = app.getSettingsManager();
         selectionManager = app.getSelectionManager();
+
+        COLOR_FILTER_GROUP_ACTIVE = ResUtil.getAttrColor(requireContext(), R.attr.itemFilterState_true);
+        COLOR_FILTER_GROUP_INACTIVE = ResUtil.getAttrColor(requireContext(), R.attr.itemFilterState_false);
 
         Bundle args = getArguments();
         previewMode = args.getBoolean(EXTRA_PREVIEW_MODE);

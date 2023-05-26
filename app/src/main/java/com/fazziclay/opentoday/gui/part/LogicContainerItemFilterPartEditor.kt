@@ -30,6 +30,7 @@ import com.fazziclay.opentoday.gui.fragment.FilterGroupItemFilterEditorFragment
 import com.fazziclay.opentoday.gui.interfaces.Destroy
 import com.fazziclay.opentoday.util.EnumUtil
 import com.fazziclay.opentoday.util.MinTextWatcher
+import com.fazziclay.opentoday.util.ResUtil
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter
 import java.util.*
 
@@ -44,6 +45,8 @@ class LogicContainerItemFilterPartEditor(private val context: Context, layoutInf
     }
 
 
+    private var colorInactive: Int = ResUtil.getAttrColor(context, R.attr.itemFilterState_false)
+    private var colorActive: Int = ResUtil.getAttrColor(context, R.attr.itemFilterState_true)
     private val binding: PartLogicContainerItemFilterEditorBinding = PartLogicContainerItemFilterEditorBinding.inflate(layoutInflater)
     private var handler: Handler = Handler(context.mainLooper)
     private var runnable: Runnable? = null
@@ -51,6 +54,7 @@ class LogicContainerItemFilterPartEditor(private val context: Context, layoutInf
     private var cached: HashMap<ItemFilter, View> = HashMap()
 
     init {
+
         runnable = Runnable {
             if (destroyed) return@Runnable
 
@@ -58,7 +62,7 @@ class LogicContainerItemFilterPartEditor(private val context: Context, layoutInf
                 val fitEquip = FitEquip(GregorianCalendar());
                 fitEquip.currentItem = item
                 val isFit = t.isFit(fitEquip)
-                u.backgroundTintList = ColorStateList.valueOf(if (isFit) Color.GREEN else Color.RED)
+                u.backgroundTintList = ColorStateList.valueOf(if (isFit) colorActive else colorInactive)
             }
             handler.postDelayed(runnable!!, 1000 / 4)
         }

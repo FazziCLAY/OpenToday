@@ -49,7 +49,8 @@
 
         <item name="item_selectionForegroundColor">#66ff7722</item>
         <item name="toolbar_background">#8C000000</item>
-        <item name="toolbar_more_items_item_textColor">#FFFFFF</item>
+        <item name="itemFilterState_true">#1C9D0E</item>
+        <item name="itemFilterState_false">#AA1111</item>
     </style>
 
 

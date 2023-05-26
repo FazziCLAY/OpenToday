@@ -23,6 +23,7 @@ import com.fazziclay.opentoday.databinding.IntegerValueRowBinding;
 import com.fazziclay.opentoday.databinding.PartItemStatItemFilterBinding;
 import com.fazziclay.opentoday.gui.interfaces.Destroy;
 import com.fazziclay.opentoday.util.MinTextWatcher;
+import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 
 import java.text.DateFormatSymbols;
@@ -32,6 +33,8 @@ import java.util.List;
 import java.util.Locale;
 
 public class ItemStatFilterPartEditor implements Destroy {
+    private final int COLOR_FILTER_GROUP_ACTIVE;
+    private final int COLOR_FILTER_GROUP_INACTIVE;
     private final Context context;
     private final PartItemStatItemFilterBinding binding;
     private final Runnable saveSignal;
@@ -58,6 +61,9 @@ public class ItemStatFilterPartEditor implements Destroy {
         this.saveSignal = saveSignal;
         this.calendar = new GregorianCalendar();
         this.handler = new Handler(Looper.getMainLooper());
+
+        COLOR_FILTER_GROUP_ACTIVE = ResUtil.getAttrColor(context, R.attr.itemFilterState_true);
+        COLOR_FILTER_GROUP_INACTIVE = ResUtil.getAttrColor(context, R.attr.itemFilterState_false);
 
         binding.description.setText(itemStatItemFilter.getDescription());
         binding.description.addTextChangedListener(new MinTextWatcher() {
@@ -97,7 +103,7 @@ public class ItemStatFilterPartEditor implements Destroy {
                 FitEquip fitEquip = new FitEquip(new GregorianCalendar());
                 fitEquip.setCurrentItem(item);
                 boolean isFitGlobal = itemStatItemFilter.isFit(fitEquip);
-                binding.currentValueTitle.setBackgroundTintList(ColorStateList.valueOf(isFitGlobal ? Color.GREEN : Color.RED));
+                binding.currentValueTitle.setBackgroundTintList(ColorStateList.valueOf(isFitGlobal ? COLOR_FILTER_GROUP_ACTIVE : COLOR_FILTER_GROUP_INACTIVE));
 
                 handler.postDelayed(this, 1000 / 4);
             }
