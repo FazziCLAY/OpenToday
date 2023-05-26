@@ -59,7 +59,6 @@ public class TickSession {
     }
 
     public void setAlarmDayOfTimeInSeconds(int time, Item item) {
-        // TODO: 30.10.2022 rewrite
         final long shift = getDayTime() >= time ? (24*60*60*1000L) : 0; // IN MILLIS!!
         final AlarmManager alarmManager = getContext().getSystemService(AlarmManager.class);
         final int flags;
@@ -69,7 +68,7 @@ public class TickSession {
             flags = PendingIntent.FLAG_UPDATE_CURRENT;
         }
         long triggerAtMs = getNoTimeCalendar().getTimeInMillis() + shift + (time * 1000L) + 599;
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerAtMs, PendingIntent.getBroadcast(getContext(), 0, ItemsTickReceiver.createIntent(context, item.getId()).putExtra("debugMessage", "dayItemNotification is work :)"), flags));
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMs, PendingIntent.getBroadcast(getContext(), item.getId().hashCode(), ItemsTickReceiver.createIntent(context, item.getId()).putExtra("debugMessage", "DayItemNotification is work :)\nItem:\n * id-hashCode: " + item.getId().hashCode() + "\n * Item: " + item), flags));
     }
 
     public void recyclePersonal(boolean b) {
