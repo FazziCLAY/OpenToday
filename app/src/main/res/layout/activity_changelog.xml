@@ -21,7 +21,7 @@
                     android:id="@+id/changelog_text"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:textSize="20sp"
+                    android:textSize="17sp"
                     tools:text="tretrete\nwertr" />
 
             </LinearLayout>
