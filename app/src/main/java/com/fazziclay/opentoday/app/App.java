@@ -16,6 +16,7 @@ import com.fazziclay.javaneoutil.FileUtil;
 import com.fazziclay.javaneoutil.JavaNeoUtil;
 import com.fazziclay.javaneoutil.NonNull;
 import com.fazziclay.neosocket.NeoSocket;
+import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.datafixer.DataFixer;
 import com.fazziclay.opentoday.app.datafixer.FixResult;
@@ -109,11 +110,12 @@ public class App extends Application {
     private final OptionalField<Telemetry> telemetry = new OptionalField<>(() -> new Telemetry(this, getSettingsManager().isTelemetry()));
     private final OptionalField<TickThread> tickThread = new OptionalField<>(this::preCheckTickThread, TickThread::requestTerminate);
     private final List<FeatureFlag> featureFlags = new ArrayList<>(App.DEBUG ? Arrays.asList(
-            FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
-            FeatureFlag.SHOW_APP_STARTUP_TIME_IN_PREMAIN_ACTIVITY,
-            FeatureFlag.ALWAYS_SHOW_SAVE_STATUS,
+            //FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
+            //FeatureFlag.SHOW_APP_STARTUP_TIME_IN_PREMAIN_ACTIVITY,
+            //FeatureFlag.ALWAYS_SHOW_SAVE_STATUS,
             //FeatureFlag.DISABLE_AUTOMATIC_TICK,
             //FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION,
+            FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION,
             FeatureFlag.TOOLBAR_DEBUG
     ) : Collections.emptyList());
     private long appStartupTime = 0;
@@ -148,7 +150,7 @@ public class App extends Application {
         } catch (Exception e) {
             crash(this, CrashReport.create(new RuntimeException(getClass().getName() + " onCreate exception: " + e, e)), false);
         }
-        this.appStartupTime = System.currentTimeMillis() - startTime;
+        this.appStartupTime = Debug.appStartupTime = System.currentTimeMillis() - startTime;
     }
 
     @Override

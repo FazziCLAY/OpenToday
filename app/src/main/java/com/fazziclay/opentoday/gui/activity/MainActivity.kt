@@ -203,6 +203,10 @@ class MainActivity : AppCompatActivity() {
                 viewVisible(binding.debugLogsScroll, binding.debugLogsSwitch.isChecked, View.GONE)
                 binding.debugLogsText.text = Logger.getLOGS().toString()
             }
+            binding.debugLogsSwitch.setOnLongClickListener {
+                toggleLogsOverlay()
+                return@setOnLongClickListener true
+            }
             binding.debugLogsText.textSize = debugViewSize.toFloat()
             binding.debugLogsSizeUp.setOnClickListener {
                 debugViewSize++

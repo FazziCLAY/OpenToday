@@ -17,13 +17,14 @@ public class Debug {
     public static long latestSave = DEF;
     public static int latestSaveRequestsCount = DEF;
     public static int latestPersonalTickDuration = DEF;
+    public static long appStartupTime = DEF;
 
     @NonNull
     public static String getDebugInfoText() {
         return String.format("[Tick] %sms; pers: %sms" + "\n" +
-                "[Save] %s ago; req=%s",
+                "[Save] %s ago; req=%s\nApp %sms",
 
-                latestTickDuration, latestPersonalTickDuration, ago(latestSave), latestSaveRequestsCount);
+                latestTickDuration, latestPersonalTickDuration, ago(latestSave), latestSaveRequestsCount, appStartupTime);
     }
 
     public static long ago(long l) {
