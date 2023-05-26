@@ -111,8 +111,8 @@ public class App extends Application {
             FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
             FeatureFlag.SHOW_APP_STARTUP_TIME_IN_PREMAIN_ACTIVITY,
             FeatureFlag.ALWAYS_SHOW_SAVE_STATUS,
-            FeatureFlag.DISABLE_AUTOMATIC_TICK,
-            FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION,
+            //FeatureFlag.DISABLE_AUTOMATIC_TICK,
+            //FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION,
             FeatureFlag.TOOLBAR_DEBUG
     ) : Collections.emptyList());
     private long appStartupTime = 0;
