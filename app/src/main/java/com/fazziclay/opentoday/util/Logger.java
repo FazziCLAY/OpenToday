@@ -4,11 +4,9 @@ import android.util.Log;
 
 import com.fazziclay.javaneoutil.FileUtil;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.util.time.TimeUtil;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.GregorianCalendar;
-import java.util.Locale;
 import java.util.function.Supplier;
 
 public class Logger {
@@ -43,9 +41,8 @@ public class Logger {
         i(tag, String.format("%sms: %s", duration, message));
     }
 
-    private static void log(String s) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd EEEE HH:mm:ss", Locale.getDefault());
-        String time = dateFormat.format(GregorianCalendar.getInstance().getTime());
+    private static void log(final String s) {
+        final String time = TimeUtil.getDebugDate(System.currentTimeMillis());
         LOGS.append("[").append(time).append("] ").append(s).append("\n");
 
         logToFile("[" + time + "] " + s + "\n");
