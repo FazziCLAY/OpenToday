@@ -76,6 +76,7 @@ public class TickThread extends Thread {
             }
 
             try {
+                //noinspection BusyWait
                 Thread.sleep(1000);
             } catch (Exception e) {
                 throw new RuntimeException(e);
