@@ -106,6 +106,7 @@ public class TickThread extends Thread {
     }
 
     public void requestTick() {
+        if (!enabled) throw new RuntimeException("TickThread disabled!");
         if (!requested) {
             firstRequestTime = System.currentTimeMillis();
         }
@@ -117,6 +118,8 @@ public class TickThread extends Thread {
     }
 
     public void requestTick(List<UUID> uuids) {
+        if (!enabled) throw new RuntimeException("TickThread disabled!");
+
         if (!requested) {
             firstRequestTime = System.currentTimeMillis();
         }
@@ -143,5 +146,9 @@ public class TickThread extends Thread {
 
     public void requestTerminate() {
         this.enabled = false;
+    }
+
+    public GregorianCalendar getGregorianCalendar() {
+        return defaultTickSession.getGregorianCalendar();
     }
 }
