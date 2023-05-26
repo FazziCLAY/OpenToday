@@ -25,6 +25,7 @@ import com.fazziclay.opentoday.databinding.FragmentSettingsBinding
 import com.fazziclay.opentoday.gui.EnumsRegistry
 import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType
+import com.fazziclay.opentoday.util.EnumUtil
 import com.fazziclay.opentoday.util.InlineUtil.viewClick
 import com.fazziclay.opentoday.util.Logger
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter
@@ -182,14 +183,13 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setupFirstTabSpinner() {
-        val firstTabSimpleSpinnerAdapter = SimpleSpinnerAdapter<FirstTab>(requireContext())
-                .add(EnumsRegistry.name(FirstTab.FIRST, requireContext()), FirstTab.FIRST)
-                .add(EnumsRegistry.name(FirstTab.TAB_ON_CLOSING, requireContext()), FirstTab.TAB_ON_CLOSING)
-        binding.firstTab.adapter = firstTabSimpleSpinnerAdapter
-        binding.firstTab.setSelection(firstTabSimpleSpinnerAdapter.getValuePosition(settingsManager.firstTab))
+        val adapter = SimpleSpinnerAdapter<FirstTab>(requireContext())
+        EnumUtil.addToSimpleSpinnerAdapter(requireContext(), adapter, FirstTab.values())
+        binding.firstTab.adapter = adapter
+        binding.firstTab.setSelection(adapter.getValuePosition(settingsManager.firstTab))
         binding.firstTab.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val t = firstTabSimpleSpinnerAdapter.getItem(position)
+                val t = adapter.getItem(position)
                 settingsManager.firstTab = t
                 settingsManager.save()
             }
