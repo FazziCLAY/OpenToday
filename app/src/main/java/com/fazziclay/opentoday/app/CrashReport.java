@@ -2,6 +2,11 @@ package com.fazziclay.opentoday.app;
 
 import android.os.Build;
 
+import com.fazziclay.javaneoutil.NonNull;
+import com.fazziclay.opentoday.Debug;
+import com.fazziclay.opentoday.util.Logger;
+import com.fazziclay.opentoday.util.time.TimeUtil;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
@@ -11,8 +16,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
-
-import ru.fazziclay.javaneoutil.NonNull;
 
 public class CrashReport {
     private final UUID id;
@@ -49,188 +52,182 @@ public class CrashReport {
     }
 
     public String convertToText() {
-        String text = "=== OpenToday Crash ===\n" +
-                "// %_RANDOM_COMMENT_%\n" +
-                "CrashID: %_CRASH_ID_%\n" +
-                "Fatal: %_FATAL_%\n" +
-                "Application: (%_APPLICATION_PACKAGE_%)\n" +
-                " * instanceId: %_INSTANCE_ID_%\n" +
-                " * appStartupTime: %_APP_STARTUP_TIME_%\n" +
-                " * VERSION_BUILD: %_APPLICATION_VERSION_BUILD_%\n" +
-                " * VERSION_NAME: %_APPLICATION_VERSION_NAME_%\n" +
-                " * DATA_VERSION: %_APPLICATION_DATA_VERSION_%\n" +
-                " * version file: \n" +
-                "%_VERSION_FILE_%\n" +
-                " * DEBUG: %_APPLICATION_DEBUG_%\n" +
-                " * DEBUG_TICK_NOTIFICATION: %_APPLICATION_DEBUG_TICK_NOTIFICATION_%\n" +
-                " * DEBUG_MAIN_ACTIVITY_START_SLEEP: %_APPLICATION_DEBUG_MAIN_ACTIVITY_START_SLEEP_%\n" +
-                " * DEBUG_APP_START_SLEEP: %_APPLICATION_DEBUG_APP_START_SLEEP_%\n" +
-                " * DEBUG_MAIN_ACTIVITY: %_APPLICATION_DEBUG_MAIN_ACTIVITY_%\n" +
-                " * DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY: %_APPLICATION_DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY_%\n" +
-                " * featureFlags: %_FEATURE_FLAGS_%\n" +
-                "\n" +
-                "Device:\n" +
-                " * SDK_INT: %_DEVICE_ANDROID_SDK_INT_%\n" +
-                " * BASE_OS: %_DEVICE_ANDROID_BASE_OS_%\n" +
-                " * Product: %_DEVICE_PRODUCT_%\n" +
-                " * Brand: %_DEVICE_BRAND_%\n" +
-                " * Model: %_DEVICE_MODEL_%\n" +
-                " * Manufacturer: %_DEVICE_MANUFACTURER_%\n" +
-                " * Display: %_DEVICE_DISPLAY_%\n" +
-                " * Bootloader: %_DEVICE_BOOTLOADER_%\n" +
-                "\n" +
-                "Time:\n" +
-                "* Formatted: %_TIME_FORMATTED_%\n" +
-                "* Millis: %_TIME_MILLIS_%\n" +
-                "* Nano: %_TIME_NANO_%\n" +
-                "\n" +
-                "L(debug logger):\n" +
-                "%_L_LOGS_%\n" +
-                "\n" +
-                "Thread: %_THREAD_%\n" +
-                "Throwable:\n" +
-                "%_THROWABLE_%\n" +
-                "\n" +
-                "All stack traces & threads:\n" +
-                "%_ALL_STACK_TRACES_%\n" +
-                "--- OpenToday Crash ---\n";
+        String text = """
+                === OpenToday Crash ===
+                // %_RANDOM_COMMENT_%
+                CrashID: %_CRASH_ID_%
+                Fatal: %_FATAL_%
+                Thread: %_THREAD_%
+                
+                Time:
+                * Formatted: %_TIME_FORMATTED_%
+                * Millis: %_TIME_MILLIS_%
+                * Nano: %_TIME_NANO_%
+                
+                == Throwable ==
+                %_THROWABLE_%
+                
+                Application: (%_APPLICATION_PACKAGE_%)
+                 * instanceId: %_INSTANCE_ID_%
+                 * appStartupTime: %_APP_STARTUP_TIME_%
+                 * VERSION_BUILD: %_APPLICATION_VERSION_BUILD_%
+                 * VERSION_NAME: %_APPLICATION_VERSION_NAME_%
+                 * DATA_VERSION: %_APPLICATION_DATA_VERSION_%
+                 * RELEASE_TIME: %_APPLICATION_VERSION_RELEASE_TIME_%
+                 * version-data: %_VERSION_DATA_%
+                 * SHADOW_RELEASE: %_SHADOW_RELEASE_%
+                 * DEBUG: %_APPLICATION_DEBUG_%
+                 * DEBUG_TICK_NOTIFICATION: %_APPLICATION_DEBUG_TICK_NOTIFICATION_%
+                 * DEBUG_MAIN_ACTIVITY_START_SLEEP: %_APPLICATION_DEBUG_MAIN_ACTIVITY_START_SLEEP_%
+                 * DEBUG_APP_START_SLEEP: %_APPLICATION_DEBUG_APP_START_SLEEP_%
+                 * DEBUG_MAIN_ACTIVITY: %_APPLICATION_DEBUG_MAIN_ACTIVITY_%
+                 * DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY: %_APPLICATION_DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY_%
+                 * featureFlags: %_FEATURE_FLAGS_%
 
-        String timeFormatted;
+                Device:
+                 * SDK_INT: %_DEVICE_ANDROID_SDK_INT_%
+                 * BASE_OS: %_DEVICE_ANDROID_BASE_OS_%
+                 * Product: %_DEVICE_PRODUCT_%
+                 * Brand: %_DEVICE_BRAND_%
+                 * Model: %_DEVICE_MODEL_%
+                 * Manufacturer: %_DEVICE_MANUFACTURER_%
+                 * Display: %_DEVICE_DISPLAY_%
+                 * Bootloader: %_DEVICE_BOOTLOADER_%
 
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.US);
-            timeFormatted = dateFormat.format(new Date(this.crashTimeMillis));
+                Debug:
+                 * App.debug(false): %_DEBUG_RESULT_OF_FALSE_APP_DEBUG_FUNCTION_%
+                 * App.debug(true): %_DEBUG_RESULT_OF_TRUE_APP_DEBUG_FUNCTION_%
+                %_DEBUG_GET_TEXT_%
+                
+                Logger:
+                %_L_LOGS_%
 
-        } catch (Exception e) {
-            timeFormatted = "(Unknown: " + e + ")";
-        }
-
-        String throwableText;
-        try {
-            if (this.throwable == null) {
-                throwableText = "null";
-            } else {
+                All stack traces & threads:
+                %_ALL_STACK_TRACES_%
+                --- OpenToday Crash ---
+                """;
+        text = text.replace("%_DEBUG_RESULT_OF_FALSE_APP_DEBUG_FUNCTION_%", getText(() -> App.debug(false)));
+        text = text.replace("%_DEBUG_RESULT_OF_TRUE_APP_DEBUG_FUNCTION_%", getText(() -> App.debug(true)));
+        text = text.replace("%_APPLICATION_VERSION_RELEASE_TIME_%", getText(() -> App.VERSION_RELEASE_TIME + " (" + TimeUtil.getDebugDate(App.VERSION_RELEASE_TIME*1000) + ")"));
+        text = text.replace("%_DEBUG_GET_TEXT_%", getText(() -> startAllLines(" * |", Debug.getDebugInfoText())));
+        text = text.replace("%_ALL_STACK_TRACES_%", getText(() -> {
+            if (this.allStackTraces == null) {
+                return null;
+            }
+            StringBuilder result = new StringBuilder();
+            StringBuilder threads = new StringBuilder("Threads: ");
+            for (Thread t : allStackTraces.keySet()) {
+                threads.append(t.toString()).append(", ");
+            }
+            threads.delete(threads.length() - 2, threads.length() - 1);
+            result.append(threads).append("\n");
+            for (Thread t : allStackTraces.keySet()) {
+                StackTraceElement[] stackTrace = allStackTraces.get(t);
+                StringBuilder stack = new StringBuilder("StackTrace ").append(t.toString()).append(":");
+                if (stackTrace.length == 0) {
+                    stack.append(" <empty>\n");
+                } else {
+                    stack.append("\n");
+                }
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
-                this.throwable.printStackTrace(pw);
+                for (StackTraceElement traceElement : stackTrace)
+                    pw.println("\tat " + traceElement);
                 pw.flush();
-                throwableText = sw.toString();
+                stack.append(sw);
+
+                result.append(stack);
             }
-        } catch (Exception e) {
-            throwableText = "(Unknown: " + e + ")";
-        }
 
-        String versionFileText;
-        try {
-            versionFileText = App.get().versionDataPutLatestStart(App.get().getVersionData()).toString(2);
-            String[] r = versionFileText.split("\n");
-            StringBuilder temp = new StringBuilder();
-            for (String s : r) {
-                temp.append(" * * ").append(s).append("\n");
+            return result.toString();
+        }));
+        text = text.replace("%_INSTANCE_ID_%", getText(() -> App.get().getInstanceId().toString()));
+        text = text.replace("%_APP_STARTUP_TIME_%", getText(() -> App.get().getAppStartupTime() + "ms"));
+        text = text.replace("%_RANDOM_COMMENT_%", getText(this::generateRandomComment));
+        text = text.replace("%_FEATURE_FLAGS_%", getText(() -> Arrays.toString(App.get().getFeatureFlags().toArray())));
+        text = text.replace("%_CRASH_ID_%", getText(id));
+        text = text.replace("%_FATAL_%", getText(fatal));
+        text = text.replace("%_APPLICATION_PACKAGE_%", getText(App.APPLICATION_ID));
+        text = text.replace("%_APPLICATION_VERSION_BUILD_%", getText(App.VERSION_CODE));
+        text = text.replace("%_APPLICATION_VERSION_NAME_%", getText(App.VERSION_NAME));
+        text = text.replace("%_APPLICATION_DATA_VERSION_%", getText(App.APPLICATION_DATA_VERSION));
+        text = text.replace("%_VERSION_DATA_%", getText(() -> App.get().versionDataPutLatestStart(App.get().getVersionData()).toString()));
+        text = text.replace("%_APPLICATION_DEBUG_%", getText(App.DEBUG));
+        text = text.replace("%_APPLICATION_DEBUG_TICK_NOTIFICATION_%", getText(App.DEBUG_TICK_NOTIFICATION));
+        text = text.replace("%_APPLICATION_DEBUG_MAIN_ACTIVITY_START_SLEEP_%", getText(App.DEBUG_MAIN_ACTIVITY_START_SLEEP));
+        text = text.replace("%_APPLICATION_DEBUG_APP_START_SLEEP_%", getText(App.DEBUG_APP_START_SLEEP));
+        text = text.replace("%_APPLICATION_DEBUG_MAIN_ACTIVITY_%", getText(App.DEBUG_MAIN_ACTIVITY));
+        text = text.replace("%_APPLICATION_DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY_%", getText(App.DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY));
+        text = text.replace("%_TIME_FORMATTED_%", getText(() -> {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss SSS", Locale.ENGLISH);
+            return dateFormat.format(new Date(this.crashTimeMillis));
+        }));
+        text = text.replace("%_TIME_MILLIS_%", getText(this.crashTimeMillis));
+        text = text.replace("%_TIME_NANO_%", getText(this.crashTimeNano));
+        text = text.replace("%_THREAD_%", getText(this.thread));
+        text = text.replace("%_THROWABLE_%", getText(() -> {
+            if (this.throwable == null) {
+                return null;
             }
-            versionFileText = temp.substring(0, temp.length()-1);
 
-        } catch (Exception e) {
-            versionFileText = "* * (Unknown " + e + ")";
-        }
-
-        UUID instanceId = null;
-        try {
-            instanceId = App.get().getInstanceId();
-        } catch (Exception ignored) {}
-
-        String featureFlags;
-        try {
-            featureFlags = Arrays.toString(App.get().getFeatureFlags().toArray());
-        } catch (Exception e) {
-            featureFlags = "(Unknown: "+e+")";
-        }
-
-        String appStartupTime;
-        try {
-            appStartupTime = App.get().getAppStartupTime() + "ms";
-        } catch (Exception e) {
-            appStartupTime = "(Unknown: " + e + ")";
-        }
-
-        String allStackTracesText;
-        try {
-            if (this.allStackTraces == null) {
-                allStackTracesText = "null";
-            } else {
-                StringBuilder result = new StringBuilder();
-                StringBuilder threads = new StringBuilder("Threads: ");
-                for (Thread t : allStackTraces.keySet()) {
-                    threads.append(t.toString()).append(", ");
-                }
-                threads.delete(threads.length()-2, threads.length()-1);
-                result.append(threads).append("\n");
-                for (Thread t : allStackTraces.keySet()) {
-                    StackTraceElement[] stackTrace = allStackTraces.get(t);
-                    StringBuilder stack = new StringBuilder("StackTrace ").append(t.toString()).append(":");
-                    if (stackTrace.length == 0) {
-                        stack.append(" <empty>\n");
-                    } else {
-                        stack.append("\n");
-                    }
-                    StringWriter sw = new StringWriter();
-                    PrintWriter pw = new PrintWriter(sw);
-                    for (StackTraceElement traceElement : stackTrace)
-                        pw.println("\tat " + traceElement);
-                    pw.flush();
-                    stack.append(sw);
-
-                    result.append(stack);
-                }
-
-                allStackTracesText = result.toString();
-            }
-        } catch (Exception e) {
-            allStackTracesText = "(Unknown: " + e + ")";
-        }
-
-        text = text.replace("%_ALL_STACK_TRACES_%", allStackTracesText);
-        text = text.replace("%_INSTANCE_ID_%", (instanceId == null ? "null" : instanceId.toString()));
-        text = text.replace("%_APP_STARTUP_TIME_%", appStartupTime);
-        text = text.replace("%_RANDOM_COMMENT_%", generateRandomComment());
-        text = text.replace("%_FEATURE_FLAGS_%", featureFlags);
-        text = text.replace("%_CRASH_ID_%", (this.id == null ? "null" : this.id.toString()));
-        text = text.replace("%_FATAL_%", (this.fatal == null ? "null" : this.fatal.name()));
-        text = text.replace("%_APPLICATION_PACKAGE_%", App.APPLICATION_ID);
-        text = text.replace("%_APPLICATION_VERSION_BUILD_%", String.valueOf(App.VERSION_CODE));
-        text = text.replace("%_APPLICATION_VERSION_NAME_%", App.VERSION_NAME);
-        text = text.replace("%_APPLICATION_DATA_VERSION_%", String.valueOf(App.APPLICATION_DATA_VERSION));
-        text = text.replace("%_VERSION_FILE_%", versionFileText == null ? "null" : versionFileText);
-        text = text.replace("%_APPLICATION_DEBUG_%", String.valueOf(App.DEBUG));
-        text = text.replace("%_APPLICATION_DEBUG_TICK_NOTIFICATION_%", String.valueOf(App.DEBUG_TICK_NOTIFICATION));
-        text = text.replace("%_APPLICATION_DEBUG_MAIN_ACTIVITY_START_SLEEP_%", String.valueOf(App.DEBUG_MAIN_ACTIVITY_START_SLEEP));
-        text = text.replace("%_APPLICATION_DEBUG_APP_START_SLEEP_%", String.valueOf(App.DEBUG_APP_START_SLEEP));
-        text = text.replace("%_APPLICATION_DEBUG_MAIN_ACTIVITY_%", String.valueOf(App.DEBUG_MAIN_ACTIVITY));
-        text = text.replace("%_APPLICATION_DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY_%", String.valueOf(App.DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY));
-        text = text.replace("%_TIME_FORMATTED_%", timeFormatted);
-        text = text.replace("%_TIME_MILLIS_%", String.valueOf(this.crashTimeMillis));
-        text = text.replace("%_TIME_NANO_%", String.valueOf(this.crashTimeNano));
-        text = text.replace("%_THREAD_%", this.thread != null ? this.thread.toString() : "null");
-        text = text.replace("%_THROWABLE_%", throwableText);
-        text = text.replace("%_DEVICE_ANDROID_SDK_INT_%", String.valueOf(Build.VERSION.SDK_INT));
-        text = text.replace("%_DEVICE_ANDROID_BASE_OS_%", String.valueOf(Build.VERSION.BASE_OS));
-        text = text.replace("%_DEVICE_PRODUCT_%", String.valueOf(Build.PRODUCT));
-        text = text.replace("%_DEVICE_BRAND_%", String.valueOf(Build.BRAND));
-        text = text.replace("%_DEVICE_MODEL_%", String.valueOf(Build.MODEL));
-        text = text.replace("%_DEVICE_MANUFACTURER_%", String.valueOf(Build.MANUFACTURER));
-        text = text.replace("%_DEVICE_DISPLAY_%", String.valueOf(Build.DISPLAY));
-        text = text.replace("%_DEVICE_BOOTLOADER_%", String.valueOf(Build.BOOTLOADER));
-
-        String loggerLLogs;
-        try {
-            loggerLLogs = "L logger deleted from this version.";
-        } catch (Exception e) {
-            loggerLLogs = "(Unknown " + e + ")";
-        }
-        text = text.replace("%_L_LOGS_%", loggerLLogs != null ? loggerLLogs : "null");
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            this.throwable.printStackTrace(pw);
+            pw.flush();
+            return sw.toString();
+        }));
+        text = text.replace("%_DEVICE_ANDROID_SDK_INT_%", getText(Build.VERSION.SDK_INT));
+        text = text.replace("%_DEVICE_ANDROID_BASE_OS_%", getText(Build.VERSION.BASE_OS));
+        text = text.replace("%_DEVICE_PRODUCT_%", getText(Build.PRODUCT));
+        text = text.replace("%_DEVICE_BRAND_%", getText(Build.BRAND));
+        text = text.replace("%_DEVICE_MODEL_%", getText(Build.MODEL));
+        text = text.replace("%_DEVICE_MANUFACTURER_%", getText(Build.MANUFACTURER));
+        text = text.replace("%_DEVICE_DISPLAY_%", getText(Build.DISPLAY));
+        text = text.replace("%_DEVICE_BOOTLOADER_%", getText(() -> Build.BOOTLOADER));
+        text = text.replace("%_L_LOGS_%", getText(() -> startAllLines("| ", Logger.getLOGS().toString())));
+        text = text.replace("%_SHADOW_RELEASE_%", getText(() -> !App.SHADOW_RELEASE ? "false" : "WARNING! SHADOW RELEASE IS TRUE (ENABLED)"));
 
         return text;
     }
+
+    private String startAllLines(String start, String text) {
+        String[] lines = text.split("\n");
+        StringBuilder temp = new StringBuilder();
+        for (String line : lines) {
+            temp.append(start).append(line).append("\n");
+        }
+        return temp.substring(0, temp.length()-1);
+    }
+
+    private String toFinalText(Object o) {
+        if (o == null) return "null";
+        try {
+            if (o instanceof Enum<?> anEnum) {
+                return anEnum.name();
+            }
+            return String.valueOf(o);
+        } catch (Exception e) {
+            return exceptionToText(e);
+        }
+    }
+
+    private String getText(UnstableSupplier<Object> t) {
+        try {
+            return toFinalText(t.get());
+        } catch (Exception e) {
+            return exceptionToText(e);
+        }
+    }
+
+    private String getText(Object t) {
+        return toFinalText(t);
+    }
+
+    private String exceptionToText(Exception e) {
+        if (e == null) return "(Unknown null exception)";
+        return "(Unknown Exception: " + e + ")";
+    }
+
 
     @NonNull
     private String generateRandomComment() {
@@ -254,6 +251,18 @@ public class CrashReport {
                 // 2022.11.01
                 "Big changes 2022.11.01: The world big commit :)",
                 /*2022.11.02*/ "feature/optimization",
+
+                //2023.05.27
+                "extend-filters so big....",
+                "sorry fgu...",
+                "await async discord.py",
+                "RandomUtil is pretty",
+                "FeatureFlags cleanup in v1.1",
+                "v.1.1 \"this is a only extend-filters\" kek",
+                "DRY in CrashReport?? :))))",
+                "DirtRenderer is love",
+                "OpenOptimizeMC is love",
+                "try also Google keep"
         };
         Random random = new Random();
         int max = comments.length;
@@ -306,5 +315,9 @@ public class CrashReport {
         public static FatalEnum fromBoolean(boolean b) {
             return b ? YES : NO;
         }
+    }
+
+    private interface UnstableSupplier<T> {
+        T get() throws Exception;
     }
 }
