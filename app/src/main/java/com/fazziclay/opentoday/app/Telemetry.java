@@ -32,6 +32,8 @@ public class Telemetry {
     public static final PacketsRegistry REGISTRY = new TelemetryPackets();
     private static final boolean NO_DELAY = (App.DEBUG && false);
     private static final String URL = "https://fazziclay.github.io/api/project_3/v2/telemetry_v1.json";
+    private static final boolean DEBUG_LOCAL_URL_CONTENT_ENABLED = App.debug(false);
+    private static final String DEBUG_LOCAL_URL_CONTENT = "{\"enabled\":true,\"host\":\"192.168.10.143\",\"port\":5999}";
 
     private final App app;
     private final File lastFile;
@@ -54,7 +56,12 @@ public class Telemetry {
         isTelemetryStatusQuerying = true;
         new Thread(() -> {
             try {
-                JSONObject telemetryJson = new JSONObject(NetworkUtil.parseTextPage(URL));
+                JSONObject telemetryJson;
+                if (DEBUG_LOCAL_URL_CONTENT_ENABLED) {
+                    telemetryJson = new JSONObject(DEBUG_LOCAL_URL_CONTENT);
+                } else {
+                    telemetryJson = new JSONObject(NetworkUtil.parseTextPage(URL));
+                }
                 telemetryStatus = TelemetryStatus.fromJson(telemetryJson);
             } catch (JSONException | IOException e) {
                 e.printStackTrace();
@@ -78,7 +85,7 @@ public class Telemetry {
                 g = new GregorianCalendar();
                 g.setTimeInMillis(curr);
                 int d2 = g.get(Calendar.DAY_OF_MONTH);
-                Logger.d(TAG, "send() d1=", d1, "d2=", d2);
+                Logger.d(TAG, "send() d1=", d1, "d2=", d2 + " sanding-canceled: " + (d1 == d2));
                 if (d1 == d2) {
                     return;
                 }
@@ -125,6 +132,7 @@ public class Telemetry {
     }
 
     public class SendThread extends Thread {
+        private static final String TAG = Telemetry.TAG + "-[SendThread]";
         private boolean isBusy = true;
         private final Packet packet;
         private boolean send = false;
@@ -152,7 +160,7 @@ public class Telemetry {
                 }
                 if (telemetryStatus.isEnabled()) {
                     Logger.d(TAG, "SaveThread: enabled! client new");
-                    Client client = new Client(telemetryStatus.getHost(), telemetryStatus.getPort(), REGISTRY, new PacketHandler() {
+                    Client client = new Client(telemetryStatus.host(), telemetryStatus.port(), REGISTRY, new PacketHandler() {
                         @Override
                         public void received(Client client, Packet packet) {
                             Logger.d(TAG, "[client] received: ", packet.toString());
@@ -264,36 +272,15 @@ public class Telemetry {
         }
     }
 
-    private static class TelemetryStatus {
-        private final boolean isEnabled;
-        private final String host;
-        private final int port;
+    private record TelemetryStatus(boolean isEnabled, String host, int port) {
+            public static TelemetryStatus fromJson(JSONObject j) throws JSONException {
+                if (j == null) return null;
+                return new TelemetryStatus(
+                        j.optBoolean("enabled", false),
+                        j.optString("host", null),
+                        j.optInt("port", 0)
+                );
+            }
 
-        public static TelemetryStatus fromJson(JSONObject j) throws JSONException {
-            if (j == null) return null;
-            return new TelemetryStatus(
-                    j.optBoolean("enabled", false),
-                    j.optString("host", null),
-                    j.optInt("port", 0)
-            );
-        }
-
-        public TelemetryStatus(boolean isEnabled, String host, int port) {
-            this.isEnabled = isEnabled;
-            this.host = host;
-            this.port = port;
-        }
-
-        public boolean isEnabled() {
-            return isEnabled;
-        }
-
-        public String getHost() {
-            return host;
-        }
-
-        public int getPort() {
-            return port;
-        }
     }
 }
