@@ -4,9 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.data.Cherry;
+import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Readonly;
 import com.fazziclay.opentoday.app.items.SimpleItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
+import com.fazziclay.opentoday.app.items.item.CheckboxItem;
+import com.fazziclay.opentoday.app.items.item.CounterItem;
+import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemType;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
@@ -91,17 +95,38 @@ public class Debug202305RandomTab extends Tab implements Readonly {
 
     @Override
     public void tick(TickSession tickSession) {
-        tick111();
+        tick111(itemsStorage);
+        for (Item item : getAllItems()) {
+            if (item instanceof ItemsStorage) {
+                tick111((ItemsStorage) item);
+            }
+        }
     }
 
-    public void tick111() {
+    public void tick111(ItemsStorage itemsStorage) {
         byte mode = (byte) (RandomUtil.nextBoolean() ? 0 : 1); // 0 remove;  1 add
-        if (isEmpty()) mode = 1;
+        if (itemsStorage.isEmpty()) mode = 1;
 
         if (mode == 0) {
-            itemsStorage.deleteItem(itemsStorage.getAllItems()[RandomUtil.nextInt(size())]);
+            itemsStorage.deleteItem(itemsStorage.getAllItems()[RandomUtil.nextInt(itemsStorage.size())]);
         } else {
-            itemsStorage.addItem(ItemsRegistry.REGISTRY.get(ItemType.values()[RandomUtil.nextInt(ItemType.values().length)]).create());
+            Item item = ItemsRegistry.REGISTRY.get(ItemType.values()[RandomUtil.nextInt(ItemType.values().length)]).create();
+            item.setViewBackgroundColor(RandomUtil.nextInt());
+            item.setViewCustomBackgroundColor(true);
+            item.setMinimize(RandomUtil.nextBoolean());
+            if (item instanceof TextItem textItem) {
+                textItem.setText(RandomUtil.nextIntPositive()+"");
+            }
+            if (item instanceof CounterItem counterItem) {
+                counterItem.setCounter(RandomUtil.nextInt());
+            }
+            if (item instanceof CycleListItem cycleListItem) {
+                cycleListItem.next();
+            }
+            if (item instanceof CheckboxItem checkboxItem) {
+                checkboxItem.setChecked(RandomUtil.nextBoolean());
+            }
+            itemsStorage.addItem(item);
         }
     }
 
