@@ -21,7 +21,7 @@ import java.util.Locale;
  * @author FazziCLAY
  * **/
 public class TimeUtil {
-    public static final OptionalField<SimpleDateFormat> SIMPLE_DATE_FORMAT = new OptionalField<>(() -> new SimpleDateFormat("yyyy.MM.dd EEEE HH:mm:ss SSS", Locale.getDefault()));
+    public static final OptionalField<SimpleDateFormat> SIMPLE_DATE_FORMAT = new OptionalField<>(() -> new SimpleDateFormat("yyyy.MM.dd EEEE HH:mm:ss SSS Z", Locale.getDefault()));
     public static final int SECONDS_IN_MINUTE = 60;
     public static final int SECONDS_IN_HOUR = SECONDS_IN_MINUTE * 60;
     public static final int SECONDS_IN_DAY = SECONDS_IN_HOUR * 24;
