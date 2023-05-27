@@ -75,7 +75,7 @@ public class CurrentItemStorageDrawer {
     private class OnUpdateListener implements OnCurrentItemStorageUpdate {
         @Override
         public Status onCurrentChanged(Item item) {
-            updateView(item);
+            activity.runOnUiThread(() ->updateView(item));
             return Status.NONE;
         }
     }
