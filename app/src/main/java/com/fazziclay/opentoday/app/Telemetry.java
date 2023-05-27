@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Objects;
 
 import ru.fazziclay.opentoday.telemetry.TelemetryPackets;
 import ru.fazziclay.opentoday.telemetry.packet.Packet20004Login;
@@ -272,15 +273,61 @@ public class Telemetry {
         }
     }
 
-    private record TelemetryStatus(boolean isEnabled, String host, int port) {
-            public static TelemetryStatus fromJson(JSONObject j) throws JSONException {
-                if (j == null) return null;
-                return new TelemetryStatus(
-                        j.optBoolean("enabled", false),
-                        j.optString("host", null),
-                        j.optInt("port", 0)
-                );
-            }
+    private static final class TelemetryStatus {
+        private final boolean isEnabled;
+        private final String host;
+        private final int port;
 
-    }
+        private TelemetryStatus(boolean isEnabled, String host, int port) {
+            this.isEnabled = isEnabled;
+            this.host = host;
+            this.port = port;
+        }
+
+        public static TelemetryStatus fromJson(JSONObject j) throws JSONException {
+            if (j == null) return null;
+            return new TelemetryStatus(
+                    j.optBoolean("enabled", false),
+                    j.optString("host", null),
+                    j.optInt("port", 0)
+            );
+        }
+
+        public boolean isEnabled() {
+            return isEnabled;
+        }
+
+        public String host() {
+            return host;
+        }
+
+        public int port() {
+            return port;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) return true;
+            if (obj == null || obj.getClass() != this.getClass()) return false;
+            var that = (TelemetryStatus) obj;
+            return this.isEnabled == that.isEnabled &&
+                    Objects.equals(this.host, that.host) &&
+                    this.port == that.port;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(isEnabled, host, port);
+        }
+
+        @Override
+        public String toString() {
+            return "TelemetryStatus[" +
+                    "isEnabled=" + isEnabled + ", " +
+                    "host=" + host + ", " +
+                    "port=" + port + ']';
+        }
+
+
+        }
 }
