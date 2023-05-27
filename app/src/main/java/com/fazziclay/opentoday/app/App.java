@@ -73,7 +73,7 @@ public class App extends Application {
     public static final int DEBUG_MAIN_ACTIVITY_START_SLEEP = debug(false) ? 6000 : 0;
     public static final int DEBUG_APP_START_SLEEP = debug(false) ? 8000 : 0;
     public static Class<? extends Activity> DEBUG_MAIN_ACTIVITY = debug(false) ? OpenSourceLicensesActivity.class : null;
-    public static final boolean DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY = debug(false);
+    public static final boolean DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY = false;
 
     public static boolean debug(boolean b) {
         return (DEBUG && b);
@@ -138,7 +138,7 @@ public class App extends Application {
             DebugUtil.sleep(DEBUG_APP_START_SLEEP);
 
             logsFile = new File(getExternalCacheDir(), "latest.log");
-            final FixResult fixResult = getDataFixer().fixToCurrentVersion();
+            final FixResult fixResult = Logger.dur("App", "[DataFixer] fixToCurrentVersion", () -> getDataFixer().fixToCurrentVersion());
 
             registryNotificationsChannels();
 
@@ -169,6 +169,18 @@ public class App extends Application {
         tickThread.free();
 
         TimeUtil.SIMPLE_DATE_FORMAT.free();
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        Logger.i("App", "onTerminate.");
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        Logger.i("App", "onTrimMemory. level="+level);
     }
 
     public boolean isPinCodeNeed() {
