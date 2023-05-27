@@ -66,6 +66,7 @@ public class DataFixer {
 
         Logger.i(TAG, "Fix done! Current dataVersion = " + dataVersion);
         if (isUpdated) {
+            Logger.i(TAG, "isUpdated = TRUE!\nlogs: " + logs);
             File logFile = new File(context.getExternalCacheDir(), "data-fixer/logs/" + System.currentTimeMillis() + ".txt");
             FileUtil.setText(logFile, logs.toString());
             return new FixResult(dataVersion, logFile, logs.toString()).versionFileExist(isVersionFileExist).versionFileOutdated(isVersionFileOutdated);
