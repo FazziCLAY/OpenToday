@@ -65,7 +65,7 @@ public class Telemetry {
 
     public void send(LPacket lPacket) {
         if (!isEnabled) return;
-        Logger.d(TAG, "send()");
+        Logger.d(TAG, "send(): " + lPacket);
         if (lPacket.isDelay() && !NO_DELAY) {
             long last = getLastSend(lPacket.getClass().getName());
             long curr = System.currentTimeMillis();
