@@ -20,6 +20,7 @@ import com.fazziclay.opentoday.app.items.tick.ItemsTickReceiver
 import com.fazziclay.opentoday.databinding.ActivityMainBinding
 import com.fazziclay.opentoday.databinding.NotificationDebugappBinding
 import com.fazziclay.opentoday.databinding.NotificationUpdateAvailableBinding
+import com.fazziclay.opentoday.gui.ActivitySettings
 import com.fazziclay.opentoday.gui.EnumsRegistry
 import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment
@@ -45,7 +46,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var currentDateHandler: Handler
     private lateinit var currentDateRunnable: Runnable
     private lateinit var currentDateCalendar: GregorianCalendar
-    private var activitySettings: ActivitySettings = ActivitySettings().setClockVisible(true).setNotificationsVisible(true)
+    private var activitySettings: ActivitySettings = ActivitySettings()
+        .setClockVisible(true).setNotificationsVisible(true)
     private var debugView = false
     private var debugHandler: Handler? = null
     private lateinit var debugRunnable: Runnable

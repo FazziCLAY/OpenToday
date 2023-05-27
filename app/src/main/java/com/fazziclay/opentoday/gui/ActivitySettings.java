@@ -1,4 +1,4 @@
-package com.fazziclay.opentoday.app;
+package com.fazziclay.opentoday.gui;
 
 public class ActivitySettings {
     private boolean clockVisible = true;
