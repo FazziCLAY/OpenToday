@@ -7,41 +7,33 @@
     android:paddingEnd="1sp"
     android:backgroundTint="?attr/item_filterGroup_backgroundColor">
 
-    <RelativeLayout
-        android:id="@+id/groupingTitleAndEd"
-        android:orientation="horizontal"
+    <TextView
+        android:id="@+id/title"
+        tools:text="Filter Group 1111111 2222222\n33333"
+        android:textSize="19sp"
+        android:paddingLeft="5sp"
+        android:layout_alignBaseline="@id/externalEditor"
+        android:textColor="?attr/item_filterGroup_textColor"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_toStartOf="@id/externalEditor"
+        android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/title"
-            tools:text="Filter Group 1111111 2222222 33333"
-            android:textSize="19sp"
-            android:paddingLeft="5sp"
-            android:layout_alignBaseline="@id/externalEditor"
-            android:textColor="?attr/item_filterGroup_textColor"
-            android:layout_width="match_parent"
-            android:layout_toStartOf="@id/externalEditor"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/externalEditor"
-            android:layout_width="53sp"
-            android:layout_height="35sp"
-            android:layout_marginStart="2sp"
-            android:gravity="center"
-            android:layout_alignParentEnd="true"
-            android:text="Ed"
-            android:textSize="13sp"
-            tools:ignore="HardcodedText" />
-
-    </RelativeLayout>
+    <Button
+        android:id="@+id/externalEditor"
+        android:layout_width="53sp"
+        android:layout_height="35sp"
+        android:layout_marginStart="2sp"
+        android:gravity="center"
+        android:layout_alignParentEnd="true"
+        android:text="Ed"
+        android:textSize="13sp"
+        tools:ignore="HardcodedText" />
 
     <LinearLayout
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/groupingTitleAndEd"
+        android:layout_below="@id/title"
         android:paddingLeft="3sp"
         android:orientation="vertical"
         android:paddingRight="2sp" />
