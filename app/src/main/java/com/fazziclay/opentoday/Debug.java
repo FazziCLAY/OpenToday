@@ -11,12 +11,12 @@ public class Debug {
     public static final boolean CUSTOM_ITEMSTABINCLUDE_BACKGROUND = App.debug(false);
     public static final boolean CUSTOM_MAINACTIVITY_BACKGROUND = App.debug(false);
 
-    private static final int DEF = -1;
+    public static final int DEF = -1;
 
     public static int latestTickDuration = DEF;
+    public static int latestPersonalTickDuration = DEF;
     public static long latestSave = DEF;
     public static int latestSaveRequestsCount = DEF;
-    public static int latestPersonalTickDuration = DEF;
     public static long appStartupTime = DEF;
 
     @NonNull
