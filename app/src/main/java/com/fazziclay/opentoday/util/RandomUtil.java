@@ -23,4 +23,8 @@ public class RandomUtil {
     public static int nextInt(int bound) {
         return getRandom().nextInt(bound);
     }
+
+    public static boolean nextBoolean() {
+        return getRandom().nextBoolean();
+    }
 }

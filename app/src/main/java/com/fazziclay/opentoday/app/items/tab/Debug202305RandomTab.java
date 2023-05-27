@@ -12,9 +12,9 @@ import com.fazziclay.opentoday.app.items.item.ItemType;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
+import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 
-import java.util.Random;
 import java.util.UUID;
 
 public class Debug202305RandomTab extends Tab implements Readonly {
@@ -34,7 +34,6 @@ public class Debug202305RandomTab extends Tab implements Readonly {
         }
     };
 
-    private final CallbackStorage<OnItemsStorageUpdate> callbacks = new CallbackStorage<>();
     private final SimpleItemsStorage itemsStorage = new SimpleItemsStorage() {
         @Override
         public void save() {
@@ -92,27 +91,17 @@ public class Debug202305RandomTab extends Tab implements Readonly {
 
     @Override
     public void tick(TickSession tickSession) {
-        itemsStorage.tick(tickSession);
-        int i = 0;
-        while (i < 4) {
-            try {
-                tick111(tickSession);
-                Thread.sleep(100);
-            } catch (Exception e) {
-
-            }
-            i++;
-        }
+        tick111();
     }
 
-    public void tick111(TickSession tickSession) {
-        Random random = new Random();
-        byte mode = (byte) (random.nextBoolean() ? 0 : 1); // 0 remove;  1 add
+    public void tick111() {
+        byte mode = (byte) (RandomUtil.nextBoolean() ? 0 : 1); // 0 remove;  1 add
+        if (isEmpty()) mode = 1;
 
         if (mode == 0) {
-            itemsStorage.deleteItem(itemsStorage.getAllItems()[random.nextInt(size())]);
+            itemsStorage.deleteItem(itemsStorage.getAllItems()[RandomUtil.nextInt(size())]);
         } else {
-            itemsStorage.addItem(ItemsRegistry.REGISTRY.get(ItemType.values()[random.nextInt(ItemType.values().length)]).create());
+            itemsStorage.addItem(ItemsRegistry.REGISTRY.get(ItemType.values()[RandomUtil.nextInt(ItemType.values().length)]).create());
         }
     }
 

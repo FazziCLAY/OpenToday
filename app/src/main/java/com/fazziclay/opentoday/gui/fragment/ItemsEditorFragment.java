@@ -3,7 +3,6 @@ package com.fazziclay.opentoday.gui.fragment;
 import static com.fazziclay.opentoday.util.InlineUtil.nullStat;
 
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -168,15 +167,19 @@ public class ItemsEditorFragment extends Fragment {
         // Empty plug
         updateNotFoundState(true, itemsStorage.isEmpty());
         onItemStorageChangeCallback = new OnItemsStorageUpdate() {
+            private void onUiThread(Runnable o) {
+                activity.runOnUiThread(o);
+            }
+
             @Override
             public Status onAdded(Item item, int position) {
-                updateNotFoundState(false, false);
+                onUiThread(() -> updateNotFoundState(false, false));
                 return Status.NONE;
             }
 
             @Override
             public Status onPostDeleted(Item item, int position) {
-                updateNotFoundState(false, itemsStorage.isEmpty());
+                onUiThread(() -> updateNotFoundState(false, itemsStorage.isEmpty()));
                 return Status.NONE;
             }
         };
