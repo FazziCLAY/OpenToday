@@ -240,8 +240,8 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     }
 
     private View addEditModule(BaseEditUiModule editUiModule) {
-        editUiModule.setup(this.item, requireActivity(), null);
         editUiModule.setOnStartEditListener(() -> unsavedChanges = true);
+        editUiModule.setup(this.item, requireActivity(), null);
         editModules.add(editUiModule);
 
         View view = editUiModule.getView();
@@ -588,7 +588,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.clickableUrls.setChecked(longTextItem.isLongTextClickableUrls());
 
             // On edit start
-            MinBaseAdapter.after(binding.text, onEditStart::run);
+            MinBaseAdapter.after(binding.text, onEditStart);
             binding.defaultTextColor.setOnClickListener(v -> {
                 updateTextColorIndicator(activity);
                 onEditStart.run();
