@@ -19,6 +19,14 @@ public class CherryOrchard {
         this.json = json;
     }
 
+    public static long[] parseLongArray(CherryOrchard orchard, long[] def) {
+        if (orchard == null) return def;
+
+        long[] result = new long[orchard.length()];
+        orchard.forEachLong((i, value) -> result[i] = value);
+        return result;
+    }
+
     public JSONArray toJSONArray() {
         return json;
     }
@@ -47,7 +55,15 @@ public class CherryOrchard {
         try {
             return json.getString(i);
         } catch (Exception e) {
-            throw new CherryException("Exception while getCherryAt", e);
+            throw new CherryException("Exception while getStringAt", e);
+        }
+    }
+
+    private long getLongAt(int i) {
+        try {
+            return json.getLong(i);
+        } catch (Exception e) {
+            throw new CherryException("Exception while getLongAt", e);
         }
     }
 
@@ -57,16 +73,29 @@ public class CherryOrchard {
         return "CherryOrchard" + json.toString();
     }
 
-    public void forEachCherry(CherryConsumer cherryConsumer) {
+    public void forEachLong(LongConsumer consumer) {
         // make reverse loop
         int i = 0;
         while (i < length()) {
-            cherryConsumer.consume(getCherryAt(i));
+            consumer.consume(i, getLongAt(i));
+            i++;
+        }
+    }
+
+    public void forEachCherry(CherryConsumer consumer) {
+        // make reverse loop
+        int i = 0;
+        while (i < length()) {
+            consumer.consume(i, getCherryAt(i));
             i++;
         }
     }
 
     public interface CherryConsumer {
-        void consume(Cherry cherry);
+        void consume(int index, Cherry cherry);
+    }
+
+    public interface LongConsumer {
+        void consume(int index, long value);
     }
 }

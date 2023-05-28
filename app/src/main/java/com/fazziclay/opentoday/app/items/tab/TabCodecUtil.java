@@ -30,7 +30,7 @@ public class TabCodecUtil {
     @NonNull
     public static List<Tab> importTabList(@NonNull final CherryOrchard orchard) {
         final List<Tab> ret = new ArrayList<>();
-        orchard.forEachCherry(cherry -> ret.add(importTab(cherry)));
+        orchard.forEachCherry((_ignore, cherry) -> ret.add(importTab(cherry)));
         return ret;
     }
 

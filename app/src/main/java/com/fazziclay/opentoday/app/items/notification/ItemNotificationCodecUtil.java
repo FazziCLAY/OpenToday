@@ -11,7 +11,7 @@ public class ItemNotificationCodecUtil {
     public static List<ItemNotification> importNotificationList(CherryOrchard orchard) {
         final List<ItemNotification> result = new ArrayList<>();
 
-        orchard.forEachCherry(cherry -> {
+        orchard.forEachCherry((_ignore, cherry) -> {
             final String type = cherry.getString(KEY_TYPE);
             final ItemNotificationCodec codec = ItemNotificationsRegistry.REGISTRY.getByStringType(type).getCodec();
             result.add(codec.importNotification(cherry));
