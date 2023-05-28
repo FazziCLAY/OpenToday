@@ -350,4 +350,14 @@
     <string name="dialogItem_module_longtext_textColor_dialog_cancel">Отмена</string>
     <string name="dialogItem_module_longtext_textColor_dialog_apply">Применить</string>
     <string name="toolbar_tabs_edit_disableTick">Отключить тик</string>
+
+    <string name="item_debugTickCounter_description">Отладочный айтем.\n\nКаждый тик он прибавляет к своему счётчику +1 и вызывает сигнал сохранения.</string>
+    <string name="item_text_description">Простая текстовая заметка. В нем есть сам текст, а также цвет текста, следует ли его форматировать и выделять ли ссылки.</string>
+    <string name="item_longTextItem_description">Длинный текст является дочерним айтемом от Текста. Имеет дополнительный текст с возможностью изменения размера.</string>
+    <string name="item_checkbox_description">Простая галочка. Она подходит для составления списков, задач и так далее.</string>
+    <string name="item_checkboxDayRepeatable_description">Ежедневная галочка. Является дочерним айтемом от Галочки, но каждый день сбрасывает своё состояние к заданному.</string>
+    <string name="item_counter_description">Счётчик. Имеет текущее значение и шаг изменения для кнопок (+) и (-).</string>
+    <string name="item_cycleList_description">Циклический список. Это контейнер для других предметов. Снаружи отображается только текущий.</string>
+    <string name="item_group_description">Группа. Это контейнер для других предметов. Снаружи отображается его содержимое, если группа не свернута.</string>
+    <string name="item_filterGroup_description">Группа с фильтрами для каждого айтема внутри.\nЭти фильтры определяют, показывать ли внутренний элемент снаружи или нет.</string>
 </resources>

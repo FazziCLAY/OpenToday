@@ -16,11 +16,18 @@
         tools:ignore="HardcodedText"
         style="@style/Theme.OpenToday.Toolbar.Section.Button.Items.ItemRow.AddOnly" />
 
+    <Button
+        android:id="@+id/description"
+        android:text="\?"
+        android:layout_toEndOf="@id/add"
+        tools:ignore="HardcodedText"
+        style="@style/Theme.OpenToday.Toolbar.Section.Button.Items.ItemRow.Description" />
+
     <TextView
         android:id="@+id/name"
         tools:text="Checkbox"
-        android:layout_toEndOf="@id/add"
-        android:layout_alignBaseline="@id/create"
+        android:layout_toEndOf="@id/description"
+        android:layout_alignBaseline="@id/description"
         style="@style/Theme.OpenToday.Toolbar.Section.Text.Items.ItemRow" />
 
 </RelativeLayout>

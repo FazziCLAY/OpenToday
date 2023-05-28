@@ -352,4 +352,14 @@
     <string name="dialogItem_module_longtext_textColor_dialog_cancel">Cancel</string>
     <string name="dialogItem_module_longtext_textColor_dialog_apply">Apply</string>
     <string name="toolbar_tabs_edit_disableTick">Disable tick</string>
+    <string name="unknown" translatable="false">Unknown</string>
+    <string name="item_debugTickCounter_description">Debugging item.\n\nHe adds +1 to his counter every tick and triggers a save signal.</string>
+    <string name="item_text_description">A simple text note. It has the text itself, as well as the color of the text, whether to format it, and whether to highlight links.</string>
+    <string name="item_longTextItem_description">The long text is a child item from the Text. It has additional text with the possibility of resizing.</string>
+    <string name="item_checkbox_description">A simple check mark. It is suitable for making lists, tasks, and so on.</string>
+    <string name="item_checkboxDayRepeatable_description">Daily check mark. It is a child item from the Check Mark, but resets its state to the set one every day.</string>
+    <string name="item_counter_description">Counter. Has the current value and the change step for the (+) and (-) buttons.</string>
+    <string name="item_cycleList_description">A cyclical list. It is a container for other items. The outside shows only the current one.</string>
+    <string name="item_group_description">Group. It is a container for other items. The outside shows its contents if it is not minimized.</string>
+    <string name="item_filterGroup_description">A group with filters for each item inside.\nThese filters determine whether to show the internal item outside or not.</string>
 </resources>

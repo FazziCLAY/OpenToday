@@ -100,10 +100,13 @@
         <item name="android:backgroundTint">#BAFFFFFF</item>
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Button.Items.ItemRow.AddAndEdit" parent="OpenToday.Base.Toolbar.Section.Button.Items.ItemRow">
-        <item name="android:backgroundTint">#AA1FA800</item>
+        <item name="android:backgroundTint">#1FA800</item>
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Button.Items.ItemRow.AddOnly" parent="OpenToday.Base.Toolbar.Section.Button.Items.ItemRow">
-        <item name="android:backgroundTint">#AA0043C0</item>
+        <item name="android:backgroundTint">#0043C0</item>
+    </style>
+    <style name="Theme.OpenToday.Toolbar.Section.Button.Items.ItemRow.Description" parent="OpenToday.Base.Toolbar.Section.Button.Items.ItemRow">
+        <item name="android:backgroundTint">#DDC70BE0</item>
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Text.Items.ItemRow" parent="OpenToday.Base.Toolbar.Section.Text.Items.ItemRow">
         <item name="android:textColor">#000000</item>

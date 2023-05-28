@@ -491,6 +491,7 @@ public class AppToolbar {
         private final TextView name;
         private final Button create;
         private final Button add;
+        private final Button description;
 
         public H(ViewGroup parent) {
             super(new FrameLayout(activity));
@@ -498,6 +499,7 @@ public class AppToolbar {
             this.name = b.name;
             this.create = b.create;
             this.add = b.add;
+            this.description = b.description;
             ((FrameLayout) itemView).addView(b.getRoot());
         }
 
@@ -533,6 +535,7 @@ public class AppToolbar {
                     holder.name.setText(EnumsRegistry.INSTANCE.nameResId(itemInfo.getItemType()));
                     viewClick(holder.create, () -> rootNavigationHost.navigate(ItemEditorFragment.create(ItemsUtils.getId(itemsStorage), itemInfo.getClassType()), true));
                     viewClick(holder.add, () -> itemsStorage.addItem(ItemsRegistry.REGISTRY.get(itemInfo.getClassType()).create()));
+                    viewClick(holder.description, () -> showItemDescriptionDialog(itemInfo));
                 } else {
                     holder.clear();
                 }
@@ -554,6 +557,14 @@ public class AppToolbar {
             settingsManager.setItemOnLeftAction(itemOnLeftAction);
             settingsManager.save();
         }, activity.getString(R.string.toolbar_more_items_action_leftSwipe)).show());
+    }
+
+    private void showItemDescriptionDialog(ItemsRegistry.ItemInfo itemInfo) {
+        new AlertDialog.Builder(activity)
+                .setTitle(EnumsRegistry.INSTANCE.nameResId(itemInfo.getItemType()))
+                .setMessage(EnumsRegistry.INSTANCE.itemDescriptionResId(itemInfo.getItemType()))
+                .setPositiveButton(R.string.abc_ok, null)
+                .show();
     }
 
     private void onOpenTodayClick() {

@@ -32,15 +32,15 @@ object EnumsRegistry {
         EnumInfo(FiltersRegistry.FilterType.LOGIC_CONTAINER,        R.string.filterRegistry_filterType_LOGIC_CONTAINER),
         EnumInfo(FiltersRegistry.FilterType.ITEM_STAT,              R.string.filterRegistry_filterType_ITEM_STAT),
 
-        EnumInfo(ItemType.DEBUG_TICK_COUNTER,            R.string.item_debugTickCounter),
-        EnumInfo(ItemType.TEXT,                          R.string.item_text),
-        EnumInfo(ItemType.LONG_TEXT,                     R.string.item_longTextItem),
-        EnumInfo(ItemType.CHECKBOX,                      R.string.item_checkbox),
-        EnumInfo(ItemType.CHECKBOX_DAY_REPEATABLE,       R.string.item_checkboxDayRepeatable),
-        EnumInfo(ItemType.COUNTER,                       R.string.item_counter),
-        EnumInfo(ItemType.CYCLE_LIST,                    R.string.item_cycleList),
-        EnumInfo(ItemType.GROUP,                         R.string.item_group),
-        EnumInfo(ItemType.FILTER_GROUP,                  R.string.item_filterGroup),
+        EnumInfo(ItemType.DEBUG_TICK_COUNTER,            R.string.item_debugTickCounter).setItemDescription(R.string.item_debugTickCounter_description),
+        EnumInfo(ItemType.TEXT,                          R.string.item_text).setItemDescription(R.string.item_text_description),
+        EnumInfo(ItemType.LONG_TEXT,                     R.string.item_longTextItem).setItemDescription(R.string.item_longTextItem_description),
+        EnumInfo(ItemType.CHECKBOX,                      R.string.item_checkbox).setItemDescription(R.string.item_checkbox_description),
+        EnumInfo(ItemType.CHECKBOX_DAY_REPEATABLE,       R.string.item_checkboxDayRepeatable).setItemDescription(R.string.item_checkboxDayRepeatable_description),
+        EnumInfo(ItemType.COUNTER,                       R.string.item_counter).setItemDescription(R.string.item_counter_description),
+        EnumInfo(ItemType.CYCLE_LIST,                    R.string.item_cycleList).setItemDescription(R.string.item_cycleList_description),
+        EnumInfo(ItemType.GROUP,                         R.string.item_group).setItemDescription(R.string.item_group_description),
+        EnumInfo(ItemType.FILTER_GROUP,                  R.string.item_filterGroup).setItemDescription(R.string.item_filterGroup_description),
 
         EnumInfo(FilterGroupItem.TickBehavior.ALL,           R.string.filter_group_item_filter_tickBehavoir_ALL),
         EnumInfo(FilterGroupItem.TickBehavior.NOTHING,       R.string.filter_group_item_filter_tickBehavoir_NOTHING),
@@ -82,11 +82,22 @@ object EnumsRegistry {
     }
 
     @StringRes
+    fun itemDescriptionResId(enum: Enum<*>): Int {
+        return getInfo(enum).itemDescriptionResId
+    }
+
+    @StringRes
     fun nameResId(e: Enum<*>): Int {
         return getInfo(e).nameResId
     }
-
     fun name(e: Enum<*>, context: Context): String = context.getString(nameResId(e))
 
-    class EnumInfo(var e: Enum<*>, var nameResId: Int)
+    class EnumInfo(var e: Enum<*>, var nameResId: Int) {
+        var itemDescriptionResId: Int = R.string.unknown
+
+        fun setItemDescription(i: Int): EnumInfo {
+            itemDescriptionResId = i
+            return this
+        }
+    }
 }
