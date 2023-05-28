@@ -10,6 +10,7 @@ import com.fazziclay.opentoday.app.App;
 public class Debug {
     public static final boolean CUSTOM_ITEMSTABINCLUDE_BACKGROUND = App.debug(false);
     public static final boolean CUSTOM_MAINACTIVITY_BACKGROUND = App.debug(false);
+    public static final boolean SHOW_PATH_TO_ITEM_ON_ITEMTEXT = App.debug(false);
 
     public static final int DEF = -1;
 

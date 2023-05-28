@@ -20,6 +20,8 @@ import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.annotation.Setter;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -205,5 +207,11 @@ public abstract class Item implements Unique {
             return controller.getParentItemsStorage(this);
         }
         return null;
+    }
+
+    @NotNull
+    @Override
+    public String toString() {
+        return getClass().getSimpleName()+"@"+getId()+hashCode() +"["+getText()+"]";
     }
 }

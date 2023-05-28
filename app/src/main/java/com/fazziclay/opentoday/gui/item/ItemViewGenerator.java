@@ -23,9 +23,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 
+import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemManager;
+import com.fazziclay.opentoday.app.items.ItemsUtils;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
@@ -53,6 +55,8 @@ import com.fazziclay.opentoday.util.DebugUtil;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.annotation.ForItem;
 import com.fazziclay.opentoday.util.callback.Status;
+
+import java.util.Arrays;
 
 public class ItemViewGenerator {
     @NonNull private final Activity activity;
@@ -308,6 +312,14 @@ public class ItemViewGenerator {
 
     //
     private void applyTextItemToTextView(final TextItem item, final TextView view) {
+        if (Debug.SHOW_PATH_TO_ITEM_ON_ITEMTEXT) {
+            view.setText(Arrays.toString(ItemsUtils.getPathToItem(item)));
+            view.setTextSize(15);
+            view.setTextColor(Color.RED);
+            view.setBackgroundColor(Color.BLACK);
+            return;
+        }
+
         final int textColor = item.isCustomTextColor() ? item.getTextColor() : ResUtil.getAttrColor(activity, R.attr.item_textColor);
         final SpannableString visibleText = item.isParagraphColorize() ? ColorUtil.colorize(item.getText(), textColor, Color.TRANSPARENT, Typeface.NORMAL) : SpannableString.valueOf(item.getText());
         final int MAX = 60;

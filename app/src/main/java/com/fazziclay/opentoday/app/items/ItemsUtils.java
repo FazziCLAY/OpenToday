@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import kotlin.collections.ArraysKt;
+
 public class ItemsUtils {
     /**
      * <h1>WARNING! Coping include ID!!!!!</h1>
@@ -23,13 +25,29 @@ public class ItemsUtils {
         return ItemCodecUtil.importItemList(ItemCodecUtil.exportItemList(items));
     }
 
+    public static ItemsStorage[] getPathToItem(Item item) {
+        if (!item.isAttached()) throw new IllegalArgumentException("Item not attached.");
+        List<ItemsStorage> path = new ArrayList<>();
+        ItemsStorage temp = item.getParentItemsStorage();
+        while (true) {
+            path.add(temp);
+            if (temp instanceof Item i) {
+                temp = i.getParentItemsStorage();
+            } else {
+                break;
+            }
+        }
+        ItemsStorage[] result = path.toArray(new ItemsStorage[0]);
+        ArraysKt.reverse(result);
+        return result;
+    }
+
     @NonNull
     public static Item[] getAllItemsInTree(@NonNull Item[] list) {
         List<Item> ret = new ArrayList<>();
         for (Item item : list) {
             ret.add(item);
-            if (item instanceof ContainerItem) {
-                ContainerItem containerItem = (ContainerItem) item;
+            if (item instanceof ContainerItem containerItem) {
                 Item[] r = getAllItemsInTree(containerItem.getAllItems());
                 ret.addAll(Arrays.asList(r));
             }
@@ -76,8 +94,7 @@ public class ItemsUtils {
     }
 
     public static UUID getId(Object o) {
-        if (o instanceof Unique) {
-            Unique id = (Unique) o;
+        if (o instanceof Unique id) {
             return id.getId();
         }
         return null;
