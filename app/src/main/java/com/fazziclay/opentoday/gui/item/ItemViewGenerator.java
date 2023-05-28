@@ -321,7 +321,7 @@ public class ItemViewGenerator {
         }
 
         final int textColor = item.isCustomTextColor() ? item.getTextColor() : ResUtil.getAttrColor(activity, R.attr.item_textColor);
-        final SpannableString visibleText = item.isParagraphColorize() ? ColorUtil.colorize(item.getText(), textColor, Color.TRANSPARENT, Typeface.NORMAL) : SpannableString.valueOf(item.getText());
+        final SpannableString visibleText = item.isParagraphColorize() ? colorize(item.getText(), textColor) : SpannableString.valueOf(item.getText());
         final int MAX = 60;
         if (!previewMode && item.isMinimize()) {
             final String text = visibleText.toString().split("\n")[0];
@@ -339,9 +339,13 @@ public class ItemViewGenerator {
         if (item.isClickableUrls()) Linkify.addLinks(view, Linkify.ALL);
     }
 
+    private SpannableString colorize(String text, int textColor) {
+        return ColorUtil.colorize(text, textColor, Color.TRANSPARENT, Typeface.NORMAL);
+    }
+
     private void applyLongTextItemToLongTextView(final LongTextItem item, final TextView view) {
         final int longTextColor = item.isCustomLongTextColor() ? item.getLongTextColor() : ResUtil.getAttrColor(activity, R.attr.item_textColor);
-        final SpannableString visibleText = item.isParagraphColorize() ? ColorUtil.colorize(item.getLongText(), longTextColor, Color.TRANSPARENT, Typeface.NORMAL) : SpannableString.valueOf(item.getLongText());
+        final SpannableString visibleText = item.isParagraphColorize() ? colorize(item.getLongText(), longTextColor) : SpannableString.valueOf(item.getLongText());
         final int MAX = 150;
         if (!previewMode && item.isMinimize()) {
             if (visibleText.length() > MAX) {
