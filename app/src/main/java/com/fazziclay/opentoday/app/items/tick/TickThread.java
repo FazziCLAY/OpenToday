@@ -19,13 +19,14 @@ import java.util.UUID;
 
 public class TickThread extends Thread {
     private static final String TAG = "TickThread";
-    private static final boolean LOG = App.debug(false);
-
+    private static final boolean LOG = App.debug(true);
+    private static final boolean LOG_ONLY_PERSONAL = true;
 
     private boolean enabled = true;
     private final ItemManager itemManager;
     private final TickSession defaultTickSession;
     private final List<UUID> personals = new ArrayList<>();
+    private boolean currentlyExecutingTickPersonal;
     private int requests = 0;
     private boolean requested = false;
     private boolean personalOnly = true;
@@ -42,7 +43,13 @@ public class TickThread extends Thread {
 
     private void log(String s) {
         if (App.LOG && LOG) {
-            Logger.d(TAG, s);
+            if (LOG_ONLY_PERSONAL) {
+                if (currentlyExecutingTickPersonal) {
+                    Logger.d(TAG, s);
+                }
+            } else {
+                Logger.d(TAG, s);
+            }
         }
     }
 
@@ -95,6 +102,7 @@ public class TickThread extends Thread {
     }
 
     private void tickPersonal() {
+        currentlyExecutingTickPersonal = true;
         if (personalUsePaths) {
             log("Tick personal(paths): "+ personals);
             for (UUID personal : personals) {
@@ -114,6 +122,7 @@ public class TickThread extends Thread {
             log("Tick personal(no-paths): "+ personals);
             itemManager.tick(defaultTickSession, personals);
         }
+        currentlyExecutingTickPersonal = false;
     }
 
     private void recycle(boolean personal) {
