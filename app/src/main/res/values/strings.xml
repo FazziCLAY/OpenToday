@@ -345,4 +345,7 @@
     <string name="dialog_editItemFilter_activeItems">Active items</string>
     <string name="dialog_itemNotification_empty_title">No notifications here</string>
     <string name="dialog_itemNotification_empty_description">Press (+) button for add item notification</string>
+    <string name="title_from_item_text">Title from item text</string>
+    <string name="text_from_item_text">Text from item text</string>
+    <string name="dialog_itemNotification_vibrate">Vibrate</string>
 </resources>

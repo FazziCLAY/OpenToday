@@ -9,7 +9,6 @@ import android.app.TimePickerDialog;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -21,6 +20,7 @@ import com.fazziclay.opentoday.databinding.DialogItemNotificationBinding;
 import com.fazziclay.opentoday.databinding.DialogItemNotificationsEditorBinding;
 import com.fazziclay.opentoday.databinding.ItemNotificationBinding;
 import com.fazziclay.opentoday.util.MinBaseAdapter;
+import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.time.ConvertMode;
 import com.fazziclay.opentoday.util.time.HumanTimeType;
 import com.fazziclay.opentoday.util.time.TimeUtil;
@@ -82,26 +82,43 @@ public class DialogItemNotificationsEditor {
                     DialogItemNotificationBinding l = DialogItemNotificationBinding.inflate(activity.getLayoutInflater());
 
                     DayItemNotification d = (DayItemNotification) itemNotification;
+                    l.vibrate.setChecked(d.isVibrate());
+                    l.vibrate.setOnClickListener(_ignore -> d.setVibrate(l.vibrate.isChecked()));
 
                     l.notificationId.setText(String.valueOf(d.getNotificationId()));
+                    MinBaseAdapter.after(l.notificationId, () -> {
+                        try {
+                            int i = Integer.parseInt(l.notificationId.getText().toString());
+                            d.setNotificationId(i);
+                        } catch (Exception ignored) {
+                            d.setNotificationId(0);
+                        }
+                    });
                     l.text.setText(d.getNotifyText());
                     l.textFromItem.setChecked(d.isNotifyTextFromItemText());
                     l.textFromItem.setOnClickListener(vvv -> {
                         l.text.setEnabled(!l.textFromItem.isChecked());
+                        d.setNotifyTextFromItemText(l.textFromItem.isChecked());
                     });
                     l.text.setEnabled(!l.textFromItem.isChecked());
+                    MinBaseAdapter.after(l.text, () -> d.setNotifyText(l.text.getText().toString()));
                     l.title.setText(d.getNotifyTitle());
                     l.titleFromItem.setChecked(d.isNotifyTitleFromItemText());
                     l.titleFromItem.setOnClickListener(vvv -> {
                         l.title.setEnabled(!l.titleFromItem.isChecked());
+                        d.setNotifyTitleFromItemText(l.titleFromItem.isChecked());
                     });
                     l.title.setEnabled(!l.titleFromItem.isChecked());
-                    l.notifySubText.setText(d.getNotifySubText());
-                    l.test.setOnClickListener(v2132321 -> {
+                    MinBaseAdapter.after(l.title, () -> d.setNotifyTitle(l.title.getText().toString()));
 
+                    l.notifySubText.setText(d.getNotifySubText());
+                    MinBaseAdapter.after(l.notifySubText, () -> d.setNotifySubText(l.notifySubText.getText().toString()));
+
+                    l.test.setOnClickListener(v2132321 -> {
+                        d.sendNotify(activity, item);
                     });
                     l.time.setText(activity.getString(R.string.dialog_itemNotification_time, TimeUtil.convertToHumanTime(d.getTime(), ConvertMode.HHMM)));
-                    l.time.setOnClickListener(v421213 -> new TimePickerDialog(activity, (view, hourOfDay, minute) -> {
+                    l.time.setOnClickListener(_ignore -> new TimePickerDialog(activity, (view, hourOfDay, minute) -> {
                         d.setTime((hourOfDay * 60 * 60) + (minute * 60));
                         d.setLatestDayOfYear(0);
                         item.save();
@@ -110,19 +127,8 @@ public class DialogItemNotificationsEditor {
 
                     new AlertDialog.Builder(activity)
                             .setView(l.getRoot())
-                            .setPositiveButton(R.string.dialog_itemNotification_apply, (refre, werwer) -> {
-                                d.setNotifyTitle(l.title.getText().toString());
-                                d.setNotifyText(l.text.getText().toString());
-                                d.setNotifySubText(l.notifySubText.getText().toString());
-                                d.setNotifyTitleFromItemText(l.titleFromItem.isChecked());
-                                d.setNotifyTextFromItemText(l.textFromItem.isChecked());
-                                try {
-                                    int i = Integer.parseInt(l.notificationId.getText().toString());
-                                    d.setNotificationId(i);
-                                } catch (Exception e) {
-                                    Toast.makeText(activity, R.string.dialog_itemNotification_incorrectNotificationId, Toast.LENGTH_SHORT).show();
-                                }
-                                d.setLatestDayOfYear(0);
+                            .setPositiveButton(R.string.dialog_itemNotification_apply, (_refre, _werwer) -> {
+                                if (d.getTime() > TimeUtil.getDaySeconds()) d.setLatestDayOfYear(0);
                                 notifyDataSetChanged();
                                 item.save();
                             })
@@ -135,7 +141,9 @@ public class DialogItemNotificationsEditor {
         });
 
         binding.add.setOnClickListener(v -> {
-            item.getNotifications().add(new DayItemNotification());
+            DayItemNotification dayItemNotification = new DayItemNotification();
+            dayItemNotification.setNotificationId(RandomUtil.nextIntPositive());
+            item.getNotifications().add(dayItemNotification);
             item.save();
             updateEmptyView(item.getNotifications().isEmpty());
             ((BaseAdapter) binding.list.getAdapter()).notifyDataSetChanged();
