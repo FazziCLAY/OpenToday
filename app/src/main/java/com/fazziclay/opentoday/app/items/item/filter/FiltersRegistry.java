@@ -3,7 +3,7 @@ package com.fazziclay.opentoday.app.items.item.filter;
 public class FiltersRegistry {
     public static final FiltersRegistry REGISTRY = new FiltersRegistry();
 
-    private static final FilterInfo[] OBJECTS = new FilterInfo[]{
+    private static final FilterInfo[] FILTERS = new FilterInfo[]{
             new FilterInfo(DateItemFilter.class,           "DateItemFilter",           FilterType.DATE,             DateItemFilter.CODEC,              DateItemFilter::new),
             new FilterInfo(LogicContainerItemFilter.class, "LogicContainerItemFilter", FilterType.LOGIC_CONTAINER,  LogicContainerItemFilter.CODEC,    LogicContainerItemFilter::new),
             new FilterInfo(ItemStatItemFilter.class,       "ItemStatItemFilter",       FilterType.ITEM_STAT,        ItemStatItemFilter.CODEC,          ItemStatItemFilter::new),
@@ -12,22 +12,22 @@ public class FiltersRegistry {
     private FiltersRegistry() {}
 
     public FilterInfo[] getAllFilters() {
-        return OBJECTS.clone();
+        return FILTERS.clone();
     }
 
     public int count() {
-        return OBJECTS.length;
+        return FILTERS.length;
     }
 
     public FilterInfo getByClass(Class<? extends ItemFilter> c) {
-        for (FilterInfo info : OBJECTS) {
+        for (FilterInfo info : FILTERS) {
             if (info.clazz == c) return info;
         }
         return null;
     }
 
     public FilterInfo getByType(String c) {
-        for (FilterInfo info : OBJECTS) {
+        for (FilterInfo info : FILTERS) {
             if (info.stringType.equals(c)) return info;
         }
         return null;

@@ -13,7 +13,7 @@ import com.fazziclay.opentoday.app.items.item.filter.LogicContainerItemFilter
 
 // GUI-only
 object EnumsRegistry {
-    private val INFOS = arrayOf(
+    private val ENUMS = arrayOf(
         EnumInfo(LogicContainerItemFilter.LogicMode.AND,            R.string.logic_container_logicMode_AND),
         EnumInfo(LogicContainerItemFilter.LogicMode.OR,             R.string.logic_container_logicMode_OR),
         EnumInfo(SettingsManager.FirstTab.FIRST,                    R.string.settings_firstTab_first),
@@ -73,7 +73,7 @@ object EnumsRegistry {
     }
 
     private fun getInfo(e: Enum<*>): EnumInfo {
-        for (info in INFOS) {
+        for (info in ENUMS) {
             if (info.e === e) {
                 return info
             }

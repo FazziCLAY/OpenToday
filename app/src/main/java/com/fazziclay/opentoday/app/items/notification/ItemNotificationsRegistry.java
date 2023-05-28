@@ -3,12 +3,12 @@ package com.fazziclay.opentoday.app.items.notification;
 public class ItemNotificationsRegistry {
     public static final ItemNotificationsRegistry REGISTRY = new ItemNotificationsRegistry();
 
-    private static final ItemNotificationInfo[] INFOS = new ItemNotificationInfo[] {
+    private static final ItemNotificationInfo[] NOTIFICATIONS = new ItemNotificationInfo[] {
         new ItemNotificationInfo(DayItemNotification.class, "DayItemNotification", DayItemNotification.CODEC)
     };
 
     public ItemNotificationInfo[] getAllNotifications() {
-        return INFOS.clone();
+        return NOTIFICATIONS.clone();
     }
 
     public static class ItemNotificationInfo {
@@ -36,7 +36,7 @@ public class ItemNotificationsRegistry {
     }
 
     public ItemNotificationInfo getByStringType(String v) {
-        for (ItemNotificationInfo info : INFOS) {
+        for (ItemNotificationInfo info : NOTIFICATIONS) {
             if (info.stringType.equals(v)) {
                 return info;
             }
@@ -45,7 +45,7 @@ public class ItemNotificationsRegistry {
     }
 
     public ItemNotificationInfo getByClass(Class<? extends ItemNotification> v) {
-        for (ItemNotificationInfo info : INFOS) {
+        for (ItemNotificationInfo info : NOTIFICATIONS) {
             if (info.clazz == v) {
                 return info;
             }
