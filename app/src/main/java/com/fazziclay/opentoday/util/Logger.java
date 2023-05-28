@@ -55,8 +55,11 @@ public class Logger {
         if (app == null) return;
         final File file = app.getLogsFile();
         if (file == null) return;
-
-        FileUtil.addText(file, s);
+        if (file.length() < 1024*1024) {
+            FileUtil.addText(file, s);
+        } else {
+            FileUtil.setText(file, TimeUtil.getDebugDate(System.currentTimeMillis()) + " == LOG FILE SIZE > 1024*1024. RESETTING ==\n" + s);
+        }
     }
 
     public static void e(String tag, String m, Throwable e) {
