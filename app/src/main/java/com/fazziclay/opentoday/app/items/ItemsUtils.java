@@ -7,6 +7,8 @@ import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.ContainerItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemCodecUtil;
+import com.fazziclay.opentoday.app.items.tick.TickSession;
+import com.fazziclay.opentoday.app.items.tick.TickTarget;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 
 import java.util.ArrayList;
@@ -98,5 +100,21 @@ public class ItemsUtils {
             return id.getId();
         }
         return null;
+    }
+
+    public static void tickDayRepeatableCheckboxes(TickSession tickSession, Item[] items) {
+        tickSession.recycleSpecifiedTickTarget(TickTarget.DAY_REPEATABLE_CHECKBOX_UPDATE);
+
+        // NOTE: No use 'for-loop' (self-delete item in tick => ConcurrentModificationException)
+        int i = items.length - 1;
+        while (i >= 0) {
+            Item item = items[i];
+            if (item != null && item.isAttached() && tickSession.isAllowed(item)) {
+                item.tick(tickSession);
+            }
+            i--;
+        }
+
+        tickSession.recycleSpecifiedTickTarget();
     }
 }

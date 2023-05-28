@@ -332,6 +332,8 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
             i--;
         }
 
+        ItemsUtils.tickDayRepeatableCheckboxes(tickSession, getAllItems());
+
         recalculate(tickSession.getGregorianCalendar());
         updateStat();
     }

@@ -138,6 +138,7 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
                 if (item != c && tickSession.isAllowed(item)) item.tick(tickSession);
             }
         }
+        ItemsUtils.tickDayRepeatableCheckboxes(tickSession, getAllItems());
     }
 
     @Override

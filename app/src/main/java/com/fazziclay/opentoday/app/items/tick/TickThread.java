@@ -144,6 +144,7 @@ public class TickThread extends Thread {
         defaultTickSession.recyclePersonal(personal);
         defaultTickSession.recycleSaveNeeded();
         defaultTickSession.recycleWhitelist(false);
+        defaultTickSession.recycleSpecifiedTickTarget();
     }
 
     public void requestTick() {

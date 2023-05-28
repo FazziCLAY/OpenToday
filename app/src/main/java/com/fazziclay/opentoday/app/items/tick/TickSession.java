@@ -30,6 +30,7 @@ public class TickSession {
     private int dayTime;
     private boolean isPersonalTick;
     private boolean saveNeeded = false;
+    private TickTarget specifiedTickTarget = null;
     private final List<UUID> whitelist = new ArrayList<>();
     private boolean isWhitelist = false;
 
@@ -55,7 +56,8 @@ public class TickSession {
     }
 
     public boolean isTickTargetAllowed(TickTarget tickTarget) {
-        return true;
+        if (specifiedTickTarget == null) return true;
+        return tickTarget == specifiedTickTarget;
     }
 
     public GregorianCalendar getGregorianCalendar() {
@@ -128,5 +130,13 @@ public class TickSession {
     public void recycleWhitelist(boolean isWhitelist) {
         this.isWhitelist = isWhitelist;
         this.whitelist.clear();
+    }
+
+    public void recycleSpecifiedTickTarget(TickTarget t) {
+        this.specifiedTickTarget = t;
+    }
+
+    public void recycleSpecifiedTickTarget() {
+        this.specifiedTickTarget = null;
     }
 }
