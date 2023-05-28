@@ -14,6 +14,7 @@ import com.fazziclay.opentoday.app.items.notification.ItemNotificationCodecUtil;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationUtil;
 import com.fazziclay.opentoday.app.items.stat.ItemStat;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
+import com.fazziclay.opentoday.app.items.tick.TickTarget;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
@@ -153,9 +154,8 @@ public abstract class Item implements Unique {
 
     public void tick(TickSession tickSession) {
         if (!tickSession.isAllowed(this)) return;
-
-        ItemNotificationUtil.tick(tickSession, notifications, this);
-        itemCallbacks.run((callbackStorage, callback) -> callback.tick(Item.this));
+        if (tickSession.isTickTargetAllowed(TickTarget.ITEM_NOTIFICATIONS)) ItemNotificationUtil.tick(tickSession, notifications, this);
+        if (tickSession.isTickTargetAllowed(TickTarget.ITEM_CALLBACKS)) itemCallbacks.run((callbackStorage, callback) -> callback.tick(Item.this));
     }
 
     public Item regenerateId() {

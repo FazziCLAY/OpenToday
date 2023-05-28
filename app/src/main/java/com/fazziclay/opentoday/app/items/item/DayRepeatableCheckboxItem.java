@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
+import com.fazziclay.opentoday.app.items.tick.TickTarget;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
@@ -82,13 +83,15 @@ public class DayRepeatableCheckboxItem extends CheckboxItem {
         if (!tickSession.isAllowed(this)) return;
 
         super.tick(tickSession);
-        int dayOfYear = tickSession.getGregorianCalendar().get(Calendar.DAY_OF_YEAR);
-        if (dayOfYear != latestDayOfYear) {
-            latestDayOfYear = dayOfYear;
-            if (isChecked() != startValue) {
-                setChecked(startValue);
-                visibleChanged();
-                tickSession.saveNeeded();
+        if (tickSession.isTickTargetAllowed(TickTarget.DAY_REPEATABLE_CHECKBOX_UPDATE)) {
+            int dayOfYear = tickSession.getGregorianCalendar().get(Calendar.DAY_OF_YEAR);
+            if (dayOfYear != latestDayOfYear) {
+                latestDayOfYear = dayOfYear;
+                if (isChecked() != startValue) {
+                    setChecked(startValue);
+                    visibleChanged();
+                    tickSession.saveNeeded();
+                }
             }
         }
     }

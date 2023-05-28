@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
+import com.fazziclay.opentoday.app.items.tick.TickTarget;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
@@ -66,9 +67,11 @@ public class DebugTickCounterItem extends TextItem {
         if (!tickSession.isAllowed(this)) return;
 
         super.tick(tickSession);
-        counter++;
-        visibleChanged();
-        tickSession.saveNeeded();
+        if (tickSession.isTickTargetAllowed(TickTarget.DEBUG_TICK_COUNTER_UPDATE)) {
+            counter++;
+            visibleChanged();
+            tickSession.saveNeeded();
+        }
     }
 
     @Getter

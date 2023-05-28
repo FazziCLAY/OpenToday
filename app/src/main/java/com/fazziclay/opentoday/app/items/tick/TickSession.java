@@ -54,6 +54,10 @@ public class TickSession {
         return true;
     }
 
+    public boolean isTickTargetAllowed(TickTarget tickTarget) {
+        return true;
+    }
+
     public GregorianCalendar getGregorianCalendar() {
         return gregorianCalendar;
     }
