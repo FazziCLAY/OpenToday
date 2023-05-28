@@ -168,7 +168,8 @@ public class App extends Application {
         telemetry.free();
         tickThread.free();
 
-        TimeUtil.SIMPLE_DATE_FORMAT.free();
+        Debug.free();
+        TimeUtil.free();
     }
 
     @Override
@@ -181,6 +182,23 @@ public class App extends Application {
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
         Logger.i("App", "onTrimMemory. level="+level);
+
+        if (level >= TRIM_MEMORY_RUNNING_LOW) {
+            openSourceLicenses.free();
+            dataFixer.free();
+            colorHistoryManager.free();
+            telemetry.free();
+            pinCodeManager.free();
+            Debug.free();
+            TimeUtil.free();
+            clipboardManager.free();
+        }
+        if (level >= TRIM_MEMORY_COMPLETE) {
+            settingsManager.free();
+            itemManager.free();
+            tickThread.free();
+            selectionManager.free();
+        }
     }
 
     public boolean isPinCodeNeed() {

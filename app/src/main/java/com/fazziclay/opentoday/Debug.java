@@ -18,13 +18,21 @@ public class Debug {
     public static long latestSave = DEF;
     public static int latestSaveRequestsCount = DEF;
     public static long appStartupTime = DEF;
+    public static Object itemsStorageToolbarContext = DEF;
 
     @NonNull
     public static String getDebugInfoText() {
-        return String.format("[Tick] %sms; pers: %sms" + "\n" +
-                "[Save] %s ago; req=%s\nApp %sms",
+        return String.format("""
+                        [Tick] %sms; pers: %sms
+                        [Save] %s ago; req=%s
+                        [App] %sms
+                        [Toolbar] ctx=%s""",
 
-                latestTickDuration, latestPersonalTickDuration, ago(latestSave), latestSaveRequestsCount, appStartupTime);
+                latestTickDuration, latestPersonalTickDuration, ago(latestSave), latestSaveRequestsCount, appStartupTime, itemsStorageToolbarContext);
+    }
+
+    public static void free() {
+        itemsStorageToolbarContext = null;
     }
 
     public static long ago(long l) {

@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.FeatureFlag;
@@ -665,7 +666,7 @@ public class AppToolbar {
     }
 
     public void setItemStorage(ItemsStorage itemsStorage) {
-        this.itemsStorage = itemsStorage;
+        Debug.itemsStorageToolbarContext = this.itemsStorage = itemsStorage;
     }
 
     public void setOnMoreVisibleChangedListener(OnMoreVisibleChanged l) {

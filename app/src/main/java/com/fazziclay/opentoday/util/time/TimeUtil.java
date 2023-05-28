@@ -94,4 +94,8 @@ public class TimeUtil {
     public static String getDebugDate(long t) {
         return SIMPLE_DATE_FORMAT.get().format(t);
     }
+
+    public static void free() {
+        SIMPLE_DATE_FORMAT.free();
+    }
 }
