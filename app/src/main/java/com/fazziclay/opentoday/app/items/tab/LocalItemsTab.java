@@ -103,6 +103,8 @@ public class LocalItemsTab extends Tab {
 
     @Override
     public void tick(TickSession tickSession) {
+        if (!tickSession.isAllowed(this)) return;
+
         itemsStorage.tick(tickSession);
     }
 

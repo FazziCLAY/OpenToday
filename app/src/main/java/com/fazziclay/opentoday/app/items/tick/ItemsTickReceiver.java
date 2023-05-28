@@ -17,19 +17,22 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class ItemsTickReceiver extends BroadcastReceiver {
+    private static final String TAG = "ItemsTickReveiver";
     public static final String EXTRA_PERSONAL_TICK = "personalTick";
+    public static final String EXTRA_PERSONAL_TICK_MODE = "personalTickMode";
 
     public static Intent createIntent(Context context) {
         return new Intent(context, ItemsTickReceiver.class);
     }
 
-    public static Intent createIntent(Context context, UUID firstItem) {
-        return createIntent(context, new String[]{Objects.toString(firstItem)});
+    public static Intent createIntent(Context context, UUID firstItem, boolean usePaths) {
+        return createIntent(context, new String[]{Objects.toString(firstItem)}, usePaths);
     }
 
-    public static Intent createIntent(Context context, String[] array) {
+    public static Intent createIntent(Context context, String[] array, boolean usePaths) {
         return new Intent(context, ItemsTickReceiver.class)
-                .putExtra(EXTRA_PERSONAL_TICK, array);
+                .putExtra(EXTRA_PERSONAL_TICK, array)
+                .putExtra(EXTRA_PERSONAL_TICK_MODE, (usePaths ? PersonalTickMode.PERSONAL_AND_PATH : PersonalTickMode.PERSONAL_ONLY).name());
     }
 
     @Override
@@ -47,14 +50,21 @@ public class ItemsTickReceiver extends BroadcastReceiver {
 
         debugNotification(context);
 
-        boolean personalMode = (intent != null && (intent.getExtras() != null && intent.getExtras().containsKey(EXTRA_PERSONAL_TICK)));
-        if (personalMode) {
+        boolean isPersonalTick = (intent != null && (intent.getExtras() != null && intent.getExtras().containsKey(EXTRA_PERSONAL_TICK)));
+        if (isPersonalTick) {
+            PersonalTickMode personalTickMode;
+            try {
+                personalTickMode = PersonalTickMode.valueOf(intent.getExtras().getString(EXTRA_PERSONAL_TICK_MODE));
+            } catch (Exception e) {
+                Logger.e(TAG,"PersonalTickMode unspecified by extras. Set to PERSONAL_ONLY", e);
+                personalTickMode = PersonalTickMode.PERSONAL_ONLY;
+            }
             String[] temp = intent.getExtras().getStringArray(EXTRA_PERSONAL_TICK);
             List<UUID> uuids = new ArrayList<>();
             for (String s : temp) {
                 uuids.add(UUID.fromString(s));
             }
-            tickThread.requestTick(uuids);
+            tickThread.requestTick(uuids, personalTickMode.isUsePaths());
         } else {
             tickThread.requestTick();
         }
@@ -70,6 +80,22 @@ public class ItemsTickReceiver extends BroadcastReceiver {
                     .setShowWhen(false)
                     .setPriority(NotificationCompat.PRIORITY_MAX)
                     .build());
+        }
+    }
+
+    public enum PersonalTickMode {
+        PERSONAL_ONLY(false),
+        PERSONAL_AND_PATH(true)
+        ;
+
+        private final boolean usePaths;
+
+        PersonalTickMode(boolean usePaths) {
+            this.usePaths = usePaths;
+        }
+
+        public boolean isUsePaths() {
+            return usePaths;
         }
     }
 }

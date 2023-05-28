@@ -95,6 +95,8 @@ public class Debug202305RandomTab extends Tab implements Readonly {
 
     @Override
     public void tick(TickSession tickSession) {
+        if (!tickSession.isAllowed(this)) return;
+
         tick111(itemsStorage);
         for (Item item : getAllItems()) {
             if (item instanceof ItemsStorage) {

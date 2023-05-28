@@ -71,6 +71,8 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
 
     @Override
     public void tick(TickSession tickSession) {
+        if (!tickSession.isAllowed(this)) return;
+
         super.tick(tickSession);
         itemsStorage.tick(tickSession);
     }

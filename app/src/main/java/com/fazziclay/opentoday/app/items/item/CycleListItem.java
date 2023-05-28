@@ -125,16 +125,17 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
 
     @Override
     public void tick(TickSession tickSession) {
+        if (!tickSession.isAllowed(this)) return;
         super.tick(tickSession);
         if (tickBehavior == TickBehavior.ALL) {
             itemsCycleStorage.tick(tickSession);
         } else if (tickBehavior == TickBehavior.CURRENT) {
             Item c = getCurrentItem();
-            if (c != null) c.tick(tickSession);
+            if (c != null && tickSession.isAllowed(c)) c.tick(tickSession);
         } else if (tickBehavior == TickBehavior.NOT_CURRENT) {
             Item c = getCurrentItem();
             for (Item item : getAllItems()) {
-                if (item != c) item.tick(tickSession);
+                if (item != c && tickSession.isAllowed(item)) item.tick(tickSession);
             }
         }
     }

@@ -152,6 +152,8 @@ public abstract class Item implements Unique {
     }
 
     public void tick(TickSession tickSession) {
+        if (!tickSession.isAllowed(this)) return;
+
         ItemNotificationUtil.tick(tickSession, notifications, this);
         itemCallbacks.run((callbackStorage, callback) -> callback.tick(Item.this));
     }

@@ -63,6 +63,8 @@ public class DebugTickCounterItem extends TextItem {
 
     @Override
     public void tick(TickSession tickSession) {
+        if (!tickSession.isAllowed(this)) return;
+
         super.tick(tickSession);
         counter++;
         visibleChanged();

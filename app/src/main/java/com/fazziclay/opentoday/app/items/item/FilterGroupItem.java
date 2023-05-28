@@ -301,6 +301,8 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
 
     @Override
     public void tick(TickSession tickSession) {
+        if (!tickSession.isAllowed(this)) return;
+
         super.tick(tickSession);
         recalculate(tickSession.getGregorianCalendar());
         updateStat();
@@ -324,7 +326,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         int i = tickList.size() - 1;
         while (i >= 0) {
             Item item = tickList.get(i).item;
-            if (item != null && item.isAttached()) {
+            if (item != null && item.isAttached() && tickSession.isAllowed(item)) {
                 item.tick(tickSession);
             }
             i--;

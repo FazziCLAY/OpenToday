@@ -6,11 +6,19 @@ import android.content.Context;
 import android.os.Build;
 
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.app.items.item.Item;
+import com.fazziclay.opentoday.util.Logger;
 
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.UUID;
 
 public class TickSession {
+    private static final String TAG = "TickSession";
+    private static final boolean LOG_ISALLOWED = App.debug(false);
+
     // Life-hacks :)
     public static GregorianCalendar getLatestGregorianCalendar() {
         return App.get().getTickThread().getGregorianCalendar();
@@ -22,6 +30,8 @@ public class TickSession {
     private int dayTime;
     private boolean isPersonalTick;
     private boolean saveNeeded = false;
+    private final List<UUID> whitelist = new ArrayList<>();
+    private boolean isWhitelist = false;
 
     public TickSession(Context context, GregorianCalendar gregorianCalendar, GregorianCalendar noTimeCalendar, int dayTime, boolean isPersonalTick) {
         this.context = context;
@@ -29,6 +39,19 @@ public class TickSession {
         this.noTimeCalendar = noTimeCalendar;
         this.dayTime = dayTime;
         this.isPersonalTick = isPersonalTick;
+    }
+
+    public boolean isAllowed(Unique unique) {
+        if (LOG_ISALLOWED) Logger.d(TAG, "isAllowed(" + unique + "): id="+unique==null ? "(unique is null)" : unique.getId());
+        if (isWhitelist) {
+            if (unique == null) {
+                Logger.w(TAG, "isAllowed: whitelist=true_, unique=null_. Return: true");
+                return true;
+            }
+            UUID uuid = unique.getId();
+            return whitelist.contains(uuid);
+        }
+        return true;
     }
 
     public GregorianCalendar getGregorianCalendar() {
@@ -69,7 +92,7 @@ public class TickSession {
             flags = PendingIntent.FLAG_UPDATE_CURRENT;
         }
         long triggerAtMs = getNoTimeCalendar().getTimeInMillis() + shift + (time * 1000L) + 599;
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMs, PendingIntent.getBroadcast(getContext(), item.getId().hashCode() + time, ItemsTickReceiver.createIntent(context, item.getId()).putExtra("debugMessage", "DayItemNotification is work :)\nItem:\n * id-hashCode: " + item.getId().hashCode() + "\n * Item: " + item + " time: " + time), flags));
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMs, PendingIntent.getBroadcast(getContext(), item.getId().hashCode() + time, ItemsTickReceiver.createIntent(context, item.getId(), true).putExtra("debugMessage", "DayItemNotification is work :)\nItem:\n * id-hashCode: " + item.getId().hashCode() + "\n * Item: " + item + " time: " + time), flags));
     }
 
     public void recyclePersonal(boolean b) {
@@ -90,5 +113,16 @@ public class TickSession {
 
     public void recycleSaveNeeded() {
         this.saveNeeded = false;
+    }
+
+    public void recycleWhitelist(boolean isWhitelist, List<UUID> whitelist) {
+        this.isWhitelist = isWhitelist;
+        this.whitelist.clear();
+        this.whitelist.addAll(whitelist);
+    }
+
+    public void recycleWhitelist(boolean isWhitelist) {
+        this.isWhitelist = isWhitelist;
+        this.whitelist.clear();
     }
 }

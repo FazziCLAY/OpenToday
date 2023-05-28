@@ -98,7 +98,8 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
     public void tick(TickSession tickSession) {
         int i = items.size() - 1;
         while (i >= 0) {
-            items.get(i).tick(tickSession);
+            Item item = items.get(i);
+            if (tickSession.isAllowed(item)) item.tick(tickSession);
             i--;
         }
     }
