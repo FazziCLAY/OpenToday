@@ -224,6 +224,7 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
 
     private class CycleItemsStorage extends SimpleItemsStorage {
         public CycleItemsStorage() {
+            super(new CycleListItemController());
             getOnUpdateCallbacks().addCallback(CallbackImportance.DEFAULT, new OnItemsStorageUpdate() {
                 @Override
                 public Status onAdded(Item item, int pos) {
@@ -254,6 +255,28 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
         @Override
         public void save() {
             CycleListItem.this.save();
+        }
+    }
+
+    private class CycleListItemController extends ItemController {
+        @Override
+        public void delete(Item item) {
+            CycleListItem.this.deleteItem(item);
+        }
+
+        @Override
+        public void save(Item item) {
+            CycleListItem.this.save();
+        }
+
+        @Override
+        public void updateUi(Item item) {
+            CycleListItem.this.getOnUpdateCallbacks().run(((callbackStorage, callback) -> callback.onUpdated(item, getItemPosition(item))));
+        }
+
+        @Override
+        public ItemsStorage getParentItemsStorage(Item item) {
+            return CycleListItem.this;
         }
     }
 

@@ -26,6 +26,11 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
         this.simpleItemController = new SimpleItemController();
     }
 
+    public SimpleItemsStorage(ItemController customController) {
+        this.items = new ArrayList<>();
+        this.simpleItemController = customController;
+    }
+
     @NonNull
     @Override
     public Item[] getAllItems() {

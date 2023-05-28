@@ -144,9 +144,35 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
 
 
     private class GroupItemsStorage extends SimpleItemsStorage {
+        public GroupItemsStorage() {
+            super(new GroupItemController());
+        }
+
         @Override
         public void save() {
             GroupItem.this.save();
+        }
+    }
+
+    private class GroupItemController extends ItemController {
+        @Override
+        public void delete(Item item) {
+            GroupItem.this.deleteItem(item);
+        }
+
+        @Override
+        public void save(Item item) {
+            GroupItem.this.save();
+        }
+
+        @Override
+        public void updateUi(Item item) {
+            GroupItem.this.getOnUpdateCallbacks().run(((callbackStorage, callback) -> callback.onUpdated(item, getItemPosition(item))));
+        }
+
+        @Override
+        public ItemsStorage getParentItemsStorage(Item item) {
+            return GroupItem.this;
         }
     }
 }

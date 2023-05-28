@@ -4,12 +4,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.data.Cherry;
+import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.SimpleItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemCodecUtil;
+import com.fazziclay.opentoday.app.items.item.ItemController;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -36,7 +40,7 @@ public class LocalItemsTab extends Tab {
     private final SimpleItemsStorage itemsStorage;
 
     protected LocalItemsTab() {
-        itemsStorage = new SimpleItemsStorage() {
+        itemsStorage = new SimpleItemsStorage(new LocalItemsTabController()) {
             @Override
             public void save() {
                 LocalItemsTab.this.save();
@@ -118,8 +122,31 @@ public class LocalItemsTab extends Tab {
         return itemsStorage.isEmpty();
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "LocalItemsTab{"+getName()+"}";
+    }
+
+    private class LocalItemsTabController extends ItemController {
+        @Override
+        public void delete(Item item) {
+            LocalItemsTab.this.deleteItem(item);
+        }
+
+        @Override
+        public void save(Item item) {
+            LocalItemsTab.this.save();
+        }
+
+        @Override
+        public void updateUi(Item item) {
+            LocalItemsTab.this.getOnUpdateCallbacks().run(((callbackStorage, callback) -> callback.onUpdated(item, getItemPosition(item))));
+        }
+
+        @Override
+        public ItemsStorage getParentItemsStorage(Item item) {
+            return LocalItemsTab.this;
+        }
     }
 }
