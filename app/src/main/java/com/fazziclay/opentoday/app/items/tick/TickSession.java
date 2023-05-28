@@ -25,6 +25,7 @@ public class TickSession {
 
     public TickSession(Context context, GregorianCalendar gregorianCalendar, GregorianCalendar noTimeCalendar, int dayTime, boolean isPersonalTick) {
         this.context = context;
+        this.gregorianCalendar = gregorianCalendar;
         this.noTimeCalendar = noTimeCalendar;
         this.dayTime = dayTime;
         this.isPersonalTick = isPersonalTick;
