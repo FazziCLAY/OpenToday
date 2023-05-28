@@ -379,7 +379,7 @@ public class ItemManager {
                 JSONObject jRoot = new JSONObject();
                 JSONArray jTabs = TabCodecUtil.exportTabList(this.tabs).toJSONArray();
                 jRoot.put("tabs", jTabs);
-                String originalData = jRoot.toString(2);
+                String originalData = jRoot.toString();
 
                 FileUtil.setText(dataOriginalFile, originalData);
 
