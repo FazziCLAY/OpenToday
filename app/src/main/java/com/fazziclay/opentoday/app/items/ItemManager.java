@@ -338,6 +338,8 @@ public class ItemManager {
         Debug.latestPersonalTickDuration = Logger.countOnlyDur(() -> {
             for (UUID uuid : uuids) {
                 for (Tab tab : tabs.toArray(new Tab[0])) {
+                    if (tab == null) continue;
+                    // todo: block personal tick by tab settings????
                     Item i = tab.getItemById(uuid);
                     if (i != null) {
                         i.tick(tickSession);
@@ -352,7 +354,7 @@ public class ItemManager {
 
         Debug.latestTickDuration = Logger.countOnlyDur(() -> {
             for (Tab tab : tabs.toArray(new Tab[0])) {
-                if (tab == null) continue;
+                if (tab == null || tab.isDisableTick()) continue;
                 tab.tick(tickSession);
             }
         });
