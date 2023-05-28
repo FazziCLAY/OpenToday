@@ -92,6 +92,7 @@ public class DialogItemNotificationsEditor {
                             d.setNotificationId(i);
                         } catch (Exception ignored) {
                             d.setNotificationId(0);
+                            l.notificationId.setText("0");
                         }
                     });
                     l.text.setText(d.getNotifyText());
