@@ -27,6 +27,7 @@ public class CheckboxItem extends TextItem {
             CheckboxItem checkboxItem = item != null ? (CheckboxItem) item : new CheckboxItem();
             super.importItem(cherry, checkboxItem);
             checkboxItem.checked = cherry.optBoolean("checked", defaultValues.checked);
+            checkboxItem.getStat().setChecked(checkboxItem.checked);
             return checkboxItem;
         }
     }
@@ -60,6 +61,15 @@ public class CheckboxItem extends TextItem {
         this.checked = copy.checked;
     }
 
+    @Override
+    protected void updateStat() {
+        super.updateStat();
+        getStat().setChecked(isChecked());
+    }
+
     @Getter public boolean isChecked() { return checked; }
-    @Setter public void setChecked(boolean s) { this.checked = s; }
+    @Setter public void setChecked(boolean s) {
+        this.checked = s;
+        updateStat();
+    }
 }

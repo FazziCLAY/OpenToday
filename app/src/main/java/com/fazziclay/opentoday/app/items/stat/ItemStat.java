@@ -4,6 +4,7 @@ public class ItemStat {
     private int totalTicks = 0;
     private int containerItems;
     private int activeItems;
+    private boolean isChecked;
 
     public int getContainerItems() {
         return containerItems;
@@ -19,6 +20,14 @@ public class ItemStat {
 
     public void setActiveItems(int activeItems) {
         this.activeItems = activeItems;
+    }
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
     }
 
     public int getTotalTicks() {

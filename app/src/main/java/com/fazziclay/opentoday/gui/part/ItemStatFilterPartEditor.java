@@ -2,7 +2,6 @@ package com.fazziclay.opentoday.gui.part;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
@@ -26,11 +25,9 @@ import com.fazziclay.opentoday.util.MinTextWatcher;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 
-import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Locale;
 
 public class ItemStatFilterPartEditor implements Destroy {
     private final int COLOR_FILTER_GROUP_ACTIVE;
@@ -38,7 +35,6 @@ public class ItemStatFilterPartEditor implements Destroy {
     private final Context context;
     private final PartItemStatItemFilterBinding binding;
     private final Runnable saveSignal;
-    private GregorianCalendar calendar;
     private final Handler handler;
     private final List<Runnable> runnableList = new ArrayList<>();
 
@@ -59,7 +55,6 @@ public class ItemStatFilterPartEditor implements Destroy {
         this.context = context;
         this.binding = PartItemStatItemFilterBinding.inflate(layoutInflater);
         this.saveSignal = saveSignal;
-        this.calendar = new GregorianCalendar();
         this.handler = new Handler(Looper.getMainLooper());
 
         COLOR_FILTER_GROUP_ACTIVE = ResUtil.getAttrColor(context, R.attr.itemFilterState_true);
@@ -73,10 +68,6 @@ public class ItemStatFilterPartEditor implements Destroy {
                 saveSignal.run();
             }
         });
-
-        DateFormatSymbols dfs = DateFormatSymbols.getInstance(Locale.getDefault());
-        String[] months = dfs.getMonths();
-        String[] weekdays = dfs.getWeekdays();
 
         setupRow(new SetupInterface() {
             @Override
@@ -94,6 +85,23 @@ public class ItemStatFilterPartEditor implements Destroy {
                 return item == null ? 0 : item.getStat().getActiveItems();
             }
         }, binding.activeItems, R.string.dialog_editItemFilter_activeItems);
+
+        setupRow(new SetupInterface() {
+            @Override
+            public IntegerValue get() {
+                return itemStatItemFilter.getIsChecked();
+            }
+
+            @Override
+            public void set(IntegerValue integerValue) {
+                itemStatItemFilter.setIsChecked(integerValue);
+            }
+
+            @Override
+            public int getCurrentValue() {
+                return item == null ? 0 : item.getStat().isChecked() ? 1 : 0;
+            }
+        }, binding.isChecked, R.string.dialog_editItemFilter_isChecked);
 
         runnableList.add(new Runnable() {
             @Override
@@ -140,7 +148,6 @@ public class ItemStatFilterPartEditor implements Destroy {
                 IntegerValue val = setup.get();
                 ColorStateList background = val == null ? null : (val.isFit(setup.getCurrentValue()) ? ColorStateList.valueOf(COLOR_FILTER_GROUP_ACTIVE) : ColorStateList.valueOf(COLOR_FILTER_GROUP_INACTIVE));
 
-                calendar = new GregorianCalendar();
                 currentValue.setText(String.valueOf(setup.getCurrentValue()));
                 currentValue.setBackgroundTintList(background);
                 handler.postDelayed(this, 1000 / 4);

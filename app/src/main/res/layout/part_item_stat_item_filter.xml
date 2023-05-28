@@ -88,6 +88,10 @@
                     android:id="@+id/activeItems"
                     layout="@layout/integer_value_row" />
 
+                <include
+                    android:id="@+id/isChecked"
+                    layout="@layout/integer_value_row" />
+
             </LinearLayout>
         </HorizontalScrollView>
     </ScrollView>

@@ -7,10 +7,11 @@ import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.stat.ItemStat;
 
-public class ItemStatItemFilter extends ItemFilter {
+public class ItemStatItemFilter extends ItemFilter implements Cloneable {
     public static final FilterCodec CODEC = new FilterCodec() {
         private static final String KEY_DESCRIPTION = "description";
         private static final String KEY_ACTIVE_ITEMS = "activeItems";
+        private static final String KEY_IS_CHECKED = "isChecked";
 
         @NonNull
         @Override
@@ -19,7 +20,8 @@ public class ItemStatItemFilter extends ItemFilter {
 
             return new Cherry()
                     .put(KEY_DESCRIPTION, f.description)
-                    .put(KEY_ACTIVE_ITEMS, f.activeItems == null ? null : f.activeItems.exportCherry());
+                    .put(KEY_ACTIVE_ITEMS, f.activeItems == null ? null : f.activeItems.exportCherry())
+                    .put(KEY_IS_CHECKED, f.isChecked == null ? null : f.isChecked.exportCherry());
         }
 
         @NonNull
@@ -29,6 +31,7 @@ public class ItemStatItemFilter extends ItemFilter {
 
             i.description = cherry.optString(KEY_DESCRIPTION, "");
             i.activeItems = IntegerValue.importCherry(cherry.getCherry(KEY_ACTIVE_ITEMS));
+            i.isChecked = IntegerValue.importCherry(cherry.getCherry(KEY_IS_CHECKED));
 
             return i;
         }
@@ -36,6 +39,7 @@ public class ItemStatItemFilter extends ItemFilter {
 
     private String description = "";
     private IntegerValue activeItems = null;
+    private IntegerValue isChecked = null;
 
     public ItemStatItemFilter() {
     }
@@ -46,7 +50,7 @@ public class ItemStatItemFilter extends ItemFilter {
         if (item == null) return true;
         ItemStat stat = item.getStat();
 
-        return check(stat.getActiveItems(), activeItems);
+        return check(stat.getActiveItems(), activeItems) && check(stat.isChecked() ? 1 : 0, isChecked);
     }
 
     private boolean check(int stat, IntegerValue val) {
@@ -59,6 +63,7 @@ public class ItemStatItemFilter extends ItemFilter {
         try {
             ItemStatItemFilter i = (ItemStatItemFilter) clone();
             i.activeItems = this.activeItems == null ? null : this.activeItems.clone();
+            i.isChecked = this.isChecked == null ? null : this.isChecked.clone();
             return i;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
@@ -81,5 +86,13 @@ public class ItemStatItemFilter extends ItemFilter {
 
     public void setActiveItems(IntegerValue integerValue) {
         this.activeItems = integerValue;
+    }
+
+    public IntegerValue getIsChecked() {
+        return isChecked;
+    }
+
+    public void setIsChecked(IntegerValue isChecked) {
+        this.isChecked = isChecked;
     }
 }

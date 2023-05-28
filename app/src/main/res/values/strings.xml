@@ -362,4 +362,5 @@
     <string name="item_cycleList_description">A cyclical list. It is a container for other items. The outside shows only the current one.</string>
     <string name="item_group_description">Group. It is a container for other items. The outside shows its contents if it is not minimized.</string>
     <string name="item_filterGroup_description">A group with filters for each item inside.\nThese filters determine whether to show the internal item outside or not.</string>
+    <string name="dialog_editItemFilter_isChecked">Is Checked</string>
 </resources>
