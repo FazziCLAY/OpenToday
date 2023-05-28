@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Unique;
+import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
 
@@ -15,13 +16,15 @@ public abstract class Tab implements ItemsStorage, Unique {
     protected static class TabCodec extends AbstractTabCodec {
         private static final String KEY_ID = "id";
         private static final String KEY_NAME = "name";
+        private static final String KEY_DISABLE_TICK = "disableTick";
 
         @NonNull
         @Override
         public Cherry exportTab(@NonNull Tab tab) {
             return new Cherry()
                     .put(KEY_NAME, tab.name)
-                    .put(KEY_ID, tab.id == null ? null : tab.id.toString());
+                    .put(KEY_ID, tab.id == null ? null : tab.id.toString())
+                    .put(KEY_DISABLE_TICK, tab.disableTick);
         }
 
         @NonNull
@@ -29,12 +32,16 @@ public abstract class Tab implements ItemsStorage, Unique {
         public Tab importTab(@NonNull Cherry cherry, @Nullable Tab tab) {
             if (cherry.has(KEY_ID)) tab.id = UUID.fromString(cherry.getString(KEY_ID));
             tab.name = cherry.optString(KEY_NAME, "");
+            tab.disableTick = cherry.optBoolean(KEY_DISABLE_TICK, false);
+
+            if (tab.id == null) Logger.w("Tab", "id is null while importing...");
             return tab;
         }
     }
 
     @RequireSave @SaveKey(key = "id") private UUID id = null;
     @RequireSave @SaveKey(key = "name") private String name = "";
+    @RequireSave @SaveKey(key = "disableTick") private boolean disableTick = false;
     private TabController controller;
 
     public Tab(String name) {
@@ -81,5 +88,13 @@ public abstract class Tab implements ItemsStorage, Unique {
     @Override
     public void save() {
         if (controller != null) controller.save(this);
+    }
+
+    public boolean isDisableTick() {
+        return disableTick;
+    }
+
+    public void setDisableTick(boolean b) {
+        this.disableTick = b;
     }
 }
