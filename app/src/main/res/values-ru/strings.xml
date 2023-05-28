@@ -346,4 +346,7 @@
     <string name="title_from_item_text">Заголовок из текста айтема</string>
     <string name="text_from_item_text">Текст из текста айтема</string>
     <string name="dialog_itemNotification_vibrate">Вибрация</string>
+    <string name="dialogItem_module_longtext_textColor_dialog_title">Цвет длинного текста</string>
+    <string name="dialogItem_module_longtext_textColor_dialog_cancel">Отмена</string>
+    <string name="dialogItem_module_longtext_textColor_dialog_apply">Применить</string>
 </resources>

@@ -348,4 +348,7 @@
     <string name="title_from_item_text">Title from item text</string>
     <string name="text_from_item_text">Text from item text</string>
     <string name="dialog_itemNotification_vibrate">Vibrate</string>
+    <string name="dialogItem_module_longtext_textColor_dialog_title">Long-text color</string>
+    <string name="dialogItem_module_longtext_textColor_dialog_cancel">Cancel</string>
+    <string name="dialogItem_module_longtext_textColor_dialog_apply">Apply</string>
 </resources>

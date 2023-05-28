@@ -17,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -55,20 +54,19 @@ import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleFiltergroupBi
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleItemBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleLongtextBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleTextBinding;
+import com.fazziclay.opentoday.gui.ColorPicker;
 import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.dialog.DialogItemNotificationsEditor;
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
 import com.fazziclay.opentoday.util.EnumUtil;
 import com.fazziclay.opentoday.util.Logger;
+import com.fazziclay.opentoday.util.MinBaseAdapter;
 import com.fazziclay.opentoday.util.MinTextWatcher;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 import com.fazziclay.opentoday.util.time.ConvertMode;
 import com.fazziclay.opentoday.util.time.TimeUtil;
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
-import com.rarepebble.colorpicker.ColorPickerView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -360,41 +358,18 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             temp_backgroundColor = item.getViewBackgroundColor();
             updateTextColorIndicator(activity);
             viewClick(binding.viewBackgroundColorEdit, () -> {
-                ColorPickerView cp = new ColorPickerView(activity);
-                cp.setCurrentColor(temp_backgroundColor);
-                cp.showHex(true); cp.showPreview(true); cp.showAlpha(true);
-                cp.setOriginalColor(temp_backgroundColor); cp.setCurrentColor(temp_backgroundColor);
-
-                ChipGroup history = new ChipGroup(requireContext());
-                int[] colors = colorHistoryManager.getHistory(5);
-                for (int color : colors) {
-                    Chip chip = new Chip(requireContext());
-                    chip.setChipBackgroundColor(ColorStateList.valueOf(color));
-                    chip.setOnClickListener(v -> cp.setCurrentColor(color));
-                    chip.setText(String.format("#%08x", color));
-                    history.addView(chip);
-                }
-                HorizontalScrollView historyHorizontal = new HorizontalScrollView(requireContext());
-                historyHorizontal.addView(history);
-
-                LinearLayout dialogLayout = new LinearLayout(activity);
-                dialogLayout.setOrientation(LinearLayout.VERTICAL);
-                dialogLayout.addView(cp);
-                dialogLayout.addView(historyHorizontal);
-
-                new AlertDialog.Builder(activity)
-                        .setTitle(R.string.dialogItem_module_item_backgroundColor_dialog_title)
-                        .setView(dialogLayout)
-                        .setNegativeButton(R.string.dialogItem_module_item_backgroundColor_dialog_cancel, null)
-                        .setPositiveButton(R.string.dialogItem_module_item_backgroundColor_dialog_apply, ((dialog1, which) -> {
-                            colorHistoryManager.addColor(cp.getColor());
-                            temp_backgroundColor = cp.getColor();
-                            binding.defaultBackgroundColor.setChecked(false);
-                            updateTextColorIndicator(activity);
-
-                            onEditStart.run();
-                        }))
-                        .show();
+                new ColorPicker(activity, temp_backgroundColor)
+                        .setting(true, true, true)
+                        .setColorHistoryManager(colorHistoryManager)
+                        .showDialog(R.string.dialogItem_module_item_backgroundColor_dialog_title,
+                                R.string.dialogItem_module_item_backgroundColor_dialog_cancel,
+                                R.string.dialogItem_module_item_backgroundColor_dialog_apply,
+                                (color) -> {
+                                    temp_backgroundColor = color;
+                                    binding.defaultBackgroundColor.setChecked(false);
+                                    updateTextColorIndicator(activity);
+                                    onEditStart.run();
+                                });
             });
             binding.minimize.setChecked(item.isMinimize());
             //viewVisible(binding.copyItemId, app.isFeatureFlag(FeatureFlag.ITEM_EDITOR_SHOW_COPY_ID_BUTTON), View.GONE);
@@ -507,40 +482,18 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             temp_textColor = textItem.getTextColor();
             updateTextColorIndicator(activity);
             binding.textColorEdit.setOnClickListener(v -> {
-                ColorPickerView cp = new ColorPickerView(activity);
-                cp.setCurrentColor(temp_textColor);
-                cp.showHex(true); cp.showPreview(true); cp.showAlpha(true);
-                cp.setOriginalColor(temp_textColor); cp.setCurrentColor(temp_textColor);
-
-                ChipGroup history = new ChipGroup(requireContext());
-                int[] colors = colorHistoryManager.getHistory(5);
-                for (int color : colors) {
-                    Chip chip = new Chip(requireContext());
-                    chip.setChipBackgroundColor(ColorStateList.valueOf(color));
-                    chip.setOnClickListener(vvv -> cp.setCurrentColor(color));
-                    chip.setText(String.format("#%08x", color));
-                    history.addView(chip);
-                }
-                HorizontalScrollView historyHorizontal = new HorizontalScrollView(requireContext());
-                historyHorizontal.addView(history);
-
-                LinearLayout dialogLayout = new LinearLayout(activity);
-                dialogLayout.setOrientation(LinearLayout.VERTICAL);
-                dialogLayout.addView(cp);
-                dialogLayout.addView(historyHorizontal);
-
-                new AlertDialog.Builder(activity)
-                        .setTitle(R.string.dialogItem_module_text_textColor_dialog_title)
-                        .setView(dialogLayout)
-                        .setNegativeButton(R.string.dialogItem_module_text_textColor_dialog_cancel, null)
-                        .setPositiveButton(R.string.dialogItem_module_text_textColor_dialog_apply, ((dialog1, which) -> {
-                            colorHistoryManager.addColor(cp.getColor());
-                            temp_textColor = cp.getColor();
-                            binding.defaultTextColor.setChecked(false);
-                            updateTextColorIndicator(activity);
-                            onEditStart.run();
-                        }))
-                        .show();
+                new ColorPicker(activity, temp_textColor)
+                        .setting(true, true, true)
+                        .setColorHistoryManager(colorHistoryManager)
+                        .showDialog(R.string.dialogItem_module_text_textColor_dialog_title,
+                                R.string.dialogItem_module_text_textColor_dialog_cancel,
+                                R.string.dialogItem_module_text_textColor_dialog_apply,
+                                (color) -> {
+                                    temp_textColor = color;
+                                    binding.defaultTextColor.setChecked(false);
+                                    updateTextColorIndicator(activity);
+                                    onEditStart.run();
+                                });
             });
 
             binding.paragraphColorize.setChecked(textItem.isParagraphColorize());
@@ -618,51 +571,24 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             temp_textColor = longTextItem.getLongTextColor();
             updateTextColorIndicator(activity);
             binding.textColorEdit.setOnClickListener(v -> {
-                ColorPickerView cp = new ColorPickerView(activity);
-                cp.setCurrentColor(temp_textColor);
-                cp.showHex(true); cp.showPreview(true); cp.showAlpha(true);
-                cp.setOriginalColor(temp_textColor); cp.setCurrentColor(temp_textColor);
-
-                ChipGroup history = new ChipGroup(requireContext());
-                int[] colors = colorHistoryManager.getHistory(5);
-                for (int color : colors) {
-                    Chip chip = new Chip(requireContext());
-                    chip.setChipBackgroundColor(ColorStateList.valueOf(color));
-                    chip.setOnClickListener(vvv -> cp.setCurrentColor(color));
-                    chip.setText(String.format("#%08x", color));
-                    history.addView(chip);
-                }
-                HorizontalScrollView historyHorizontal = new HorizontalScrollView(requireContext());
-                historyHorizontal.addView(history);
-
-                LinearLayout dialogLayout = new LinearLayout(activity);
-                dialogLayout.setOrientation(LinearLayout.VERTICAL);
-                dialogLayout.addView(cp);
-                dialogLayout.addView(historyHorizontal);
-
-                new AlertDialog.Builder(activity)
-                        .setTitle(R.string.dialogItem_module_text_textColor_dialog_title)
-                        .setView(dialogLayout)
-                        .setNegativeButton(R.string.dialogItem_module_text_textColor_dialog_cancel, null)
-                        .setPositiveButton(R.string.dialogItem_module_text_textColor_dialog_apply, ((dialog1, which) -> {
-                            colorHistoryManager.addColor(cp.getColor());
-                            temp_textColor = cp.getColor();
-                            binding.defaultTextColor.setChecked(false);
-                            updateTextColorIndicator(activity);
-                            onEditStart.run();
-                        }))
-                        .show();
+                new ColorPicker(activity, temp_textColor)
+                        .setting(true, true, true)
+                        .setColorHistoryManager(colorHistoryManager)
+                        .showDialog(R.string.dialogItem_module_longtext_textColor_dialog_title,
+                                R.string.dialogItem_module_longtext_textColor_dialog_cancel,
+                                R.string.dialogItem_module_longtext_textColor_dialog_apply,
+                                (color) -> {
+                                    temp_textColor = color;
+                                    binding.defaultTextColor.setChecked(false);
+                                    updateTextColorIndicator(activity);
+                                    onEditStart.run();
+                                });
             });
 
             binding.clickableUrls.setChecked(longTextItem.isLongTextClickableUrls());
 
             // On edit start
-            binding.text.addTextChangedListener(new MinTextWatcher() {
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    onEditStart.run();
-                }
-            });
+            MinBaseAdapter.after(binding.text, onEditStart::run);
             binding.defaultTextColor.setOnClickListener(v -> {
                 updateTextColorIndicator(activity);
                 onEditStart.run();
