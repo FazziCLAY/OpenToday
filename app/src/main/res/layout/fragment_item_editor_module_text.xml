@@ -40,29 +40,25 @@
         android:layout_height="wrap_content"
         android:text="@string/fragment_itemEditor_text_textColor" />
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/textColor_edit"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <LinearLayout
             android:id="@+id/textColor_indicator"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="45sp"
+            android:layout_width="match_parent"
+            android:layout_height="35sp"
+            android:layout_toStartOf="@id/default_text_color"
             android:background="@drawable/shape_color_indicator"
             android:backgroundTint="#ff000f"
-            android:orientation="horizontal">
-        </LinearLayout>
+            android:orientation="horizontal" />
 
         <CheckBox
             android:id="@+id/default_text_color"
-            android:layout_weight="0"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:minHeight="0sp" />
-
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:minHeight="0sp"/>
+    </RelativeLayout>
 </LinearLayout>
