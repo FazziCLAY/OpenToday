@@ -250,10 +250,10 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     private void setupTabs() {
         binding.tabs.removeAllTabs();
 
-        for (Tab localItemsTab : itemManager.getTabs()) {
+        for (Tab tab : itemManager.getTabs()) {
             TabLayout.Tab tabView = binding.tabs.newTab();
-            tabView.setTag(localItemsTab.getId().toString());
-            tabView.setText(localItemsTab.getName());
+            tabView.setTag(tab.getId().toString());
+            tabView.setText(tab.getName());
             binding.tabs.addTab(tabView);
         }
     }
