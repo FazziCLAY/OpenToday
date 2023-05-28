@@ -295,7 +295,7 @@ public class ItemManager {
 
     public void destroy() {
         saveAllDirect();
-        saveThread.disable();
+        if (saveThread != null) saveThread.disable();
 
         for (Tab tab : tabs) {
             tab.detach();

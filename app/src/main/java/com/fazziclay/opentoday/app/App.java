@@ -187,17 +187,17 @@ public class App extends Application {
             openSourceLicenses.free();
             dataFixer.free();
             colorHistoryManager.free();
-            telemetry.free();
+            //telemetry.free();
             pinCodeManager.free();
             Debug.free();
             TimeUtil.free();
             clipboardManager.free();
         }
         if (level >= TRIM_MEMORY_COMPLETE) {
-            settingsManager.free();
-            itemManager.free();
-            tickThread.free();
-            selectionManager.free();
+            //settingsManager.free();
+            //itemManager.free();
+            //tickThread.free();
+            //selectionManager.free();
         }
     }
 
