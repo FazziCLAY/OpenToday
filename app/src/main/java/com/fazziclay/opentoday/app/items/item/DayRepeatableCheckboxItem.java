@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.TickTarget;
+import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
@@ -15,6 +16,7 @@ import java.util.GregorianCalendar;
 
 public class DayRepeatableCheckboxItem extends CheckboxItem {
     // START - Save
+    private static final boolean DEBUG_RANDOM_STATE_CHANGES = false; // NO NOT TOUCH! RANDOM STATES ARE SAVED TO FILE!!!! ALWAYS IS FALSE!
     public final static DayRepeatableCheckboxItemCodec CODEC = new DayRepeatableCheckboxItemCodec();
     public static class DayRepeatableCheckboxItemCodec extends CheckboxItemCodec {
         @NonNull
@@ -89,6 +91,14 @@ public class DayRepeatableCheckboxItem extends CheckboxItem {
                 latestDayOfYear = dayOfYear;
                 if (isChecked() != startValue) {
                     setChecked(startValue);
+                    visibleChanged();
+                    tickSession.saveNeeded();
+                }
+            }
+            if (DEBUG_RANDOM_STATE_CHANGES) {
+                boolean nextValue = RandomUtil.nextBoolean();
+                if (isChecked() != nextValue) {
+                    setChecked(nextValue);
                     visibleChanged();
                     tickSession.saveNeeded();
                 }
