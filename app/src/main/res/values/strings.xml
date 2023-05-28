@@ -153,7 +153,7 @@
     <string name="toolbar_more_file_import_textHint">Enter import text or URL here</string>
     <string name="quickNote_hint">Type here</string>
     <string name="quickNote_add">Add quick note</string>
-    <string name="toolbar_more_items_tab_rename">Rename</string>
+    <string name="toolbar_more_items_tab_apply">Apply</string>
     <string name="toolbar_more_items_tab_add">Add</string>
     <string name="toolbar_more_items_tab_delete">Delete</string>
     <string name="abc_cancel">Cancel</string>
@@ -351,4 +351,5 @@
     <string name="dialogItem_module_longtext_textColor_dialog_title">Long-text color</string>
     <string name="dialogItem_module_longtext_textColor_dialog_cancel">Cancel</string>
     <string name="dialogItem_module_longtext_textColor_dialog_apply">Apply</string>
+    <string name="toolbar_tabs_edit_disableTick">Disable tick</string>
 </resources>

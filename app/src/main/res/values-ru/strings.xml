@@ -82,7 +82,7 @@
     <string name="toolbar_tabs_addNew_dialog_title">Добавить новую вкладку</string>
     <string name="toolbar_tabs">Вкладки</string>
     <string name="toolbar_tabs_title">Список вкладок:</string>
-    <string name="toolbar_more_items_tab_rename">Переименовать</string>
+    <string name="toolbar_more_items_tab_apply">Применить</string>
     <string name="toolbar_more_items_tab_add">Создать</string>
     <string name="toolbar_more_items_tab_delete">Удалить</string>
     <string name="toolbar_more_file_import_success">Успешно</string>
@@ -349,4 +349,5 @@
     <string name="dialogItem_module_longtext_textColor_dialog_title">Цвет длинного текста</string>
     <string name="dialogItem_module_longtext_textColor_dialog_cancel">Отмена</string>
     <string name="dialogItem_module_longtext_textColor_dialog_apply">Применить</string>
+    <string name="toolbar_tabs_edit_disableTick">Отключить тик</string>
 </resources>

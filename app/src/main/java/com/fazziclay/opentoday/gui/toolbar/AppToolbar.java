@@ -17,6 +17,7 @@ import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -356,6 +357,10 @@ public class AppToolbar {
         public void setText(String text) {
             ((TextView) itemView).setText(text);
         }
+
+        public void setDisableTick(boolean disableTick) {
+            itemView.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(disableTick ? "#ff3333" : "#555555")));
+        }
     }
 
     private void onTabsClick() {
@@ -374,6 +379,7 @@ public class AppToolbar {
             public void onBindViewHolder(@NonNull TabHolder holder, int position) {
                 Tab tab = itemManager.getTabAt(position);
                 holder.setText(tab.getName());
+                holder.setDisableTick(tab.isDisableTick());
                 viewClick(holder.itemView, () -> showEditTabDialog(tab));
             }
 
@@ -435,20 +441,31 @@ public class AppToolbar {
     }
 
     private void showEditTabDialog(final Tab tab) {
+        LinearLayout dialogView = new LinearLayout(activity);
+        dialogView.setOrientation(LinearLayout.VERTICAL);
+
         EditText tabNameEditText = new EditText(activity);
         tabNameEditText.setHint(R.string.toolbar_tabs_edit_name_hint);
         tabNameEditText.setText(tab.getName());
 
+        CheckBox disableTick = new CheckBox(activity);
+        disableTick.setText(R.string.toolbar_tabs_edit_disableTick);
+        disableTick.setChecked(tab.isDisableTick());
+
+        dialogView.addView(tabNameEditText);
+        dialogView.addView(disableTick);
+
         new AlertDialog.Builder(activity)
                 .setTitle(activity.getString(R.string.toolbar_tabs_edit_dialog_title, tab.getName()))
-                .setView(tabNameEditText)
-                .setPositiveButton(R.string.toolbar_more_items_tab_rename, (dialog, which) -> {
+                .setView(dialogView)
+                .setPositiveButton(R.string.toolbar_more_items_tab_apply, (dialog, which) -> {
                     String text = tabNameEditText.getText().toString();
                     if (!text.trim().isEmpty()) {
                         tab.setName(text);
                     } else {
                         Toast.makeText(activity, R.string.tab_noEmptyName, Toast.LENGTH_SHORT).show();
                     }
+                    tab.setDisableTick(disableTick.isChecked());
                 })
                 .setNegativeButton(R.string.abc_cancel, null)
                 .setNeutralButton(R.string.toolbar_more_items_tab_delete, (dialog, w) -> new AlertDialog.Builder(activity)
