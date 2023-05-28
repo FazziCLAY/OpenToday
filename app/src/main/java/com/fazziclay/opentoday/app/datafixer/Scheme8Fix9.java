@@ -65,7 +65,12 @@ public class Scheme8Fix9 {
 
 
         } else if (itemType.equals("FilterGroupItem")) {
+            // do not edit.
             final String KEY_WRAPPERS = "items";
+            final String KEY_NEW_TICK_BEHAVIOR = "tickBehavior";
+            final String TICK_BEHAVIOR_DEFAULT_OLDEST = "ACTIVE";
+
+            item.put(KEY_NEW_TICK_BEHAVIOR, TICK_BEHAVIOR_DEFAULT_OLDEST);
 
             JSONArray wrappers = item.optJSONArray(KEY_WRAPPERS);
             if (wrappers == null) return;
