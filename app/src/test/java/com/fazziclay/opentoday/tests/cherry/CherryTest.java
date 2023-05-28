@@ -14,6 +14,22 @@ public class CherryTest {
     }
 
     @Test
+    public void notificationsTest() {
+        Cherry cherry = new Cherry();
+        CherryOrchard orchard = cherry.getOrchard("sdgfgfdgfd");
+        Assert.assertNull(orchard);
+
+        long[] arr = CherryOrchard.parseLongArray(orchard, new long[]{50, 100, 50, 200});
+        Assert.assertArrayEquals(arr, new long[]{50, 100, 50, 200});
+
+        cherry.put("wtrtf", CherryOrchard.of(arr));
+
+        CherryOrchard orchard2 = cherry.getOrchard("wtrtf");
+        long[] arr2 = CherryOrchard.parseLongArray(orchard2, new long[]{50, -1});
+        Assert.assertArrayEquals(arr2, new long[]{50, 100, 50, 200});
+    }
+
+    @Test
     public void putValues() {
         Cherry cherry = new Cherry();
         cherry.put("key1", "values");
