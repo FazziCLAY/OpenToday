@@ -62,27 +62,34 @@ public class Logger {
     public static void e(String tag, String m, Throwable e) {
         if (!App.LOG) return;
         Log.e(ANDROID_LOG_TAG, String.format("[%s] %s", tag, m), e);
-        log("OTL [" + tag + "] " + m + " E: " + e);
+        log("OTL/ERROR [" + tag + "] " + m + " E: " + e);
+    }
+
+
+    public static void w(String tag, String m) {
+        if (!App.LOG) return;
+        Log.w(ANDROID_LOG_TAG, String.format("[%s] %s", tag, m));
+        log("OTL/WARN [" + tag + "] " + m);
     }
 
     public static void i(String tag, String m) {
         if (!App.LOG) return;
         Log.i(ANDROID_LOG_TAG, String.format("[%s] %s", tag, m));
-        log("OTL [" + tag + "] " + m);
+        log("OTL/INFO [" + tag + "] " + m);
     }
 
     public static void d(String tag, Object... m) {
         if (!App.LOG) return;
         if (m.length == 1) {
             Log.d(ANDROID_LOG_TAG, String.format("[%s] %s", tag, m[0]));
-            log("OTL [" + tag + "] " + m[0]);
+            log("OTL/DEBUG [" + tag + "] " + m[0]);
         } else {
             StringBuilder s = new StringBuilder();
             for (Object o : m) {
                 s.append(o).append(" ");
             }
             Log.d(ANDROID_LOG_TAG, String.format("[%s] %s", tag, s.substring(0, s.length()-1)));
-            log("OTL [" + tag + "] " + s.substring(0, s.length()-1));
+            log("OTL/DEBUG [" + tag + "] " + s.substring(0, s.length()-1));
         }
     }
 
