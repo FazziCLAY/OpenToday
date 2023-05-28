@@ -48,8 +48,8 @@ public class DayItemNotification implements ItemNotification {
             o.latestDayOfYear = cherry.optInt("latestDayOfYear", 0);
             o.time = cherry.optInt("time", 0);
             o.isVibrate = cherry.optBoolean("isVibrate", true);
-            o.vibration = CherryOrchard.parseLongArray(cherry.optOrchard("vibration"), new long[]{100, 50, 100, 50, 100, 50});
-
+            o.vibration = CherryOrchard.parseLongArray(cherry.getOrchard("vibration"), new long[]{100, 50, 100, 50, 100, 50});
+            if (o.vibration.length == 0) o.vibration = new long[]{100, 50, 100, 50, 100, 50};
             return o;
         }
     }
@@ -118,6 +118,9 @@ public class DayItemNotification implements ItemNotification {
 
         if (isVibrate) {
             Vibrator vibrator = context.getSystemService(Vibrator.class);
+            if (vibration.length == 0) {
+                vibration = new long[]{100, 50, 100, 50, 100, 50};
+            }
             vibrator.vibrate(VibrationEffect.createWaveform(vibration, -1));
         }
 
