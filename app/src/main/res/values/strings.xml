@@ -343,4 +343,6 @@
     <string name="toolbar_debug">Debug</string>
     <string name="filterRegistry_filterType_ITEM_STAT">Item stat</string>
     <string name="dialog_editItemFilter_activeItems">Active items</string>
+    <string name="dialog_itemNotification_empty_title">No notifications here</string>
+    <string name="dialog_itemNotification_empty_description">Press (+) button for add item notification</string>
 </resources>

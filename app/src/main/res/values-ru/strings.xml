@@ -341,4 +341,6 @@
     <string name="toolbar_debug">Отладка</string>
     <string name="filterRegistry_filterType_ITEM_STAT">Статистика айтема</string>
     <string name="dialog_editItemFilter_activeItems">Активные айтемы</string>
+    <string name="dialog_itemNotification_empty_title">Уведомления отсутствуют</string>
+    <string name="dialog_itemNotification_empty_description">Нажмите (+) для добавления уведомлений к этому айтему</string>
 </resources>

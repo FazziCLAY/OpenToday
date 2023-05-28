@@ -1,5 +1,8 @@
 package com.fazziclay.opentoday.gui.dialog;
 
+import static com.fazziclay.opentoday.util.InlineUtil.viewClick;
+import static com.fazziclay.opentoday.util.InlineUtil.viewVisible;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -36,12 +39,14 @@ public class DialogItemNotificationsEditor {
         this.item = item;
         this.onApply = o;
 
-        dialog = new Dialog(activity);
+        dialog = new Dialog(activity, android.R.style.ThemeOverlay_Material_ActionBar);
         dialog.setOnCancelListener(dialog -> onApply.run());
 
         binding = DialogItemNotificationsEditorBinding.inflate(activity.getLayoutInflater());
         view = binding.getRoot();
 
+        viewClick(binding.cancelButton, dialog::cancel);
+        updateEmptyView(item.getNotifications().isEmpty());
         binding.list.setAdapter(new MinBaseAdapter() {
             @Override
             public int getCount() {
@@ -66,6 +71,7 @@ public class DialogItemNotificationsEditor {
                                 item.getNotifications().remove(itemNotification);
                                 item.save();
                                 notifyDataSetChanged();
+                                updateEmptyView(item.getNotifications().isEmpty());
                             })
                             .setNegativeButton(R.string.dialogItem_delete_cancel, null)
                             .show();
@@ -83,11 +89,13 @@ public class DialogItemNotificationsEditor {
                     l.textFromItem.setOnClickListener(vvv -> {
                         l.text.setEnabled(!l.textFromItem.isChecked());
                     });
+                    l.text.setEnabled(!l.textFromItem.isChecked());
                     l.title.setText(d.getNotifyTitle());
                     l.titleFromItem.setChecked(d.isNotifyTitleFromItemText());
                     l.titleFromItem.setOnClickListener(vvv -> {
                         l.title.setEnabled(!l.titleFromItem.isChecked());
                     });
+                    l.title.setEnabled(!l.titleFromItem.isChecked());
                     l.notifySubText.setText(d.getNotifySubText());
                     l.test.setOnClickListener(v2132321 -> {
 
@@ -129,8 +137,13 @@ public class DialogItemNotificationsEditor {
         binding.add.setOnClickListener(v -> {
             item.getNotifications().add(new DayItemNotification());
             item.save();
+            updateEmptyView(item.getNotifications().isEmpty());
             ((BaseAdapter) binding.list.getAdapter()).notifyDataSetChanged();
         });
+    }
+
+    private void updateEmptyView(boolean empty) {
+        viewVisible(binding.empty, empty, View.GONE);
     }
 
     public void show() {
