@@ -338,8 +338,10 @@ public class ItemManager {
         Debug.latestPersonalTickDuration = Logger.countOnlyDur(() -> {
             for (UUID uuid : uuids) {
                 for (Tab tab : tabs.toArray(new Tab[0])) {
+                    // block personal tick by tab settings????
+                    // NO! personal tick this is system or debug specified tick. For example:
+                    // Notification tick this is simple tick with enabled whitelist on TickSession.
                     if (tab == null) continue;
-                    // todo: block personal tick by tab settings????
                     Item i = tab.getItemById(uuid);
                     if (i != null) {
                         i.tick(tickSession);
