@@ -160,6 +160,13 @@ public class Cherry {
         return CherryOrchard.of(jsonArray);
     }
 
+    public CherryOrchard getOrchard(String key) {
+        if (!has(key)) return null;
+        JSONArray jsonArray = json.optJSONArray(key);
+        if (jsonArray == null) jsonArray = new JSONArray();
+        return CherryOrchard.of(jsonArray);
+    }
+
     public Cherry optCherry(String key) {
         JSONObject jsonObject = json.optJSONObject(key);
         if (jsonObject == null) jsonObject = new JSONObject();

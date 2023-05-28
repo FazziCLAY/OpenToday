@@ -9,6 +9,14 @@ public class CherryOrchard {
         return new CherryOrchard(array);
     }
 
+    public static CherryOrchard of(long[] array) {
+        JSONArray jsonArray = new JSONArray();
+        for (long l : array) {
+            jsonArray.put(l);
+        }
+        return new CherryOrchard(jsonArray);
+    }
+
     private final JSONArray json;
 
     public CherryOrchard() {
