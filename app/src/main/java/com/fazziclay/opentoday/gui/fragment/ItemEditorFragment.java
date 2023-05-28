@@ -60,6 +60,7 @@ import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.dialog.DialogItemNotificationsEditor;
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
 import com.fazziclay.opentoday.util.EnumUtil;
+import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.MinTextWatcher;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
@@ -213,6 +214,12 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         binding.itemTypeName.setText(EnumsRegistry.INSTANCE.nameResId(ItemsRegistry.REGISTRY.get(item.getClass()).getItemType()));
 
         return binding.getRoot();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Logger.i("ItemEditorFragment", "onResume");
     }
 
     public UUID getArgTabId() {
