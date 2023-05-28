@@ -165,8 +165,7 @@ public class ItemManager {
 
         Object o = tab;
         for (UUID item : itemPath.getItems()) {
-            if (o instanceof ItemsStorage) {
-                ItemsStorage itemsStorage = (ItemsStorage) o;
+            if (o instanceof ItemsStorage itemsStorage) {
                 o = itemsStorage.getItemById(item);
             } else {
                 break;
@@ -287,7 +286,7 @@ public class ItemManager {
     public Item getItemById(@NonNull UUID id) {
         checkDestroy();
 
-        for (Tab tab : getTabs()) {
+        for (Tab tab : getTabs().toArray(new Tab[0])) {
             Item i = tab.getItemById(id);
             if (i != null) return i;
         }
