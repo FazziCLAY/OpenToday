@@ -307,24 +307,17 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
 
         final List<ItemFilterWrapper> tickList;
         switch (tickBehavior) {
-            case ALL:
-                tickList = items;
-                break;
-            case ACTIVE:
-                tickList = activeItems;
-                break;
-            case NOTHING:
-                tickList = Collections.emptyList();
-                break;
-            case NOT_ACTIVE:
+            case ALL -> tickList = items;
+            case ACTIVE -> tickList = activeItems;
+            case NOTHING -> tickList = Collections.emptyList();
+            case NOT_ACTIVE -> {
                 tickList = new ArrayList<>(items);
                 for (ItemFilterWrapper activeItem : activeItems) {
                     tickList.remove(activeItem);
                 }
-                break;
-
-            default:
-                throw new RuntimeException(TAG + ": Unexpected tickBehavior: " + tickBehavior);
+            }
+            default ->
+                    throw new RuntimeException(TAG + ": Unexpected tickBehavior: " + tickBehavior);
         }
 
         // NOTE: No use 'for-loop' (self-delete item in tick => ConcurrentModificationException)
