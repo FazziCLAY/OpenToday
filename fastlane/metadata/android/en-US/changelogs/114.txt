@@ -1,0 +1,65 @@
+# Changelog v114 1.1
+
+* Added formatting support for TextItem. The ColorUtil.colorize(...) function is used. Example: Hello $[-#ffffff;=#000000;@bolditalic]Worl$[||]d
+    - new system added: $[||] - reset all
+
+* Add 'What's new' button to AboutFragment
+* Add Release Time to AboutFragment
+* New filter-system. Now available 3 filter types:
+    - Date - current time filter
+    - LogicContainer - container of other filters with logic settings
+    - ItemStat - filter the current statistics of item. For example, the number of active items (specified for FilterGroup)
+    The current state of the filter is now displayed by the color of the buttons
+
+* FilterGroup now support Tick behavior
+* CycleList now support 2 new types of Tick behavior
+* New time format setting at the top of the screen
+
+* Fixes bugs:
+    - Data break while importing data from oldest version
+    - Memory leaks while ticks
+    - Notifications were not sent when the application was closed
+
+# Technical changes
+* Data version now is 9
+* Import version now is 3
+
+* Uses new data format: Cherry(JSON wrap) & CherryOrchard(JSONArray wrap)
+* Fix translates
+* Cleanup oldest FeatureFlags
+* Advanced debug tools
+* Refactoring: rename IE_TOOL -> Codec
+* Fixing selection crunches & bugs. And move selection to SelectionManager
+* ImportExport now use DataFixer for fixing imports generated in old version:
+   ImportExport now a 3 version!
+   Root JSON object new fields:
+     dataVersion
+     applicationVersion
+     applicationVersionData - JSON object like as files/version file!
+   New Error system
+
+* Move GUI-only variables from registry's to EnumsRegistry(GUI-only): nameResId
+* Fix ItemNotifications calls to AlarmManager (added permissions to AndroidManifest.xml and set unique PendingIntent:requestCode)
+* PinCodeManager: add comment to head of 'pcb' file
+* Selections logic moved to SelectionManager from ItemManager
+    - More fixes in Selection system
+* ItemManager now can be destroyed
+* ItemsStorage: add isEmpty()
+* Optimize auto-saves
+* OnItemsStorageCallback onDeleted(...) -> onPreDeleted(...) and new onPostDeleted(...)
+* Item:
+    - Added ItemCallback (for Selection fixes)
+    - Add ItemStat
+* CycleListItem: added new TickBehaviors: NOT_CURRENT, NOTHING
+* FilterGroupItem: added TickBehavior! ACTIVE, NOT_ACTIVE, NOTHING, ALL
+* Add ItemType enum for ItemInfo in ItemsRegistry
+* TextItem: added boolean 'paragraphColorize': Apply ColorUtil.colorize for getText()
+    - ColorUtil.colorize new system: $[||] for reset all
+
+* Tab fixes
+* Fixing tick-system and fix Tick memory leaks. New TickThread
+* Fixing memory usage for filters tick (FitEquip.recycle())
+
+* Debug changes:
+    - new tab type: Debug202305RandomTab
+    - new tab on Toolbar: DEBUG
