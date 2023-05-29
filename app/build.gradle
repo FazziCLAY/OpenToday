@@ -5,9 +5,9 @@ plugins {
 
 // =====
 var isDev = false
-var beta = true
-var verBuild = 113
-var verName = "1.1 beta"
+var beta = false
+var verBuild = 114
+var verName = "1.1"
 var verReleaseTime = 1685350800 // in seconds
 // =====
 
