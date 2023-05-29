@@ -208,24 +208,18 @@ public class ImportFragment extends Fragment {
     }
 
     private String getDescription(ImportWrapper.Permission permission) {
-        switch (permission) {
-            case ADD_ITEMS_TO_CURRENT:
-                return activity.getString(R.string.import_permission_ADD_ITEMS_TO_CURRENT);
+        return switch (permission) {
+            case ADD_ITEMS_TO_CURRENT ->
+                    activity.getString(R.string.import_permission_ADD_ITEMS_TO_CURRENT);
+            case ADD_TABS -> activity.getString(R.string.import_permission_ADD_TABS);
+            case PRE_IMPORT_SHOW_DIALOG ->
+                    activity.getString(R.string.import_permission_PRE_IMPORT_SHOW_DIALOG);
+            case OVERWRITE_SETTINGS ->
+                    activity.getString(R.string.import_permission_OVERWRITE_SETTINGS);
+            case OVERWRITE_COLOR_HISTORY ->
+                    activity.getString(R.string.import_permission_OVERWRITE_COLOR_HISTORY);
+        };
 
-            case ADD_TABS:
-                return activity.getString(R.string.import_permission_ADD_TABS);
-
-            case PRE_IMPORT_SHOW_DIALOG:
-                return activity.getString(R.string.import_permission_PRE_IMPORT_SHOW_DIALOG);
-
-            case OVERWRITE_SETTINGS:
-                return activity.getString(R.string.import_permission_OVERWRITE_SETTINGS);
-
-            case OVERWRITE_COLOR_HISTORY:
-                return activity.getString(R.string.import_permission_OVERWRITE_COLOR_HISTORY);
-        }
-
-        return null;
     }
     private void directImport(ImportWrapper importWrapper) {
         try {
@@ -240,7 +234,10 @@ public class ImportFragment extends Fragment {
         boolean isRestart = false;
         if (importWrapper.isPerm(ImportWrapper.Permission.ADD_ITEMS_TO_CURRENT)) {
             for (Item item : importWrapper.getItems()) {
-                itemsStorage.addItem(item);
+                switch (app.getSettingsManager().getItemAddPosition()) {
+                    case TOP -> itemsStorage.addItem(item, 0);
+                    case BOTTOM -> itemsStorage.addItem(item);
+                }
                 selectionManager.selectItem(item);
             }
         }

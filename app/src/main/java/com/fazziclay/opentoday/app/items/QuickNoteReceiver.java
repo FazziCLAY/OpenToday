@@ -75,7 +75,10 @@ public class QuickNoteReceiver extends BroadcastReceiver {
             if (itemsStorage == null) {
                 itemsStorage = itemManager.getMainTab();
             }
-            itemsStorage.addItem(item);
+            switch (settingsManager.getItemAddPosition()) {
+                case TOP -> itemsStorage.addItem(item, 0);
+                case BOTTOM -> itemsStorage.addItem(item);
+            }
 
             if (!rawTextMode) sendQuickNoteNotification(context);
         }

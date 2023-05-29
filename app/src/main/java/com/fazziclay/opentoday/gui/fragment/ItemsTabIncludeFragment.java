@@ -210,7 +210,10 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
                 Item item = settingsManager.getDefaultQuickNoteType().create();
                 if (item instanceof TextItem) ((TextItem) item).setText(text);
                 if (app.getSettingsManager().isParseTimeFromQuickNote()) item.getNotifications().addAll(QUICK_NOTE_NOTIFICATIONS_PARSE.run(text));
-                currentItemsStorage.addItem(item);
+                switch (settingsManager.getItemAddPosition()) {
+                    case TOP -> currentItemsStorage.addItem(item, 0);
+                    case BOTTOM -> currentItemsStorage.addItem(item);
+                }
             }
         });
 
@@ -227,7 +230,10 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
                     Item item = registryItem.create();
                     if (item instanceof TextItem) ((TextItem) item).setText(text);
                     if (settingsManager.isParseTimeFromQuickNote()) item.getNotifications().addAll(QUICK_NOTE_NOTIFICATIONS_PARSE.run(text));
-                    currentItemsStorage.addItem(item);
+                    switch (settingsManager.getItemAddPosition()) {
+                        case TOP -> currentItemsStorage.addItem(item, 0);
+                        case BOTTOM -> currentItemsStorage.addItem(item);
+                    }
                     return true;
                 });
             }
