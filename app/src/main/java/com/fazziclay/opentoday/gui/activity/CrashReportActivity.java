@@ -3,6 +3,8 @@ package com.fazziclay.opentoday.gui.activity;
 import static com.fazziclay.opentoday.util.InlineUtil.viewClick;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -45,6 +47,13 @@ public class CrashReportActivity extends Activity {
 
         File file = new File(getIntent().getExtras().getString(EXTRA_PATH));
         String string = FileUtil.getText(file);
+
+        crashReportText.setOnLongClickListener(view -> {
+            ClipboardManager clipboardManager = getSystemService(ClipboardManager.class);
+            clipboardManager.setPrimaryClip(ClipData.newPlainText("Crash report", string));
+            Toast.makeText(this, R.string.abc_coped, Toast.LENGTH_LONG).show();
+            return true;
+        });
 
         crashReportText.setText(string);
         viewClick(sendToDeveloper, () -> {
