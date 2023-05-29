@@ -103,18 +103,16 @@ public class ItemsUtils {
     }
 
     public static void tickDayRepeatableCheckboxes(TickSession tickSession, Item[] items) {
-        tickSession.recycleSpecifiedTickTarget(TickTarget.DAY_REPEATABLE_CHECKBOX_UPDATE);
-
         // NOTE: No use 'for-loop' (self-delete item in tick => ConcurrentModificationException)
         int i = items.length - 1;
         while (i >= 0) {
             Item item = items[i];
             if (item != null && item.isAttached() && tickSession.isAllowed(item)) {
+                tickSession.recycleSpecifiedTickTarget(TickTarget.DAY_REPEATABLE_CHECKBOX_UPDATE);
                 item.tick(tickSession);
+                tickSession.recycleSpecifiedTickTarget();
             }
             i--;
         }
-
-        tickSession.recycleSpecifiedTickTarget();
     }
 }
