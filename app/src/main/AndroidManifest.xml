@@ -2,7 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
@@ -38,6 +41,9 @@
             android:name="com.fazziclay.opentoday.gui.activity.MainActivity"
             android:exported="false" />
         <activity
+            android:name="com.fazziclay.opentoday.gui.activity.ChangelogActivity"
+            android:exported="false" />
+        <activity
             android:name="com.fazziclay.opentoday.debug.TestItemViewGenerator"
             android:exported="false" />
         <activity
@@ -61,11 +67,11 @@
         </activity> <!-- Services -->
         <!-- Receivers -->
         <receiver
-            android:name="com.fazziclay.opentoday.app.receiver.ItemsTickReceiver"
+            android:name="com.fazziclay.opentoday.app.items.tick.ItemsTickReceiver"
             android:enabled="true"
             android:exported="false" />
         <receiver
-            android:name="com.fazziclay.opentoday.app.receiver.QuickNoteReceiver"
+            android:name="com.fazziclay.opentoday.app.items.QuickNoteReceiver"
             android:enabled="true"
             android:exported="false" />
     </application>

@@ -1,17 +1,15 @@
 package com.fazziclay.opentoday.app.items.item;
 
-import android.os.Handler;
-import android.os.Looper;
-
 import androidx.annotation.NonNull;
 
-import com.fazziclay.opentoday.app.TickSession;
+import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.CurrentItemStorage;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.ItemsUtils;
 import com.fazziclay.opentoday.app.items.SimpleItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnCurrentItemStorageUpdate;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
+import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
@@ -20,46 +18,31 @@ import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 import com.fazziclay.opentoday.util.callback.Status;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.UUID;
 
 public class CycleListItem extends TextItem implements ContainerItem, ItemsStorage, CurrentItemStorage {
     // START - Save
-    public final static CycleListItemIETool IE_TOOL = new CycleListItemIETool();
-    public static class CycleListItemIETool extends TextItem.TextItemIETool {
+    public final static CycleListItemCodec CODEC = new CycleListItemCodec();
+    public static class CycleListItemCodec extends TextItemCodec {
         @NonNull
         @Override
-        public JSONObject exportItem(@NonNull Item item) throws Exception {
+        public Cherry exportItem(@NonNull Item item) {
             CycleListItem cycleListItem = (CycleListItem) item;
             return super.exportItem(item)
                     .put("currentItemPosition", cycleListItem.currentItemPosition)
-                    .put("itemsCycle", ItemIEUtil.exportItemList(cycleListItem.getAllItems()))
-                    .put("tickBehavior", cycleListItem.tickBehavior.name());
+                    .put("itemsCycle", ItemCodecUtil.exportItemList(cycleListItem.getAllItems()))
+                    .put("tickBehavior", cycleListItem.tickBehavior);
         }
 
         private final CycleListItem defaultValues = new CycleListItem();
         @NonNull
         @Override
-        public Item importItem(@NonNull JSONObject json, Item item) throws Exception {
+        public Item importItem(@NonNull Cherry cherry, Item item) {
             CycleListItem cycleListItem = item != null ? (CycleListItem) item : new CycleListItem();
-            super.importItem(json, cycleListItem);
-
-            // Items cycle
-            JSONArray jsonItemsCycle = json.getJSONArray("itemsCycle");
-            if (jsonItemsCycle == null) jsonItemsCycle = new JSONArray();
-            cycleListItem.itemsCycleStorage.importData(ItemIEUtil.importItemList(jsonItemsCycle));
-
-            // Current item pos
-            cycleListItem.currentItemPosition = json.optInt("currentItemPosition", defaultValues.currentItemPosition);
-
-            // Tick behavior
-            try {
-                cycleListItem.tickBehavior = TickBehavior.valueOf(json.optString("tickBehavior", defaultValues.tickBehavior.name()).toUpperCase());
-            } catch (Exception e) {
-                cycleListItem.tickBehavior = defaultValues.tickBehavior;
-            }
+            super.importItem(cherry, cycleListItem);
+            cycleListItem.itemsCycleStorage.importData(ItemCodecUtil.importItemList(cherry.optOrchard("itemsCycle")));
+            cycleListItem.currentItemPosition = cherry.optInt("currentItemPosition", defaultValues.currentItemPosition);
+            cycleListItem.tickBehavior = cherry.optEnum("tickBehavior", defaultValues.tickBehavior);
             return cycleListItem;
         }
     }
@@ -142,13 +125,20 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
 
     @Override
     public void tick(TickSession tickSession) {
+        if (!tickSession.isAllowed(this)) return;
         super.tick(tickSession);
         if (tickBehavior == TickBehavior.ALL) {
             itemsCycleStorage.tick(tickSession);
         } else if (tickBehavior == TickBehavior.CURRENT) {
             Item c = getCurrentItem();
-            if (c != null) c.tick(tickSession);
+            if (c != null && tickSession.isAllowed(c)) c.tick(tickSession);
+        } else if (tickBehavior == TickBehavior.NOT_CURRENT) {
+            Item c = getCurrentItem();
+            for (Item item : getAllItems()) {
+                if (item != c && tickSession.isAllowed(item)) item.tick(tickSession);
+            }
         }
+        ItemsUtils.tickDayRepeatableCheckboxes(tickSession, getAllItems());
     }
 
     @Override
@@ -174,6 +164,11 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
     @Override
     public CallbackStorage<OnItemsStorageUpdate> getOnUpdateCallbacks() {
         return itemsCycleStorage.getOnUpdateCallbacks();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return itemsCycleStorage.isEmpty();
     }
 
     @Override
@@ -231,6 +226,7 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
 
     private class CycleItemsStorage extends SimpleItemsStorage {
         public CycleItemsStorage() {
+            super(new CycleListItemController());
             getOnUpdateCallbacks().addCallback(CallbackImportance.DEFAULT, new OnItemsStorageUpdate() {
                 @Override
                 public Status onAdded(Item item, int pos) {
@@ -239,9 +235,8 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
                 }
 
                 @Override
-                public Status onDeleted(Item item, int pos) {
-                    // TODO: 01.11.2022 WTF This?
-                    new Handler(Looper.getMainLooper()).postDelayed(() -> onCurrentItemStorageUpdateCallback.run((callbackStorage, callback) -> callback.onCurrentChanged(getCurrentItem())), 250);
+                public Status onPostDeleted(Item item, int pos) {
+                    onCurrentItemStorageUpdateCallback.run((callbackStorage, callback) -> callback.onCurrentChanged(getCurrentItem()));
                     return Status.NONE;
                 }
 
@@ -265,8 +260,32 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
         }
     }
 
+    private class CycleListItemController extends ItemController {
+        @Override
+        public void delete(Item item) {
+            CycleListItem.this.deleteItem(item);
+        }
+
+        @Override
+        public void save(Item item) {
+            CycleListItem.this.save();
+        }
+
+        @Override
+        public void updateUi(Item item) {
+            CycleListItem.this.getOnUpdateCallbacks().run(((callbackStorage, callback) -> callback.onUpdated(item, getItemPosition(item))));
+        }
+
+        @Override
+        public ItemsStorage getParentItemsStorage(Item item) {
+            return CycleListItem.this;
+        }
+    }
+
     public enum TickBehavior {
         ALL,
-        CURRENT
+        NOTHING,
+        CURRENT,
+        NOT_CURRENT
     }
 }

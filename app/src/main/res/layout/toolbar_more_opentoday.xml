@@ -2,28 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/Theme.OpenToday.Toolbar.Section.Root.OpenToday">
 
-    <Button
-        android:id="@+id/debug_resetSetup"
-        android:text="@string/toolbar_more_opentoday_debug_resetSetup"
-        style="@style/Theme.OpenToday.Toolbar.Section.Button.OpenToday.ToggleLogsOverlay" />
-
-
-    <Button
-        android:id="@+id/debug_restartActivity"
-        android:text="@string/toolbar_more_opentoday_debug_restartActivity"
-        style="@style/Theme.OpenToday.Toolbar.Section.Button.OpenToday.ToggleLogsOverlay" />
-
-
-    <Button
-        android:id="@+id/debug_personalTick"
-        android:text="@string/toolbar_more_opentoday_debug_personalTick"
-        style="@style/Theme.OpenToday.Toolbar.Section.Button.OpenToday.ToggleLogsOverlay" />
-
-    <Button
-        android:id="@+id/debug_toggleDebugOverlayText"
-        android:text="@string/toolbar_more_opentoday_toggleLogsOverlay"
-        style="@style/Theme.OpenToday.Toolbar.Section.Button.OpenToday.ToggleLogsOverlay" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

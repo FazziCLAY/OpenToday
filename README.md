@@ -1,5 +1,6 @@
 # OpenToday
-Android application for the organization of life, pro notes and reminder!
+English | [Русский](https://github.com/FazziCLAY/OpenToday/blob/main/docs/README_RU.md)
+Android application for the organization of life, pro notes and reminder
 
 [![license](https://img.shields.io/github/license/fazziclay/opentoday?color=%2300bb00&style=plastic)](https://github.com/FazziCLAY/OpenToday/blob/main/LICENSE)
 

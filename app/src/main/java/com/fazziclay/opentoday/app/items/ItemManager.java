@@ -1,16 +1,15 @@
 package com.fazziclay.opentoday.app.items;
 
 import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.fazziclay.javaneoutil.FileUtil;
+import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.TickSession;
-import com.fazziclay.opentoday.app.items.callback.OnSelectionChanged;
+import com.fazziclay.opentoday.app.data.CherryOrchard;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
@@ -20,25 +19,28 @@ import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.TextItem;
-import com.fazziclay.opentoday.app.items.tab.ItemsTabController;
+import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.LocalItemsTab;
 import com.fazziclay.opentoday.app.items.tab.Tab;
-import com.fazziclay.opentoday.app.items.tab.TabIEUtil;
+import com.fazziclay.opentoday.app.items.tab.TabCodecUtil;
+import com.fazziclay.opentoday.app.items.tab.TabController;
+import com.fazziclay.opentoday.app.items.tick.TickSession;
+import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
-import com.fazziclay.opentoday.util.callback.Status;
+import com.fazziclay.opentoday.util.time.TimeUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -47,25 +49,30 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class ItemManager {
-    private static final boolean DEBUG_ITEMS_SET = (App.DEBUG && false);
+    private static final boolean DEBUG_ITEMS_SET = App.debug(false);
+    private static final String TAG = "ItemManager";
 
-    // Selection
-    private final List<Selection> selections = new ArrayList<>();
-    private final CallbackStorage<OnSelectionChanged> onSelectionUpdated = new CallbackStorage<>();
-
+    private boolean destroyed = false;
     @NonNull private final File dataOriginalFile;
     @NonNull private final File dataCompressFile;
     private boolean debugPrintSaveStatusAlways = false;
     private SaveThread saveThread = null;
     @NonNull @RequireSave
     @SaveKey(key = "tabs") private final List<Tab> tabs = new ArrayList<>();
-    @NonNull private final ItemsTabController itemsTabController = new LocalItemTabsController();
+    @NonNull private final TabController tabController = new LocalItemTabsController();
     @NonNull private final CallbackStorage<OnTabsChanged> onTabsChangedCallbacks = new CallbackStorage<>();
+    @NonNull private final SelectionManager selectionManager;
 
     public ItemManager(@NonNull final File dataOriginalFile, @NonNull final File dataCompressFile) {
         this.dataOriginalFile = dataOriginalFile;
         this.dataCompressFile = dataCompressFile;
+        this.selectionManager = new SelectionManager();
         load();
+    }
+
+    @NonNull
+    public SelectionManager getSelectionManager() {
+        return selectionManager;
     }
 
     public void setDebugPrintSaveStatusAlways(boolean b) {
@@ -110,9 +117,10 @@ public class ItemManager {
                     } else {
                         jsonTabs = new JSONArray();
                     }
-                    List<Tab> tabs = TabIEUtil.importTabs(jsonTabs);
+                    List<Tab> tabs = TabCodecUtil.importTabList(CherryOrchard.of(jsonTabs));
                     for (Tab tab : tabs) {
-                        tab.setController(itemsTabController);
+                        tab.setController(tabController);
+                        tab.validateId();
                     }
                     this.tabs.addAll(tabs);
                 } catch (Exception e) {
@@ -127,6 +135,8 @@ public class ItemManager {
 
     @Nullable
     public ItemsStorage getItemStorageById(UUID id) {
+        checkDestroy();
+
         Tab tab = getTab(id);
         if (tab != null) return tab;
         Item item = null;
@@ -145,6 +155,8 @@ public class ItemManager {
 
     // ==== Path ====
     public Item getItemByPath(ItemPath itemPath) {
+        checkDestroy();
+
         UUID tabId = itemPath.getTabId();
         Tab tab = getTab(tabId);
         if (tab == null) {
@@ -153,8 +165,7 @@ public class ItemManager {
 
         Object o = tab;
         for (UUID item : itemPath.getItems()) {
-            if (o instanceof ItemsStorage) {
-                ItemsStorage itemsStorage = (ItemsStorage) o;
+            if (o instanceof ItemsStorage itemsStorage) {
                 o = itemsStorage.getItemById(item);
             } else {
                 break;
@@ -173,22 +184,32 @@ public class ItemManager {
     // ==== TABS ====
     @NonNull
     public List<Tab> getTabs() {
+        checkDestroy();
+
         return tabs;
     }
 
     public boolean isOneTabMode() {
+        checkDestroy();
+
         return getTabsCount() == 1;
     }
 
     public int getTabsCount() {
+        checkDestroy();
+
         return tabs.size();
     }
 
     public Tab getTabAt(int i) {
+        checkDestroy();
+
         return tabs.get(i);
     }
 
     public int getTabPosition(UUID tabId) {
+        checkDestroy();
+
         Tab tab = getTab(tabId);
         if (tab == null) {
             return -1;
@@ -197,6 +218,8 @@ public class ItemManager {
     }
 
     public Tab getTab(UUID uuid) {
+        checkDestroy();
+
         for (Tab tab : getTabs()) {
             if (tab.getId().equals(uuid)) {
                 return tab;
@@ -211,23 +234,26 @@ public class ItemManager {
     }
 
     public void createTab(@NonNull String name) {
+        checkDestroy();
+
         if (name.trim().isEmpty()) {
             throw new RuntimeException("Empty name for tab is not allowed!");
         }
-        addTab(new LocalItemsTab(UUID.randomUUID(), name));
-        internalOnTabChanged();
-        queueSave();
+        addTab(new LocalItemsTab(name));
     }
 
     public void addTab(@NonNull Tab tab) {
-        tab.setId(UUID.randomUUID());
-        tab.setController(itemsTabController);
+        checkDestroy();
+
+        tab.attach(tabController);
         this.tabs.add(tab);
         internalOnTabChanged();
         queueSave();
     }
 
     public void deleteTab(Tab tab) {
+        checkDestroy();
+
         if (getTabsCount() == 1) {
             throw new SecurityException("Not allowed one tab (after delete tabs count == 0)");
         }
@@ -237,6 +263,8 @@ public class ItemManager {
     }
 
     public void moveTabs(int positionFrom, int positionTo) {
+        checkDestroy();
+
         Tab from = tabs.get(positionFrom);
         tabs.remove(from);
         tabs.add(positionTo, from);
@@ -256,14 +284,37 @@ public class ItemManager {
 
     @Nullable
     public Item getItemById(@NonNull UUID id) {
-        for (Tab tab : getTabs()) {
+        checkDestroy();
+
+        for (Tab tab : getTabs().toArray(new Tab[0])) {
             Item i = tab.getItemById(id);
             if (i != null) return i;
         }
         return null;
     }
 
-    private class LocalItemTabsController implements ItemsTabController {
+    public void destroy() {
+        saveAllDirect();
+        if (saveThread != null) saveThread.disable();
+
+        for (Tab tab : tabs) {
+            tab.detach();
+        }
+
+        destroyed = true;
+    }
+
+    private void checkDestroy() {
+        if (destroyed) {
+            throw new RuntimeException("This ItemManager destroyed!");
+        }
+    }
+
+    public boolean isDestroyed() {
+        return destroyed;
+    }
+
+    private class LocalItemTabsController implements TabController {
         @Override
         public void save(@NonNull Tab tab) {
             ItemManager.this.queueSave();
@@ -273,98 +324,54 @@ public class ItemManager {
             ItemManager.this.internalOnTabChanged();
             ItemManager.this.queueSave();
         }
+
+        @Override
+        public UUID generateId() {
+            return UUID.randomUUID();
+        }
     }
 
     // ==== Tick ====
     public void tick(TickSession tickSession, List<UUID> uuids) {
-        for (UUID uuid : uuids) {
-            for (Tab tab : tabs) {
-                Item i = tab.getItemById(uuid);
-                if (i != null) {
-                    i.tick(tickSession);
+        checkDestroy();
+
+        Debug.latestPersonalTickDuration = Logger.countOnlyDur(() -> {
+            for (UUID uuid : uuids) {
+                for (Tab tab : tabs.toArray(new Tab[0])) {
+                    // block personal tick by tab settings????
+                    // NO! personal tick this is system or debug specified tick. For example:
+                    // Notification tick this is simple tick with enabled whitelist on TickSession.
+                    if (tab == null) continue;
+                    Item i = tab.getItemById(uuid);
+                    if (i != null) {
+                        i.tick(tickSession);
+                    }
                 }
             }
-        }
+        });
     }
 
     public void tick(TickSession tickSession) {
-        for (Tab tab : tabs) {
-            if (tab == null) continue;
-            tab.tick(tickSession);
-        }
-    }
+        checkDestroy();
 
-    public CallbackStorage<OnSelectionChanged> getOnSelectionUpdated() {
-        return onSelectionUpdated;
-    }
-
-    public boolean isSelectionEmpty() {
-        return selections.isEmpty();
-    }
-
-    public Selection[] getSelections() {
-        return selections.toArray(new Selection[0]);
-    }
-
-    public void selectItem(Selection selection) {
-        if (isSelected(selection.getItem())) return;
-        this.selections.add(selection);
-        this.onSelectionUpdated.run((callbackStorage, callback) -> {
-            callback.onSelectionChanged(this.selections);
-            return new Status.Builder().build();
+        Debug.latestTickDuration = Logger.countOnlyDur(() -> {
+            for (Tab tab : tabs.toArray(new Tab[0])) {
+                if (tab == null || tab.isDisableTick()) continue;
+                tab.tick(tickSession);
+            }
         });
-    }
-
-    public void deselectItem(Item item) {
-        if (!isSelected(item)) return;
-        Selection toDelete = null;
-        for (Selection selection : this.selections) {
-            if (selection.getItem() == item) toDelete = selection;
-        }
-        selections.remove(toDelete);
-
-        this.onSelectionUpdated.run((callbackStorage, callback) -> {
-            callback.onSelectionChanged(this.selections);
-            return new Status.Builder().build();
-        });
-    }
-
-    public void deselectItem(Selection se) {
-        if (!isSelected(se.getItem())) return;
-        Selection toDelete = null;
-        for (Selection selection : this.selections) {
-            if (selection == se) toDelete = selection;
-        }
-        selections.remove(toDelete);
-
-        this.onSelectionUpdated.run((callbackStorage, callback) -> {
-            callback.onSelectionChanged(this.selections);
-            return new Status.Builder().build();
-        });
-    }
-
-    public void deselectAll() {
-        selections.clear();
-
-        this.onSelectionUpdated.run((callbackStorage, callback) -> {
-            callback.onSelectionChanged(this.selections);
-            return new Status.Builder().build();
-        });
-    }
-
-    public boolean isSelected(Item item) {
-        for (Selection selection : selections) {
-            if (selection.getItem() == item) return true;
-        }
-        return false;
     }
 
     public void queueSave() {
+        queueSave(SaveInitiator.USER);
+    }
+
+    public void queueSave(SaveInitiator initiator) {
         if (saveThread == null) {
             saveThread = new SaveThread();
             saveThread.start();
         }
-        saveThread.request();
+        saveThread.request(initiator);
     }
 
     public boolean saveAllDirect() {
@@ -373,13 +380,13 @@ public class ItemManager {
             // Save
             {
                 JSONObject jRoot = new JSONObject();
-                JSONArray jTabs = TabIEUtil.exportTabs(this.tabs);
+                JSONArray jTabs = TabCodecUtil.exportTabList(this.tabs).toJSONArray();
                 jRoot.put("tabs", jTabs);
                 String originalData = jRoot.toString();
 
                 FileUtil.setText(dataOriginalFile, originalData);
 
-                GZIPOutputStream gz = new GZIPOutputStream(new FileOutputStream(dataCompressFile));
+                GZIPOutputStream gz = new GZIPOutputStream(Files.newOutputStream(dataCompressFile.toPath()));
                 Writer writer = new OutputStreamWriter(gz);
                 writer.write(originalData);
                 writer.flush();
@@ -391,9 +398,10 @@ public class ItemManager {
                     new Handler(App.get().getMainLooper()).post(() -> Toast.makeText(App.get(), "Success save", Toast.LENGTH_SHORT).show());
                 } catch (Exception ignored) {}
             }
+            Debug.saved();
             return true;
         } catch (Exception e) {
-            Log.e("ItemManager", "SaveThread exception", e);
+            Logger.e(TAG, "saveAllDirect", e);
             App.exception(null, e);
             try {
                 new Handler(App.get().getMainLooper()).post(() -> Toast.makeText(App.get(), "Error: Save exception: " + e + "; cause: " + e.getCause(), Toast.LENGTH_LONG).show());
@@ -403,7 +411,9 @@ public class ItemManager {
     }
 
     private class SaveThread extends Thread {
+        public boolean enabled = true;
         public boolean request = false;
+        private byte requestImportance = 0;
         public int requestsCount = 0;
         public long firstRequestTime = 0;
         public long latestRequestTime = 0;
@@ -414,28 +424,31 @@ public class ItemManager {
 
         @Override
         public void run() {
-            while (!isInterrupted()) {
-                if (request) {
+            while (!isInterrupted() && enabled) {
+                if (request && (requestImportance > 0 || ((System.currentTimeMillis() - firstRequestTime) > 1000 * 10))) {
+                    if (App.LOG) Logger.i(TAG, String.format("SaveThread: requestCount=%s\nfirstTime=%s\nlatestTime=%s", requestsCount, TimeUtil.getDebugDate(firstRequestTime), TimeUtil.getDebugDate(latestRequestTime)));
+
                     request = false;
-                    requestsCount = 0;
+                    requestsCount = Debug.latestSaveRequestsCount = 0;
                     firstRequestTime = 0;
                     latestRequestTime = 0;
+                    requestImportance = 0;
 
                     // Save
                     internalSave();
-                    Log.i("SaveThread", String.format("requestCount=%s\nfirstTime=%s\nlatestTime=%s", requestsCount, firstRequestTime, latestRequestTime));
                 }
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(1000);
                 } catch (InterruptedException ignored) {}
             }
+            interrupt();
         }
 
         private void internalSave() {
             try {
                 ItemManager.this.saveAllDirect();
             } catch (Exception e) {
-                Log.e("ItemManager", "SaveThread exception", e);
+                Logger.e(TAG, "SaveThread internalSave", e);
                 try {
                     new Handler(App.get().getMainLooper()).post(() -> Toast.makeText(App.get(), "Error: Save exception: " + e + "; cause: " + e.getCause(), Toast.LENGTH_LONG).show());
                 } catch (Exception ignored) {}
@@ -445,13 +458,20 @@ public class ItemManager {
             }
         }
 
-        public void request() {
+        public void request(SaveInitiator initiator) {
+            if (initiator == SaveInitiator.TICK_PERSONAL) initiator = SaveInitiator.USER; // TODO: 2023.05.26 handle TICK_PERSONAL!
+
             if (!request) {
                 firstRequestTime = System.currentTimeMillis();
             }
+            if (requestImportance == 0 && initiator == SaveInitiator.USER) requestImportance = 1;
             request = true;
             latestRequestTime = System.currentTimeMillis();
-            requestsCount = requestsCount + 1;
+            requestsCount = Debug.latestSaveRequestsCount = requestsCount + 1;
+        }
+
+        public void disable() {
+            this.enabled = false;
         }
     }
 
@@ -475,8 +495,8 @@ public class ItemManager {
         }
 
         List<Tab> tabs = new ArrayList<>();
-        addTab(new LocalItemsTab(UUID.randomUUID(), "Debug1", tab1items.toArray(new Item[0])));
-        addTab(new LocalItemsTab(UUID.randomUUID(), "Debug2", tab2items.toArray(new Item[0])));
+        //addTab(new LocalItemsTab("Debug1", tab1items.toArray(new Item[0])));
+        //addTab(new LocalItemsTab("Debug2", tab2items.toArray(new Item[0])));
         return tabs;
     }
 }

@@ -5,19 +5,29 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.widget.*
+import android.widget.CheckBox
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.ScrollView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.App
 import com.fazziclay.opentoday.app.FeatureFlag
-import com.fazziclay.opentoday.app.receiver.ItemsTickReceiver
+import com.fazziclay.opentoday.app.items.tick.ItemsTickReceiver
+import com.fazziclay.opentoday.gui.callbacks.UIDebugCallback
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost
 import com.fazziclay.opentoday.util.InlineUtil
-import java.util.*
+import com.fazziclay.opentoday.util.callback.CallbackStorage
+import com.fazziclay.opentoday.util.callback.Status
+import java.util.UUID
 
 object UI {
+    private val debugCallbacks: CallbackStorage<UIDebugCallback> = CallbackStorage()
+
     @JvmStatic
     fun <T : Fragment?> findFragmentInParents(fragment: Fragment, find: Class<T>): T? {
         var parent = fragment.parentFragment
@@ -36,6 +46,11 @@ object UI {
     fun rootBack(fragment: Fragment) {
         val host = findFragmentInParents(fragment, MainRootFragment::class.java) ?: throw RuntimeException("Fragment is not contains MainRootFragment in parents!")
         host.popBackStack()
+    }
+
+    @JvmStatic
+    fun getDebugCallbacks(): CallbackStorage<UIDebugCallback> {
+        return debugCallbacks;
     }
 
     @JvmStatic
@@ -58,7 +73,8 @@ object UI {
                         // TODO: 3/10/23 review
                         try {
                             val id = UUID.fromString(view.text.toString())
-                            context.sendBroadcast(Intent(context, ItemsTickReceiver::class.java).putExtra(ItemsTickReceiver.EXTRA_PERSONAL_TICK, arrayOf(id.toString())).putExtra("debugMessage", "Debug personal tick is work!"))
+                            context.sendBroadcast(Intent(context, ItemsTickReceiver::class.java).putExtra(
+                                ItemsTickReceiver.EXTRA_PERSONAL_TICK, arrayOf(id.toString())).putExtra("debugMessage", "Debug personal tick is work!"))
                         } catch (e: Exception) {
                             Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show()
                         }
@@ -74,7 +90,7 @@ object UI {
                     .setTitle(R.string.manuallyCrash_dialog_title)
                     .setView(message)
                     .setMessage(R.string.manuallyCrash_dialog_message)
-                    .setPositiveButton(R.string.manuallyCrash_dialog_apply) { var1: DialogInterface?, var2: Int -> throw RuntimeException(String.format(exceptionMessagePattern!!, message.text.toString())) }
+                    .setPositiveButton(R.string.manuallyCrash_dialog_apply) { _: DialogInterface?, _: Int -> throw RuntimeException(String.format(exceptionMessagePattern!!, message.text.toString())) }
                     .setNegativeButton(R.string.manuallyCrash_dialog_cancel, null)
                     .create()
             dialog.setCanceledOnTouchOutside(false)
@@ -98,6 +114,12 @@ object UI {
                         if (app.isFeatureFlag(featureFlag)) {
                             app.featureFlags.remove(featureFlag)
                         }
+                    }
+                    if (featureFlag == FeatureFlag.TOOLBAR_DEBUG) {
+                        debugCallbacks.run(CallbackStorage.RunCallbackInterface { _, callback ->
+                            callback.debugChange(`is`)
+                            return@RunCallbackInterface Status.NONE
+                        })
                     }
                 })
                 val textView = TextView(context)

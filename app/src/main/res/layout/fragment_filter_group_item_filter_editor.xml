@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5sp">
+
+    <TextView
+        android:id="@+id/rootFilterEditor_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/filter_group_item_filter_editor_rootFilterEditor_title" />
+
+    <LinearLayout
+        android:id="@+id/outdated_item_filter_scheme"
+        android:layout_below="@id/rootFilterEditor_title"
+        android:visibility="gone"
+        android:padding="2sp"
+        android:background="#33730606"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="@string/fragment_filter_group_item_filter_editor_outdatedItemFilterSchemeTitle"/>
+
+        <Button
+            android:id="@+id/merge_to_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fragment_filter_group_item_filter_editor_outdatedItemFilterScheme_FixButton" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/itemFilter_root_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/outdated_item_filter_scheme" />
+
+</RelativeLayout>

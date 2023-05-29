@@ -33,5 +33,10 @@
             android:id="@+id/toolbar_opentoday"
             android:text="@string/toolbar_opentoday"
             style="@style/Theme.OpenToday.Toolbar.Button" />
+
+        <Button
+            android:id="@+id/toolbar_debug"
+            android:text="@string/toolbar_debug"
+            style="@style/Theme.OpenToday.Toolbar.Button" />
     </LinearLayout>
 </HorizontalScrollView>

@@ -2,24 +2,26 @@ package com.fazziclay.opentoday.gui.activity
 
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import com.fazziclay.opentoday.Debug
 import com.fazziclay.opentoday.R
-import com.fazziclay.opentoday.app.ActivitySettings
-import com.fazziclay.opentoday.app.App
-import com.fazziclay.opentoday.app.FeatureFlag
+import com.fazziclay.opentoday.app.*
 import com.fazziclay.opentoday.app.Telemetry.UiClosedLPacket
 import com.fazziclay.opentoday.app.Telemetry.UiOpenLPacket
-import com.fazziclay.opentoday.app.receiver.ItemsTickReceiver
-import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver
-import com.fazziclay.opentoday.app.updatechecker.UpdateChecker
+import com.fazziclay.opentoday.app.items.QuickNoteReceiver
+import com.fazziclay.opentoday.app.items.tick.ItemsTickReceiver
 import com.fazziclay.opentoday.databinding.ActivityMainBinding
 import com.fazziclay.opentoday.databinding.NotificationDebugappBinding
 import com.fazziclay.opentoday.databinding.NotificationUpdateAvailableBinding
+import com.fazziclay.opentoday.gui.ActivitySettings
+import com.fazziclay.opentoday.gui.EnumsRegistry
 import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember
@@ -37,27 +39,39 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var app: App
+    private lateinit var settingsManager: SettingsManager;
     private var lastExitClick: Long = 0
 
     // Current Date
     private lateinit var currentDateHandler: Handler
     private lateinit var currentDateRunnable: Runnable
     private lateinit var currentDateCalendar: GregorianCalendar
-    private var activitySettings: ActivitySettings = ActivitySettings().setClockVisible(true).setNotificationsVisible(true)
+    private var activitySettings: ActivitySettings = ActivitySettings()
+        .setClockVisible(true).setNotificationsVisible(true)
     private var debugView = false
+    private var debugHandler: Handler? = null
+    private lateinit var debugRunnable: Runnable
     private var debugViewSize = 13
 
     // Activity overrides
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Logger.d(TAG, "onCreate", nullStat(savedInstanceState))
+        if (App.DEBUG) EnumsRegistry.missingChecks()
         app = App.get(this)
-        UI.setTheme(app.settingsManager.theme)
-        app.isAppInForeground = true
+        settingsManager = app.settingsManager;
+        UI.setTheme(settingsManager.theme)
         app.telemetry.send(UiOpenLPacket())
         binding = ActivityMainBinding.inflate(layoutInflater)
         supportActionBar!!.hide()
+        debugRunnable = Runnable {
+            binding.debugInfo.text = Debug.getDebugInfoText()
+            if (debugView && debugHandler != null) {
+                debugHandler!!.postDelayed(this.debugRunnable, 99)
+            }
+        }
         setContentView(binding.root)
+        if (Debug.CUSTOM_MAINACTIVITY_BACKGROUND) binding.root.setBackgroundColor(Color.parseColor("#00ffff"))
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                     .replace(CONTAINER_ID, MainRootFragment.create(), "MainRootFragment")
@@ -65,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         }
         setupNotifications()
         setupCurrentDate()
-        if (app.settingsManager.isQuickNoteNotification) {
+        if (settingsManager.isQuickNoteNotification) {
             QuickNoteReceiver.sendQuickNoteNotification(this)
         }
         updateDebugView()
@@ -100,7 +114,6 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         Logger.d(TAG, "onDestroy")
-        app.isAppInForeground = false
         app.telemetry.send(UiClosedLPacket())
         currentDateHandler.removeCallbacks(currentDateRunnable)
     }
@@ -142,11 +155,11 @@ class MainActivity : AppCompatActivity() {
 
         // TODO: 11.10.2022 IDEA: Pattern to settings
         // Date
-        var dateFormat = SimpleDateFormat("yyyy.MM.dd EEEE", Locale.getDefault())
+        var dateFormat = SimpleDateFormat(settingsManager.datePattern, Locale.getDefault())
         binding.currentDateDate.text = dateFormat.format(time)
 
         // Time
-        dateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+        dateFormat = SimpleDateFormat(settingsManager.timePattern, Locale.getDefault())
         binding.currentDateTime.text = dateFormat.format(time)
     }
 
@@ -167,7 +180,7 @@ class MainActivity : AppCompatActivity() {
 
     // App is DEBUG warning notify
     private fun setupAppDebugNotify() {
-        if (!App.DEBUG) return
+        if (!App.DEBUG || app.isFeatureFlag(FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION)) return
 
         val b = NotificationDebugappBinding.inflate(layoutInflater)
         binding.notifications.addView(b.root)
@@ -180,12 +193,21 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateDebugView() {
         if (debugView) {
+            if (debugHandler == null) {
+                debugHandler = Handler(Looper.getMainLooper())
+            }
+            debugHandler?.post(debugRunnable)
+            binding.debugInfo.visibility = View.VISIBLE
             binding.debugLogsSizeUp.visibility = View.VISIBLE
             binding.debugLogsSizeDown.visibility = View.VISIBLE
             binding.debugLogsSwitch.visibility = View.VISIBLE
             binding.debugLogsSwitch.setOnClickListener {
                 viewVisible(binding.debugLogsScroll, binding.debugLogsSwitch.isChecked, View.GONE)
                 binding.debugLogsText.text = Logger.getLOGS().toString()
+            }
+            binding.debugLogsSwitch.setOnLongClickListener {
+                toggleLogsOverlay()
+                return@setOnLongClickListener true
             }
             binding.debugLogsText.textSize = debugViewSize.toFloat()
             binding.debugLogsSizeUp.setOnClickListener {
@@ -197,6 +219,8 @@ class MainActivity : AppCompatActivity() {
                 binding.debugLogsText.textSize = debugViewSize.toFloat()
             }
         } else {
+            debugHandler?.removeCallbacks(debugRunnable)
+            binding.debugInfo.visibility = View.GONE
             binding.debugLogsSizeUp.visibility = View.GONE
             binding.debugLogsSizeDown.visibility = View.GONE
             binding.debugLogsSwitch.visibility = View.GONE

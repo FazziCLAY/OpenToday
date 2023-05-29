@@ -73,7 +73,7 @@ public class OpenSourceLicenseActivity extends AppCompatActivity {
     }
 
     // IDEA: move to JavaNeoUtil as `readString(InputStream is)`
-    private String read(InputStream inputStream) throws IOException {
+    public static String read(InputStream inputStream) throws IOException {
         Reader reader = new InputStreamReader(inputStream);
         final StringBuilder result = new StringBuilder();
 

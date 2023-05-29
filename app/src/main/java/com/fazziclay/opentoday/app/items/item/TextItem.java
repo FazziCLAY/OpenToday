@@ -4,41 +4,43 @@ import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 
+import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.annotation.Setter;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
 
 public class TextItem extends Item {
     private static final String DEFAULT_TEXT_COLOR = "#ff0000ff";
 
     // START - Save
-    public final static TextItemIETool IE_TOOL = new TextItemIETool();
-    public static class TextItemIETool extends Item.ItemIETool {
+    public final static TextItemCodec CODEC = new TextItemCodec();
+    public static class TextItemCodec extends ItemCodec {
         @NonNull
         @Override
-        public JSONObject exportItem(@NonNull Item item) throws Exception {
+        public Cherry exportItem(@NonNull Item item) {
             TextItem textItem = (TextItem) item;
             return super.exportItem(textItem)
                     .put("text", textItem.text)
                     .put("textColor", textItem.textColor)
                     .put("customTextColor", textItem.customTextColor)
-                    .put("clickableUrls", textItem.clickableUrls);
+                    .put("clickableUrls", textItem.clickableUrls)
+                    .put("paragraphColorize", textItem.paragraphColorize);
         }
 
         private final TextItem defaultValues = new TextItem();
         @NonNull
         @Override
-        public Item importItem(@NonNull JSONObject json, Item item) throws Exception {
+        public Item importItem(@NonNull Cherry cherry, Item item) {
             TextItem textItem = item != null ? (TextItem) item : new TextItem();
-            super.importItem(json, textItem);
-            textItem.text = json.optString("text", defaultValues.text);
-            textItem.textColor = json.optInt("textColor", defaultValues.textColor);
-            textItem.customTextColor = json.optBoolean("customTextColor", defaultValues.customTextColor);
-            textItem.clickableUrls = json.optBoolean("clickableUrls", defaultValues.clickableUrls);
+            super.importItem(cherry, textItem);
+            textItem.text = cherry.optString("text", defaultValues.text);
+            textItem.textColor = cherry.optInt("textColor", defaultValues.textColor);
+            textItem.customTextColor = cherry.optBoolean("customTextColor", defaultValues.customTextColor);
+            textItem.clickableUrls = cherry.optBoolean("clickableUrls", defaultValues.clickableUrls);
+            textItem.paragraphColorize = cherry.optBoolean("paragraphColorize", defaultValues.paragraphColorize);
             return textItem;
         }
     }
@@ -53,6 +55,7 @@ public class TextItem extends Item {
     @SaveKey(key = "textColor") @RequireSave private int textColor = Color.parseColor(DEFAULT_TEXT_COLOR);
     @SaveKey(key = "customTextColor") @RequireSave private boolean customTextColor = false;
     @SaveKey(key = "clickableUrls") @RequireSave private boolean clickableUrls = false;
+    @SaveKey(key = "paragraphColorize") private boolean paragraphColorize = true;
 
     protected TextItem() {}
 
@@ -73,6 +76,7 @@ public class TextItem extends Item {
         this.textColor = copy.textColor;
         this.customTextColor = copy.customTextColor;
         this.clickableUrls = copy.clickableUrls;
+        this.paragraphColorize = copy.paragraphColorize;
     }
 
     @Override @Getter @NonNull public String getText() { return text; }
@@ -83,4 +87,6 @@ public class TextItem extends Item {
     @Setter public void setCustomTextColor(boolean v) { this.customTextColor = v; }
     @Getter public boolean isClickableUrls() { return clickableUrls; }
     @Setter public void setClickableUrls(boolean clickableUrls) { this.clickableUrls = clickableUrls; }
+    @Getter public boolean isParagraphColorize() {return paragraphColorize;}
+    @Setter public void setParagraphColorize(boolean v) {this.paragraphColorize = v;}
 }

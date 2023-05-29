@@ -2,11 +2,12 @@ package com.fazziclay.opentoday.app.items;
 
 import androidx.annotation.NonNull;
 
-import com.fazziclay.opentoday.app.TickSession;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemController;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
+import com.fazziclay.opentoday.app.items.tick.TickSession;
+import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 
 import java.util.ArrayList;
@@ -14,17 +15,20 @@ import java.util.List;
 import java.util.UUID;
 
 public abstract class SimpleItemsStorage implements ItemsStorage {
+    private static final String TAG = "SimpleItemsStorage";
     private final List<Item> items;
     private final ItemController simpleItemController;
     private final CallbackStorage<OnItemsStorageUpdate> onUpdateCallbacks = new CallbackStorage<>();
 
-    public SimpleItemsStorage(List<Item> items) {
-        this.items = items;
+
+    public SimpleItemsStorage() {
+        this.items = new ArrayList<>();
         this.simpleItemController = new SimpleItemController();
     }
 
-    public SimpleItemsStorage() {
-        this(new ArrayList<>());
+    public SimpleItemsStorage(ItemController customController) {
+        this.items = new ArrayList<>();
+        this.simpleItemController = customController;
     }
 
     @NonNull
@@ -36,6 +40,11 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
     @Override
     public int size() {
         return items.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return items.isEmpty();
     }
 
     @Override
@@ -55,14 +64,18 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
 
     @Override
     public Item getItemById(UUID id) {
-        return ItemsUtils.getItemByIdRoot(getAllItems(), id);
+        return Logger.dur(TAG, "getItemById (recursive)", () -> ItemsUtils.getItemByIdRecursive(getAllItems(), id));
     }
 
     @Override
     public void deleteItem(Item item) {
-        onUpdateCallbacks.run((callbackStorage, callback) -> callback.onDeleted(item, getItemPosition(item)));
+        int position = getItemPosition(item);
+        onUpdateCallbacks.run((callbackStorage, callback) -> callback.onPreDeleted(item, position));
+
         items.remove(item);
         item.detach();
+
+        onUpdateCallbacks.run((callbackStorage, callback) -> callback.onPostDeleted(item, position));
         save();
     }
 
@@ -85,7 +98,8 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
     public void tick(TickSession tickSession) {
         int i = items.size() - 1;
         while (i >= 0) {
-            items.get(i).tick(tickSession);
+            Item item = items.get(i);
+            if (tickSession.isAllowed(item)) item.tick(tickSession);
             i--;
         }
     }
@@ -144,7 +158,7 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
         }
 
         @Override
-        public ItemsStorage getParentItemStorage(Item item) {
+        public ItemsStorage getParentItemsStorage(Item item) {
             return SimpleItemsStorage.this;
         }
     }

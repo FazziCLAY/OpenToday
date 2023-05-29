@@ -3,23 +3,23 @@ package com.fazziclay.opentoday.app.items.notification;
 public class ItemNotificationsRegistry {
     public static final ItemNotificationsRegistry REGISTRY = new ItemNotificationsRegistry();
 
-    private static final ItemNotificationInfo[] INFOS = new ItemNotificationInfo[] {
-        new ItemNotificationInfo(DayItemNotification.class, "DayItemNotification", DayItemNotification.IE_TOOL)
+    private static final ItemNotificationInfo[] NOTIFICATIONS = new ItemNotificationInfo[] {
+        new ItemNotificationInfo(DayItemNotification.class, "DayItemNotification", DayItemNotification.CODEC)
     };
 
     public ItemNotificationInfo[] getAllNotifications() {
-        return INFOS.clone();
+        return NOTIFICATIONS.clone();
     }
 
     public static class ItemNotificationInfo {
         private final Class<? extends ItemNotification> clazz;
         private final String stringType;
-        private final ItemNotificationIETool ieTool;
+        private final ItemNotificationCodec codec;
 
-        public ItemNotificationInfo(Class<? extends ItemNotification> clazz, String v, ItemNotificationIETool ieTool) {
+        public ItemNotificationInfo(Class<? extends ItemNotification> clazz, String v, ItemNotificationCodec codec) {
             this.clazz = clazz;
-            stringType = v;
-            this.ieTool = ieTool;
+            this.stringType = v;
+            this.codec = codec;
         }
 
         public Class<? extends ItemNotification> getClazz() {
@@ -30,13 +30,13 @@ public class ItemNotificationsRegistry {
             return stringType;
         }
 
-        public ItemNotificationIETool getIeTool() {
-            return ieTool;
+        public ItemNotificationCodec getCodec() {
+            return codec;
         }
     }
 
     public ItemNotificationInfo getByStringType(String v) {
-        for (ItemNotificationInfo info : INFOS) {
+        for (ItemNotificationInfo info : NOTIFICATIONS) {
             if (info.stringType.equals(v)) {
                 return info;
             }
@@ -45,7 +45,7 @@ public class ItemNotificationsRegistry {
     }
 
     public ItemNotificationInfo getByClass(Class<? extends ItemNotification> v) {
-        for (ItemNotificationInfo info : INFOS) {
+        for (ItemNotificationInfo info : NOTIFICATIONS) {
             if (info.clazz == v) {
                 return info;
             }

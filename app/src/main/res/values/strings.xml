@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">OpenToday</string>
+    <string name="abc_ok">OK</string>
     <string name="aboutapp_title">About OpenToday:</string>
-    <string name="toolbar_more_opentoday_debug_restartActivity">DEBUG: Restart acvitvity</string>
+    <string name="toolbar_more_opentoday_debug_restartActivity">DEBUG: Restart activity</string>
     <string name="aboutapp_text_version">Version:</string>
     <string name="aboutapp_text_package">Package:</string>
     <string name="aboutapp_text_license">License:</string>
@@ -47,9 +48,11 @@
     <string name="dialog_item_module_item_minimize">Minimize</string>
     <string name="menuItem_minimize">Minimize</string>
     <string name="uidialog_edit_textentry_clickableUrls">Clickable URLs</string>
-    <string name="cycleListItem_tick_all">All items</string>
-    <string name="cycleListItem_tick_current">Current</string>
-    <string name="dayRepeatable_latestRegenerate">Latest regenerate: %s</string>
+    <string name="cycleListItem_tickBehavior_all">All items</string>
+    <string name="cycleListItem_tickBehavior_current">Current</string>
+    <string name="cycleListItem_tickBehavior_nothing">Nothing</string>
+    <string name="cycleListItem_tickBehavior_notCurrent">Not current</string>
+    <string name="dayRepeatable_latestRegenerate">Latest reset: %s</string>
     <string name="selectItemTypeDialog_create">Create</string>
     <string name="dialog_item_module_cyclelist_tickMode">Tick mode</string>
     <string name="menuItem_copy">Copy</string>
@@ -87,7 +90,7 @@
     <string name="dialog_previewDeleteItems_delete_cancel">Cancel</string>
     <string name="dialog_previewDeleteItems_delete_apply">DELETE!</string>
     <string name="dialog_previewDeleteItems_delete_title">Delete %s items?</string>
-    <string name="toolbar_more_selection_info">Count: %s</string>
+    <string name="toolbar_more_selection_info">Selected: %s</string>
     <string name="dialog_item_module_item_export">Export</string>
     <string name="quickNote_notificationPattern">Quick note: %s</string>
     <string name="notification_quickNote_title">Quick note</string>
@@ -150,11 +153,11 @@
     <string name="toolbar_more_file_import_textHint">Enter import text or URL here</string>
     <string name="quickNote_hint">Type here</string>
     <string name="quickNote_add">Add quick note</string>
-    <string name="toolbar_more_items_tab_rename">Rename</string>
+    <string name="toolbar_more_items_tab_apply">Apply</string>
     <string name="toolbar_more_items_tab_add">Add</string>
     <string name="toolbar_more_items_tab_delete">Delete</string>
     <string name="abc_cancel">Cancel</string>
-    <string name="tab_noEmptyName">Empty name</string>
+    <string name="tab_noEmptyName">Name can\'t be empty!</string>
     <string name="exit_tab_2_count">Press back once more to exit.</string>
     <string name="manuallyCrash_7tap">Hello :) Stop clicking please</string>
     <string name="manuallyCrash_crash">Crashed</string>
@@ -169,7 +172,7 @@
     <string name="toolbar_tabs_title">Tabs list:</string>
     <string name="add_new_tab">Add new tab</string>
     <string name="aboutapp_text_sourceCode">Source Code</string>
-    <string name="aboutapp_text_issues">Issues</string>
+    <string name="aboutapp_text_issues">Bugs/Issues</string>
     <string name="openSourceLicense_cantStart">Can\'t start this activity</string>
     <string name="openSourceLicense_cantStart_assesPath">Can\'t start this activity: assesPath is null!</string>
     <string name="openSourceLicense_cantStart_exception">Exception: %s</string>
@@ -208,14 +211,14 @@
 
     <!-- Import -->
     <string name="importFragment_dialog_main_title">Import</string>
-    <string name="importFragment_dialog_main_message">This import permissions:\n%s\n\nInfo:\n%s</string>
+    <string name="importFragment_dialog_main_message">This import have permissions:\n%s\n\nInfo:\n%s</string>
     <string name="importFragment_dialog_main_cancel">Cancel</string>
     <string name="importFragment_dialog_main_import">Import</string>
     <string name="importFragment_dialog_importMessage_title">Message from import</string>
     <string name="importFragment_dialog_importMessage_import">Import</string>
     <string name="import_permission_ADD_ITEMS_TO_CURRENT">Add items to current open container</string>
     <string name="import_permission_ADD_TABS">Add tabs</string>
-    <string name="import_permission_PRE_IMPORT_SHOW_DIALOG">Show custom message on pre import</string>
+    <string name="import_permission_PRE_IMPORT_SHOW_DIALOG">Show custom message</string>
     <string name="import_permission_OVERWRITE_SETTINGS">Overwrite app settings</string>
     <string name="import_permission_OVERWRITE_COLOR_HISTORY">Overwrite app color history</string>
     <string name="importFragment_dialog_main_info_items">* Items: %s</string>
@@ -251,12 +254,12 @@
 
     <!-- Other... (Trash) -->
     <string name="item_text_editText">Edit text</string>
-    <string name="fragment_itemEditor_checkbox_isChecked">Is checked</string>
+    <string name="fragment_itemEditor_checkbox_isChecked">Completed</string>
     <string name="fragment_itemEditor_text_textColor">Text color</string>
     <string name="dialog_item_module_longtext_text_title">Long text</string>
     <string name="dialog_item_module_longtext_text_hint">Enter long text</string>
     <string name="fragment_itemEditor_longtext_textColor">Long text color</string>
-    <string name="fragment_itemEditor_longtext_textSize">Text size</string>
+    <string name="fragment_itemEditor_longtext_textSize">Long text size</string>
     <string name="toolbar_more_selection_editSelected">Edit selected</string>
     <string name="toolbar_more_opentoday_debug_personalTick">DEBUG: Personal tick</string>
     <string name="menuItem_transform">Transform</string>
@@ -264,10 +267,10 @@
     <string name="abc_success">Successfully</string>
 
 
-    <string name="_migration_title">Time for Migration!</string>
-    <string name="_migration_shortDescription">It\'s time to update the app to the release version!\nThis means that you need to go through some steps to update the application.</string>
-    <string name="_migration_clickToDetails">Click to details</string>
-    <string name="_migration_dialogStart">Start</string>
+    <string name="_migration_title">[DEPRECATED] Time for Migration!</string>
+    <string name="_migration_shortDescription">[DEPRECATED] \nIt\'s time to update the app to the release version!\nThis means that you need to go through some steps to update the application.</string>
+    <string name="_migration_clickToDetails">[DEPRECATED] Click to details</string>
+    <string name="_migration_dialogStart">[DEPRECATED] Start</string>
 
 
     <string name="itemsStorageEmpty_details"><![CDATA[Use bottom toolbar for add items.\nItems -> Plus(+)]]></string>
@@ -278,7 +281,7 @@
     <string name="toolbar_more_opentoday_debug_resetSetup">DEBUG: Reset setup</string>
     <string name="abc_done_button">Done!</string>
     <string name="setup_telemetry">Allow to send anonymous statistics</string>
-    <string name="setup_telemetry_details">These statistics will help the developer a lot. They contain:\n * IP\n * Instance ID\n * App open/close (max 1 per day)\n * Crashes and Errors</string>
+    <string name="setup_telemetry_details">These statistics will help the developer a lot. They contain:\n * IP-address\n * Instance ID\n * App open/close (max 1 per day)\n * Crashes and Errors</string>
     <string name="settings_isTelemetry">@string/setup_telemetry</string>
     <string name="settings_firstDayOfWeek_title">First day of week</string>
 
@@ -301,15 +304,66 @@
     <string name="settings_pincode_enable_message">Don\'t forget this!</string>
     <string name="settings_pincode_enable_apply">Set</string>
     <string name="settings_pincode_enable_success">Pin-code set successfully</string>
-    <string name="settings_pincode_enable_nonDigitsError">Error: Pin-code contains non-digits chars!</string>
+    <string name="settings_pincode_enable_nonDigitsError">Error: Pin-code can contains only digits!</string>
     <string name="settings_pincode_enable_unknownError">Unknown error!</string>
     <string name="settings_pincode_enable_cancel">Cancel</string>
     <string name="settings_firstTab_first">First</string>
-    <string name="settings_firstTab_onClosed">On closed</string>
-    <string name="settings_firstTab_title">Tab on open</string>
+    <string name="settings_firstTab_onClosed">On close moment</string>
+    <string name="settings_firstTab_title">Default tab</string>
     <string name="toolbar_more_file_importFromClipboard">Import from clipboard</string>
     <string name="toolbar_more_file_importFromClipboard_unknownError">Unknown error!</string>
-    <string name="toolbar_more_file_importFromClipboard_notImportText">This is not import text</string>
+    <string name="toolbar_more_file_importFromClipboard_notImportText">This is not import-text</string>
     <string name="toolbar_more_tabs_delete_notAllowOneTabMode">Delete not allow!</string>
     <string name="fragment_itemEditor_module_item_selected">Selected</string>
+    <string name="logic_container_item_filter_part_editor_name_empty"><![CDATA[<No description>]]></string>
+    <string name="logic_container_logicMode_OR">Or (||)</string>
+    <string name="logic_container_logicMode_AND">And (&amp;&amp;)</string>
+    <string name="part_logic_container_item_filter_editor_description">Description</string>
+    <string name="part_logic_container_item_filter_editor_invert">Invert</string>
+    <string name="part_logic_container_item_filter_editor_logicMode_title">Logic mode:</string>
+    <string name="filter_group_item_filter_editor_replaceRoot">Replace root</string>
+    <string name="filter_group_item_filter_editor_rootTypeTitle">Root filter type:</string>
+    <string name="filter_group_item_filter_editor_rootFilterEditor_title">Root filter editor:</string>
+    <string name="part_date_item_filter_editor_description">Description</string>
+    <string name="filter_group_item_filter_editor_error_unknownFilter">Unknown filter! This is a bug. Report to developer.\nCanonical: %s</string>
+    <string name="aboutapp_text_changelog">What\'s new?</string>
+    <string name="fragment_filter_group_item_filter_editor_outdatedItemFilterSchemeTitle">This item uses outdated item-filter scheme.</string>
+    <string name="fragment_filter_group_item_filter_editor_outdatedItemFilterScheme_FixButton">Merge to new</string>
+    <string name="importWrapper_errorCode_NOT_IMPORT_TEXT">This is not a OpenToday import-text.</string>
+    <string name="importWrapper_errorCode_VERSION_NOT_COMPATIBLE">This import-text version not compatible with current version</string>
+    <string name="settings_dateAndTime_format"><![CDATA[Date&Time format]]></string>
+    <string name="fragment_itemEditor_text_paragraphColorize">Formatting support</string>
+    <string name="filterRegistry_filterType_DATE"><![CDATA[Date&Time]]></string>
+    <string name="filterRegistry_filterType_LOGIC_CONTAINER">Container</string>
+    <string name="filter_group_item_filter_tickBehavoir_ALL">All</string>
+    <string name="filter_group_item_filter_tickBehavoir_NOTHING">Nothing</string>
+    <string name="filter_group_item_filter_tickBehavoir_ACTIVE">Active only</string>
+    <string name="filter_group_item_filter_tickBehavoir_NOT_ACTIVE">Not-active only</string>
+    <string name="fragment_itemEditor_filterGroup_tickBehavior">Tick behavior</string>
+    <string name="toolbar_debug">Debug</string>
+    <string name="filterRegistry_filterType_ITEM_STAT">Item stat</string>
+    <string name="dialog_editItemFilter_activeItems">Active items</string>
+    <string name="dialog_itemNotification_empty_title">No notifications here</string>
+    <string name="dialog_itemNotification_empty_description">Press (+) button for add item notification</string>
+    <string name="title_from_item_text">Title from item text</string>
+    <string name="text_from_item_text">Text from item text</string>
+    <string name="dialog_itemNotification_vibrate">Vibrate</string>
+    <string name="dialogItem_module_longtext_textColor_dialog_title">Long-text color</string>
+    <string name="dialogItem_module_longtext_textColor_dialog_cancel">Cancel</string>
+    <string name="dialogItem_module_longtext_textColor_dialog_apply">Apply</string>
+    <string name="toolbar_tabs_edit_disableTick">Disable tick</string>
+    <string name="unknown" translatable="false">Unknown</string>
+    <string name="item_debugTickCounter_description">Debugging item.\n\nHe adds +1 to his counter every tick and triggers a save signal.</string>
+    <string name="item_text_description">A simple text note. It has the text itself, as well as the color of the text, whether to format it, and whether to highlight links.</string>
+    <string name="item_longTextItem_description">The long text is a child item from the Text. It has additional text with the possibility of resizing.</string>
+    <string name="item_checkbox_description">A simple check mark. It is suitable for making lists, tasks, and so on.</string>
+    <string name="item_checkboxDayRepeatable_description">Daily check mark. It is a child item from the Check Mark, but resets its state to the set one every day.</string>
+    <string name="item_counter_description">Counter. Has the current value and the change step for the (+) and (-) buttons.</string>
+    <string name="item_cycleList_description">A cyclical list. It is a container for other items. The outside shows only the current one.</string>
+    <string name="item_group_description">Group. It is a container for other items. The outside shows its contents if it is not minimized.</string>
+    <string name="item_filterGroup_description">A group with filters for each item inside.\nThese filters determine whether to show the internal item outside or not.</string>
+    <string name="dialog_editItemFilter_isChecked">Is Checked</string>
+    <string name="settings_itemAddPosition_BOTTOM">Bottom</string>
+    <string name="settings_itemAddPosition_TOP">Top</string>
+    <string name="settings_addItemsToTop">Add items to top^</string>
 </resources>

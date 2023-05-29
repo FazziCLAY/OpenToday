@@ -1,9 +1,11 @@
 package com.fazziclay.opentoday.app;
 
+import com.fazziclay.opentoday.app.data.CherryOrchard;
+import com.fazziclay.opentoday.app.datafixer.DataFixer;
 import com.fazziclay.opentoday.app.items.item.Item;
-import com.fazziclay.opentoday.app.items.item.ItemIEUtil;
+import com.fazziclay.opentoday.app.items.item.ItemCodecUtil;
 import com.fazziclay.opentoday.app.items.tab.Tab;
-import com.fazziclay.opentoday.app.items.tab.TabIEUtil;
+import com.fazziclay.opentoday.app.items.tab.TabCodecUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,10 +26,36 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+/*
+Version 3 specifications
+Header and footer as in all previous versions
+--OPENTODAY-IMPORT-START--
+<version>
+<data>
+--OPENTODAY-IMPORT-END--
+
+<version> is a 3
+<data> as in 1 & 2 version. base64(gzip(  <StringJsonObject>  ))
+<StringJsonObject> is a JSONObject without indentSpaces with this scheme:
+  {
+    "importVersion": 3, // like a 2... version? but 3 value
+    "permissions": [""], // like a 2 version. Contains ENUM.name() of Permission
+    "dataVersion": <App.APPLICATION_DATA_VERSION>, // Added. Contains version of application data. This is a APPLICATION_DATA_VERSION constant in App.class
+    "applicationVersionData": { // Added. HERE CONTAINS A App.getVersionData() JSONObject
+        "data_version": -1, // App.APPLICATION_DATA_VERSION
+        "product": "OpenToday",
+        "developer": "FazziCLAY ( https://fazziclay.github.io )"
+        ......
+    }
+  }
+
+ */
 public class ImportWrapper {
-    public static final int VERSION = 2;
+    public static final int VERSION = 3;
 
     private final int importVersion = VERSION;
+    private final boolean isError;
+    private final ErrorCode errorCode;
     private final Permission[] permissions;
     private final List<Tab> tabs;
     private final List<Item> items;
@@ -35,8 +63,14 @@ public class ImportWrapper {
     private final JSONObject settings;
     private final JSONObject colorHistory;
 
-    private ImportWrapper(Permission[] permissions, List<Tab> tabs, List<Item> items, String dialogMessage, JSONObject settings, JSONObject colorHistory) {
+    private static ImportWrapper error(ErrorCode code) {
+        return new ImportWrapper(null, null, null, null, null, null, true, code);
+    }
+
+    private ImportWrapper(Permission[] permissions, List<Tab> tabs, List<Item> items, String dialogMessage, JSONObject settings, JSONObject colorHistory, boolean isError, ErrorCode errorCode) {
         this.permissions = permissions;
+        this.isError = isError;
+        this.errorCode = errorCode;
 
         if (tabs != null) checkPerm(Permission.ADD_TABS, "Tabs not allowed by permissions");
         this.tabs = tabs;
@@ -54,6 +88,14 @@ public class ImportWrapper {
         this.colorHistory = colorHistory;
     }
 
+    public boolean isError() {
+        return isError;
+    }
+
+    public ErrorCode getErrorCode() {
+        return errorCode;
+    }
+
     public String finalExport() throws Exception {
         byte[] bytes = finalExportBytes();
         return "--OPENTODAY-IMPORT-START--\n" +
@@ -64,15 +106,18 @@ public class ImportWrapper {
 
     private byte[] finalExportBytes() throws Exception {
         JSONObject jsonObject = new JSONObject()
+                .put("dataVersion", App.APPLICATION_DATA_VERSION)
+                .put("applicationVersionData", App.get().getVersionData())
                 .put("importVersion", importVersion)
+                .put("applicationVersion", App.VERSION_CODE)
                 .put("permissions", exportPermissions());
 
         if (isPerm(Permission.ADD_ITEMS_TO_CURRENT)) {
-            jsonObject.put("items", ItemIEUtil.exportItemList(items));
+            jsonObject.put("items", ItemCodecUtil.exportItemList(items).toJSONArray());
         }
 
         if (isPerm(Permission.ADD_TABS)) {
-            jsonObject.put("tabs", TabIEUtil.exportTabs(tabs));
+            jsonObject.put("tabs", TabCodecUtil.exportTabList(tabs).toJSONArray());
         }
 
         if (isPerm(Permission.PRE_IMPORT_SHOW_DIALOG)) {
@@ -117,11 +162,11 @@ public class ImportWrapper {
     public static ImportWrapper finalImport(String content) throws Exception {
         content = content.trim();
         if (!isImportText(content)) {
-            throw new Exception("Not import text");
+            return error(ErrorCode.NOT_IMPORT_TEXT);
         }
 
         int version = Integer.parseInt(content.split("\n")[1]);
-        if (!isVersionSupport(version)) throw new Exception("Version not compatible");
+        if (!isVersionSupport(version)) return error(ErrorCode.VERSION_NOT_COMPATIBLE);
         byte[] bytes = Base64.getDecoder().decode(content.split("\n")[2].getBytes(StandardCharsets.UTF_8));
         if (version == 0) {
             return importV0(bytes);
@@ -129,8 +174,10 @@ public class ImportWrapper {
             return importV1(bytes);
         } else if (version == 2) {
             return importV2(bytes);
+        } else if (version == 3) {
+            return importV3(bytes);
         } else {
-            throw new RuntimeException("Version not compatible");
+            return error(ErrorCode.VERSION_NOT_COMPATIBLE);
         }
     }
 
@@ -139,33 +186,35 @@ public class ImportWrapper {
 
         int importVersion = jsonObject.getInt("importVersion");
         if (importVersion != 0) {
-            throw new Exception("Version not compatible");
+            return error(ErrorCode.VERSION_NOT_COMPATIBLE);
         }
 
-        List<Item> items = ItemIEUtil.importItemList(jsonObject.getJSONArray("items"));
-        return new ImportWrapper(new Permission[]{Permission.ADD_ITEMS_TO_CURRENT}, null, items, null, null, null);
+        List<Item> items = ItemCodecUtil.importItemList(CherryOrchard.of(fixItems(8, jsonObject.getJSONArray("items"))));
+        return new ImportWrapper(new Permission[]{Permission.ADD_ITEMS_TO_CURRENT}, null, items, null, null, null, false, null);
     }
 
+    // uses GZip
     private static ImportWrapper importV1(byte[] bytes) throws Exception {
         String data = fromGzip(bytes);
         JSONObject jsonObject = new JSONObject(data);
 
         int importVersion = jsonObject.getInt("importVersion");
         if (importVersion != 1) {
-            throw new Exception("Version not compatible");
+            return error(ErrorCode.VERSION_NOT_COMPATIBLE);
         }
 
-        List<Item> items = ItemIEUtil.importItemList(jsonObject.getJSONArray("items"));
-        return new ImportWrapper(new Permission[]{Permission.ADD_ITEMS_TO_CURRENT}, null, items, null, null, null);
+        List<Item> items = ItemCodecUtil.importItemList(CherryOrchard.of(fixItems(8, jsonObject.getJSONArray("items"))));
+        return new ImportWrapper(new Permission[]{Permission.ADD_ITEMS_TO_CURRENT}, null, items, null, null, null, false, null);
     }
 
+    // Add tabs, settings, colorHistory, permissions, dialogMessage
     private static ImportWrapper importV2(byte[] bytes) throws Exception {
         String data = fromGzip(bytes);
         JSONObject jsonObject = new JSONObject(data);
 
         int importVersion = jsonObject.getInt("importVersion");
         if (importVersion != 2) {
-            throw new Exception("Version not compatible");
+            return error(ErrorCode.VERSION_NOT_COMPATIBLE);
         }
 
         Permission[] perms = importPermissions(jsonObject.getJSONArray("permissions"));
@@ -175,12 +224,23 @@ public class ImportWrapper {
         JSONObject settings = null;
         JSONObject colorHistory = null;
 
+
         if (isPerm(perms, Permission.ADD_TABS)) {
-            tabs = new ArrayList<>(TabIEUtil.importTabs(jsonObject.getJSONArray("tabs")));
+            // BEGIN INSERTED WHILE DEVELOPING VER 3
+            JSONArray _tabs = jsonObject.getJSONArray("tabs");
+            _tabs = fixTabs(8, _tabs);
+            // END INSERTED WHILE DEVELOPING VER 3
+
+            tabs = new ArrayList<>(TabCodecUtil.importTabList(CherryOrchard.of(/*PART OF DATAFIXING*/_tabs/*END*/)));
         }
 
         if (isPerm(perms, Permission.ADD_ITEMS_TO_CURRENT)) {
-            items = new ArrayList<>(ItemIEUtil.importItemList(jsonObject.getJSONArray("items")));
+            // BEGIN INSERTED WHILE DEVELOPING VER 3
+            JSONArray _items = jsonObject.getJSONArray("items");
+            _items = fixItems(8, _items);
+            // END INSERTED WHILE DEVELOPING VER 3
+
+            items = new ArrayList<>(ItemCodecUtil.importItemList(CherryOrchard.of(/*PART OF DATAFIXING*/_items/*END*/)));
         }
 
         if (isPerm(perms, Permission.PRE_IMPORT_SHOW_DIALOG)) {
@@ -195,11 +255,79 @@ public class ImportWrapper {
             colorHistory = jsonObject.getJSONObject("colorHistory");
         }
 
-        return new ImportWrapper(perms, tabs, items, dialogMessage, settings, colorHistory);
+        return new ImportWrapper(perms, tabs, items, dialogMessage, settings, colorHistory, false, null);
+    }
+
+    // Add datafixer & more info while creating (e.g. dataVersion, appVersion and etc...)
+    private static ImportWrapper importV3(byte[] bytes) throws Exception {
+        String data = fromGzip(bytes);
+        JSONObject jsonObject = new JSONObject(data);
+
+        int importVersion = jsonObject.getInt("importVersion");
+        if (importVersion != 3) {
+            return error(ErrorCode.VERSION_NOT_COMPATIBLE);
+        }
+
+        Permission[] perms = importPermissions(jsonObject.getJSONArray("permissions"));
+        int dataVersion = jsonObject.getInt("dataVersion");
+        List<Tab> tabs = null;
+        List<Item> items = null;
+        String dialogMessage = null;
+        JSONObject settings = null;
+        JSONObject colorHistory = null;
+
+        if (isPerm(perms, Permission.ADD_TABS)) {
+            JSONArray _tabs = jsonObject.getJSONArray("tabs");
+            _tabs = fixTabs(dataVersion, _tabs);
+
+            tabs = new ArrayList<>(TabCodecUtil.importTabList(CherryOrchard.of(_tabs)));
+        }
+
+        if (isPerm(perms, Permission.ADD_ITEMS_TO_CURRENT)) {
+            JSONArray _items = jsonObject.getJSONArray("items");
+            _items = fixItems(dataVersion, _items);
+
+            items = new ArrayList<>(ItemCodecUtil.importItemList(CherryOrchard.of(_items)));
+        }
+
+        if (isPerm(perms, Permission.PRE_IMPORT_SHOW_DIALOG)) {
+            dialogMessage = jsonObject.getString("dialogMessage");
+        }
+
+        if (isPerm(perms, Permission.OVERWRITE_SETTINGS)) {
+            settings = jsonObject.getJSONObject("settings");
+        }
+
+        if (isPerm(perms, Permission.OVERWRITE_COLOR_HISTORY)) {
+            colorHistory = jsonObject.getJSONObject("colorHistory");
+        }
+
+        return new ImportWrapper(perms, tabs, items, dialogMessage, settings, colorHistory, false, null);
     }
 
     private static boolean isVersionSupport(int v) {
-        return (v == 0 || v == 1 || v == 2);
+        return (v == 0 || v == 1 || v == 2 || v == 3);
+    }
+
+
+    private static JSONArray fixTabs(int from, JSONArray tabs) throws Exception {
+        if (from == App.APPLICATION_DATA_VERSION) return tabs;
+
+        final DataFixer dataFixer = App.get().getDataFixer();
+
+        tabs = dataFixer.fixTabs(from, tabs);
+
+        return tabs;
+    }
+
+    private static JSONArray fixItems(int from, JSONArray items) throws Exception {
+        if (from == App.APPLICATION_DATA_VERSION) return items;
+
+        final DataFixer dataFixer = App.get().getDataFixer();
+
+        items = dataFixer.fixItems(from, items);
+
+        return items;
     }
 
     private static byte[] toGzip(String s) throws IOException {
@@ -343,7 +471,7 @@ public class ImportWrapper {
         }
 
         public ImportWrapper build() {
-            return new ImportWrapper(permissions, tabs.isEmpty() ? null : tabs, items.isEmpty() ? null : items, dialogMessage, settings, colorHistory);
+            return new ImportWrapper(permissions, tabs.isEmpty() ? null : tabs, items.isEmpty() ? null : items, dialogMessage, settings, colorHistory, false, null);
         }
     }
 
@@ -353,5 +481,10 @@ public class ImportWrapper {
         OVERWRITE_SETTINGS,
         OVERWRITE_COLOR_HISTORY,
         PRE_IMPORT_SHOW_DIALOG
+    }
+
+    public enum ErrorCode {
+        VERSION_NOT_COMPATIBLE,
+        NOT_IMPORT_TEXT
     }
 }

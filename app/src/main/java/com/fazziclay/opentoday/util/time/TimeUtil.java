@@ -2,8 +2,12 @@ package com.fazziclay.opentoday.util.time;
 
 import androidx.annotation.NonNull;
 
+import com.fazziclay.opentoday.app.OptionalField;
+
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 /**
  * Utility class, Utils of Time
@@ -17,6 +21,7 @@ import java.util.GregorianCalendar;
  * @author FazziCLAY
  * **/
 public class TimeUtil {
+    public static final OptionalField<SimpleDateFormat> SIMPLE_DATE_FORMAT = new OptionalField<>(() -> new SimpleDateFormat("yyyy.MM.dd EEEE HH:mm:ss SSS Z", Locale.getDefault()));
     public static final int SECONDS_IN_MINUTE = 60;
     public static final int SECONDS_IN_HOUR = SECONDS_IN_MINUTE * 60;
     public static final int SECONDS_IN_DAY = SECONDS_IN_HOUR * 24;
@@ -84,5 +89,13 @@ public class TimeUtil {
 
     public static long getUnixSeconds() {
         return System.currentTimeMillis() / 1000;
+    }
+
+    public static String getDebugDate(long t) {
+        return SIMPLE_DATE_FORMAT.get().format(t);
+    }
+
+    public static void free() {
+        SIMPLE_DATE_FORMAT.free();
     }
 }

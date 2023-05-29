@@ -2,20 +2,19 @@ package com.fazziclay.opentoday.app.items.item;
 
 import androidx.annotation.NonNull;
 
+import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.annotation.Setter;
 
-import org.json.JSONObject;
-
 public class CheckboxItem extends TextItem {
     // START - Save
-    public final static CheckboxItemIETool IE_TOOL = new CheckboxItemIETool();
-    public static class CheckboxItemIETool extends TextItem.TextItemIETool {
+    public final static CheckboxItemCodec CODEC = new CheckboxItemCodec();
+    public static class CheckboxItemCodec extends TextItemCodec {
         @NonNull
         @Override
-        public JSONObject exportItem(@NonNull Item item) throws Exception {
+        public Cherry exportItem(@NonNull Item item) {
             CheckboxItem checkboxItem = (CheckboxItem) item;
             return super.exportItem(checkboxItem)
                     .put("checked", checkboxItem.checked);
@@ -24,10 +23,11 @@ public class CheckboxItem extends TextItem {
         private final CheckboxItem defaultValues = new CheckboxItem();
         @NonNull
         @Override
-        public Item importItem(@NonNull JSONObject json, Item item) throws Exception {
+        public Item importItem(@NonNull Cherry cherry, Item item) {
             CheckboxItem checkboxItem = item != null ? (CheckboxItem) item : new CheckboxItem();
-            super.importItem(json, checkboxItem);
-            checkboxItem.checked = json.optBoolean("checked", defaultValues.checked);
+            super.importItem(cherry, checkboxItem);
+            checkboxItem.checked = cherry.optBoolean("checked", defaultValues.checked);
+            checkboxItem.getStat().setChecked(checkboxItem.checked);
             return checkboxItem;
         }
     }
@@ -61,6 +61,15 @@ public class CheckboxItem extends TextItem {
         this.checked = copy.checked;
     }
 
+    @Override
+    protected void updateStat() {
+        super.updateStat();
+        getStat().setChecked(isChecked());
+    }
+
     @Getter public boolean isChecked() { return checked; }
-    @Setter public void setChecked(boolean s) { this.checked = s; }
+    @Setter public void setChecked(boolean s) {
+        this.checked = s;
+        updateStat();
+    }
 }

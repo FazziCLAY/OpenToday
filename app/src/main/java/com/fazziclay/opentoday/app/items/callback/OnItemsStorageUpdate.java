@@ -9,9 +9,25 @@ import com.fazziclay.opentoday.util.callback.Status;
  * @see ItemsStorage
  * @see Callback
  */
-public interface OnItemsStorageUpdate extends Callback {
-    Status onAdded(Item item, int position);
-    Status onDeleted(Item item, int position);
-    Status onMoved(Item item, int from, int to);
-    Status onUpdated(Item item, int position);
+public abstract class OnItemsStorageUpdate implements Callback {
+    public Status onAdded(Item item, int position) {
+        return Status.NONE;
+    }
+
+
+    public Status onPreDeleted(Item item, int position) {
+        return Status.NONE;
+    }
+
+    public Status onPostDeleted(Item item, int position) {
+        return Status.NONE;
+    }
+
+    public Status onMoved(Item item, int from, int to) {
+        return Status.NONE;
+    }
+
+    public Status onUpdated(Item item, int position) {
+        return Status.NONE;
+    }
 }

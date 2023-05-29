@@ -2,26 +2,28 @@ package com.fazziclay.opentoday.app.items.notification;
 
 import android.app.NotificationManager;
 import android.content.Context;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.TickSession;
+import com.fazziclay.opentoday.app.data.Cherry;
+import com.fazziclay.opentoday.app.data.CherryOrchard;
 import com.fazziclay.opentoday.app.items.item.Item;
-
-import org.json.JSONObject;
+import com.fazziclay.opentoday.app.items.tick.TickSession;
 
 import java.util.Calendar;
 
 public class DayItemNotification implements ItemNotification {
-    public static final ItemNotificationIETool IE_TOOL = new IeTool();
-    private static class IeTool extends ItemNotificationIETool {
+    public static final ItemNotificationCodec CODEC = new Codec();
+    private static class Codec extends ItemNotificationCodec {
         @Override
-        public JSONObject exportNotification(ItemNotification itemNotification) throws Exception {
+        public Cherry exportNotification(ItemNotification itemNotification) {
             DayItemNotification d = (DayItemNotification) itemNotification;
-            return new JSONObject()
+            return new Cherry()
                     .put("notificationId", d.notificationId)
                     .put("notifyTitle", d.notifyTitle)
                     .put("notifyTitleFromItemText", d.notifyTitleFromItemText)
@@ -29,21 +31,25 @@ public class DayItemNotification implements ItemNotification {
                     .put("notifyTextFromItemText", d.notifyTextFromItemText)
                     .put("latestDayOfYear", d.latestDayOfYear)
                     .put("notifySubText", d.notifySubText)
-                    .put("time", d.time);
+                    .put("time", d.time)
+                    .put("isVibrate", d.isVibrate)
+                    .put("vibration", CherryOrchard.of(d.vibration));
         }
 
         @Override
-        public ItemNotification importNotification(JSONObject json) {
+        public ItemNotification importNotification(Cherry cherry) {
             DayItemNotification o = new DayItemNotification();
-            o.notificationId = json.optInt("notificationId", 543);
-            o.notifyTitle = json.optString("notifyTitle", "");
-            o.notifyTitleFromItemText = json.optBoolean("notifyTitleFromItemText", true);
-            o.notifyText = json.optString("notifyText", "");
-            o.notifyTextFromItemText = json.optBoolean("notifyTextFromItemText", true);
-            o.notifySubText = json.optString("notifySubText", "");
-            o.latestDayOfYear = json.optInt("latestDayOfYear", 0);
-            o.time = json.optInt("time", 0);
-
+            o.notificationId = cherry.optInt("notificationId", 543);
+            o.notifyTitle = cherry.optString("notifyTitle", "");
+            o.notifyTitleFromItemText = cherry.optBoolean("notifyTitleFromItemText", true);
+            o.notifyText = cherry.optString("notifyText", "");
+            o.notifyTextFromItemText = cherry.optBoolean("notifyTextFromItemText", true);
+            o.notifySubText = cherry.optString("notifySubText", "");
+            o.latestDayOfYear = cherry.optInt("latestDayOfYear", 0);
+            o.time = cherry.optInt("time", 0);
+            o.isVibrate = cherry.optBoolean("isVibrate", true);
+            o.vibration = CherryOrchard.parseLongArray(cherry.getOrchard("vibration"), new long[]{100, 50, 100, 50, 100, 50});
+            if (o.vibration.length == 0) o.vibration = new long[]{100, 50, 100, 50, 100, 50};
             return o;
         }
     }
@@ -56,6 +62,8 @@ public class DayItemNotification implements ItemNotification {
     private String notifySubText;
     private int latestDayOfYear;
     private int time;
+    private boolean isVibrate = true;
+    private long[] vibration = new long[]{100, 50, 100, 50, 100, 50};
 
     public DayItemNotification() {
 
@@ -76,9 +84,6 @@ public class DayItemNotification implements ItemNotification {
         int dayOfYear = tickSession.getGregorianCalendar().get(Calendar.DAY_OF_YEAR);
         if (dayOfYear != latestDayOfYear) {
             boolean isTime = tickSession.getDayTime() >= time;
-            if (tickSession.isPersonalTick() && !isTime) {
-                isTime = time - tickSession.getDayTime() < 10;
-            }
 
             if (isTime) {
                 sendNotify(tickSession.getContext(), item);
@@ -104,14 +109,22 @@ public class DayItemNotification implements ItemNotification {
         final String nTitle = notifyTitleFromItemText ? item.getText() : notifyTitle;
         final String nText = notifyTextFromItemText ? item.getText() : notifyText;
 
-        context.getSystemService(NotificationManager.class).notify(this.notificationId,
-                new NotificationCompat.Builder(context, App.NOTIFICATION_ITEMS_CHANNEL)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle(nTitle)
-                        .setContentText(nText)
-                        .setSubText(notifySubText)
-                        .setPriority(NotificationCompat.PRIORITY_MAX)
-                        .build());
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, App.NOTIFICATION_ITEMS_CHANNEL)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(nTitle)
+                .setContentText(nText)
+                .setSubText(notifySubText)
+                .setPriority(NotificationCompat.PRIORITY_MAX);
+
+        if (isVibrate) {
+            Vibrator vibrator = context.getSystemService(Vibrator.class);
+            if (vibration.length == 0) {
+                vibration = new long[]{100, 50, 100, 50, 100, 50};
+            }
+            vibrator.vibrate(VibrationEffect.createWaveform(vibration, -1));
+        }
+
+        context.getSystemService(NotificationManager.class).notify(this.notificationId, builder.build());
     }
 
     public int getLatestDayOfYear() {
@@ -176,5 +189,21 @@ public class DayItemNotification implements ItemNotification {
 
     public void setNotifyTextFromItemText(boolean notifyTextFromItemText) {
         this.notifyTextFromItemText = notifyTextFromItemText;
+    }
+
+    public void setVibrate(boolean vibrate) {
+        isVibrate = vibrate;
+    }
+
+    public boolean isVibrate() {
+        return isVibrate;
+    }
+
+    public long[] getVibration() {
+        return vibration;
+    }
+
+    public void setVibration(long[] vibration) {
+        this.vibration = vibration;
     }
 }

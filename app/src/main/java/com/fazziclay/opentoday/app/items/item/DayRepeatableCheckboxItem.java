@@ -2,24 +2,26 @@ package com.fazziclay.opentoday.app.items.item;
 
 import androidx.annotation.NonNull;
 
-import com.fazziclay.opentoday.app.TickSession;
+import com.fazziclay.opentoday.app.data.Cherry;
+import com.fazziclay.opentoday.app.items.tick.TickSession;
+import com.fazziclay.opentoday.app.items.tick.TickTarget;
+import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.annotation.Setter;
-
-import org.json.JSONObject;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class DayRepeatableCheckboxItem extends CheckboxItem {
     // START - Save
-    public final static DayRepeatableCheckboxItemIETool IE_TOOL = new DayRepeatableCheckboxItemIETool();
-    public static class DayRepeatableCheckboxItemIETool extends CheckboxItem.CheckboxItemIETool {
+    private static final boolean DEBUG_RANDOM_STATE_CHANGES = false; // NO NOT TOUCH! RANDOM STATES ARE SAVED TO FILE!!!! ALWAYS IS FALSE!
+    public final static DayRepeatableCheckboxItemCodec CODEC = new DayRepeatableCheckboxItemCodec();
+    public static class DayRepeatableCheckboxItemCodec extends CheckboxItemCodec {
         @NonNull
         @Override
-        public JSONObject exportItem(@NonNull Item item) throws Exception {
+        public Cherry exportItem(@NonNull Item item) {
             DayRepeatableCheckboxItem dayRepeatableCheckboxItem = (DayRepeatableCheckboxItem) item;
             return super.exportItem(dayRepeatableCheckboxItem)
                     .put("startValue", dayRepeatableCheckboxItem.startValue)
@@ -29,11 +31,11 @@ public class DayRepeatableCheckboxItem extends CheckboxItem {
         private final DayRepeatableCheckboxItem defaultValues = new DayRepeatableCheckboxItem();
         @NonNull
         @Override
-        public Item importItem(@NonNull JSONObject json, Item item) throws Exception {
+        public Item importItem(@NonNull Cherry cherry, Item item) {
             DayRepeatableCheckboxItem dCheckboxItem = item != null ? (DayRepeatableCheckboxItem) item : new DayRepeatableCheckboxItem();
-            super.importItem(json, dCheckboxItem);
-            dCheckboxItem.startValue = json.optBoolean("startValue", defaultValues.startValue);
-            dCheckboxItem.latestDayOfYear = json.optInt("latestDayOfYear", defaultValues.latestDayOfYear);
+            super.importItem(cherry, dCheckboxItem);
+            dCheckboxItem.startValue = cherry.optBoolean("startValue", defaultValues.startValue);
+            dCheckboxItem.latestDayOfYear = cherry.optInt("latestDayOfYear", defaultValues.latestDayOfYear);
             return dCheckboxItem;
         }
     }
@@ -80,14 +82,26 @@ public class DayRepeatableCheckboxItem extends CheckboxItem {
 
     @Override
     public void tick(TickSession tickSession) {
+        if (!tickSession.isAllowed(this)) return;
+
         super.tick(tickSession);
-        int dayOfYear = tickSession.getGregorianCalendar().get(Calendar.DAY_OF_YEAR);
-        if (dayOfYear != latestDayOfYear) {
-            latestDayOfYear = dayOfYear;
-            if (isChecked() != startValue) {
-                setChecked(startValue);
-                visibleChanged();
-                tickSession.saveNeeded();
+        if (tickSession.isTickTargetAllowed(TickTarget.DAY_REPEATABLE_CHECKBOX_UPDATE)) {
+            int dayOfYear = tickSession.getGregorianCalendar().get(Calendar.DAY_OF_YEAR);
+            if (dayOfYear != latestDayOfYear) {
+                latestDayOfYear = dayOfYear;
+                if (isChecked() != startValue) {
+                    setChecked(startValue);
+                    visibleChanged();
+                    tickSession.saveNeeded();
+                }
+            }
+            if (DEBUG_RANDOM_STATE_CHANGES) {
+                boolean nextValue = RandomUtil.nextBoolean();
+                if (isChecked() != nextValue) {
+                    setChecked(nextValue);
+                    visibleChanged();
+                    tickSession.saveNeeded();
+                }
             }
         }
     }

@@ -7,6 +7,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 
 import androidx.annotation.NonNull;
@@ -51,6 +52,7 @@ public class ColorUtil {
         int currentForegroundSpan = defaultFgColor;
         int currentBackgroundSpan = defaultBgColor;
         int currentStyleSpan = defaultStyle;
+        boolean currentStrikeOut = false;
 
         List<SpanText> spanTextList = new ArrayList<>();
 
@@ -85,6 +87,14 @@ public class ColorUtil {
                             String[] systems = text.substring(oi+2, _i).split(";");
                             for (String system : systems) {
                                 if (system.length() < 2) continue;
+                                if (system.equals("||")) {
+                                    // SET DEFAULT VALUES
+                                    currentForegroundSpan = defaultFgColor;
+                                    currentBackgroundSpan = defaultBgColor;
+                                    currentStyleSpan = defaultStyle;
+                                    currentStrikeOut = false;
+                                    continue;
+                                }
                                 char systemType = system.charAt(0);
                                 String systemValue = system.substring(1);
                                 if (systemType == '-') {
@@ -107,23 +117,18 @@ public class ColorUtil {
 
                                 } else if (systemType == '@') {
                                     int style = Typeface.NORMAL;
-                                    switch (systemValue) {
-                                        case "normal":
-                                            style = Typeface.NORMAL;
-                                            break;
-                                        case "bolditalic":
-                                        case "italicbold":
-                                            style = Typeface.BOLD_ITALIC;
-                                            break;
-                                        case "bold":
-                                            style = Typeface.BOLD;
-                                            break;
-                                        case "italic":
-                                            style = Typeface.ITALIC;
-                                            break;
+                                    if (systemValue.contains("italic")) {
+                                        style = Typeface.ITALIC;
+                                    }
+                                    if (systemValue.contains("bold")) {
+                                        style = Typeface.BOLD;
+                                    }
+                                    if (systemValue.contains("bolditalic") || systemValue.contains("italicbold")) {
+                                        style = Typeface.BOLD_ITALIC;
                                     }
                                     if (systemValue.equals("reset")) style = defaultStyle;
                                     currentStyleSpan = style;
+                                    currentStrikeOut = systemValue.contains("~");
                                 }
                             }
                         }
@@ -138,7 +143,7 @@ public class ColorUtil {
 
             if (oi >= chars.length) continue;
             SpanText latestSpan = getLatestElement(spanTextList);
-            if (spanTextList.size() > 0 && latestSpan != null && latestSpan.spanEquals(currentForegroundSpan, currentBackgroundSpan, currentStyleSpan)) {
+            if (spanTextList.size() > 0 && latestSpan != null && latestSpan.spanEquals(currentForegroundSpan, currentBackgroundSpan, currentStyleSpan, currentStrikeOut)) {
                 latestSpan.appendText(toAppend);
             } else {
                 int latestStart = ni;
@@ -146,6 +151,7 @@ public class ColorUtil {
                     latestStart = latestSpan.end;
                 }
                 SpanText n = new SpanText(toAppend, currentForegroundSpan, currentBackgroundSpan, currentStyleSpan, latestStart);
+                n.strikeOut = currentStrikeOut;
                 spanTextList.add(n);
             }
 
@@ -169,6 +175,7 @@ public class ColorUtil {
             int end = Math.min(spanText.end, spannableText.length());
 
             spannableText.setSpan(new ForegroundColorSpan(spanText.fgColor), start, end, Spannable.SPAN_COMPOSING);
+            if (spanText.strikeOut) spannableText.setSpan(new StrikethroughSpan(), start, end, Spannable.SPAN_COMPOSING);
             spannableText.setSpan(new BackgroundColorSpan(spanText.bgColor), start, end, Spanned.SPAN_COMPOSING);
             spannableText.setSpan(new StyleSpan(spanText.style), start, end, Spanned.SPAN_COMPOSING);
             i++;
@@ -188,6 +195,7 @@ public class ColorUtil {
      * @see ColorUtil#colorize(String, int, int, int)
      * **/
     private static class SpanText {
+        boolean strikeOut;
         String text;
         int fgColor;
         int bgColor;
@@ -210,15 +218,16 @@ public class ColorUtil {
             end = start + text.length();
         }
 
-        public boolean spanEquals(int fgColor, int bgColor, int style) {
-            return (this.fgColor == fgColor && this.bgColor == bgColor && this.style == style);
+        public boolean spanEquals(int fgColor, int bgColor, int style, boolean strikeOut) {
+            return (this.fgColor == fgColor && this.bgColor == bgColor && this.style == style && this.strikeOut == strikeOut);
         }
 
         @NonNull
         @Override
         public String toString() {
             return "SpanText{" +
-                    "text='" + text + '\'' +
+                    "strikeOut=" + strikeOut +
+                    ", text='" + text + '\'' +
                     ", fgColor=" + fgColor +
                     ", bgColor=" + bgColor +
                     ", style=" + style +

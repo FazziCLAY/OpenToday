@@ -78,7 +78,7 @@
         android:visibility="gone"
         tools:visibility="visible"
         android:backgroundTint="#FF0000"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@id/debug_logs_sizeDown"
         android:layout_toStartOf="@id/debug_logs_switch"
         android:text="+"
         android:minHeight="0sp"
@@ -93,11 +93,26 @@
         tools:visibility="visible"
         android:backgroundTint="#FF0000"
         android:layout_alignParentBottom="true"
-        android:layout_toStartOf="@id/debug_logs_sizeUp"
+        android:layout_toStartOf="@id/debug_logs_switch"
         android:text="-"
         android:minHeight="0sp"
         android:minWidth="0sp"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
+    <TextView
+        android:id="@+id/debug_info"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:background="#9B000000"
+        android:textColor="#ffffff"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@id/debug_logs_sizeDown"
+        tools:text="This is test of debug-info text\nnewLine 000000000000000000000000000000000000000"
+        android:minHeight="0sp"
+        android:minWidth="0sp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
 </RelativeLayout>

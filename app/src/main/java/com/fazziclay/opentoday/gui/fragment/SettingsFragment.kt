@@ -10,7 +10,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
@@ -18,23 +22,28 @@ import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.App
 import com.fazziclay.opentoday.app.ColorHistoryManager
 import com.fazziclay.opentoday.app.ImportWrapper
+import com.fazziclay.opentoday.app.PinCodeManager
+import com.fazziclay.opentoday.app.PinCodeManager.ContainNonDigitChars
+import com.fazziclay.opentoday.app.SettingsManager
+import com.fazziclay.opentoday.app.SettingsManager.FirstTab
+import com.fazziclay.opentoday.app.items.QuickNoteReceiver
 import com.fazziclay.opentoday.app.items.item.Item
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry
-import com.fazziclay.opentoday.app.pincode.PinCodeManager
-import com.fazziclay.opentoday.app.pincode.PinCodeManager.ContainNonDigitChars
-import com.fazziclay.opentoday.app.receiver.QuickNoteReceiver
-import com.fazziclay.opentoday.app.settings.SettingsManager
-import com.fazziclay.opentoday.app.settings.SettingsManager.FirstTab
 import com.fazziclay.opentoday.databinding.ExportBinding
 import com.fazziclay.opentoday.databinding.FragmentSettingsBinding
+import com.fazziclay.opentoday.gui.EnumsRegistry
 import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType
-import com.fazziclay.opentoday.util.InlineUtil.*
+import com.fazziclay.opentoday.util.EnumUtil
+import com.fazziclay.opentoday.util.InlineUtil.viewClick
 import com.fazziclay.opentoday.util.Logger
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter
 import org.json.JSONException
 import java.text.DateFormatSymbols
-import java.util.*
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.GregorianCalendar
+import java.util.Locale
 
 class SettingsFragment : Fragment() {
     companion object {
@@ -75,6 +84,42 @@ class SettingsFragment : Fragment() {
         setupThemeSpinner()
         setupFirstDayOfWeekSpinner()
         setupFirstTabSpinner()
+
+        viewClick(binding.dateAndTimeFormat, Runnable {
+            val preview = TextView(requireContext())
+            val spinner = Spinner(requireContext())
+            val adapter = SimpleSpinnerAdapter<SettingsManager.DateAndTimePreset>(requireContext())
+            spinner.adapter = adapter
+            for (value in SettingsManager.DateAndTimePreset.values()) {
+                adapter.add(value.name, value)
+            }
+            spinner.onItemSelectedListener = object : OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>?, view123: View?, position: Int, id: Long) {
+                    val t = adapter.getItem(position)
+                    settingsManager.applyDateAndTimePreset(t)
+                    settingsManager.save()
+
+                    val current = GregorianCalendar().time
+                    val dateFormat = SimpleDateFormat(settingsManager.datePattern, Locale.getDefault())
+                    val timeFormat = SimpleDateFormat(settingsManager.timePattern, Locale.getDefault())
+
+                    val previewText = dateFormat.format(current) + "  " + timeFormat.format(current)
+
+                    preview.text = previewText
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
+            }
+
+            val view = LinearLayout(requireContext())
+            view.orientation = LinearLayout.VERTICAL
+            view.addView(preview)
+            view.addView(spinner)
+
+            AlertDialog.Builder(requireContext())
+                .setView(view)
+                .show()
+        })
 
         // Debug
         viewClick(binding.themeTitle, Runnable { experimentalFeaturesInteract() })
@@ -129,29 +174,40 @@ class SettingsFragment : Fragment() {
             settingsManager.isTelemetry = isTelemetry
             settingsManager.save()
             app.telemetry.setEnabled(isTelemetry)
+            if (isTelemetry) AlertDialog.Builder(requireContext())
+                .setTitle(R.string.setup_telemetry)
+                .setMessage(R.string.setup_telemetry_details)
+                .setPositiveButton(R.string.abc_ok, null)
+                .show()
         })
-        binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(settingsManager.defaultQuickNoteType.nameResId))
+        binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(EnumsRegistry.nameResId(settingsManager.defaultQuickNoteType.itemType)))
         viewClick(binding.defaultQuickNoteType, Runnable {
             DialogSelectItemType(context) { type: Class<out Item?> ->
                 settingsManager.defaultQuickNoteType = ItemsRegistry.REGISTRY.get(type)
-                binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(settingsManager.defaultQuickNoteType.nameResId))
+                binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(EnumsRegistry.nameResId(settingsManager.defaultQuickNoteType.itemType)))
                 settingsManager.save()
             }.show()
         })
         pinCodeCallback = Runnable { binding.pincode.text = getString(R.string.settings_pincode, if (pinCodeManager.isPinCodeSet) getString(R.string.settings_pincode_on) else getString(R.string.settings_pincode_off)) }
         pinCodeCallback.run()
         viewClick(binding.pincode, Runnable { showPinCodeDialog() })
+
+        // add item to top
+        binding.addItemsToTop.isChecked = settingsManager.itemAddPosition == SettingsManager.ItemAddPosition.TOP
+        viewClick(binding.addItemsToTop, Runnable {
+            settingsManager.itemAddPosition = if (binding.addItemsToTop.isChecked) SettingsManager.ItemAddPosition.TOP else SettingsManager.ItemAddPosition.BOTTOM
+            settingsManager.save()
+        })
     }
 
     private fun setupFirstTabSpinner() {
-        val firstTabSimpleSpinnerAdapter = SimpleSpinnerAdapter<FirstTab>(requireContext())
-                .add(requireContext().getString(R.string.settings_firstTab_first), FirstTab.FIRST)
-                .add(requireContext().getString(R.string.settings_firstTab_onClosed), FirstTab.TAB_ON_CLOSING)
-        binding.firstTab.adapter = firstTabSimpleSpinnerAdapter
-        binding.firstTab.setSelection(firstTabSimpleSpinnerAdapter.getValuePosition(settingsManager.firstTab))
-        binding.firstTab.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        val adapter = SimpleSpinnerAdapter<FirstTab>(requireContext())
+        EnumUtil.addToSimpleSpinnerAdapter(requireContext(), adapter, FirstTab.values())
+        binding.firstTab.adapter = adapter
+        binding.firstTab.setSelection(adapter.getValuePosition(settingsManager.firstTab))
+        binding.firstTab.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val t = firstTabSimpleSpinnerAdapter.getItem(position)
+                val t = adapter.getItem(position)
                 settingsManager.firstTab = t
                 settingsManager.save()
             }
@@ -167,7 +223,7 @@ class SettingsFragment : Fragment() {
                 .add(requireContext().getString(R.string.settings_theme_night), AppCompatDelegate.MODE_NIGHT_YES)
         binding.themeSpinner.adapter = adapter
         binding.themeSpinner.setSelection(adapter.getValuePosition(settingsManager.theme))
-        binding.themeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.themeSpinner.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val theme = adapter.getItem(position)
                 UI.setTheme(theme)
@@ -186,7 +242,7 @@ class SettingsFragment : Fragment() {
                 .add(weekdays[Calendar.MONDAY], Calendar.MONDAY)
         binding.firstDayOfWeekSpinner.adapter = adapter
         binding.firstDayOfWeekSpinner.setSelection(adapter.getValuePosition(settingsManager.firstDayOfWeek))
-        binding.firstDayOfWeekSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.firstDayOfWeekSpinner.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val day = adapter.getItem(position)
                 settingsManager.firstDayOfWeek = day

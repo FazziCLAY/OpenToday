@@ -6,7 +6,10 @@ import static com.fazziclay.opentoday.util.InlineUtil.viewVisible;
 import android.app.Activity;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,8 +23,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 
+import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
+import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemManager;
+import com.fazziclay.opentoday.app.items.ItemsUtils;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
@@ -32,7 +38,7 @@ import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.LongTextItem;
 import com.fazziclay.opentoday.app.items.item.TextItem;
-import com.fazziclay.opentoday.app.settings.SettingsManager;
+import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.databinding.ItemCheckboxBinding;
 import com.fazziclay.opentoday.databinding.ItemCounterBinding;
 import com.fazziclay.opentoday.databinding.ItemCycleListBinding;
@@ -44,34 +50,39 @@ import com.fazziclay.opentoday.databinding.ItemTextBinding;
 import com.fazziclay.opentoday.gui.interfaces.ContentInterface;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.gui.interfaces.StorageEditsActions;
+import com.fazziclay.opentoday.util.ColorUtil;
 import com.fazziclay.opentoday.util.DebugUtil;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.annotation.ForItem;
 import com.fazziclay.opentoday.util.callback.Status;
+
+import java.util.Arrays;
 
 public class ItemViewGenerator {
     @NonNull private final Activity activity;
     @NonNull private final LayoutInflater layoutInflater;
     @NonNull private final ItemManager itemManager;
     @NonNull private final SettingsManager settingsManager;
+    @NonNull private final SelectionManager selectionManager;
     private final boolean previewMode; // Disable items minimize view patch & disable buttons
     @Nullable private final ItemInterface itemOnClick; // Action when view click
     @NonNull private final ItemInterface onItemEditor;
     private final StorageEditsActions storageEdits;
 
-    public ItemViewGenerator(@NonNull final Activity activity, @NonNull final ItemManager itemManager, @NonNull final SettingsManager settingsManager, final boolean previewMode, @Nullable final ItemInterface itemOnClick, @NonNull final ItemInterface onItemEditor, @NonNull final StorageEditsActions storageEdits) {
+    public ItemViewGenerator(@NonNull final Activity activity, @NonNull final ItemManager itemManager, @NonNull final SettingsManager settingsManager, @NonNull final SelectionManager selectionManager, final boolean previewMode, @Nullable final ItemInterface itemOnClick, @NonNull final ItemInterface onItemEditor, @NonNull final StorageEditsActions storageEdits) {
         this.activity = activity;
         this.layoutInflater = activity.getLayoutInflater();
         this.itemManager = itemManager;
         this.settingsManager = settingsManager;
+        this.selectionManager = selectionManager;
         this.previewMode = previewMode;
         this.itemOnClick = itemOnClick;
         this.onItemEditor = onItemEditor;
         this.storageEdits = storageEdits;
     }
 
-    public static CreateBuilder builder(final Activity activity, final ItemManager itemManager, final SettingsManager settingsManager) {
-        return new CreateBuilder(activity, itemManager, settingsManager);
+    public static CreateBuilder builder(final Activity activity, final ItemManager itemManager, final SettingsManager settingsManager, final SelectionManager selectionManager) {
+        return new CreateBuilder(activity, itemManager, settingsManager, selectionManager);
     }
 
     public View generate(final Item item, final ViewGroup parent) {
@@ -97,7 +108,7 @@ public class ItemViewGenerator {
             final CycleListItem cycleListItem = (CycleListItem) item;
             resultView = generateCycleListItemView((CycleListItem) item, parent, i -> storageEdits.onCycleListEdit(cycleListItem),
                     (linearLayout, empty) -> {
-                        final CurrentItemStorageDrawer currentItemStorageDrawer = new CurrentItemStorageDrawer(this.activity, itemManager, settingsManager, cycleListItem, previewMode, itemOnClick, onItemEditor, storageEdits);
+                        final CurrentItemStorageDrawer currentItemStorageDrawer = new CurrentItemStorageDrawer(this.activity, itemManager, settingsManager, selectionManager, cycleListItem, previewMode, itemOnClick, onItemEditor, storageEdits);
                         linearLayout.addView(currentItemStorageDrawer.getView());
                         currentItemStorageDrawer.setOnUpdateListener(currentItem -> {
                             viewVisible(empty, currentItem == null, View.GONE);
@@ -112,7 +123,7 @@ public class ItemViewGenerator {
         } else if (type == GroupItem.class) {
             final GroupItem groupItem = (GroupItem) item;
             resultView = generateGroupItemView(groupItem, parent, v -> storageEdits.onGroupEdit(groupItem), viewGroup -> {
-                final ItemStorageDrawer itemStorageDrawer = new ItemStorageDrawer(activity, itemManager, settingsManager, groupItem, itemOnClick, onItemEditor, previewMode, storageEdits);
+                final ItemStorageDrawer itemStorageDrawer = new ItemStorageDrawer(activity, itemManager, settingsManager, selectionManager, groupItem, itemOnClick, onItemEditor, previewMode, storageEdits);
                 itemStorageDrawer.create();
                 viewGroup.addView(itemStorageDrawer.getView());
             });
@@ -124,7 +135,7 @@ public class ItemViewGenerator {
                     final ItemViewHolder holder = new ItemViewHolder(activity);
                     holder.layout.addView(generate(activeItem, linearLayout));
 
-                    if (itemManager.isSelected(activeItem)) {
+                    if (selectionManager.isSelected(activeItem)) {
                         holder.layout.setForeground(new ColorDrawable(ResUtil.getAttrColor(activity, R.attr.item_selectionForegroundColor)));
                     } else {
                         holder.layout.setForeground(null);
@@ -301,38 +312,53 @@ public class ItemViewGenerator {
 
     //
     private void applyTextItemToTextView(final TextItem item, final TextView view) {
+        if (Debug.SHOW_PATH_TO_ITEM_ON_ITEMTEXT) {
+            view.setText(Arrays.toString(ItemsUtils.getPathToItem(item)));
+            view.setTextSize(15);
+            view.setTextColor(Color.RED);
+            view.setBackgroundColor(Color.BLACK);
+            return;
+        }
+
+        final int textColor = item.isCustomTextColor() ? item.getTextColor() : ResUtil.getAttrColor(activity, R.attr.item_textColor);
+        final SpannableString visibleText = item.isParagraphColorize() ? colorize(item.getText(), textColor) : SpannableString.valueOf(item.getText());
         final int MAX = 60;
         if (!previewMode && item.isMinimize()) {
-            final String text = item.getText().split("\n")[0];
+            final String text = visibleText.toString().split("\n")[0];
             if (text.length() > MAX) {
-                view.setText(text.substring(0, MAX-3).concat("..."));
+                view.setText(new SpannableStringBuilder().append(visibleText.subSequence(0, MAX-3)).append("..."));
             } else {
-                view.setText(text);
+                view.setText(visibleText);
             }
         } else {
-            view.setText(item.getText());
+            view.setText(visibleText);
         }
         if (item.isCustomTextColor()) {
-            view.setTextColor(ColorStateList.valueOf(item.getTextColor()));
+            view.setTextColor(ColorStateList.valueOf(textColor));
         }
         if (item.isClickableUrls()) Linkify.addLinks(view, Linkify.ALL);
     }
 
+    private SpannableString colorize(String text, int textColor) {
+        return ColorUtil.colorize(text, textColor, Color.TRANSPARENT, Typeface.NORMAL);
+    }
+
     private void applyLongTextItemToLongTextView(final LongTextItem item, final TextView view) {
+        final int longTextColor = item.isCustomLongTextColor() ? item.getLongTextColor() : ResUtil.getAttrColor(activity, R.attr.item_textColor);
+        final SpannableString visibleText = item.isParagraphColorize() ? colorize(item.getLongText(), longTextColor) : SpannableString.valueOf(item.getLongText());
         final int MAX = 150;
         if (!previewMode && item.isMinimize()) {
-            final String text = item.getLongText();
-            if (text.length() > MAX) {
-                view.setText(text.substring(0, MAX-3).concat("..."));
+            if (visibleText.length() > MAX) {
+                view.setText(new SpannableStringBuilder().append(visibleText.subSequence(0, MAX-3)).append("..."));
             } else {
-                view.setText(text);
+                view.setText(visibleText);
             }
         } else {
-            view.setText(item.getLongText());
+            view.setText(visibleText);
         }
         if (item.isCustomLongTextSize()) view.setTextSize(item.getLongTextSize());
         if (item.isCustomLongTextColor()) {
-            view.setTextColor(ColorStateList.valueOf(item.getLongTextColor()));
+            view.setTextColor(ColorStateList.valueOf(longTextColor));
         }
         if (item.isLongTextClickableUrls()) Linkify.addLinks(view, Linkify.ALL);
     }
@@ -355,15 +381,17 @@ public class ItemViewGenerator {
         private final Activity activity;
         private final ItemManager itemManager;
         private final SettingsManager settingsManager;
+        private final SelectionManager selectionManager;
         private boolean previewMode = false;
         private ItemInterface onItemClick = null;
         private ItemInterface onItemOpenEditor = null;
         private StorageEditsActions storageEditsAction = null;
 
-        public CreateBuilder(final Activity activity, final ItemManager itemManager, final SettingsManager settingsManager) {
+        public CreateBuilder(final Activity activity, final ItemManager itemManager, final SettingsManager settingsManager, final SelectionManager selectionManager) {
             this.activity = activity;
             this.itemManager = itemManager;
             this.settingsManager = settingsManager;
+            this.selectionManager = selectionManager;
         }
 
         public CreateBuilder setPreviewMode() {
@@ -389,7 +417,7 @@ public class ItemViewGenerator {
         }
 
         public ItemViewGenerator build() {
-            return new ItemViewGenerator(activity, itemManager, settingsManager, previewMode, onItemClick, onItemOpenEditor, storageEditsAction);
+            return new ItemViewGenerator(activity, itemManager, settingsManager, selectionManager, previewMode, onItemClick, onItemOpenEditor, storageEditsAction);
         }
     }
 }

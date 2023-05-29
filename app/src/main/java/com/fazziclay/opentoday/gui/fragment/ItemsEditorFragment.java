@@ -2,6 +2,7 @@ package com.fazziclay.opentoday.gui.fragment;
 
 import static com.fazziclay.opentoday.util.InlineUtil.nullStat;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,28 +15,33 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
+import com.fazziclay.opentoday.app.items.Readonly;
+import com.fazziclay.opentoday.app.items.callback.ItemCallback;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
+import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.Tab;
-import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.databinding.ItemsStorageEmptyBinding;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.activity.MainActivity;
-import com.fazziclay.opentoday.gui.dialog.DialogEditItemFilter;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.gui.interfaces.StorageEditsActions;
 import com.fazziclay.opentoday.gui.item.ItemStorageDrawer;
 import com.fazziclay.opentoday.util.Logger;
+import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,11 +52,14 @@ public class ItemsEditorFragment extends Fragment {
     private static final String EXTRA_PREVIEW_MODE = "items_editor_fragment_previewMode";
     private static final String TAG = "ItemsEditorFragment";
 
+    private int COLOR_FILTER_GROUP_ACTIVE;
+    private int COLOR_FILTER_GROUP_INACTIVE;
     private MainActivity activity;
     private NavigationHost navigationHost;
     private NavigationHost rootNavigationHost;
     private ItemManager itemManager;
     private SettingsManager settingsManager;
+    private SelectionManager selectionManager;
     private ItemsStorage itemsStorage;
     private boolean previewMode;
     private LinearLayout layout;
@@ -65,13 +74,14 @@ public class ItemsEditorFragment extends Fragment {
     private Item item;
     private final List<Runnable> onCreateListeners = new ArrayList<>();
     private OnItemsStorageUpdate onItemStorageChangeCallback;
+    private ItemCallback itemCallback;
 
-    public static ItemsEditorFragment createRoot(UUID tab) {
-        return ItemsEditorFragment.create(tab, null, false);
+    public static ItemsEditorFragment createRoot(UUID tab, boolean previewMode) {
+        return ItemsEditorFragment.create(tab, null, previewMode);
     }
 
-    public static ItemsEditorFragment createItem(UUID tab, UUID item) {
-        return ItemsEditorFragment.create(tab, item, false);
+    public static ItemsEditorFragment createItem(UUID tab, UUID item, boolean previewMode) {
+        return ItemsEditorFragment.create(tab, item, previewMode);
     }
 
     private static ItemsEditorFragment create(UUID tab, UUID item, boolean previewMode) {
@@ -91,8 +101,13 @@ public class ItemsEditorFragment extends Fragment {
         activity = (MainActivity) requireActivity();
         navigationHost = (NavigationHost) getParentFragment();
         rootNavigationHost = UI.findFragmentInParents(this, MainRootFragment.class);
-        itemManager = App.get(requireContext()).getItemManager();
-        settingsManager = App.get(requireContext()).getSettingsManager();
+        App app = App.get(requireContext());
+        itemManager = app.getItemManager();
+        settingsManager = app.getSettingsManager();
+        selectionManager = app.getSelectionManager();
+
+        COLOR_FILTER_GROUP_ACTIVE = ResUtil.getAttrColor(requireContext(), R.attr.itemFilterState_true);
+        COLOR_FILTER_GROUP_INACTIVE = ResUtil.getAttrColor(requireContext(), R.attr.itemFilterState_false);
 
         Bundle args = getArguments();
         previewMode = args.getBoolean(EXTRA_PREVIEW_MODE);
@@ -115,26 +130,26 @@ public class ItemsEditorFragment extends Fragment {
         }
 
         if (previewMode) {
-            this.itemStorageDrawer = ItemStorageDrawer.builder(activity, itemManager, settingsManager, itemsStorage)
+            this.itemStorageDrawer = ItemStorageDrawer.builder(activity, itemManager, settingsManager, selectionManager, itemsStorage)
                     .setPreviewMode()
                     .build();
         } else {
-            this.itemStorageDrawer = ItemStorageDrawer.builder(activity, itemManager, settingsManager, itemsStorage)
+            this.itemStorageDrawer = ItemStorageDrawer.builder(activity, itemManager, settingsManager, selectionManager, itemsStorage)
                     .setOnItemOpenEditor((item) -> rootNavigationHost.navigate(ItemEditorFragment.edit(item.getId()), true))
                     .setStorageEditsActions(new StorageEditsActions() {
                         @Override
-                        public void onGroupEdit(GroupItem groupItem) {
-                            navigationHost.navigate(createItem(tabId, groupItem.getId()), true);
+                        public void onGroupEdit(@NonNull GroupItem groupItem) {
+                            navigationHost.navigate(createItem(tabId, groupItem.getId(), (groupItem instanceof Readonly)), true);
                         }
 
                         @Override
-                        public void onCycleListEdit(CycleListItem cycleListItem) {
-                            navigationHost.navigate(createItem(tabId, cycleListItem.getId()), true);
+                        public void onCycleListEdit(@NonNull CycleListItem cycleListItem) {
+                            navigationHost.navigate(createItem(tabId, cycleListItem.getId(), (cycleListItem instanceof Readonly)), true);
                         }
 
                         @Override
-                        public void onFilterGroupEdit(FilterGroupItem filterGroupItem) {
-                            navigationHost.navigate(createItem(tabId, filterGroupItem.getId()), true);
+                        public void onFilterGroupEdit(@NonNull FilterGroupItem filterGroupItem) {
+                            navigationHost.navigate(createItem(tabId, filterGroupItem.getId(), (filterGroupItem instanceof Readonly)), true);
                         }
                     })
                     .build();
@@ -149,27 +164,22 @@ public class ItemsEditorFragment extends Fragment {
         layout = new LinearLayout(requireContext());
         layout.setOrientation(LinearLayout.VERTICAL);
 
-        updateNotFoundState(true, (itemsStorage.size() == 0));
+        // Empty plug
+        updateNotFoundState(true, itemsStorage.isEmpty());
         onItemStorageChangeCallback = new OnItemsStorageUpdate() {
+            private void onUiThread(Runnable o) {
+                activity.runOnUiThread(o);
+            }
+
             @Override
             public Status onAdded(Item item, int position) {
-                updateNotFoundState(false, false);
+                onUiThread(() -> updateNotFoundState(false, false));
                 return Status.NONE;
             }
 
             @Override
-            public Status onDeleted(Item item, int position) {
-                updateNotFoundState(false, itemsStorage.size() <= 1);
-                return Status.NONE;
-            }
-
-            @Override
-            public Status onMoved(Item item, int from, int to) {
-                return Status.NONE;
-            }
-
-            @Override
-            public Status onUpdated(Item item, int position) {
+            public Status onPostDeleted(Item item, int position) {
+                onUiThread(() -> updateNotFoundState(false, itemsStorage.isEmpty()));
                 return Status.NONE;
             }
         };
@@ -196,6 +206,7 @@ public class ItemsEditorFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Logger.d(TAG, "onCreateView", nullStat(savedInstanceState));
+        if (settingsManager.isColorizeItemsEditorBackgroundByItemBackground() && item != null) layout.setBackgroundColor(item.getViewBackgroundColor());
         return layout;
     }
 
@@ -204,6 +215,7 @@ public class ItemsEditorFragment extends Fragment {
         super.onDestroy();
         if (this.itemStorageDrawer != null) this.itemStorageDrawer.destroy();
         if (this.itemsStorage != null) itemsStorage.getOnUpdateCallbacks().deleteCallback(onItemStorageChangeCallback);
+        if (this.item != null) item.getItemCallbacks().deleteCallback(itemCallback);
     }
 
     public ItemsStorage getItemStorage() {
@@ -219,7 +231,7 @@ public class ItemsEditorFragment extends Fragment {
     }
 
     public void addOnCreateListener(Runnable o) {
-        onCreateListeners.add(o);
+        onCreateListeners.add(o); // TODO: 3/11/23 remove unused onCreateListener
     }
 
     @Nullable
@@ -230,6 +242,19 @@ public class ItemsEditorFragment extends Fragment {
         return null;
     }
 
+    private FilterGroupItem getFilterGroupItem() {
+        if (item instanceof FilterGroupItem) {
+            return (FilterGroupItem) item;
+        }
+        throw new RuntimeException("this.item is not a FilterGroupItem", new ClassCastException("this.item is a " + item.getClass().getName()));
+    }
+
+    private void filterGroup_setEditButtonBackground(View view, Item item) {
+        FilterGroupItem filterGroup = getFilterGroupItem();
+        view.setBackgroundTintList(ColorStateList.valueOf(filterGroup.isActiveItem(item) ? COLOR_FILTER_GROUP_ACTIVE : COLOR_FILTER_GROUP_INACTIVE));
+    }
+
+    private final HashMap<Item, ImageButton> buttons = new HashMap<>(); // TODO: 5/9/23 FIX THIIS: NOT DELETING OLDEST
     private void applyFilterGroupViewPatch(FilterGroupItem filterGroupItem) {
         itemStorageDrawer.setItemViewWrapper((item, view) -> {
             LinearLayout layout = new LinearLayout(view.getContext());
@@ -238,14 +263,29 @@ public class ItemsEditorFragment extends Fragment {
 
             ImageButton filter = new ImageButton(view.getContext());
             filter.setImageResource(RES_FILTER_BUTTON_IMAGE);
-            filter.setOnClickListener(v -> new DialogEditItemFilter(activity, filterGroupItem.getItemFilter(item), filterGroupItem::save).show());
+            filterGroup_setEditButtonBackground(filter, item);
+            filter.setOnClickListener(v -> editFilterGroupItemFilter(filterGroupItem, item));
             layout.addView(filter);
             filter.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 70, 0));
-
+            buttons.put(item, filter);
             return layout;
         });
+
+        itemCallback = new ItemCallback() {
+            @Override
+            public Status updateUi(Item item) {
+                buttons.forEach((imageItem, imageButton) -> filterGroup_setEditButtonBackground(imageButton, imageItem));
+                return Status.NONE;
+            }
+        };
+        if (item != null) item.getItemCallbacks().addCallback(CallbackImportance.MIN, itemCallback);
     }
 
+    private void editFilterGroupItemFilter(FilterGroupItem filterGroupItem, Item item) {
+        rootNavigationHost.navigate(FilterGroupItemFilterEditorFragment.create(filterGroupItem.getId(), item.getId()), true);
+    }
+
+    @Deprecated
     private void runOnCreateListeners() {
         for (Runnable e : onCreateListeners) {
             e.run();

@@ -3,46 +3,67 @@ package com.fazziclay.opentoday.app.items.tab;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.fazziclay.opentoday.app.items.ID;
+import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
+import com.fazziclay.opentoday.app.items.Unique;
+import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
 
-import org.json.JSONObject;
-
 import java.util.UUID;
 
-public abstract class Tab implements ItemsStorage, ID {
-    public static final TabIETool IE_TOOL = new TabIETool();
-    protected static class TabIETool extends TabImportExportTool {
+public abstract class Tab implements ItemsStorage, Unique {
+    protected static class TabCodec extends AbstractTabCodec {
+        private static final String KEY_ID = "id";
+        private static final String KEY_NAME = "name";
+        private static final String KEY_DISABLE_TICK = "disableTick";
+
         @NonNull
         @Override
-        public JSONObject exportTab(@NonNull Tab tab) throws Exception {
-            return new JSONObject()
-                    .put("name", tab.name)
-                    .put("id", tab.id == null ? null : tab.id.toString());
+        public Cherry exportTab(@NonNull Tab tab) {
+            return new Cherry()
+                    .put(KEY_NAME, tab.name)
+                    .put(KEY_ID, tab.id == null ? null : tab.id.toString())
+                    .put(KEY_DISABLE_TICK, tab.disableTick);
         }
 
         @NonNull
         @Override
-        public Tab importTab(@NonNull JSONObject json, @Nullable Tab tab) throws Exception {
-            if (json.has("id")) tab.id = UUID.fromString(json.getString("id"));
-            tab.name = json.getString("name");
+        public Tab importTab(@NonNull Cherry cherry, @Nullable Tab tab) {
+            if (cherry.has(KEY_ID)) tab.id = UUID.fromString(cherry.getString(KEY_ID));
+            tab.name = cherry.optString(KEY_NAME, "");
+            tab.disableTick = cherry.optBoolean(KEY_DISABLE_TICK, false);
+
+            if (tab.id == null) Logger.w("Tab", "id is null while importing...");
             return tab;
         }
     }
 
-    @RequireSave @SaveKey(key = "id") private UUID id;
-    @RequireSave @SaveKey(key = "name") private String name;
-    private ItemsTabController controller;
+    @RequireSave @SaveKey(key = "id") private UUID id = null;
+    @RequireSave @SaveKey(key = "name") private String name = "";
+    @RequireSave @SaveKey(key = "disableTick") private boolean disableTick = false;
+    private TabController controller;
 
-    public Tab(UUID id, String name) {
-        this.id = id;
+    public Tab(String name) {
         this.name = name;
     }
 
-    public void setController(ItemsTabController controller) {
+    public void setController(TabController controller) {
         this.controller = controller;
+    }
+
+    public void validateId() {
+        if (id == null && controller != null) id = controller.generateId();
+    }
+
+    public void attach(TabController controller) {
+        this.controller = controller;
+        this.id = controller.generateId();
+    }
+
+    public void detach() {
+        this.controller = null;
+        this.id = null;
     }
 
     protected Tab() {
@@ -54,9 +75,6 @@ public abstract class Tab implements ItemsStorage, ID {
         return id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -64,11 +82,19 @@ public abstract class Tab implements ItemsStorage, ID {
 
     public void setName(String text) {
         this.name = text;
-        controller.nameChanged(this);
+        if (controller != null) controller.nameChanged(this);
     }
 
     @Override
     public void save() {
         if (controller != null) controller.save(this);
+    }
+
+    public boolean isDisableTick() {
+        return disableTick;
+    }
+
+    public void setDisableTick(boolean b) {
+        this.disableTick = b;
     }
 }

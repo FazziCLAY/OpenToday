@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/description_textInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/part_date_item_filter_editor_description" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <ScrollView
+        android:layout_below="@id/description_textInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbarSize="10sp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/currentValueTitle"
+                        android:background="@drawable/shape"
+                        android:layout_width="40sp"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textSize="17sp"
+                        android:text="@string/dialog_editItemFilter_title_currentValue"/>
+
+                    <TextView
+                        android:layout_width="130sp"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textSize="17sp"
+                        android:text="@string/dialog_editItemFilter_title_field"/>
+
+                    <TextView
+                        android:layout_width="130sp"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textSize="17sp"
+                        android:text="@string/dialog_editItemFilter_title_mode"/>
+
+
+                    <TextView
+                        android:layout_width="120sp"
+                        android:layout_height="match_parent"
+                        android:textStyle="bold"
+                        android:textSize="17sp"
+                        android:text="@string/dialog_editItemFilter_title_value"/>
+
+
+                    <TextView
+                        android:layout_width="100sp"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textSize="17sp"
+                        android:text="@string/dialog_editItemFilter_title_shift"/>
+
+                    <TextView
+                        android:layout_width="60sp"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textSize="17sp"
+                        android:text="@string/dialog_editItemFilter_title_invert"/>
+                </LinearLayout>
+
+                <include
+                    android:id="@+id/year"
+                    layout="@layout/integer_value_row" />
+
+                <include
+                    android:id="@+id/month"
+                    layout="@layout/integer_value_row" />
+
+                <include
+                    android:id="@+id/dayOfMonth"
+                    layout="@layout/integer_value_row" />
+
+                <include
+                    android:id="@+id/dayOfWeek"
+                    layout="@layout/integer_value_row" />
+
+                <include
+                    android:id="@+id/weekOfYear"
+                    layout="@layout/integer_value_row" />
+
+                <include
+                    android:id="@+id/dayOfYear"
+                    layout="@layout/integer_value_row" />
+
+                <include
+                    android:id="@+id/hour"
+                    layout="@layout/integer_value_row" />
+
+                <include
+                    android:id="@+id/minute"
+                    layout="@layout/integer_value_row" />
+
+                <include
+                    android:id="@+id/second"
+                    layout="@layout/integer_value_row" />
+
+            </LinearLayout>
+        </HorizontalScrollView>
+    </ScrollView>
+</RelativeLayout>

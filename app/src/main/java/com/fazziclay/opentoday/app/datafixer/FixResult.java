@@ -1,7 +1,18 @@
 package com.fazziclay.opentoday.app.datafixer;
 
+import com.fazziclay.opentoday.app.App;
+
 import java.io.File;
 
+/**
+ * Result of DataFixer work
+ * fixed - isFixed
+ * logs - logs of DataFixer work
+ *
+ * NO_FIX - DataFixer didn't fix anything
+ * @see App#onCreate()
+ * @author FazziCLAY
+ */
 public class FixResult {
     public static FixResult NO_FIX = new FixResult();
 
@@ -37,6 +48,10 @@ public class FixResult {
         return fixed;
     }
 
+    /**
+     * whether to update the "version" file
+     * @return true is update needed
+     */
     public boolean isVersionFileUpdateRequired() {
         return !versionFileExist || versionFileOutdated;
     }

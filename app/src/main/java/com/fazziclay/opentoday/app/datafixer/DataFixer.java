@@ -66,6 +66,7 @@ public class DataFixer {
 
         Logger.i(TAG, "Fix done! Current dataVersion = " + dataVersion);
         if (isUpdated) {
+            Logger.i(TAG, "isUpdated = TRUE!\nlogs: " + logs);
             File logFile = new File(context.getExternalCacheDir(), "data-fixer/logs/" + System.currentTimeMillis() + ".txt");
             FileUtil.setText(logFile, logs.toString());
             return new FixResult(dataVersion, logFile, logs.toString()).versionFileExist(isVersionFileExist).versionFileOutdated(isVersionFileOutdated);
@@ -134,7 +135,21 @@ public class DataFixer {
             isUpdated = true;
         }
 
+        if (dataVersion == 8) {
+            fix8versionTo9();
+            dataVersion = 9;
+            isUpdated = true;
+        }
+
         return dataVersion;
+    }
+
+    private void fix8versionTo9() {
+        final String TAG = "v8 -> v9";
+        log(TAG, "FIX START");
+        log(TAG, "(start external fixer)");
+        Scheme8Fix9.fix8versionTo9(context);
+        log(TAG, "FIX DONE");
     }
 
     // Moved instanceId from settings to external file
@@ -326,5 +341,29 @@ public class DataFixer {
         log(TAG, "Delete entry_data.json");
 
         log(TAG, "FIX DONE");
+    }
+
+    public JSONArray fixItems(int from, JSONArray items) throws Exception {
+        if (from < 8) throw new RuntimeException("Oldest dataVersion for this functional");
+
+        JSONArray result = items;
+        if (from == 8) {
+            Scheme8Fix9.itemsListFix(context, items);
+            result = items;
+            from = 9;
+        }
+        return result;
+    }
+
+    public JSONArray fixTabs(int from, JSONArray tabs) throws Exception {
+        if (from < 8) throw new RuntimeException("Oldest dataVersion for this functional");
+
+        JSONArray result = tabs;
+        if (from == 8) {
+            Scheme8Fix9.tabsListFix(context, tabs);
+            result = tabs;
+            from = 9;
+        }
+        return result;
     }
 }

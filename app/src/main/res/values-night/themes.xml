@@ -22,7 +22,7 @@
         <item name="updateAvailable_backgroundColor">#4D0000</item>
         <item name="updateAvailable_textColor">#FFFFFF</item>
 
-        <!-- Entries -->
+        <!-- Items -->
         <item name="item_backgroundColor">#80252525</item>
         <item name="item_textColor">#FFFDFF</item>
 
@@ -49,7 +49,8 @@
 
         <item name="item_selectionForegroundColor">#66ff7722</item>
         <item name="toolbar_background">#8C000000</item>
-        <item name="toolbar_more_items_item_textColor">#FFFFFF</item>
+        <item name="itemFilterState_true">#1C9D0E</item>
+        <item name="itemFilterState_false">#AA1111</item>
     </style>
 
 
@@ -79,10 +80,13 @@
         <item name="android:backgroundTint">#B9000000</item>
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Button.Items.ItemRow.AddAndEdit" parent="OpenToday.Base.Toolbar.Section.Button.Items.ItemRow">
-        <item name="android:backgroundTint">#AA26C702</item>
+        <item name="android:backgroundTint">#26C702</item>
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Button.Items.ItemRow.AddOnly" parent="OpenToday.Base.Toolbar.Section.Button.Items.ItemRow">
-        <item name="android:backgroundTint">#AA014CD7</item>
+        <item name="android:backgroundTint">#014CD7</item>
+    </style>
+    <style name="Theme.OpenToday.Toolbar.Section.Button.Items.ItemRow.Description" parent="OpenToday.Base.Toolbar.Section.Button.Items.ItemRow">
+        <item name="android:backgroundTint">#FA9918EF</item>
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Text.Items.ItemRow" parent="OpenToday.Base.Toolbar.Section.Text.Items.ItemRow">
         <item name="android:textColor">#FFFFFF</item>
@@ -160,6 +164,9 @@
     <style name="Theme.OpenToday.Toolbar.Section.Text.Tabs.TabsListTitle" parent="OpenToday.Base.Toolbar.Section.Text.Tabs">
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">#FFFFFF</item>
+        <item name="android:background">@drawable/shape</item>
+        <item name="android:backgroundTint">#E1000000</item>
+        <item name="android:padding">2sp</item>
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Button.Tabs.Add" parent="OpenToday.Base.Toolbar.Section.Button.Tabs">
         <item name="android:backgroundTint">#1DC2F4</item>

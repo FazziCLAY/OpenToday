@@ -2,28 +2,36 @@ package com.fazziclay.opentoday.app.items.item;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 
-import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.FeatureFlag;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
+/**
+ * Registry of items. Contains links between the following:
+ * <p>* Java class. E.g. TextItem.class</p>
+ * <p>* String type. E.g. "TextItem"</p>
+ * <p>* ItemType enum</p>
+ * <p>* Codec. See {@link AbstractItemCodec} E.g. TextItem.CODEC</p>
+ * <p>* Instructions for creating an empty instance</p>
+ * <p>* Instructions for copying</p>
+ */
 public class ItemsRegistry {
     @NonNull
     public static final ItemsRegistry REGISTRY = new ItemsRegistry();
 
     @NonNull
     private static final ItemInfo[] ITEMS = new ItemInfo[]{
-            new ItemInfo(DebugTickCounterItem.class,               "DebugTickCounterItem",          DebugTickCounterItem.IE_TOOL,          DebugTickCounterItem::createEmpty,        (i) -> new DebugTickCounterItem((DebugTickCounterItem) i).regenerateId(),            R.string.item_debugTickCounter).requiredFeatureFlag(FeatureFlag.ITEM_DEBUG_TICK_COUNTER),
-            new ItemInfo(TextItem.class,                           "TextItem",                      TextItem.IE_TOOL,                      TextItem::createEmpty,                    (i) -> new TextItem((TextItem) i).regenerateId(),                                    R.string.item_text),
-            new ItemInfo(LongTextItem.class,                       "LongTextItem",                  LongTextItem.IE_TOOL,                  LongTextItem::createEmpty,                (i) -> new LongTextItem((LongTextItem) i).regenerateId(),                            R.string.item_longTextItem),
-            new ItemInfo(CheckboxItem.class,                       "CheckboxItem",                  CheckboxItem.IE_TOOL,                  CheckboxItem::createEmpty,                (i) -> new CheckboxItem((CheckboxItem) i).regenerateId(),                            R.string.item_checkbox),
-            new ItemInfo(DayRepeatableCheckboxItem.class,          "DayRepeatableCheckboxItem",     DayRepeatableCheckboxItem.IE_TOOL,     DayRepeatableCheckboxItem::createEmpty,   (i) -> new DayRepeatableCheckboxItem((DayRepeatableCheckboxItem) i).regenerateId(),  R.string.item_checkboxDayRepeatable),
-            new ItemInfo(CounterItem.class,                        "CounterItem",                   CounterItem.IE_TOOL,                   CounterItem::createEmpty,                 (i) -> new CounterItem((CounterItem) i).regenerateId(),                              R.string.item_counter),
-            new ItemInfo(CycleListItem.class,                      "CycleListItem",                 CycleListItem.IE_TOOL,                 CycleListItem::createEmpty,               (i) -> new CycleListItem((CycleListItem) i).regenerateId(),                          R.string.item_cycleList),
-            new ItemInfo(GroupItem.class,                          "GroupItem",                     GroupItem.IE_TOOL,                     GroupItem::createEmpty,                   (i) -> new GroupItem((GroupItem) i).regenerateId(),                                  R.string.item_group),
-            new ItemInfo(FilterGroupItem.class,                    "FilterGroupItem",               FilterGroupItem.IE_TOOL,               FilterGroupItem::createEmpty,             (i) -> new FilterGroupItem((FilterGroupItem) i).regenerateId(),                      R.string.item_filterGroup),
+            new ItemInfo(DebugTickCounterItem.class,               "DebugTickCounterItem",          ItemType.DEBUG_TICK_COUNTER,         DebugTickCounterItem.CODEC,           DebugTickCounterItem::createEmpty,        (i) -> new DebugTickCounterItem((DebugTickCounterItem) i).regenerateId()).requiredFeatureFlag(FeatureFlag.ITEM_DEBUG_TICK_COUNTER),
+            new ItemInfo(TextItem.class,                           "TextItem",                      ItemType.TEXT,                       TextItem.CODEC,                       TextItem::createEmpty,                    (i) -> new TextItem((TextItem) i).regenerateId()),
+            new ItemInfo(LongTextItem.class,                       "LongTextItem",                  ItemType.LONG_TEXT,                  LongTextItem.CODEC,                   LongTextItem::createEmpty,                (i) -> new LongTextItem((LongTextItem) i).regenerateId()),
+            new ItemInfo(CheckboxItem.class,                       "CheckboxItem",                  ItemType.CHECKBOX,                   CheckboxItem.CODEC,                   CheckboxItem::createEmpty,                (i) -> new CheckboxItem((CheckboxItem) i).regenerateId()),
+            new ItemInfo(DayRepeatableCheckboxItem.class,          "DayRepeatableCheckboxItem",     ItemType.CHECKBOX_DAY_REPEATABLE,    DayRepeatableCheckboxItem.CODEC,      DayRepeatableCheckboxItem::createEmpty,   (i) -> new DayRepeatableCheckboxItem((DayRepeatableCheckboxItem) i).regenerateId()),
+            new ItemInfo(CounterItem.class,                        "CounterItem",                   ItemType.COUNTER,                    CounterItem.CODEC,                    CounterItem::createEmpty,                 (i) -> new CounterItem((CounterItem) i).regenerateId()),
+            new ItemInfo(CycleListItem.class,                      "CycleListItem",                 ItemType.CYCLE_LIST,                 CycleListItem.CODEC,                  CycleListItem::createEmpty,               (i) -> new CycleListItem((CycleListItem) i).regenerateId()),
+            new ItemInfo(GroupItem.class,                          "GroupItem",                     ItemType.GROUP,                      GroupItem.CODEC,                      GroupItem::createEmpty,                   (i) -> new GroupItem((GroupItem) i).regenerateId()),
+            new ItemInfo(FilterGroupItem.class,                    "FilterGroupItem",               ItemType.FILTER_GROUP,               FilterGroupItem.CODEC,                FilterGroupItem::createEmpty,             (i) -> new FilterGroupItem((FilterGroupItem) i).regenerateId()),
     };
 
     private ItemsRegistry() {}
@@ -53,22 +61,30 @@ public class ItemsRegistry {
         return null;
     }
 
+    @NonNull
+    public ItemInfo get(@NonNull ItemType itemType) {
+        for (ItemInfo itemInfo : ITEMS) {
+            if (itemType == itemInfo.itemType) return itemInfo;
+        }
+        throw new NoSuchElementException("Not found item for ItemType: " + itemType);
+    }
+
     public static class ItemInfo {
         private final Class<? extends Item> classType;
         private final String stringType;
-        private final ItemImportExportTool itemImportExportTool;
+        private final ItemType itemType;
+        private final AbstractItemCodec codec;
         private final ItemCreateInterface createInterface;
         private final ItemCopyInterface copyInterface;
-        private final int nameResId;
         private FeatureFlag requiredFeatureFlag;
 
-        public ItemInfo(@NonNull Class<? extends Item> classType, @NonNull String stringType, @NonNull ItemImportExportTool itemImportExportTool, @NonNull ItemCreateInterface createInterface, @NonNull ItemCopyInterface copyInterface, @StringRes int nameResId) {
+        public ItemInfo(@NonNull Class<? extends Item> classType, @NonNull String stringType, @NonNull ItemType itemType, @NonNull AbstractItemCodec codec, @NonNull ItemCreateInterface createInterface, @NonNull ItemCopyInterface copyInterface) {
             this.classType = classType;
             this.stringType = stringType;
-            this.itemImportExportTool = itemImportExportTool;
+            this.itemType = itemType;
+            this.codec = codec;
             this.createInterface = createInterface;
             this.copyInterface = copyInterface;
-            this.nameResId = nameResId;
         }
 
         @NonNull
@@ -82,8 +98,8 @@ public class ItemsRegistry {
         }
 
         @NonNull
-        public ItemImportExportTool getItemIETool() {
-            return itemImportExportTool;
+        public AbstractItemCodec getCodec() {
+            return codec;
         }
 
         @NonNull
@@ -96,9 +112,8 @@ public class ItemsRegistry {
             return copyInterface.copy(item);
         }
 
-        @StringRes
-        public int getNameResId() {
-            return nameResId;
+        public ItemType getItemType() {
+            return itemType;
         }
 
         public ItemInfo requiredFeatureFlag(FeatureFlag flag) {

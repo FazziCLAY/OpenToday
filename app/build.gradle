@@ -3,16 +3,16 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+// =====
+var isDev = true
+var verBuild = 113
+var verName = "1.1 dev"
+var verReleaseTime = 1684068997 // in seconds
+// =====
+
 android {
     compileSdk 33
-
     defaultConfig {
-        // =====
-        var isDev = true
-        var verBuild = 111
-        var verName = "1.0.5 dev"
-        // =====
-
         applicationId "com.fazziclay.opentoday" + (isDev ? ".dev" : "")
         minSdk 26
         targetSdk 33
@@ -23,17 +23,23 @@ android {
     }
 
     buildTypes {
+        if (isDev) {
+            verReleaseTime = (long) (new Date().time / 1000)
+        }
+
         release {
+            buildConfigField "long", "VERSION_RELEASE_TIME", verReleaseTime.toString()
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
+            buildConfigField "long", "VERSION_RELEASE_TIME", verReleaseTime.toString()
             versionNameSuffix ' (debug)'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     buildFeatures {
         viewBinding true
@@ -51,15 +57,17 @@ dependencies {
     implementation files("./libs/JavaNeoUtil-1.1.jar")
     implementation 'com.github.martin-stone:hsv-alpha-color-picker-android:3.0.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'com.google.android.material:material:1.9.0'
     implementation 'com.google.code.gson:gson:2.8.9'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.navigation:navigation-fragment:2.5.3'
     implementation 'androidx.navigation:navigation-ui:2.5.3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.core:core-ktx:1.10.1'
 
     // Tests
+    androidTestImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
+    androidTestImplementation 'org.testng:testng:6.9.6'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.json:json:20220320'
     androidTestImplementation'org.robolectric:robolectric:3.0'

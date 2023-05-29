@@ -6,7 +6,9 @@ import androidx.annotation.Nullable;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.ContainerItem;
 import com.fazziclay.opentoday.app.items.item.Item;
-import com.fazziclay.opentoday.app.items.item.ItemIEUtil;
+import com.fazziclay.opentoday.app.items.item.ItemCodecUtil;
+import com.fazziclay.opentoday.app.items.tick.TickSession;
+import com.fazziclay.opentoday.app.items.tick.TickTarget;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 
 import java.util.ArrayList;
@@ -14,14 +16,32 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import kotlin.collections.ArraysKt;
+
 public class ItemsUtils {
+    /**
+     * <h1>WARNING! Coping include ID!!!!!</h1>
+     */
     @NonNull
     public static List<Item> copy(Item[] items) {
-        try {
-            return ItemIEUtil.importItemList(ItemIEUtil.exportItemList(items));
-        } catch (Exception e) {
-            throw new RuntimeException("Clone exception!", e);
+        return ItemCodecUtil.importItemList(ItemCodecUtil.exportItemList(items));
+    }
+
+    public static ItemsStorage[] getPathToItem(Item item) {
+        if (!item.isAttached()) throw new IllegalArgumentException("Item not attached.");
+        List<ItemsStorage> path = new ArrayList<>();
+        ItemsStorage temp = item.getParentItemsStorage();
+        while (true) {
+            path.add(temp);
+            if (temp instanceof Item i) {
+                temp = i.getParentItemsStorage();
+            } else {
+                break;
+            }
         }
+        ItemsStorage[] result = path.toArray(new ItemsStorage[0]);
+        ArraysKt.reverse(result);
+        return result;
     }
 
     @NonNull
@@ -29,8 +49,7 @@ public class ItemsUtils {
         List<Item> ret = new ArrayList<>();
         for (Item item : list) {
             ret.add(item);
-            if (item instanceof ContainerItem) {
-                ContainerItem containerItem = (ContainerItem) item;
+            if (item instanceof ContainerItem containerItem) {
                 Item[] r = getAllItemsInTree(containerItem.getAllItems());
                 ret.addAll(Arrays.asList(r));
             }
@@ -43,16 +62,14 @@ public class ItemsUtils {
     * Get item in rootArray and subItems (recursive)
     * */
     @Nullable
-    public static Item getItemByIdRoot(Item[] rootArray, UUID id) {
+    public static Item getItemByIdRecursive(Item[] rootArray, UUID id) {
         return getItemById(getAllItemsInTree(rootArray), id);
     }
 
     @Nullable
-    public static Item getItemById(@NonNull Item[] allItems, UUID id) {
+    public static Item getItemById(@NonNull Item[] allItems, @NonNull UUID id) {
         for (Item item : allItems) {
-            if (item.getId().equals(id)) {
-                return item;
-            }
+            if (id.equals(item.getId())) return item;
         }
         return null;
     }
@@ -79,10 +96,23 @@ public class ItemsUtils {
     }
 
     public static UUID getId(Object o) {
-        if (o instanceof ID) {
-            ID id = (ID) o;
+        if (o instanceof Unique id) {
             return id.getId();
         }
         return null;
+    }
+
+    public static void tickDayRepeatableCheckboxes(TickSession tickSession, Item[] items) {
+        // NOTE: No use 'for-loop' (self-delete item in tick => ConcurrentModificationException)
+        int i = items.length - 1;
+        while (i >= 0) {
+            Item item = items[i];
+            if (item != null && item.isAttached() && tickSession.isAllowed(item)) {
+                tickSession.recycleSpecifiedTickTarget(TickTarget.DAY_REPEATABLE_CHECKBOX_UPDATE);
+                item.tick(tickSession);
+                tickSession.recycleSpecifiedTickTarget();
+            }
+            i--;
+        }
     }
 }

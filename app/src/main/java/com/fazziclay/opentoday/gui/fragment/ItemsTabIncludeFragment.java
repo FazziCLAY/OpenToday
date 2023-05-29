@@ -3,6 +3,7 @@ package com.fazziclay.opentoday.gui.fragment;
 import static com.fazziclay.opentoday.util.InlineUtil.nullStat;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -17,20 +18,23 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.ImportWrapper;
-import com.fazziclay.opentoday.app.items.ID;
+import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
+import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
+import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.Tab;
-import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.databinding.FragmentItemsTabIncludeBinding;
+import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.interfaces.CurrentItemsTab;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
@@ -48,16 +52,17 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     private static final String TAG = "ItemsTabIncludeFragment";
 
     public static final ItemsTabIncludeFragment.QuickNoteInterface QUICK_NOTE_NOTIFICATIONS_PARSE = QuickNote.QUICK_NOTE_NOTIFICATIONS_PARSE;
-
     public static ItemsTabIncludeFragment create() {
         return new ItemsTabIncludeFragment();
     }
+
 
 
     private FragmentItemsTabIncludeBinding binding;
     private App app;
     private ItemManager itemManager;
     private SettingsManager settingsManager;
+    private SelectionManager selectionManager;
     private AppToolbar toolbar;
     private NavigationHost rootNavigationHost;
     private ItemsStorage currentItemsStorage; // <-------------------------- this generic current item storage
@@ -76,12 +81,13 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         this.app = App.get(requireContext());
         this.itemManager = app.getItemManager();
         this.settingsManager = app.getSettingsManager();
+        this.selectionManager = app.getSelectionManager();
         this.rootNavigationHost = UI.findFragmentInParents(this, MainRootFragment.class);
         binding = FragmentItemsTabIncludeBinding.inflate(getLayoutInflater());
 
         if (settingsManager.getFirstTab() == SettingsManager.FirstTab.TAB_ON_CLOSING) {
-            currentTab = getOldTabId();
-            if (itemManager.getTab(currentTab) == null) {
+            currentTab = getLastTabId();
+            if (currentTab == null || itemManager.getTab(currentTab) == null) {
                 currentTab = itemManager.getMainTab().getId();
                 currentItemsStorage = itemManager.getMainTab();
             } else {
@@ -94,7 +100,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
             throw new RuntimeException("Unknown firstTab settings!");
         }
 
-        this.toolbar = new AppToolbar(requireActivity(), itemManager, settingsManager, currentItemsStorage, rootNavigationHost, binding.toolbar, binding.toolbarMore);
+        this.toolbar = new AppToolbar(requireActivity(), itemManager, settingsManager, selectionManager, currentItemsStorage, rootNavigationHost, binding.toolbar, binding.toolbarMore);
 
         // Tabs
         itemManager.getOnTabsChanged().addCallback(CallbackImportance.DEFAULT, localOnTabChanged);
@@ -123,7 +129,10 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         setupQuickNote();
     }
 
-    private UUID getOldTabId() {
+    /**
+     * Get latest active tab (saved)
+     */
+    private UUID getLastTabId() {
         String s = requireContext().getSharedPreferences(App.SHARED_NAME, Context.MODE_PRIVATE).getString(App.SHARED_KEY_LAST_TAB, "");
         try {
             return UUID.fromString(s);
@@ -132,7 +141,11 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         }
     }
 
-    private void setOldTabId(UUID id) {
+    /**
+     * Save latest tab id for {@link #getLastTabId()}
+     * @param id data for save
+     */
+    private void setLastTabId(final UUID id) {
         requireContext().getSharedPreferences(App.SHARED_NAME, Context.MODE_PRIVATE).edit().putString(App.SHARED_KEY_LAST_TAB, id.toString()).apply();
     }
 
@@ -140,6 +153,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Logger.d(TAG, "onCreateView", nullStat(savedInstanceState));
+        if (Debug.CUSTOM_ITEMSTABINCLUDE_BACKGROUND) binding.getRoot().setBackgroundColor(Color.parseColor("#ffff00"));
         return binding.getRoot();
     }
 
@@ -186,8 +200,8 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
             binding.quickNoteText.setText("");
 
             if (ImportWrapper.isImportText(text)) {
-                if (currentItemsStorage instanceof ID) {
-                    UUID id = ((ID) currentItemsStorage).getId();
+                if (currentItemsStorage instanceof Unique) {
+                    UUID id = ((Unique) currentItemsStorage).getId();
                     rootNavigationHost.navigate(ImportFragment.create(id, text.trim(), true), true);
                 } else {
                     Toast.makeText(requireContext(), R.string.toolbar_more_file_import_unsupported, Toast.LENGTH_SHORT).show();
@@ -196,7 +210,10 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
                 Item item = settingsManager.getDefaultQuickNoteType().create();
                 if (item instanceof TextItem) ((TextItem) item).setText(text);
                 if (app.getSettingsManager().isParseTimeFromQuickNote()) item.getNotifications().addAll(QUICK_NOTE_NOTIFICATIONS_PARSE.run(text));
-                currentItemsStorage.addItem(item);
+                switch (settingsManager.getItemAddPosition()) {
+                    case TOP -> currentItemsStorage.addItem(item, 0);
+                    case BOTTOM -> currentItemsStorage.addItem(item);
+                }
             }
         });
 
@@ -207,13 +224,16 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
                 if (!registryItem.isCompatibility(app.getFeatureFlags())) {
                     continue;
                 }
-                MenuItem menuItem = popupMenu.getMenu().add(registryItem.getNameResId());
+                MenuItem menuItem = popupMenu.getMenu().add(EnumsRegistry.INSTANCE.nameResId(registryItem.getItemType()));
                 menuItem.setOnMenuItemClickListener(clicked -> {
                     String text = binding.quickNoteText.getText().toString();
                     Item item = registryItem.create();
                     if (item instanceof TextItem) ((TextItem) item).setText(text);
                     if (settingsManager.isParseTimeFromQuickNote()) item.getNotifications().addAll(QUICK_NOTE_NOTIFICATIONS_PARSE.run(text));
-                    currentItemsStorage.addItem(item);
+                    switch (settingsManager.getItemAddPosition()) {
+                        case TOP -> currentItemsStorage.addItem(item, 0);
+                        case BOTTOM -> currentItemsStorage.addItem(item);
+                    }
                     return true;
                 });
             }
@@ -236,10 +256,10 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     private void setupTabs() {
         binding.tabs.removeAllTabs();
 
-        for (Tab localItemsTab : itemManager.getTabs()) {
+        for (Tab tab : itemManager.getTabs()) {
             TabLayout.Tab tabView = binding.tabs.newTab();
-            tabView.setTag(localItemsTab.getId().toString());
-            tabView.setText(localItemsTab.getName());
+            tabView.setTag(tab.getId().toString());
+            tabView.setText(tab.getName());
             binding.tabs.addTab(tabView);
         }
     }
@@ -260,11 +280,13 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         binding.tabs.addOnTabSelectedListener(uiOnTabSelectedListener);
     }
 
+    @NonNull
     @Override
     public UUID getCurrentTabId() {
         return currentTab;
     }
 
+    @NonNull
     @Override
     public Tab getCurrentTab() {
         return itemManager.getTab(getCurrentTabId());
@@ -273,7 +295,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     @Override
     public void setCurrentTab(UUID id) {
         currentTab = id;
-        setOldTabId(id);
+        setLastTabId(id);
     }
 
     @Override
@@ -295,7 +317,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     }
 
     @Override
-    public void navigate(Fragment navigateTo, boolean addToBackStack) {
+    public void navigate(@NonNull Fragment navigateTo, boolean addToBackStack) {
         Logger.d(TAG, "navigate", "to=", navigateTo, "addToBack=", addToBackStack);
         ItemsEditorRootFragment fragment = getCurrentViewPagerFragment();
         if (navigateTo != null) {

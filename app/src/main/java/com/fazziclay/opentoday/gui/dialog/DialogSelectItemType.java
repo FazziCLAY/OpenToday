@@ -9,7 +9,9 @@ import android.widget.Spinner;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.items.item.Item;
+import com.fazziclay.opentoday.app.items.item.ItemType;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
+import com.fazziclay.opentoday.util.EnumUtil;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 
 public class DialogSelectItemType {
@@ -18,7 +20,7 @@ public class DialogSelectItemType {
     private String message;
     private final OnSelected onSelected;
     private View view;
-    private final SimpleSpinnerAdapter<Class<? extends Item>> simpleSpinnerAdapter;
+    private final SimpleSpinnerAdapter<ItemType> simpleSpinnerAdapter;
     private final Dialog dialog;
 
     public DialogSelectItemType(Context context, OnSelected onSelected) {
@@ -38,11 +40,11 @@ public class DialogSelectItemType {
         this.onSelected = onSelected;
 
         this.simpleSpinnerAdapter = new SimpleSpinnerAdapter<>(context);
-        for (ItemsRegistry.ItemInfo itemInfo : ItemsRegistry.REGISTRY.getAllItems()) {
-            this.simpleSpinnerAdapter.add(context.getString(itemInfo.getNameResId()), itemInfo.getClassType());
-        }
+        EnumUtil.addToSimpleSpinnerAdapter(context, simpleSpinnerAdapter, ItemType.values());
 
         final byte MODE = 2; // 1 - spinner; 2 - list
+        // TODO: 2023.05.25 Add MODE selecting in constructor
+        // TODO: 2023.05.25 add StartValue to constructor
         if (MODE == 1) {
             Spinner spinner = new Spinner(context);
             this.view = spinner;
@@ -53,8 +55,8 @@ public class DialogSelectItemType {
             this.view = listView;
             listView.setAdapter(simpleSpinnerAdapter);
             listView.setOnItemClickListener((parent, ignoreView, position, id) -> {
-                Class<? extends Item> itemType = simpleSpinnerAdapter.getItem(position);
-                onSelected.onSelected(itemType);
+                ItemType itemType = simpleSpinnerAdapter.getItem(position);
+                onSelected.onSelected(ItemsRegistry.REGISTRY.get(itemType).getClassType());
                 cancel();
             });
         }
@@ -66,8 +68,8 @@ public class DialogSelectItemType {
                 .setNegativeButton(context.getString(R.string.dialog_selectItemAction_cancel), null)
                 .setPositiveButton(this.selectButtonText, (i2, i1) -> {
                     if (MODE == 1) {
-                        Class<? extends Item> itemType = simpleSpinnerAdapter.getItem(((Spinner) view).getSelectedItemPosition());
-                        onSelected.onSelected(itemType);
+                        ItemType itemType = simpleSpinnerAdapter.getItem(((Spinner) view).getSelectedItemPosition());
+                        onSelected.onSelected(ItemsRegistry.REGISTRY.get(itemType).getClassType());
                     }
                 })
                 .create();

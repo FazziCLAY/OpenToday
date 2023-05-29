@@ -22,13 +22,14 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.ColorHistoryManager;
 import com.fazziclay.opentoday.app.ImportWrapper;
+import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
-import com.fazziclay.opentoday.app.items.Selection;
 import com.fazziclay.opentoday.app.items.item.Item;
+import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.Tab;
-import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.databinding.FragmentImportBinding;
+import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.util.NetworkUtil;
 
@@ -38,7 +39,6 @@ public class ImportFragment extends Fragment {
     private static final String KEY_ITEMS_STORAGE = "importFragment:itemsStorageId";
     private static final String KEY_START_TEXT = "importFragment:startImportText";
     private static final String KEY_AUTORUN = "importFragment:autoRun";
-
     @NonNull
     public static ImportFragment create(@NonNull final UUID itemsStorageId) {
         final ImportFragment f = new ImportFragment();
@@ -63,10 +63,12 @@ public class ImportFragment extends Fragment {
         return f;
     }
 
+
     private FragmentImportBinding binding;
     private Activity activity;
     private App app;
     private ItemManager itemManager;
+    private SelectionManager selectionManager;
     private ItemsStorage itemsStorage;
     private boolean autoRun = false;
 
@@ -76,6 +78,7 @@ public class ImportFragment extends Fragment {
         activity = requireActivity();
         app = App.get(requireContext());
         itemManager = app.getItemManager();
+        selectionManager = app.getSelectionManager();
         itemsStorage = itemManager.getItemStorageById(UUID.fromString(getArguments().getString(KEY_ITEMS_STORAGE)));
 
         if (getArguments().containsKey(KEY_START_TEXT)) {
@@ -145,6 +148,13 @@ public class ImportFragment extends Fragment {
     }
 
     private void importWrapper(ImportWrapper importWrapper) {
+        if (importWrapper.isError()) {
+            ImportWrapper.ErrorCode errorCode = importWrapper.getErrorCode();
+            Toast.makeText(activity, activity.getString(R.string.toolbar_more_file_import_exception, getString(EnumsRegistry.INSTANCE.nameResId(errorCode))), Toast.LENGTH_LONG).show();
+            UI.rootBack(this);
+            return;
+        }
+
         StringBuilder perms = new StringBuilder();
         String info = "";
         final boolean ONLY_DESCRIPTION = true;
@@ -198,24 +208,18 @@ public class ImportFragment extends Fragment {
     }
 
     private String getDescription(ImportWrapper.Permission permission) {
-        switch (permission) {
-            case ADD_ITEMS_TO_CURRENT:
-                return activity.getString(R.string.import_permission_ADD_ITEMS_TO_CURRENT);
+        return switch (permission) {
+            case ADD_ITEMS_TO_CURRENT ->
+                    activity.getString(R.string.import_permission_ADD_ITEMS_TO_CURRENT);
+            case ADD_TABS -> activity.getString(R.string.import_permission_ADD_TABS);
+            case PRE_IMPORT_SHOW_DIALOG ->
+                    activity.getString(R.string.import_permission_PRE_IMPORT_SHOW_DIALOG);
+            case OVERWRITE_SETTINGS ->
+                    activity.getString(R.string.import_permission_OVERWRITE_SETTINGS);
+            case OVERWRITE_COLOR_HISTORY ->
+                    activity.getString(R.string.import_permission_OVERWRITE_COLOR_HISTORY);
+        };
 
-            case ADD_TABS:
-                return activity.getString(R.string.import_permission_ADD_TABS);
-
-            case PRE_IMPORT_SHOW_DIALOG:
-                return activity.getString(R.string.import_permission_PRE_IMPORT_SHOW_DIALOG);
-
-            case OVERWRITE_SETTINGS:
-                return activity.getString(R.string.import_permission_OVERWRITE_SETTINGS);
-
-            case OVERWRITE_COLOR_HISTORY:
-                return activity.getString(R.string.import_permission_OVERWRITE_COLOR_HISTORY);
-        }
-
-        return null;
     }
     private void directImport(ImportWrapper importWrapper) {
         try {
@@ -230,8 +234,11 @@ public class ImportFragment extends Fragment {
         boolean isRestart = false;
         if (importWrapper.isPerm(ImportWrapper.Permission.ADD_ITEMS_TO_CURRENT)) {
             for (Item item : importWrapper.getItems()) {
-                itemsStorage.addItem(item);
-                itemManager.selectItem(new Selection(itemsStorage, item));
+                switch (app.getSettingsManager().getItemAddPosition()) {
+                    case TOP -> itemsStorage.addItem(item, 0);
+                    case BOTTOM -> itemsStorage.addItem(item);
+                }
+                selectionManager.selectItem(item);
             }
         }
 
