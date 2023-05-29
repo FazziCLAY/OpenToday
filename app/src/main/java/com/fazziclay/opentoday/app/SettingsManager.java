@@ -51,6 +51,7 @@ public class SettingsManager {
     private FirstTab firstTab = FirstTab.TAB_ON_CLOSING;
     private String datePattern = "yyyy.MM.dd EE";
     private String timePattern = "HH:mm:ss";
+    private ItemAddPosition itemAddPosition = ItemAddPosition.BOTTOM;
 
 
     public SettingsManager(File saveFile) {
@@ -90,6 +91,8 @@ public class SettingsManager {
         setDatePattern(p.getDate());
         setTimePattern(p.getTime());
     }
+    @Setter public void setItemAddPosition(ItemAddPosition e) {this.itemAddPosition = e;}
+    @Getter public ItemAddPosition getItemAddPosition() {return itemAddPosition;}
 
     private void load() {
         if (!FileUtil.isExist(saveFile)) {
@@ -140,6 +143,10 @@ public class SettingsManager {
             datePattern = j.optString("datePattern", datePattern);
             timePattern = j.optString("timePattern", timePattern);
 
+            try {
+                this.itemAddPosition = ItemAddPosition.valueOf(j.getString("itemAddPosition"));
+            } catch (Exception ignored) {}
+
         } catch (Exception e) {
             Logger.e(TAG, "load", e);
             App.exception(null, e);
@@ -178,6 +185,7 @@ public class SettingsManager {
         j.put("firstTab", this.firstTab.name());
         j.put("datePattern", this.datePattern);
         j.put("timePattern", this.timePattern);
+        j.put("itemAddPosition", this.itemAddPosition.name());
         return j;
     }
 
@@ -235,5 +243,10 @@ public class SettingsManager {
         public String getDate() {
             return date;
         }
+    }
+
+    public enum ItemAddPosition {
+        TOP,
+        BOTTOM
     }
 }

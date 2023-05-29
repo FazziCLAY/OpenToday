@@ -52,6 +52,8 @@ object EnumsRegistry {
         EnumInfo(CycleListItem.TickBehavior.CURRENT,        R.string.cycleListItem_tickBehavior_current),
         EnumInfo(CycleListItem.TickBehavior.NOT_CURRENT,    R.string.cycleListItem_tickBehavior_notCurrent),
 
+        EnumInfo(SettingsManager.ItemAddPosition.TOP,       R.string.settings_itemAddPosition_TOP),
+        EnumInfo(SettingsManager.ItemAddPosition.BOTTOM,    R.string.settings_itemAddPosition_BOTTOM),
 
     )
 
@@ -64,6 +66,7 @@ object EnumsRegistry {
         missingCheck(ItemType.values().toList())
         missingCheck(FilterGroupItem.TickBehavior.values().toList())
         missingCheck(CycleListItem.TickBehavior.values().toList())
+        missingCheck(SettingsManager.ItemAddPosition.values().toList())
     }
 
     private fun missingCheck(values: List<Enum<*>>) {

@@ -9,13 +9,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.Spinner
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.fazziclay.opentoday.R
-import com.fazziclay.opentoday.app.*
+import com.fazziclay.opentoday.app.App
+import com.fazziclay.opentoday.app.ColorHistoryManager
+import com.fazziclay.opentoday.app.ImportWrapper
+import com.fazziclay.opentoday.app.PinCodeManager
 import com.fazziclay.opentoday.app.PinCodeManager.ContainNonDigitChars
+import com.fazziclay.opentoday.app.SettingsManager
 import com.fazziclay.opentoday.app.SettingsManager.FirstTab
 import com.fazziclay.opentoday.app.items.QuickNoteReceiver
 import com.fazziclay.opentoday.app.items.item.Item
@@ -32,7 +41,9 @@ import com.fazziclay.opentoday.util.SimpleSpinnerAdapter
 import org.json.JSONException
 import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.GregorianCalendar
+import java.util.Locale
 
 class SettingsFragment : Fragment() {
     companion object {
@@ -180,6 +191,13 @@ class SettingsFragment : Fragment() {
         pinCodeCallback = Runnable { binding.pincode.text = getString(R.string.settings_pincode, if (pinCodeManager.isPinCodeSet) getString(R.string.settings_pincode_on) else getString(R.string.settings_pincode_off)) }
         pinCodeCallback.run()
         viewClick(binding.pincode, Runnable { showPinCodeDialog() })
+
+        // add item to top
+        binding.addItemsToTop.isChecked = settingsManager.itemAddPosition == SettingsManager.ItemAddPosition.TOP
+        viewClick(binding.addItemsToTop, Runnable {
+            settingsManager.itemAddPosition = if (binding.addItemsToTop.isChecked) SettingsManager.ItemAddPosition.TOP else SettingsManager.ItemAddPosition.BOTTOM
+            colorHistoryManager.save()
+        })
     }
 
     private fun setupFirstTabSpinner() {

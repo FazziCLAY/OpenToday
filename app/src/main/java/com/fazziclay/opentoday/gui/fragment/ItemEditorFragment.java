@@ -85,13 +85,18 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     private static final String KEY_EDIT_ITEM_ID = "edit:itemId";
     private static final String KEY_CREATE_ITEM_STORAGE_ID = "create:itemStorageId";
     private static final String KEY_CREATE_ITEM_TYPE = "create:itemType";
-    public static ItemEditorFragment create(UUID itemStorageId, Class<? extends Item> itemType) {
+    private static final String KEY_ADD_ITEM_POSITION = "create:addItemPosition";
+    public static final int VALUE_ADD_ITEM_POSITION_TOP = 0;
+    public static final int VALUE_ADD_ITEM_POSITION_BOTTOM = -1;
+
+    public static ItemEditorFragment create(UUID itemStorageId, Class<? extends Item> itemType, int addItemPosition) {
         ItemEditorFragment result = new ItemEditorFragment();
         Bundle a = new Bundle();
 
         a.putInt(KEY_MODE, MODE_CREATE);
         a.putString(KEY_CREATE_ITEM_STORAGE_ID, itemStorageId.toString());
         a.putString(KEY_CREATE_ITEM_TYPE, ItemsRegistry.REGISTRY.get(itemType).getStringType());
+        a.putInt(KEY_ADD_ITEM_POSITION, addItemPosition);
 
         result.setArguments(a);
         return result;
@@ -128,6 +133,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     private SelectionManager selectionManager;
     private boolean unsavedChanges = false;
     private Item item;
+    private int addItemPosition = VALUE_ADD_ITEM_POSITION_BOTTOM;
 
     private int mode;
     
@@ -163,6 +169,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
         } else if (mode == MODE_CREATE) {
             itemsStorage = itemManager.getItemStorageById(getArgItemStorageId());
+            addItemPosition = getArgAddItemPosition();
             ItemsRegistry.ItemInfo itemInfo = ItemsRegistry.REGISTRY.get(getArgItemType());
             item = itemInfo.create();
             
@@ -235,6 +242,9 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     public String getArgItemType() {
         return getArguments().getString(KEY_CREATE_ITEM_TYPE);
     }
+    public int getArgAddItemPosition() {
+        return getArguments().getInt(KEY_ADD_ITEM_POSITION);
+    }
 
     public ItemEditorFragment() {
     }
@@ -267,7 +277,11 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             }
         }
         if (mode == MODE_CREATE) {
-            itemsStorage.addItem(item);
+            switch (addItemPosition) {
+                case VALUE_ADD_ITEM_POSITION_BOTTOM -> itemsStorage.addItem(item);
+                case VALUE_ADD_ITEM_POSITION_TOP -> itemsStorage.addItem(item, 0);
+                default -> itemsStorage.addItem(item, addItemPosition);
+            }
         }
 
         item.visibleChanged();

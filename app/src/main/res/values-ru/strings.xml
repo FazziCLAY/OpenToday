@@ -361,4 +361,7 @@
     <string name="item_group_description">Группа. Это контейнер для других предметов. Снаружи отображается его содержимое, если группа не свернута.</string>
     <string name="item_filterGroup_description">Группа с фильтрами для каждого айтема внутри.\nЭти фильтры определяют, показывать ли внутренний элемент снаружи или нет.</string>
     <string name="dialog_editItemFilter_isChecked">Состояние галочки</string>
+    <string name="settings_itemAddPosition_BOTTOM">Вниз</string>
+    <string name="settings_itemAddPosition_TOP">Вверх</string>
+    <string name="settings_addItemsToTop">Добавлять айтемы вверх</string>
 </resources>

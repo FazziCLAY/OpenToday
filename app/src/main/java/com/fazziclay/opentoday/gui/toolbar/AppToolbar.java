@@ -521,6 +521,13 @@ public class AppToolbar {
 
         localBinding.items.setLayoutManager(new LinearLayoutManager(activity, RecyclerView.VERTICAL, false));
         localBinding.items.setAdapter(new RecyclerView.Adapter<H>() {
+            private int getAddItemPos(SettingsManager.ItemAddPosition fromSettings) {
+                return switch (fromSettings) {
+                    case TOP -> ItemEditorFragment.VALUE_ADD_ITEM_POSITION_TOP;
+                    case BOTTOM -> ItemEditorFragment.VALUE_ADD_ITEM_POSITION_BOTTOM;
+                };
+            }
+
             @NonNull
             @Override
             public H onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -533,8 +540,13 @@ public class AppToolbar {
 
                 if (itemInfo.isCompatibility(app.getFeatureFlags())) {
                     holder.name.setText(EnumsRegistry.INSTANCE.nameResId(itemInfo.getItemType()));
-                    viewClick(holder.create, () -> rootNavigationHost.navigate(ItemEditorFragment.create(ItemsUtils.getId(itemsStorage), itemInfo.getClassType()), true));
-                    viewClick(holder.add, () -> itemsStorage.addItem(ItemsRegistry.REGISTRY.get(itemInfo.getClassType()).create()));
+                    viewClick(holder.create, () -> rootNavigationHost.navigate(ItemEditorFragment.create(ItemsUtils.getId(itemsStorage), itemInfo.getClassType(), getAddItemPos(settingsManager.getItemAddPosition())), true));
+                    viewClick(holder.add, () -> {
+                        switch (settingsManager.getItemAddPosition()) {
+                            case TOP -> itemsStorage.addItem(ItemsRegistry.REGISTRY.get(itemInfo.getClassType()).create(), 0);
+                            case BOTTOM -> itemsStorage.addItem(ItemsRegistry.REGISTRY.get(itemInfo.getClassType()).create());
+                        }
+                    });
                     viewClick(holder.description, () -> showItemDescriptionDialog(itemInfo));
                 } else {
                     holder.clear();
