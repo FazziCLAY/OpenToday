@@ -196,7 +196,7 @@ class SettingsFragment : Fragment() {
         binding.addItemsToTop.isChecked = settingsManager.itemAddPosition == SettingsManager.ItemAddPosition.TOP
         viewClick(binding.addItemsToTop, Runnable {
             settingsManager.itemAddPosition = if (binding.addItemsToTop.isChecked) SettingsManager.ItemAddPosition.TOP else SettingsManager.ItemAddPosition.BOTTOM
-            colorHistoryManager.save()
+            settingsManager.save()
         })
     }
 
