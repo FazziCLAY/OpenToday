@@ -2,7 +2,6 @@
 # TODO: Translate russian README...
 [English](https://github.com/FazziCLAY/OpenToday/blob/main/README.md) | Русский
 Android-приложение для организации жизни, многофункциональные заметки и напоминалка
-Android application for the organization of life, pro notes and reminder
 
 [![license](https://img.shields.io/github/license/fazziclay/opentoday?color=%2300bb00&style=plastic)](https://github.com/FazziCLAY/OpenToday/blob/main/LICENSE)
 
@@ -10,15 +9,15 @@ Android application for the organization of life, pro notes and reminder
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/fazziclay/opentoday?style=plastic) ](https://github.com/FazziCLAY/OpenToday/releases)
 [![IzzyOnDroid](https://img.shields.io/endpoint?style=plastic&color=%2300bb00&url=https://apt.izzysoft.de/fdroid/api/v1/shield/com.fazziclay.opentoday)](https://apt.izzysoft.de/fdroid/index/apk/com.fazziclay.opentoday)
 
-# Using
-Your main friends are Items
-There are different types of items that you can add:
-* **Text** - use it for simple text notes
-* **CheckBox** - in connection with GroupItem, use it as a grocery list to the store or a to-do list for today
-* **Group** - there are no restrictions in depth! Create your own hierarchy of storing items
-* **Filter Group** - use it to indicate current birthdays, tasks for today, various schedules (for example, school) or something more, up to the second (very useful thing)
+# Использование
+Ваши главные друзья это айтемы
+Они бываю разных типов, и каждый вы можете создать
+* **Text** - можно использовать для простых текстовых заметок
+* **CheckBox** - в связи с GroupItem используйте его как список покупок в магазине или список дел на сегодня
+* **Group** - здесь нет никаких ограничений по глубине! Создайте свою собственную иерархию хранения элементов
+* **Filter Group** - используйте его для указания текущих дней рождения, задач на сегодня, различных расписаний (например, школьных) или чего-то еще, вплоть до второго (очень полезная вещь).
 
-and others...
+и другие...
 
 
 ## Items tree
@@ -38,10 +37,10 @@ Item - (minimal heigth, backgroud color)
    ```
 
 ## Add items
-There is a toolbar at the bottom of the application, open the Items tab, click next to the desired one +
+В нижней части приложения есть панель инструментов, откройте вкладку Элементы, нажмите рядом с нужным +
 
-## Move items
-Swipe the desired item to the right, click the 'selected' checkbox, then open the desired location, open the 'selection' tab in the toolbar and select the desired action there
+## Перемещение
+Проведите пальцем по нужному элементу вправо, установите флажок "Выбран", затем откройте нужное местоположение, откройте вкладку "Выбор" на панели инструментов и выберите там нужное действие
 
 ## Import/Export
 Share your items with your friends, to export you have to click on the corresponding button in the 'selection' toolbar menu. All selected items are exported to the clipboard
@@ -49,15 +48,15 @@ Share your items with your friends, to export you have to click on the correspon
 To import, use the received text in the File tab in the toolbar
 
 # Screenshots
-**Even more ideas for use can come to your mind after viewing the screenshots**
+**Еще больше идей для использования может прийти вам в голову после просмотра скриншотов**
 |![1](https://user-images.githubusercontent.com/68351787/199270739-5e7491ed-f345-4347-ac8a-a6160090414e.jpg) | ![1](https://user-images.githubusercontent.com/68351787/199270753-53d74768-63e6-4564-a889-e2025ed78d19.jpg) | ![About app](https://user-images.githubusercontent.com/68351787/199270769-080177ea-5368-485a-aa23-3a75e87a0695.jpg) | ![Calendar](https://user-images.githubusercontent.com/68351787/199270761-d21b86d9-9059-4578-ae0a-f3aacb73e1c9.jpg)
 |:---:|:---:|:----:|:---:|
 |![1](https://user-images.githubusercontent.com/68351787/199270781-a832ca3e-0da1-4480-b1ff-9134c9c41751.jpg) | ![1](https://user-images.githubusercontent.com/68351787/199270788-c29d92ab-b585-440b-90b1-2e2c9bb001b5.jpg)
 
 
-# Explore app!
+# Исследуйте приложение
 
-# For developers
+# Для разработчиков
 "/docs" folder
 
 ## Todo/Ideas:
