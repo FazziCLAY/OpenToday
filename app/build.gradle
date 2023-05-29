@@ -4,16 +4,17 @@ plugins {
 }
 
 // =====
-var isDev = true
+var isDev = false
+var beta = true
 var verBuild = 113
-var verName = "1.1 dev"
-var verReleaseTime = 1684068997 // in seconds
+var verName = "1.1 beta"
+var verReleaseTime = 1685350800 // in seconds
 // =====
 
 android {
     compileSdk 33
     defaultConfig {
-        applicationId "com.fazziclay.opentoday" + (isDev ? ".dev" : "")
+        applicationId "com.fazziclay.opentoday" + (isDev ? ".dev" : "") + (beta ? ".beta" : "")
         minSdk 26
         targetSdk 33
         versionCode verBuild
