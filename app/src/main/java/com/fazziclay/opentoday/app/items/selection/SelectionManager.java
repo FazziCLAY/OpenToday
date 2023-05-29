@@ -46,6 +46,7 @@ public class SelectionManager {
         this.selections.add(selection);
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
             callback.onSelectionChanged(this.selections);
+            callback.selected(selection);
             return Status.NONE;
         });
     }
@@ -59,8 +60,10 @@ public class SelectionManager {
         selections.remove(toDelete);
         toDelete.deselect();
 
+        final Selection finalToDelete = toDelete;
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
             callback.onSelectionChanged(this.selections);
+            callback.unselected(finalToDelete);
             return new Status.Builder().build();
         });
     }
@@ -77,6 +80,7 @@ public class SelectionManager {
 
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
             callback.onSelectionChanged(this.selections);
+            callback.unselected(se);
             return Status.NONE;
         });
     }
@@ -86,6 +90,7 @@ public class SelectionManager {
 
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
             callback.onSelectionChanged(this.selections);
+            callback.unselectedAll();
             return Status.NONE;
         });
     }
