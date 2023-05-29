@@ -191,7 +191,10 @@ public class ItemStorageDrawer {
     private class DrawerOnItemsStorageUpdated extends OnItemsStorageUpdate {
         @Override
         public Status onAdded(Item item, int pos) {
-            rou(() -> adapter.notifyItemInserted(pos));
+            rou(() -> {
+                adapter.notifyItemInserted(pos);
+                if (settingsManager.isScrollToAddedItem()) view.smoothScrollToPosition(pos);
+            });
             return Status.NONE;
         }
 

@@ -190,6 +190,10 @@ public class SettingsManager {
         return false; // TODO: 5/22/23 owo
     }
 
+    public boolean isScrollToAddedItem() {
+        return true; // TODO: 29.05.2023 add customizable
+    }
+
 
     public enum ItemAction {
         OPEN_EDITOR,
