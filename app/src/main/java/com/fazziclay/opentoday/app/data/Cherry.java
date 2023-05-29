@@ -5,6 +5,11 @@ import androidx.annotation.NonNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * This is wrapper for JSONObject {
+ *     "key": "value"
+ * }
+ */
 public class Cherry {
     public static Cherry of(JSONObject j) {
         return new Cherry(j);

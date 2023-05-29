@@ -4,6 +4,11 @@ import androidx.annotation.NonNull;
 
 import org.json.JSONArray;
 
+/**
+ * This is wrapper of JSONArray [
+ *      "value1", "value2", 3, 4
+ * ]
+ */
 public class CherryOrchard {
     public static CherryOrchard of(JSONArray array) {
         return new CherryOrchard(array);
