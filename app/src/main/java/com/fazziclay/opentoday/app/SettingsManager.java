@@ -52,6 +52,7 @@ public class SettingsManager {
     private String datePattern = "yyyy.MM.dd EE";
     private String timePattern = "HH:mm:ss";
     private ItemAddPosition itemAddPosition = ItemAddPosition.BOTTOM;
+    private boolean confirmFastChanges = true;
 
 
     public SettingsManager(File saveFile) {
@@ -94,6 +95,9 @@ public class SettingsManager {
     @Setter public void setItemAddPosition(ItemAddPosition e) {this.itemAddPosition = e;}
     @Getter public ItemAddPosition getItemAddPosition() {return itemAddPosition;}
 
+    @Getter public boolean isConfirmFastChanges() {return confirmFastChanges;}
+    @Setter public void setConfirmFastChanges(boolean confirmFastChanges) {this.confirmFastChanges = confirmFastChanges;}
+
     private void load() {
         if (!FileUtil.isExist(saveFile)) {
             return;
@@ -132,7 +136,7 @@ public class SettingsManager {
             try {
                 this.quickNoteNotificationItemsStorageId = UUID.fromString(j.optString("quickNoteNotificationItemsStorageId"));
             } catch (Exception ignored) {}
-            this.isTelemetry = j.optBoolean("isTelemetry", true);
+            this.isTelemetry = j.optBoolean("isTelemetry", true); // TODO: 30.05.2023 (oht branch) use isTelemetry for fallback
             try {
                 this.defaultQuickNoteType = ItemsRegistry.REGISTRY.get(j.getString("defaultQuickNoteType"));
             } catch (Exception ignored) {}
@@ -146,6 +150,7 @@ public class SettingsManager {
             try {
                 this.itemAddPosition = ItemAddPosition.valueOf(j.getString("itemAddPosition"));
             } catch (Exception ignored) {}
+            this.confirmFastChanges = j.optBoolean("confirmFastChanges", this.confirmFastChanges);
 
         } catch (Exception e) {
             Logger.e(TAG, "load", e);
@@ -186,6 +191,7 @@ public class SettingsManager {
         j.put("datePattern", this.datePattern);
         j.put("timePattern", this.timePattern);
         j.put("itemAddPosition", this.itemAddPosition.name());
+        j.put("confirmFastChanges", this.confirmFastChanges);
         return j;
     }
 

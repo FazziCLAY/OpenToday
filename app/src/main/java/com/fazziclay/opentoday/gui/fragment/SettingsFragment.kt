@@ -198,6 +198,13 @@ class SettingsFragment : Fragment() {
             settingsManager.itemAddPosition = if (binding.addItemsToTop.isChecked) SettingsManager.ItemAddPosition.TOP else SettingsManager.ItemAddPosition.BOTTOM
             settingsManager.save()
         })
+
+        // confirm easy-to-make changes
+        binding.confirmFastChanges.isChecked = settingsManager.isConfirmFastChanges
+        viewClick(binding.confirmFastChanges, Runnable {
+            settingsManager.isConfirmFastChanges = binding.confirmFastChanges.isChecked
+            settingsManager.save()
+        })
     }
 
     private fun setupFirstTabSpinner() {

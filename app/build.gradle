@@ -6,10 +6,10 @@ plugins {
 // =====
 var isDev = false
 var beta = false
-var verBuild = 118
-var verName = "1.1.1"
+var verBuild = 120
+var verName = "1.1.1.x.1"
 var verBranch = "RELEASE" // use "RELEASE" for releases versions
-var verReleaseTime = 1685446503 // in seconds
+var verReleaseTime = 1685455456 // in seconds
 // =====
 
 android {

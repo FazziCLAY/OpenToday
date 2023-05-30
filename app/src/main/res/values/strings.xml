@@ -366,4 +366,13 @@
     <string name="settings_itemAddPosition_BOTTOM">Bottom</string>
     <string name="settings_itemAddPosition_TOP">Top</string>
     <string name="settings_addItemsToTop">Add items to top^</string>
+    <string name="settings_confirmFastChanges">Confirm easy-to-make changes</string>
+    <string name="fastChanges_dialog_title">Easy-to-make changes</string>
+    <string name="fastChanges_dialog_dontAsk">Don\'t ask</string>
+    <string name="fastChanges_dialog_cancel">Cancel</string>
+    <string name="fastChanges_dialog_apply">OK</string>
+    <string name="item_checkbox_fastChanges_checked">Check the box?</string>
+    <string name="item_checkbox_fastChanges_unchecked">Remove the check mark?</string>
+    <string name="item_counter_fastChanges_up">Increase the counter value?</string>
+    <string name="item_counter_fastChanges_down">Decrease the counter value?</string>
 </resources>
