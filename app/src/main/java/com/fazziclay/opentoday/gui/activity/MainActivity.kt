@@ -3,6 +3,7 @@ package com.fazziclay.opentoday.gui.activity
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -28,6 +29,7 @@ import com.fazziclay.opentoday.gui.EnumsRegistry
 import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember
+import com.fazziclay.opentoday.util.ColorUtil
 import com.fazziclay.opentoday.util.InlineUtil.nullStat
 import com.fazziclay.opentoday.util.InlineUtil.viewClick
 import com.fazziclay.opentoday.util.InlineUtil.viewVisible
@@ -61,6 +63,7 @@ class MainActivity : AppCompatActivity() {
 
     // Activity overrides
     override fun onCreate(savedInstanceState: Bundle?) {
+        val startTime = System.currentTimeMillis()
         super.onCreate(savedInstanceState)
         Logger.d(TAG, "onCreate", nullStat(savedInstanceState))
         if (App.DEBUG) EnumsRegistry.missingChecks()
@@ -71,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         supportActionBar!!.hide()
         debugRunnable = Runnable {
-            binding.debugInfo.text = Debug.getDebugInfoText()
+            binding.debugInfo.text = ColorUtil.colorize(Debug.getDebugInfoText(), Color.WHITE, Color.TRANSPARENT, Typeface.NORMAL)
             if (debugView && debugHandler != null) {
                 debugHandler!!.postDelayed(this.debugRunnable, 99)
             }
@@ -110,6 +113,8 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+
+        Debug.mainActivityStartupTime = System.currentTimeMillis() - startTime
     }
 
     private fun setupNotifications() {
