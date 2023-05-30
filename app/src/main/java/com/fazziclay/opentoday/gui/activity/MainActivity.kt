@@ -162,7 +162,6 @@ class MainActivity : AppCompatActivity() {
         currentDateCalendar.timeInMillis = System.currentTimeMillis()
         val time = currentDateCalendar.time
 
-        // TODO: 11.10.2022 IDEA: Pattern to settings
         // Date
         var dateFormat = SimpleDateFormat(settingsManager.datePattern, Locale.getDefault())
         binding.currentDateDate.text = dateFormat.format(time)
