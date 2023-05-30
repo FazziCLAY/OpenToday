@@ -4,11 +4,11 @@ plugins {
 }
 
 // =====
-var isDev = false
+var isDev = true
 var beta = false
-var verBuild = 118
-var verName = "1.1.1"
-var verBranch = "RELEASE" // use "RELEASE" for releases versions
+var verBuild = 119
+var verName = "1.1.1.x.1 confirm-fast-changes"
+var verBranch = "confirm-fast-changes" // use "RELEASE" for releases versions
 var verReleaseTime = 1685446503 // in seconds
 // =====
 
