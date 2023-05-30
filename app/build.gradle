@@ -7,7 +7,7 @@ plugins {
 var isDev = false
 var beta = false
 var verBuild = 120
-var verName = "1.1.1.x.1"
+var verName = "1.1.2"
 var verBranch = "RELEASE" // use "RELEASE" for releases versions
 var verReleaseTime = 1685455456 // in seconds
 // =====
