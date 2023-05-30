@@ -51,6 +51,7 @@ public class App extends Application {
     public static final String VERSION_NAME = CustomBuildConfig.VERSION_NAME;
     public static final int VERSION_CODE = CustomBuildConfig.VERSION_CODE;
     public static final long VERSION_RELEASE_TIME = CustomBuildConfig.VERSION_RELEASE_TIME;
+    public static final String VERSION_BRANCH = CustomBuildConfig.VERSION_BRANCH;
     public static final String APPLICATION_ID = CustomBuildConfig.APPLICATION_ID;
 
     // Notifications
@@ -115,7 +116,6 @@ public class App extends Application {
             //FeatureFlag.ALWAYS_SHOW_SAVE_STATUS,
             //FeatureFlag.DISABLE_AUTOMATIC_TICK,
             //FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION,
-            FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION,
             FeatureFlag.TOOLBAR_DEBUG
     ) : Collections.emptyList());
     private long appStartupTime = 0;
@@ -124,6 +124,7 @@ public class App extends Application {
      * OPENTODAY APPLICATION INITIALIZE
      * <p>1. Setup {@link #instance} variable to this object</p>
      * <p>2. Setup UncaughtExceptionHandler to CrashReport</p>
+     * <p>2.5 init logFile variable for logs</p>
      * <p>3. {@link DataFixer} run</p>
      * <p>4. (Android) Registry notification channels</p>
      * <p>5. {@link #updateVersionFile()} if {@link FixResult} return true and send Telemetry signal about datafixer work</p>

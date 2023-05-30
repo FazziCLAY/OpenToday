@@ -354,6 +354,7 @@ public class ItemManager {
     public void tick(TickSession tickSession) {
         checkDestroy();
 
+        Debug.ticked();
         Debug.latestTickDuration = Logger.countOnlyDur(() -> {
             for (Tab tab : tabs.toArray(new Tab[0])) {
                 if (tab == null || tab.isDisableTick()) continue;

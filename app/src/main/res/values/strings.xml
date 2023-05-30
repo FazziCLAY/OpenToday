@@ -183,7 +183,7 @@
     <string name="toolbar_tabs_edit_name_hint">Enter new tab name…</string>
     <string name="toolbar_more_items_add_exception">Error: %s</string>
     <string name="dialog_item_module_item_copyItemId">Copy item id</string>
-    <string name="debug_app">This is developer only application version! Download release version!</string>
+    <string name="debug_app">This is debug build! (for developers only)\nBranch: %s</string>
     <string name="toolbar_more_selection_copySelectedHere">Copy selected here</string>
     <string name="toolbar_more_file_import_unsupported">Unsupported</string>
     <string name="abc_coped">Coped!</string>

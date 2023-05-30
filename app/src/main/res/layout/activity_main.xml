@@ -42,10 +42,11 @@
         android:layout_alignParentBottom="true"
         android:layout_height="match_parent" />
 
+    <!-- Debug layouts -->
     <ScrollView
         android:id="@+id/debug_logs_scroll"
         android:visibility="gone"
-        android:background="#22222222"
+        android:background="#33222222"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -62,57 +63,54 @@
         </HorizontalScrollView>
     </ScrollView>
 
+    <TextView
+        android:id="@+id/debug_logs_sizeUp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:background="#80EB1010"
+        android:layout_toStartOf="@id/debug_logs_switch"
+        android:text="+"
+        android:gravity="center"
+        android:textColor="#ffffff"
+        android:textSize="25sp"
+        android:layout_width="40sp"
+        android:layout_margin="1sp"
+        android:layout_height="35sp"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/debug_logs_sizeDown"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:background="#800800FF"
+        android:layout_toStartOf="@id/debug_logs_sizeUp"
+        android:text="-"
+        android:gravity="center"
+        android:textColor="#ffffff"
+        android:textSize="25sp"
+        android:layout_width="40sp"
+        android:layout_margin="1sp"
+        android:layout_height="35sp"
+        tools:ignore="HardcodedText" />
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/debug_logs_switch"
         android:visibility="gone"
         tools:visibility="visible"
-        android:background="#FF0000"
+        android:background="#7FFF0000"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <Button
-        android:id="@+id/debug_logs_sizeUp"
-        android:visibility="gone"
-        tools:visibility="visible"
-        android:backgroundTint="#FF0000"
-        android:layout_above="@id/debug_logs_sizeDown"
-        android:layout_toStartOf="@id/debug_logs_switch"
-        android:text="+"
-        android:minHeight="0sp"
-        android:minWidth="0sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
-
-    <Button
-        android:id="@+id/debug_logs_sizeDown"
-        android:visibility="gone"
-        tools:visibility="visible"
-        android:backgroundTint="#FF0000"
-        android:layout_alignParentBottom="true"
-        android:layout_toStartOf="@id/debug_logs_switch"
-        android:text="-"
-        android:minHeight="0sp"
-        android:minWidth="0sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
+        android:layout_width="40sp"
+        android:layout_height="34sp"/>
 
     <TextView
         android:id="@+id/debug_info"
         android:visibility="gone"
         tools:visibility="visible"
-        android:background="#9B000000"
+        android:background="#74000000"
         android:textColor="#ffffff"
-        android:layout_alignParentBottom="true"
-        android:layout_toStartOf="@id/debug_logs_sizeDown"
         tools:text="This is test of debug-info text\nnewLine 000000000000000000000000000000000000000"
         android:minHeight="0sp"
         android:minWidth="0sp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+        android:layout_height="wrap_content" />
 </RelativeLayout>

@@ -14,22 +14,27 @@ public class Debug {
 
     public static final int DEF = -1;
 
+    public static long latestTick = DEF;
     public static int latestTickDuration = DEF;
     public static int latestPersonalTickDuration = DEF;
     public static long latestSave = DEF;
     public static int latestSaveRequestsCount = DEF;
     public static long appStartupTime = DEF;
+    public static long mainActivityStartupTime = DEF;
     public static Object itemsStorageToolbarContext = DEF;
 
     @NonNull
     public static String getDebugInfoText() {
         return String.format("""
-                        [Tick] %sms; pers: %sms
+                        $[@bold;-#ffff00][Tick]$[||] %s ago %sms; Personal: %s ago %sms
                         [Save] %s ago; req=%s
-                        [App] %sms
-                        [Toolbar] ctx=%s""",
+                        [App] init=%sms
+                        [GUI] %sms; Toolbar-ctx=$[@italic;-#0055ff]%s$[||]""",
 
-                latestTickDuration, latestPersonalTickDuration, ago(latestSave), latestSaveRequestsCount, appStartupTime, itemsStorageToolbarContext);
+                ago(latestTick), latestTickDuration, "$[-#ff0000]?$[||]", latestPersonalTickDuration,
+                ago(latestSave), latestSaveRequestsCount,
+                appStartupTime,
+                mainActivityStartupTime, itemsStorageToolbarContext);
     }
 
     public static void free() {
@@ -37,11 +42,16 @@ public class Debug {
     }
 
     public static long ago(long l) {
+        if (l <= 0) return l;
         return (System.currentTimeMillis() - l) / 1000;
     }
 
 
     public static void saved() {
         latestSave = System.currentTimeMillis();
+    }
+
+    public static void ticked() {
+        latestTick = System.currentTimeMillis();
     }
 }
