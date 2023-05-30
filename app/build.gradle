@@ -4,12 +4,12 @@ plugins {
 }
 
 // =====
-var isDev = true
+var isDev = false
 var beta = false
-var verBuild = 115 // based on 114 1.1 release
-var verName = "1.1.x FixDebugLayout"
-var verBranch = "fix-debug-layout"
-var verReleaseTime = 1685350800 // in seconds
+var verBuild = 116
+var verName = "1.1.x.1"
+var verBranch = "RELEASE"
+var verReleaseTime = 1685444401 // in seconds
 // =====
 
 android {
