@@ -12,9 +12,12 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.fazziclay.opentoday.Debug
 import com.fazziclay.opentoday.R
-import com.fazziclay.opentoday.app.*
+import com.fazziclay.opentoday.app.App
+import com.fazziclay.opentoday.app.FeatureFlag
+import com.fazziclay.opentoday.app.SettingsManager
 import com.fazziclay.opentoday.app.Telemetry.UiClosedLPacket
 import com.fazziclay.opentoday.app.Telemetry.UiOpenLPacket
+import com.fazziclay.opentoday.app.UpdateChecker
 import com.fazziclay.opentoday.app.items.QuickNoteReceiver
 import com.fazziclay.opentoday.app.items.tick.ItemsTickReceiver
 import com.fazziclay.opentoday.databinding.ActivityMainBinding
@@ -25,11 +28,14 @@ import com.fazziclay.opentoday.gui.EnumsRegistry
 import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember
-import com.fazziclay.opentoday.util.InlineUtil.*
+import com.fazziclay.opentoday.util.InlineUtil.nullStat
+import com.fazziclay.opentoday.util.InlineUtil.viewClick
+import com.fazziclay.opentoday.util.InlineUtil.viewVisible
 import com.fazziclay.opentoday.util.Logger
 import com.fazziclay.opentoday.util.NetworkUtil
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.GregorianCalendar
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -39,7 +45,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var app: App
-    private lateinit var settingsManager: SettingsManager;
+    private lateinit var settingsManager: SettingsManager
     private var lastExitClick: Long = 0
 
     // Current Date
@@ -59,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         Logger.d(TAG, "onCreate", nullStat(savedInstanceState))
         if (App.DEBUG) EnumsRegistry.missingChecks()
         app = App.get(this)
-        settingsManager = app.settingsManager;
+        settingsManager = app.settingsManager
         UI.setTheme(settingsManager.theme)
         app.telemetry.send(UiOpenLPacket())
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -183,6 +189,7 @@ class MainActivity : AppCompatActivity() {
         if (!App.DEBUG || app.isFeatureFlag(FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION)) return
 
         val b = NotificationDebugappBinding.inflate(layoutInflater)
+        b.notificationText.text = getString(R.string.debug_app, App.VERSION_BRANCH)
         binding.notifications.addView(b.root)
     }
 

@@ -188,7 +188,7 @@
     <string name="openSourceLicense_cantStart_exception">Ошибка: %s</string>
     <string name="openSourceLicenses_telemetry_warn">Для автоматической отправки ошибок приложения</string>
     <string name="dialog_item_module_item_copyItemId">Копировать АйДи айтема</string>
-    <string name="debug_app">Эта версия приложения предназначена только для разработки! Скачайте последкий оффициальный релиз</string>
+    <string name="debug_app">Это отладочный билд! (только для разработки)\nBranch: %s</string>
     <string name="quickNote">Быстрая заметка</string>
 
     <!-- Settings -->
