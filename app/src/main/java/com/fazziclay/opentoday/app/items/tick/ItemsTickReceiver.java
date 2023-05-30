@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class ItemsTickReceiver extends BroadcastReceiver {
-    private static final String TAG = "ItemsTickReveiver";
+    private static final String TAG = "ItemsTickReceiver";
     public static final String EXTRA_PERSONAL_TICK = "personalTick";
     public static final String EXTRA_PERSONAL_TICK_MODE = "personalTickMode";
 
