@@ -87,7 +87,7 @@
             android:layout_below="@id/addItemsToTop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_addItemsToTop" />
+            android:text="@string/settings_confirmFastChanges" />
 
         <Button
             android:id="@+id/date_and_time_format"
