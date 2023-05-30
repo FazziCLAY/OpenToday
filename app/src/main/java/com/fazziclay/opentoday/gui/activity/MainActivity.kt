@@ -1,7 +1,6 @@
 package com.fazziclay.opentoday.gui.activity
 
 import android.app.DatePickerDialog
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -20,7 +19,6 @@ import com.fazziclay.opentoday.app.Telemetry.UiClosedLPacket
 import com.fazziclay.opentoday.app.Telemetry.UiOpenLPacket
 import com.fazziclay.opentoday.app.UpdateChecker
 import com.fazziclay.opentoday.app.items.QuickNoteReceiver
-import com.fazziclay.opentoday.app.items.tick.ItemsTickReceiver
 import com.fazziclay.opentoday.databinding.ActivityMainBinding
 import com.fazziclay.opentoday.databinding.NotificationDebugappBinding
 import com.fazziclay.opentoday.databinding.NotificationUpdateAvailableBinding
@@ -156,7 +154,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun internalItemsTick() {
         if (!app.isFeatureFlag(FeatureFlag.DISABLE_AUTOMATIC_TICK)) {
-            sendBroadcast(Intent(this@MainActivity, ItemsTickReceiver::class.java))
+            app.tickThread.requestTick()
         }
     }
 
