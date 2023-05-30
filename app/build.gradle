@@ -4,11 +4,11 @@ plugins {
 }
 
 // =====
-var isDev = false
+var isDev = true
 var beta = false
-var verBuild = 116
-var verName = "1.1.x.1"
-var verBranch = "RELEASE"
+var verBuild = 117
+var verName = "1.1.x.2 FixTickDeath"
+var verBranch = "fix-tick-death"
 var verReleaseTime = 1685444401 // in seconds
 // =====
 
