@@ -364,4 +364,13 @@
     <string name="settings_itemAddPosition_BOTTOM">Вниз</string>
     <string name="settings_itemAddPosition_TOP">Вверх</string>
     <string name="settings_addItemsToTop">Добавлять айтемы вверх</string>
+    <string name="item_checkbox_fastChanges_checked">Поставить галочку?</string>
+    <string name="settings_confirmFastChanges">Подтверждать лёгкие изменения</string>
+    <string name="item_checkbox_fastChanges_unchecked">Убрать галочку</string>
+    <string name="fastChanges_dialog_title">Лёгкое изменение</string>
+    <string name="fastChanges_dialog_dontAsk">Всегда</string>
+    <string name="fastChanges_dialog_cancel">Отмена</string>
+    <string name="fastChanges_dialog_apply">ОК</string>
+    <string name="item_counter_fastChanges_up">Увеличить значение счетчика?</string>
+    <string name="item_counter_fastChanges_down">Уменьшить значение счетчика?</string>
 </resources>

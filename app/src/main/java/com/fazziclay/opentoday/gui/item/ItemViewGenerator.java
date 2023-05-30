@@ -4,6 +4,7 @@ import static com.fazziclay.opentoday.util.InlineUtil.viewClick;
 import static com.fazziclay.opentoday.util.InlineUtil.viewVisible;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -245,8 +246,8 @@ public class ItemViewGenerator {
         applyTextItemToTextView(item, binding.title);
 
         // Counter
-        viewClick(binding.up, item::up);
-        viewClick(binding.down, item::down);
+        viewClick(binding.up, () -> runFastChanges(R.string.item_counter_fastChanges_up, item::up));
+        viewClick(binding.down, () -> runFastChanges(R.string.item_counter_fastChanges_down, item::down));
         binding.up.setEnabled(!previewMode);
         binding.down.setEnabled(!previewMode);
 
@@ -367,10 +368,45 @@ public class ItemViewGenerator {
         view.setChecked(item.isChecked());
         view.setEnabled(!previewMode);
         viewClick(view, () -> {
-            item.setChecked(view.isChecked());
-            item.visibleChanged();
-            item.save();
+            boolean to = view.isChecked();
+            view.setChecked(!to);
+            runFastChanges(to ? R.string.item_checkbox_fastChanges_checked : R.string.item_checkbox_fastChanges_unchecked, () -> {
+                view.setChecked(to);
+                item.setChecked(to);
+                item.visibleChanged();
+                item.save();
+            });
         });
+    }
+
+    private String getString(int resId, Object... formatArgs) {
+        return activity.getString(resId, formatArgs);
+    }
+
+    private String getString(int resId) {
+        return activity.getString(resId);
+    }
+
+    private void runFastChanges(int message, Runnable runnable) {
+        runFastChanges(getString(message), runnable);
+    }
+
+    private void runFastChanges(String message, Runnable runnable) {
+        if (settingsManager.isConfirmFastChanges()) {
+            new AlertDialog.Builder(activity)
+                    .setTitle(R.string.fastChanges_dialog_title)
+                    .setMessage(message)
+                    .setNeutralButton(R.string.fastChanges_dialog_dontAsk, (_ignore, __ignore) -> {
+                        settingsManager.setConfirmFastChanges(false);
+                        settingsManager.save();
+                        runnable.run();
+                    })
+                    .setNegativeButton(R.string.fastChanges_dialog_cancel, null)
+                    .setPositiveButton(R.string.fastChanges_dialog_apply, (_ignore, __ignore) -> runnable.run())
+                    .show();
+        } else {
+            runnable.run();
+        }
     }
 
     private interface ContentInterfaceE {
