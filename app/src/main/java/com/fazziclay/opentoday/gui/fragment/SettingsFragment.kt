@@ -199,7 +199,7 @@ class SettingsFragment : Fragment() {
             settingsManager.save()
         })
 
-        // add item to top
+        // confirm easy-to-make changes
         binding.confirmFastChanges.isChecked = settingsManager.isConfirmFastChanges
         viewClick(binding.confirmFastChanges, Runnable {
             settingsManager.isConfirmFastChanges = binding.confirmFastChanges.isChecked
