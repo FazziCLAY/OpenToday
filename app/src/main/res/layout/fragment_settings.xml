@@ -82,11 +82,18 @@
             android:layout_height="wrap_content"
             android:text="@string/settings_addItemsToTop" />
 
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/confirmFastChanges"
+            android:layout_below="@id/addItemsToTop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_addItemsToTop" />
+
         <Button
             android:id="@+id/date_and_time_format"
             android:text="@string/settings_dateAndTime_format"
             android:layout_width="wrap_content"
-            android:layout_below="@id/addItemsToTop"
+            android:layout_below="@id/confirmFastChanges"
             android:layout_height="wrap_content" />
 
 
