@@ -56,6 +56,7 @@ public class TickThread extends Thread {
     @Override
     public void run() {
         while (!isInterrupted() && enabled) {
+            long tickStart = System.currentTimeMillis();
             if (requested) {
                 log("Processing requests: " + requests + "; personalOnly: "+personalOnly);
 
@@ -84,10 +85,13 @@ public class TickThread extends Thread {
                 personalOnly = true;
                 personalUsePaths = false;
             }
+            long tickEnd = System.currentTimeMillis();
 
             try {
+                int sleep = (int) (1000 - (tickEnd - tickStart));
+                if (sleep <= 0) sleep = 1;
                 //noinspection BusyWait
-                Thread.sleep(1000);
+                Thread.sleep(sleep);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
