@@ -13,6 +13,7 @@ import com.fazziclay.opentoday.app.items.item.filter.FitEquip;
 import com.fazziclay.opentoday.app.items.item.filter.ItemFilter;
 import com.fazziclay.opentoday.app.items.item.filter.LogicContainerItemFilter;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
+import com.fazziclay.opentoday.app.items.tick.TickTarget;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
@@ -304,38 +305,38 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         if (!tickSession.isAllowed(this)) return;
 
         super.tick(tickSession);
-        recalculate(tickSession.getGregorianCalendar());
-        updateStat();
+        if (tickBehavior != TickBehavior.ALL) ItemsUtils.tickOnlyImportantTargets(tickSession, getAllItems());
+        if (tickSession.isTickTargetAllowed(TickTarget.ITEM_FILTER_GROUP_TICK)) {
+            recalculate(tickSession.getGregorianCalendar());
+            updateStat();
 
-        final List<ItemFilterWrapper> tickList;
-        switch (tickBehavior) {
-            case ALL -> tickList = items;
-            case ACTIVE -> tickList = activeItems;
-            case NOTHING -> tickList = Collections.emptyList();
-            case NOT_ACTIVE -> {
-                tickList = new ArrayList<>(items);
-                for (ItemFilterWrapper activeItem : activeItems) {
-                    tickList.remove(activeItem);
+            final List<ItemFilterWrapper> tickList;
+            switch (tickBehavior) {
+                case ALL -> tickList = items;
+                case ACTIVE -> tickList = activeItems;
+                case NOTHING -> tickList = Collections.emptyList();
+                case NOT_ACTIVE -> {
+                    tickList = new ArrayList<>(items);
+                    for (ItemFilterWrapper activeItem : activeItems) {
+                        tickList.remove(activeItem);
+                    }
                 }
+                default -> throw new RuntimeException(TAG + ": Unexpected tickBehavior: " + tickBehavior);
             }
-            default ->
-                    throw new RuntimeException(TAG + ": Unexpected tickBehavior: " + tickBehavior);
-        }
 
-        // NOTE: No use 'for-loop' (self-delete item in tick => ConcurrentModificationException)
-        int i = tickList.size() - 1;
-        while (i >= 0) {
-            Item item = tickList.get(i).item;
-            if (item != null && item.isAttached() && tickSession.isAllowed(item)) {
-                item.tick(tickSession);
+            // NOTE: No use 'for-loop' (self-delete item in tick => ConcurrentModificationException)
+            int i = tickList.size() - 1;
+            while (i >= 0) {
+                Item item = tickList.get(i).item;
+                if (item != null && item.isAttached() && tickSession.isAllowed(item)) {
+                    item.tick(tickSession);
+                }
+                i--;
             }
-            i--;
+
+            recalculate(tickSession.getGregorianCalendar());
+            updateStat();
         }
-
-        ItemsUtils.tickDayRepeatableCheckboxes(tickSession, getAllItems());
-
-        recalculate(tickSession.getGregorianCalendar());
-        updateStat();
     }
 
     public boolean recalculate(final GregorianCalendar gregorianCalendar) {

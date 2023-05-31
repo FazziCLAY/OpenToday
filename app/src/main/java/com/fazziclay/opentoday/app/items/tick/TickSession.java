@@ -13,6 +13,7 @@ import com.fazziclay.opentoday.util.Logger;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Stack;
 import java.util.UUID;
 
 public class TickSession {
@@ -30,7 +31,7 @@ public class TickSession {
     private int dayTime;
     private boolean isPersonalTick;
     private boolean saveNeeded = false;
-    private TickTarget specifiedTickTarget = null;
+    private final Stack<List<TickTarget>> specifiedTickTarget = new Stack<>();
     private final List<UUID> whitelist = new ArrayList<>();
     private boolean isWhitelist = false;
 
@@ -56,8 +57,14 @@ public class TickSession {
     }
 
     public boolean isTickTargetAllowed(TickTarget tickTarget) {
-        if (specifiedTickTarget == null) return true;
-        return tickTarget == specifiedTickTarget;
+        if (specifiedTickTarget.isEmpty()) return true;
+        return specifiedTickTarget.lastElement().contains(tickTarget);
+    }
+
+    public void runWithSpecifiedTickTargets(List<TickTarget> targets, Runnable r) {
+        specifiedTickTarget.push(targets);
+        r.run();
+        specifiedTickTarget.pop();
     }
 
     public GregorianCalendar getGregorianCalendar() {
@@ -132,11 +139,19 @@ public class TickSession {
         this.whitelist.clear();
     }
 
-    public void recycleSpecifiedTickTarget(TickTarget t) {
-        this.specifiedTickTarget = t;
+    public void recycleSpecifiedTickTarget() {
+        this.specifiedTickTarget.clear();
     }
 
-    public void recycleSpecifiedTickTarget() {
-        this.specifiedTickTarget = null;
+    public void setStartSpecifiedTickTarget(List<TickTarget> start) {
+        this.specifiedTickTarget.push(start);
+    }
+
+    public Object _getWhitelist() {
+        return whitelist.toString();
+    }
+
+    public Object _isWhitelist() {
+        return isWhitelist;
     }
 }

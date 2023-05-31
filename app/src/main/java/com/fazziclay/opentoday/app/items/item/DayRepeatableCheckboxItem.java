@@ -85,7 +85,7 @@ public class DayRepeatableCheckboxItem extends CheckboxItem {
         if (!tickSession.isAllowed(this)) return;
 
         super.tick(tickSession);
-        if (tickSession.isTickTargetAllowed(TickTarget.DAY_REPEATABLE_CHECKBOX_UPDATE)) {
+        if (tickSession.isTickTargetAllowed(TickTarget.ITEM_DAY_REPEATABLE_CHECKBOX_UPDATE)) {
             int dayOfYear = tickSession.getGregorianCalendar().get(Calendar.DAY_OF_YEAR);
             if (dayOfYear != latestDayOfYear) {
                 latestDayOfYear = dayOfYear;

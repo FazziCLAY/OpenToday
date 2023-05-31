@@ -3,11 +3,16 @@ package com.fazziclay.opentoday.app.items.item;
 import androidx.annotation.NonNull;
 
 import com.fazziclay.opentoday.app.data.Cherry;
+import com.fazziclay.opentoday.app.items.ItemsUtils;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.TickTarget;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class DebugTickCounterItem extends TextItem {
     // START - Save
@@ -40,6 +45,7 @@ public class DebugTickCounterItem extends TextItem {
 
     @SaveKey(key = "counter") @RequireSave
     private int counter;
+    private String debugStat = "";
 
     protected DebugTickCounterItem() {
         super();
@@ -60,20 +66,47 @@ public class DebugTickCounterItem extends TextItem {
     public DebugTickCounterItem(DebugTickCounterItem copy) {
         super(copy);
         this.counter = copy.counter;
+        this.debugStat = "";
     }
 
     @Override
     public void tick(TickSession tickSession) {
-        if (!tickSession.isAllowed(this)) return;
+        if (!tickSession.isAllowed(this)) {
+            debugStat = "tickSession not allowed tick me.";
+            visibleChanged();
+            return;
+        }
+        counter++;
+        final List<String> targets = new ArrayList<>();
+        for (TickTarget value : TickTarget.values()) {
+            boolean allow = tickSession.isTickTargetAllowed(value);
+            if (allow) {
+                targets.add("$[-#00ff00]"+value.name()+"$[||]");
+            } else {
+                targets.add("$[-#ff0000]"+value.name()+"$[||]");
+            }
+        }
+        debugStat = String.format("""
+        === Debug tick counter ===
+        ID: %s
+        $[-#ffff00]Counter: $[-#00aaff] %s$[||]
+        $[-#f0f0f0]Allowed targets: %s$[||]
+        $[-#00ffff]Whitelist(%s): %s$[||]
+        $[-$fff00f]PathToMe: %s
+        """, getId(), counter, targets, tickSession._isWhitelist(), tickSession._getWhitelist(),
+                Arrays.toString(ItemsUtils.getPathToItem(this)));
+        visibleChanged();
 
         super.tick(tickSession);
-        if (tickSession.isTickTargetAllowed(TickTarget.DEBUG_TICK_COUNTER_UPDATE)) {
-            counter++;
-            visibleChanged();
+        if (tickSession.isTickTargetAllowed(TickTarget.ITEM_DEBUG_TICK_COUNTER_UPDATE)) {
             tickSession.saveNeeded();
         }
     }
 
     @Getter
     public int getCounter() { return counter; }
+
+    @Getter public String getDebugStat() {
+        return debugStat;
+    }
 }
