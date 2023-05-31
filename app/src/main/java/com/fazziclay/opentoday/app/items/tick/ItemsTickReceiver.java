@@ -37,6 +37,7 @@ public class ItemsTickReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Logger.d(TAG, "onReceive(...)");
         final App app = App.get(context);
         if (app == null) return;
 
