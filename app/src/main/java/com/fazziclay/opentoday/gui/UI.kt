@@ -82,6 +82,7 @@ object UI {
                     .show()
         }
 
+        @JvmStatic
         fun showCrashWithMessageDialog(context: Context?, exceptionMessagePattern: String?) {
             Toast.makeText(context, R.string.manuallyCrash_crash, Toast.LENGTH_SHORT).show()
             val message = EditText(context)
@@ -97,6 +98,7 @@ object UI {
             dialog.show()
         }
 
+        @JvmStatic
         fun showFeatureFlagsDialog(app: App, context: Context?) {
             val view = LinearLayout(context)
             view.orientation = LinearLayout.VERTICAL
@@ -136,6 +138,7 @@ object UI {
                     .setTitle("DEBUG: FeatureFlags")
                     .setNegativeButton(R.string.abc_cancel, null)
                     .create()
+            dialog.setCanceledOnTouchOutside(false)
             dialog.show()
         }
     }
