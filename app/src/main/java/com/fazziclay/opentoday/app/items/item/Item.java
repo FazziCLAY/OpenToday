@@ -214,6 +214,6 @@ public abstract class Item implements Unique {
     @NotNull
     @Override
     public String toString() {
-        return getClass().getSimpleName()+"@"+getId()+hashCode() +"["+getText()+"]";
+        return getClass().getSimpleName()+"@[ID:"+getId()+"HASH:"+hashCode() +"TEXT:"+getText()+"]";
     }
 }
