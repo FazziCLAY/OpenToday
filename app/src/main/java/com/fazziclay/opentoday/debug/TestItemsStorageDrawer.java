@@ -16,12 +16,12 @@ import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.gui.interfaces.StorageEditsActions;
-import com.fazziclay.opentoday.gui.item.ItemStorageDrawer;
+import com.fazziclay.opentoday.gui.item.ItemsStorageDrawer;
 
 import java.io.File;
 import java.util.UUID;
 
-public class TestItemStorageDrawer extends Activity {
+public class TestItemsStorageDrawer extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,33 +32,33 @@ public class TestItemStorageDrawer extends Activity {
         StorageEditsActions edits = new StorageEditsActions() {
             @Override
             public void onGroupEdit(GroupItem groupItem) {
-                Toast.makeText(TestItemStorageDrawer.this, "Edit: Group: " + groupItem.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(TestItemsStorageDrawer.this, "Edit: Group: " + groupItem.toString(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onCycleListEdit(CycleListItem cycleListItem) {
-                Toast.makeText(TestItemStorageDrawer.this, "Edit: CycleList: " + cycleListItem.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(TestItemsStorageDrawer.this, "Edit: CycleList: " + cycleListItem.toString(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFilterGroupEdit(FilterGroupItem filterGroupItem) {
-                Toast.makeText(TestItemStorageDrawer.this, "Edit: FilterGroup: " + filterGroupItem.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(TestItemsStorageDrawer.this, "Edit: FilterGroup: " + filterGroupItem.toString(), Toast.LENGTH_SHORT).show();
             }
         };
 
-        ItemStorageDrawer itemStorageDrawer = new ItemStorageDrawer(this,
+        ItemsStorageDrawer itemsStorageDrawer = new ItemsStorageDrawer(this,
                 itemManager,
                 new SettingsManager(null),
                 itemManager.getSelectionManager(),
                 itemManager.getTab(new UUID(0, 0)),
                 onClick,
-                item -> Toast.makeText(TestItemStorageDrawer.this, "unsupported", Toast.LENGTH_SHORT).show(),
+                item -> Toast.makeText(TestItemsStorageDrawer.this, "unsupported", Toast.LENGTH_SHORT).show(),
                 previewMode,
                 edits);
 
 
         Button add = new Button(this);
-        View view = itemStorageDrawer.getView();
+        View view = itemsStorageDrawer.getView();
 
 
         LinearLayout linearLayout = new LinearLayout(this);
@@ -67,7 +67,7 @@ public class TestItemStorageDrawer extends Activity {
         linearLayout.addView(view);
         setContentView(linearLayout);
 
-        itemStorageDrawer.create();
+        itemsStorageDrawer.create();
 
         add.setOnClickListener(v -> itemManager.getTab(new UUID(0, 0)).addItem(new CycleListItem("123132231213")));
     }

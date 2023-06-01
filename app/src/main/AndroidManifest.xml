@@ -50,7 +50,7 @@
             android:name="com.fazziclay.opentoday.gui.activity.SetupActivity"
             android:exported="false" />
         <activity
-            android:name="com.fazziclay.opentoday.debug.TestItemStorageDrawer"
+            android:name="com.fazziclay.opentoday.debug.TestItemsStorageDrawer"
             android:exported="false" />
         <activity
             android:name="com.fazziclay.opentoday.debug.TestActivityFragment"

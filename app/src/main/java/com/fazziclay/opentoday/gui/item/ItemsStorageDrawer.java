@@ -39,7 +39,7 @@ import com.fazziclay.opentoday.util.callback.Status;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemStorageDrawer {
+public class ItemsStorageDrawer {
     private static final String TAG = "ItemStorageDrawer";
     private final Activity activity;
     private final ItemManager itemManager;
@@ -112,7 +112,7 @@ public class ItemStorageDrawer {
     private final ItemInterface onItemEditor;
 
     // Public
-    public ItemStorageDrawer(@NonNull Activity activity, @NonNull ItemManager itemManager, SettingsManager settingsManager, SelectionManager selectionManager, ItemsStorage itemsStorage, ItemInterface itemOnClick, @NonNull ItemInterface onItemEditor, boolean previewMode, StorageEditsActions storageEdits) {
+    public ItemsStorageDrawer(@NonNull Activity activity, @NonNull ItemManager itemManager, SettingsManager settingsManager, SelectionManager selectionManager, ItemsStorage itemsStorage, ItemInterface itemOnClick, @NonNull ItemInterface onItemEditor, boolean previewMode, StorageEditsActions storageEdits) {
         this.activity = activity;
         this.onItemEditor = onItemEditor;
         this.itemManager = itemManager;
@@ -192,7 +192,7 @@ public class ItemStorageDrawer {
         @Override
         public Status onAdded(Item item, int pos) {
             rou(() -> {
-                adapter.notifyItemInserted(pos);
+                runAdapter((adapter) -> adapter.notifyItemInserted(pos));
                 if (settingsManager.isScrollToAddedItem()) view.smoothScrollToPosition(pos);
             });
             return Status.NONE;
@@ -200,24 +200,20 @@ public class ItemStorageDrawer {
 
         @Override
         public Status onPreDeleted(Item item, int pos) {
-            rou(() -> adapter.notifyItemRemoved(pos));
+            rou(() -> runAdapter((adapter) -> adapter.notifyItemRemoved(pos)));
             return Status.NONE;
         }
 
         @Override
         public Status onMoved(Item item, int from, int to) {
-            rou(() -> adapter.notifyItemMoved(from, to));
+            rou(() -> runAdapter((adapter) -> adapter.notifyItemMoved(from, to)));
             return Status.NONE;
         }
 
         @Override
         public Status onUpdated(Item item, int pos) {
-            rou(() -> adapter.notifyItemChanged(pos));
+            rou(() -> runAdapter(adapter -> adapter.notifyItemChanged(pos)));
             return Status.NONE;
-        }
-
-        private int getItemPos(Item item) {
-            return ItemStorageDrawer.this.itemsStorage.getItemPosition(item);
         }
 
         private void rou(Runnable runnable) {
@@ -225,6 +221,13 @@ public class ItemStorageDrawer {
         }
     }
 
+    /**
+     * Run AdapterInterface if adapter not null
+     */
+    private void runAdapter(AdapterInterface i) {
+        if (adapter != null) i.run(adapter);
+    }
+    
     private View generateViewForItem(Item item) {
         return itemViewGenerator.generate(item, view);
     }
@@ -272,7 +275,7 @@ public class ItemStorageDrawer {
 
             //! NOTE: Adapter receive notify signal from callbacks!
             //ItemUIDrawer.this.adapter.notifyItemMoved(positionFrom, positionTo);
-            ItemStorageDrawer.this.itemsStorage.move(positionFrom, positionTo);
+            ItemsStorageDrawer.this.itemsStorage.move(positionFrom, positionTo);
             return true;
         }
 
@@ -280,13 +283,13 @@ public class ItemStorageDrawer {
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             if (direction == ItemTouchHelper.LEFT) {
                 int positionFrom = viewHolder.getAdapterPosition();
-                Item item = ItemStorageDrawer.this.itemsStorage.getAllItems()[positionFrom];
+                Item item = ItemsStorageDrawer.this.itemsStorage.getAllItems()[positionFrom];
                 item.visibleChanged();
                 actionItem(item, settingsManager.getItemOnLeftAction());
 
             } else if (direction == ItemTouchHelper.RIGHT) {
                 int position = viewHolder.getAdapterPosition();
-                Item item = ItemStorageDrawer.this.itemsStorage.getAllItems()[position];
+                Item item = ItemsStorageDrawer.this.itemsStorage.getAllItems()[position];
                 item.visibleChanged();
                 ItemViewHolder itemViewHolder = (ItemViewHolder) viewHolder;
                 showRightMenu(item, itemViewHolder.itemView);
@@ -478,8 +481,12 @@ public class ItemStorageDrawer {
             return this;
         }
 
-        public ItemStorageDrawer build() {
-            return new ItemStorageDrawer(activity, itemManager, settingsManager, selectionManager, itemsStorage, onItemClick, onItemOpenEditor, previewMode, storageEditsAction);
+        public ItemsStorageDrawer build() {
+            return new ItemsStorageDrawer(activity, itemManager, settingsManager, selectionManager, itemsStorage, onItemClick, onItemOpenEditor, previewMode, storageEditsAction);
         }
+    }
+
+    private interface AdapterInterface {
+        void run(RecyclerView.Adapter<ItemViewHolder> adapter);
     }
 }
