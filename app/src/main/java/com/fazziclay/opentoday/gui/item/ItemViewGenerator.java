@@ -190,15 +190,14 @@ public class ItemViewGenerator {
 
     @ForItem(key = DebugTickCounterItem.class)
     private View generateDebugTickCounterItemView(final DebugTickCounterItem item, final ViewGroup parent) {
-        final ItemCounterBinding binding = ItemCounterBinding.inflate(this.layoutInflater, parent, false);
+        final ItemLongtextBinding binding = ItemLongtextBinding.inflate(this.layoutInflater, parent, false);
 
         // Title
         applyTextItemToTextView(item, binding.title);
 
-        // Counter
-        viewVisible(binding.up, false, View.GONE);
-        viewVisible(binding.down, false, View.GONE);
-        binding.counter.setText(String.valueOf(item.getCounter()));
+        // Debugs
+        binding.longText.setText(ColorUtil.colorize(item.getDebugStat(), Color.WHITE, Color.TRANSPARENT, Typeface.NORMAL));
+        binding.longText.setTextSize(10);
 
         return binding.getRoot();
     }

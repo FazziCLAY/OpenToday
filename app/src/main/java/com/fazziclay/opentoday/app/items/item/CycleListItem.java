@@ -127,6 +127,7 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
     public void tick(TickSession tickSession) {
         if (!tickSession.isAllowed(this)) return;
         super.tick(tickSession);
+        if (tickBehavior != TickBehavior.ALL) ItemsUtils.tickOnlyImportantTargets(tickSession, getAllItems());
         if (tickBehavior == TickBehavior.ALL) {
             itemsCycleStorage.tick(tickSession);
         } else if (tickBehavior == TickBehavior.CURRENT) {
@@ -138,7 +139,6 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
                 if (item != c && tickSession.isAllowed(item)) item.tick(tickSession);
             }
         }
-        ItemsUtils.tickDayRepeatableCheckboxes(tickSession, getAllItems());
     }
 
     @Override

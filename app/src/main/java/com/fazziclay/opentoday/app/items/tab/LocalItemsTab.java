@@ -127,7 +127,7 @@ public class LocalItemsTab extends Tab {
     @NotNull
     @Override
     public String toString() {
-        return "LocalItemsTab{"+getName()+"}";
+        return "LocalItemsTab@["+getId()+"]{"+getName()+"}";
     }
 
     private class LocalItemsTabController extends ItemController {

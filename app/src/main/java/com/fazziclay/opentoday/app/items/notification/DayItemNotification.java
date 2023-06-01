@@ -14,6 +14,7 @@ import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.data.CherryOrchard;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
+import com.fazziclay.opentoday.app.items.tick.TickTarget;
 
 import java.util.Calendar;
 
@@ -79,17 +80,18 @@ public class DayItemNotification implements ItemNotification {
 
     @Override
     public boolean tick(TickSession tickSession, Item item) {
-        tickSession.setAlarmDayOfTimeInSeconds(time, item);
+        if (tickSession.isTickTargetAllowed(TickTarget.ITEM_NOTIFICATION_SCHEDULE)) tickSession.setAlarmDayOfTimeInSeconds(time, item);
+        if (tickSession.isTickTargetAllowed(TickTarget.ITEM_NOTIFICATION_UPDATE)) {
+            int dayOfYear = tickSession.getGregorianCalendar().get(Calendar.DAY_OF_YEAR);
+            if (dayOfYear != latestDayOfYear) {
+                boolean isTimeToSend = tickSession.getDayTime() >= time;
 
-        int dayOfYear = tickSession.getGregorianCalendar().get(Calendar.DAY_OF_YEAR);
-        if (dayOfYear != latestDayOfYear) {
-            boolean isTime = tickSession.getDayTime() >= time;
-
-            if (isTime) {
-                sendNotify(tickSession.getContext(), item);
-                latestDayOfYear = dayOfYear;
-                tickSession.saveNeeded();
-                return true;
+                if (isTimeToSend) {
+                    sendNotify(tickSession.getContext(), item);
+                    latestDayOfYear = dayOfYear;
+                    tickSession.saveNeeded();
+                    return true;
+                }
             }
         }
         return false;

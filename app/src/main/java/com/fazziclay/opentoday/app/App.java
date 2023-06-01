@@ -111,7 +111,7 @@ public class App extends Application {
     private final OptionalField<Telemetry> telemetry = new OptionalField<>(() -> new Telemetry(this, getSettingsManager().isTelemetry()));
     private final OptionalField<TickThread> tickThread = new OptionalField<>(this::preCheckTickThread, TickThread::requestTerminate);
     private final List<FeatureFlag> featureFlags = new ArrayList<>(App.DEBUG ? Arrays.asList(
-            //FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
+            FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
             //FeatureFlag.SHOW_APP_STARTUP_TIME_IN_PREMAIN_ACTIVITY,
             //FeatureFlag.ALWAYS_SHOW_SAVE_STATUS,
             //FeatureFlag.DISABLE_AUTOMATIC_TICK,

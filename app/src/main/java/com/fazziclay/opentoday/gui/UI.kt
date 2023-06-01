@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -66,15 +65,23 @@ object UI {
     object Debug {
         @JvmStatic
         fun showPersonalTickDialog(context: Context) {
-            val view = EditText(context)
+            val idview = EditText(context)
+            idview.hint = "Enter item UUID"
+
+            val paths = CheckBox(context)
+            paths.text = "Use paths?"
+
+            val view = LinearLayout(context)
+            view.orientation = LinearLayout.VERTICAL
+            view.addView(idview)
+            view.addView(paths)
+
             AlertDialog.Builder(context)
                     .setView(view)
-                    .setPositiveButton("TICK") { dfsd: DialogInterface?, fdsg: Int ->
-                        // TODO: 3/10/23 review
+                    .setPositiveButton("TICK") { _: DialogInterface?, _: Int ->
                         try {
-                            val id = UUID.fromString(view.text.toString())
-                            context.sendBroadcast(Intent(context, ItemsTickReceiver::class.java).putExtra(
-                                ItemsTickReceiver.EXTRA_PERSONAL_TICK, arrayOf(id.toString())).putExtra("debugMessage", "Debug personal tick is work!"))
+                            val id = UUID.fromString(idview.text.toString())
+                            context.sendBroadcast(ItemsTickReceiver.createIntent(context, id, paths.isChecked).putExtra("debugMessage", "Debug personal tick is work!"))
                         } catch (e: Exception) {
                             Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show()
                         }
@@ -82,6 +89,7 @@ object UI {
                     .show()
         }
 
+        @JvmStatic
         fun showCrashWithMessageDialog(context: Context?, exceptionMessagePattern: String?) {
             Toast.makeText(context, R.string.manuallyCrash_crash, Toast.LENGTH_SHORT).show()
             val message = EditText(context)
@@ -97,6 +105,7 @@ object UI {
             dialog.show()
         }
 
+        @JvmStatic
         fun showFeatureFlagsDialog(app: App, context: Context?) {
             val view = LinearLayout(context)
             view.orientation = LinearLayout.VERTICAL
@@ -136,6 +145,7 @@ object UI {
                     .setTitle("DEBUG: FeatureFlags")
                     .setNegativeButton(R.string.abc_cancel, null)
                     .create()
+            dialog.setCanceledOnTouchOutside(false)
             dialog.show()
         }
     }

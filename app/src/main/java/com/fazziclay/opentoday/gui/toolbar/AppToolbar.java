@@ -284,12 +284,22 @@ public class AppToolbar {
             itemManager.addTab(new Debug202305RandomTab());
         });
 
+        MaterialButton featureFlags = new MaterialButton(activity);
+        featureFlags.setText("Feature flags");
+        viewClick(featureFlags, () -> UI.Debug.showFeatureFlagsDialog(app, activity));
+
+        MaterialButton crash = new MaterialButton(activity);
+        crash.setText("CRASH");
+        viewClick(crash, () -> UI.Debug.showCrashWithMessageDialog(activity, "Toolbar->Debug->Crash: %s"));
+
         // Position
         layout.addView(overlay);
         layout.addView(personalTick);
         layout.addView(restartActivity);
         layout.addView(resetSetup);
         layout.addView(debugTabCreate);
+        layout.addView(featureFlags);
+        layout.addView(crash);
 
         TextView textView = new TextView(activity);
         layout.addView(textView);
