@@ -1,5 +1,6 @@
 package com.fazziclay.opentoday.gui
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
@@ -63,6 +64,7 @@ object UI {
     }
 
     object Debug {
+        @SuppressLint("SetTextI18n")
         @JvmStatic
         fun showPersonalTickDialog(context: Context) {
             val idview = EditText(context)
