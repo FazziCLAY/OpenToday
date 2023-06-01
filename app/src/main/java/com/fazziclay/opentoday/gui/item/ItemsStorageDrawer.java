@@ -216,10 +216,6 @@ public class ItemsStorageDrawer {
             return Status.NONE;
         }
 
-        private int getItemPos(Item item) {
-            return ItemsStorageDrawer.this.itemsStorage.getItemPosition(item);
-        }
-
         private void rou(Runnable runnable) {
             activity.runOnUiThread(runnable);
         }
@@ -227,7 +223,6 @@ public class ItemsStorageDrawer {
 
     /**
      * Run AdapterInterface if adapter not null
-     * @param i
      */
     private void runAdapter(AdapterInterface i) {
         if (adapter != null) i.run(adapter);
