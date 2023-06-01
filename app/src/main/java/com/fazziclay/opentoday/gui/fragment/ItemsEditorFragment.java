@@ -34,7 +34,7 @@ import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.activity.MainActivity;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.gui.interfaces.StorageEditsActions;
-import com.fazziclay.opentoday.gui.item.ItemStorageDrawer;
+import com.fazziclay.opentoday.gui.item.ItemsStorageDrawer;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
@@ -64,7 +64,7 @@ public class ItemsEditorFragment extends Fragment {
     private boolean previewMode;
     private LinearLayout layout;
     private boolean currentlyIsNone;
-    private ItemStorageDrawer itemStorageDrawer;
+    private ItemsStorageDrawer itemsStorageDrawer;
 
     private UUID tabId;
     private UUID itemId;
@@ -130,11 +130,11 @@ public class ItemsEditorFragment extends Fragment {
         }
 
         if (previewMode) {
-            this.itemStorageDrawer = ItemStorageDrawer.builder(activity, itemManager, settingsManager, selectionManager, itemsStorage)
+            this.itemsStorageDrawer = ItemsStorageDrawer.builder(activity, itemManager, settingsManager, selectionManager, itemsStorage)
                     .setPreviewMode()
                     .build();
         } else {
-            this.itemStorageDrawer = ItemStorageDrawer.builder(activity, itemManager, settingsManager, selectionManager, itemsStorage)
+            this.itemsStorageDrawer = ItemsStorageDrawer.builder(activity, itemManager, settingsManager, selectionManager, itemsStorage)
                     .setOnItemOpenEditor((item) -> rootNavigationHost.navigate(ItemEditorFragment.edit(item.getId()), true))
                     .setStorageEditsActions(new StorageEditsActions() {
                         @Override
@@ -159,7 +159,7 @@ public class ItemsEditorFragment extends Fragment {
             applyFilterGroupViewPatch((FilterGroupItem) item);
         }
 
-        itemStorageDrawer.create();
+        itemsStorageDrawer.create();
 
         layout = new LinearLayout(requireContext());
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -198,7 +198,7 @@ public class ItemsEditorFragment extends Fragment {
             b.getRoot().setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             layout.addView(b.getRoot());
         } else {
-            layout.addView(itemStorageDrawer.getView());
+            layout.addView(itemsStorageDrawer.getView());
         }
     }
 
@@ -213,7 +213,7 @@ public class ItemsEditorFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (this.itemStorageDrawer != null) this.itemStorageDrawer.destroy();
+        if (this.itemsStorageDrawer != null) this.itemsStorageDrawer.destroy();
         if (this.itemsStorage != null) itemsStorage.getOnUpdateCallbacks().deleteCallback(onItemStorageChangeCallback);
         if (this.item != null) item.getItemCallbacks().deleteCallback(itemCallback);
     }
@@ -256,7 +256,7 @@ public class ItemsEditorFragment extends Fragment {
 
     private final HashMap<Item, ImageButton> buttons = new HashMap<>(); // TODO: 5/9/23 FIX THIIS: NOT DELETING OLDEST
     private void applyFilterGroupViewPatch(FilterGroupItem filterGroupItem) {
-        itemStorageDrawer.setItemViewWrapper((item, view) -> {
+        itemsStorageDrawer.setItemViewWrapper((item, view) -> {
             LinearLayout layout = new LinearLayout(view.getContext());
             layout.addView(view);
             view.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1));

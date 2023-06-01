@@ -16,7 +16,7 @@ import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.gui.interfaces.StorageEditsActions;
-import com.fazziclay.opentoday.gui.item.ItemStorageDrawer;
+import com.fazziclay.opentoday.gui.item.ItemsStorageDrawer;
 
 import java.io.File;
 import java.util.UUID;
@@ -46,7 +46,7 @@ public class TestItemStorageDrawer extends Activity {
             }
         };
 
-        ItemStorageDrawer itemStorageDrawer = new ItemStorageDrawer(this,
+        ItemsStorageDrawer itemsStorageDrawer = new ItemsStorageDrawer(this,
                 itemManager,
                 new SettingsManager(null),
                 itemManager.getSelectionManager(),
@@ -58,7 +58,7 @@ public class TestItemStorageDrawer extends Activity {
 
 
         Button add = new Button(this);
-        View view = itemStorageDrawer.getView();
+        View view = itemsStorageDrawer.getView();
 
 
         LinearLayout linearLayout = new LinearLayout(this);
@@ -67,7 +67,7 @@ public class TestItemStorageDrawer extends Activity {
         linearLayout.addView(view);
         setContentView(linearLayout);
 
-        itemStorageDrawer.create();
+        itemsStorageDrawer.create();
 
         add.setOnClickListener(v -> itemManager.getTab(new UUID(0, 0)).addItem(new CycleListItem("123132231213")));
     }
