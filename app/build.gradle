@@ -6,9 +6,9 @@ plugins {
 // =====
 var isDev = true
 var beta = false
-var verBuild = 121
-var verName = "1.1.2.x.1"
-var verBranch = "tick-fix" // use "RELEASE" for releases versions
+var verBuild = 123
+var verName = "1.1.2.x.2"
+var verBranch = "fix-itemstoragedrawer-crashes" // use "RELEASE" for releases versions
 var verReleaseTime = 1685455456 // in seconds
 // =====
 
