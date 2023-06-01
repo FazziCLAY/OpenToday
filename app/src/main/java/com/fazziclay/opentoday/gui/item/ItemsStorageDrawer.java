@@ -192,7 +192,7 @@ public class ItemsStorageDrawer {
         @Override
         public Status onAdded(Item item, int pos) {
             rou(() -> {
-                adapter.notifyItemInserted(pos);
+                runAdapter((adapter) -> adapter.notifyItemInserted(pos));
                 if (settingsManager.isScrollToAddedItem()) view.smoothScrollToPosition(pos);
             });
             return Status.NONE;
@@ -200,19 +200,19 @@ public class ItemsStorageDrawer {
 
         @Override
         public Status onPreDeleted(Item item, int pos) {
-            rou(() -> adapter.notifyItemRemoved(pos));
+            rou(() -> runAdapter((adapter) -> adapter.notifyItemRemoved(pos)));
             return Status.NONE;
         }
 
         @Override
         public Status onMoved(Item item, int from, int to) {
-            rou(() -> adapter.notifyItemMoved(from, to));
+            rou(() -> runAdapter((adapter) -> adapter.notifyItemMoved(from, to)));
             return Status.NONE;
         }
 
         @Override
         public Status onUpdated(Item item, int pos) {
-            rou(() -> adapter.notifyItemChanged(pos));
+            rou(() -> runAdapter(adapter -> adapter.notifyItemChanged(pos)));
             return Status.NONE;
         }
 
@@ -225,6 +225,14 @@ public class ItemsStorageDrawer {
         }
     }
 
+    /**
+     * Run AdapterInterface if adapter not null
+     * @param i
+     */
+    private void runAdapter(AdapterInterface i) {
+        if (adapter != null) i.run(adapter);
+    }
+    
     private View generateViewForItem(Item item) {
         return itemViewGenerator.generate(item, view);
     }
@@ -481,5 +489,9 @@ public class ItemsStorageDrawer {
         public ItemsStorageDrawer build() {
             return new ItemsStorageDrawer(activity, itemManager, settingsManager, selectionManager, itemsStorage, onItemClick, onItemOpenEditor, previewMode, storageEditsAction);
         }
+    }
+
+    private interface AdapterInterface {
+        void run(RecyclerView.Adapter<ItemViewHolder> adapter);
     }
 }
