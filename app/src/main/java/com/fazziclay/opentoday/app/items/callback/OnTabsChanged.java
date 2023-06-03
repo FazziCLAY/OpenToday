@@ -11,7 +11,6 @@ import com.fazziclay.opentoday.util.callback.Status;
  * @see ItemManager#getOnTabsChanged()
  * @see Callback
  */
-@FunctionalInterface
 public interface OnTabsChanged extends Callback {
     Status onTabsChanged(@NonNull final Tab[] tabs);
 }

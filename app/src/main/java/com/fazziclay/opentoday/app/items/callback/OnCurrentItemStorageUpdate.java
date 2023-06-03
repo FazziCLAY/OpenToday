@@ -9,7 +9,6 @@ import com.fazziclay.opentoday.util.callback.Status;
  * @see CurrentItemStorage
  * @see Callback
  */
-@FunctionalInterface
 public interface OnCurrentItemStorageUpdate extends Callback {
     Status onCurrentChanged(Item item);
 }
