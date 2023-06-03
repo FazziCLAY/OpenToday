@@ -140,7 +140,7 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
     }
 
     @Override
-    public Item regenerateId() {
+    protected Item regenerateId() {
         super.regenerateId();
         for (Item item : getAllItems()) {
             item.regenerateId();

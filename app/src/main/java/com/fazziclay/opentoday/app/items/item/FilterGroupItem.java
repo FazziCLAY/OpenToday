@@ -178,7 +178,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     }
 
     @Override
-    public Item regenerateId() {
+    protected Item regenerateId() {
         super.regenerateId();
         for (ItemFilterWrapper item : items) {
             item.item.regenerateId();
@@ -197,8 +197,8 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     }
 
     private void addItem(ItemFilterWrapper item, int position) {
-        ItemUtil.checkAllowedItems(item.item);
-        ItemUtil.checkAttached(item.item);
+        ItemUtil.throwIsBreakType(item.item);
+        ItemUtil.throwIsAttached(item.item);
         item.item.attach(groupItemController);
         items.add(position, item);
         itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onAdded(item.item, getItemPosition(item.item)));

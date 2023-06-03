@@ -139,13 +139,13 @@ public abstract class Item implements Unique {
      * set controller and regenerate ids
      * @param itemController controller
      */
-    public void attach(ItemController itemController) {
+    protected void attach(ItemController itemController) {
         this.controller = itemController;
         this.id = itemController.generateId(this);
         itemCallbacks.run((callbackStorage, callback) -> callback.attached(Item.this));
     }
 
-    public void detach() {
+    protected void detach() {
         this.controller = null;
         this.id = null;
         itemCallbacks.run((callbackStorage, callback) -> callback.detached(Item.this));
@@ -157,7 +157,7 @@ public abstract class Item implements Unique {
         if (tickSession.isTickTargetAllowed(TickTarget.ITEM_CALLBACKS)) itemCallbacks.run((callbackStorage, callback) -> callback.tick(Item.this));
     }
 
-    public Item regenerateId() {
+    protected Item regenerateId() {
         this.id = UUID.randomUUID();
         return this;
     }
@@ -170,18 +170,10 @@ public abstract class Item implements Unique {
         return itemCallbacks;
     }
 
-    /**
-     * Copy this item
-     * @return copy
-     */
-    public Item copy() {
-        return ItemsRegistry.REGISTRY.get(this.getClass()).copy(this);
-    }
-
     // Getters & Setters
     @Nullable @Override @Getter public UUID getId() { return id; }
 
-    public void setController(@Nullable ItemController controller) {
+    protected void setController(@Nullable ItemController controller) {
         this.controller = controller;
     }
 

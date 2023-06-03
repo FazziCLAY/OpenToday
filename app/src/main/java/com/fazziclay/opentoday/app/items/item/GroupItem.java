@@ -76,7 +76,7 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
     }
 
     @Override
-    public Item regenerateId() {
+    protected Item regenerateId() {
         super.regenerateId();
         for (Item item : getAllItems()) {
             item.regenerateId();
