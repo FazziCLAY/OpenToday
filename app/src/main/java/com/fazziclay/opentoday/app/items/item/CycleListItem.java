@@ -68,7 +68,7 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
 
     public CycleListItem(TextItem textItem, ContainerItem containerItem) {
         super(textItem);
-        if (containerItem != null) this.itemsCycleStorage.importData(ItemUtil.copy(containerItem.getAllItems()));
+        if (containerItem != null) this.itemsCycleStorage.copyData(containerItem.getAllItems());
     }
 
     public CycleListItem(CycleListItem copy) {
