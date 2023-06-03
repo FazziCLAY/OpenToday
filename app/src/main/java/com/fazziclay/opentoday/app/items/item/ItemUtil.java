@@ -27,7 +27,7 @@ public class ItemUtil {
      * <h1>WARNING! Coping include ID!!!!!</h1>
      */
     @NonNull
-    public static List<Item> copy(Item[] items) {
+    public static List<Item> copyIncludeIds(Item[] items) {
         return ItemCodecUtil.importItemList(ItemCodecUtil.exportItemList(items));
     }
 
@@ -128,5 +128,22 @@ public class ItemUtil {
 
     public static Item copyItem(Item item) {
         return ItemsRegistry.REGISTRY.copyItem(item);
+    }
+
+    /**
+     * Designed taking into account the fact that item.regenerateId changes only its ID, without children, but the current implementation also works.
+     * @param items items to regenerate
+     */
+    public static void regenerateAllIdsInTree(final Item[] items) {
+        final Item[] allItemsInTree = getAllItemsInTree(items);
+        for (final Item item : allItemsInTree) {
+            item.regenerateId();
+        }
+    }
+
+    public static void throwIsIdNull(Item item) {
+        if (item.getId() == null) {
+            throw new RuntimeException("Item id is null!");
+        }
     }
 }
