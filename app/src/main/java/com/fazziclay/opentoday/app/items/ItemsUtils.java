@@ -90,7 +90,7 @@ public class ItemsUtils {
 
     public static void checkAllowedItems(Item item) {
         if (item.getClass() == Item.class) {
-            throw new RuntimeException("'Item' not allowed to add (add Item parents)");
+            throw new RuntimeException("'Item' not allowed to add (add Item children's)");
         }
     }
 
