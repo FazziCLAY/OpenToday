@@ -20,7 +20,7 @@ import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.datafixer.DataFixer;
 import com.fazziclay.opentoday.app.datafixer.FixResult;
-import com.fazziclay.opentoday.app.items.ItemManager;
+import com.fazziclay.opentoday.app.items.item.ItemManager;
 import com.fazziclay.opentoday.app.items.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tick.TickThread;

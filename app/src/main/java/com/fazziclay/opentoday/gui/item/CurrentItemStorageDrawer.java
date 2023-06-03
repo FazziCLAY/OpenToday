@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.CurrentItemStorage;
-import com.fazziclay.opentoday.app.items.ItemManager;
+import com.fazziclay.opentoday.app.items.item.ItemManager;
 import com.fazziclay.opentoday.app.items.callback.OnCurrentItemStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;

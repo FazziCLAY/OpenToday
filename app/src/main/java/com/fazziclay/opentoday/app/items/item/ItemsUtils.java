@@ -1,4 +1,4 @@
-package com.fazziclay.opentoday.app.items;
+package com.fazziclay.opentoday.app.items.item;
 
 import android.content.Context;
 
@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.R;
+import com.fazziclay.opentoday.app.items.ItemsStorage;
+import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.ContainerItem;
 import com.fazziclay.opentoday.app.items.item.Item;

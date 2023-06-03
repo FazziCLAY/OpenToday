@@ -1,4 +1,4 @@
-package com.fazziclay.opentoday.app.items;
+package com.fazziclay.opentoday.app.items.item;
 
 import android.os.Handler;
 import android.widget.Toast;
@@ -10,15 +10,10 @@ import com.fazziclay.javaneoutil.FileUtil;
 import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.data.CherryOrchard;
+import com.fazziclay.opentoday.app.items.ItemPath;
+import com.fazziclay.opentoday.app.items.ItemsStorage;
+import com.fazziclay.opentoday.app.items.SaveInitiator;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
-import com.fazziclay.opentoday.app.items.item.CheckboxItem;
-import com.fazziclay.opentoday.app.items.item.CounterItem;
-import com.fazziclay.opentoday.app.items.item.CycleListItem;
-import com.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem;
-import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
-import com.fazziclay.opentoday.app.items.item.GroupItem;
-import com.fazziclay.opentoday.app.items.item.Item;
-import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.LocalItemsTab;
 import com.fazziclay.opentoday.app.items.tab.Tab;

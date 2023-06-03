@@ -13,6 +13,7 @@ import androidx.core.app.RemoteInput;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.SettingsManager;
+import com.fazziclay.opentoday.app.items.item.ItemManager;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.gui.fragment.ItemsTabIncludeFragment;
 

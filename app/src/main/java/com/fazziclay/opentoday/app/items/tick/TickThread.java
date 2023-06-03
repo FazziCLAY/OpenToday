@@ -3,9 +3,9 @@ package com.fazziclay.opentoday.app.items.tick;
 import android.content.Context;
 
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.items.ItemManager;
+import com.fazziclay.opentoday.app.items.item.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
-import com.fazziclay.opentoday.app.items.ItemsUtils;
+import com.fazziclay.opentoday.app.items.item.ItemsUtils;
 import com.fazziclay.opentoday.app.items.SaveInitiator;
 import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.app.items.item.Item;

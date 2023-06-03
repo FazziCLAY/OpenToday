@@ -11,7 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.App
-import com.fazziclay.opentoday.app.items.ItemManager
+import com.fazziclay.opentoday.app.items.item.ItemManager
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem
 import com.fazziclay.opentoday.app.items.item.Item
 import com.fazziclay.opentoday.app.items.item.filter.DateItemFilter
