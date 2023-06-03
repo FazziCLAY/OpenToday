@@ -73,9 +73,11 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
 
     public CycleListItem(CycleListItem copy) {
         super(copy);
-        this.itemsCycleStorage.importData(ItemUtil.copy(copy.getAllItems()));
-        this.currentItemPosition = copy.currentItemPosition;
-        this.tickBehavior = copy.tickBehavior;
+        if (copy != null) {
+            this.itemsCycleStorage.copyData(copy.getAllItems());
+            this.currentItemPosition = copy.currentItemPosition;
+            this.tickBehavior = copy.tickBehavior;
+        }
     }
 
     @Override
