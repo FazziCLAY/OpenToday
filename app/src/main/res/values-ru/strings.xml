@@ -373,4 +373,7 @@
     <string name="fastChanges_dialog_apply">ОК</string>
     <string name="item_counter_fastChanges_up">Увеличить значение счетчика?</string>
     <string name="item_counter_fastChanges_down">Уменьшить значение счетчика?</string>
+    <string name="item_mathGame">Математическая игра</string>
+    <string name="item_mathGame_description">Математическая игра поможет размять мозг простыми задачками</string>
+    <string name="item_mathGame_quest_primitive_text">Сколько будет %s %s %s</string>
 </resources>

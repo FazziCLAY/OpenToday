@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:backgroundTint="?attr/item_text_background_color"
+    android:background="@drawable/shape">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Simple text"
+        android:textSize="19sp"
+        android:textColor="?attr/item_text_textColor"
+        android:paddingLeft="5sp" />
+
+    <TextView
+        android:id="@+id/questText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/keyboard"
+        tools:text="Simple long text"
+        android:layout_toStartOf="@id/keyboard"
+        android:textSize="15sp"
+        android:layout_below="@id/title"
+        android:textColor="?attr/item_text_textColor"
+        android:paddingLeft="5sp" />
+
+    <TextView
+        android:id="@+id/userEnterNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="111"
+        android:layout_toEndOf="@id/questText"
+        android:textSize="20sp"
+        android:layout_below="@id/title"
+        android:textColor="?attr/item_text_textColor"
+        android:paddingRight="10sp" />
+
+
+
+    <LinearLayout
+        android:id="@+id/keyboard"
+        android:layout_margin="4sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/userEnterNumber"
+        android:layout_alignParentEnd="true"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/number1"
+                android:layout_width="42sp"
+                android:layout_height="42sp"
+                android:padding="0sp"
+                android:text="1"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/number4"
+                android:layout_width="42sp"
+                android:layout_height="42sp"
+                android:padding="0sp"
+                android:text="4"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/number7"
+                android:layout_width="42sp"
+                android:layout_height="42sp"
+                android:padding="0sp"
+                android:text="7"
+                android:textSize="20sp" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/numberClear"
+                android:layout_width="42sp"
+                android:layout_height="42sp"
+                android:padding="0sp"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/number2"
+                android:layout_width="42sp"
+                android:layout_height="42sp"
+                android:padding="0sp"
+                android:text="2"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/number5"
+                android:layout_width="42sp"
+                android:layout_height="42sp"
+                android:padding="0sp"
+                android:text="5"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/number8"
+                android:layout_width="42sp"
+                android:layout_height="42sp"
+                android:padding="0sp"
+                android:text="8"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/number0"
+                android:layout_width="42sp"
+                android:layout_height="42sp"
+                android:padding="0sp"
+                android:text="0"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/number3"
+                android:layout_width="42sp"
+                android:layout_height="42sp"
+                android:padding="0sp"
+                android:text="3"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/number6"
+                android:layout_width="42sp"
+                android:layout_height="42sp"
+                android:padding="0sp"
+                android:text="6"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/number9"
+                android:layout_width="42sp"
+                android:layout_height="42sp"
+                android:padding="0sp"
+                android:text="9"
+                android:textSize="20sp" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/numberNext"
+                android:layout_width="42sp"
+                android:layout_height="42sp"
+                android:padding="0sp"
+                android:src="@android:drawable/ic_menu_send"
+                android:textSize="20sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,2 +1,5 @@
 Write changelog while development here...
 
+Import/Export: added checking for a newest version of data
+
+Add new item: MathGameItem

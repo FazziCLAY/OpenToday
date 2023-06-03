@@ -32,6 +32,7 @@ public class ItemsRegistry {
             new ItemInfo(CycleListItem.class,                      "CycleListItem",                 ItemType.CYCLE_LIST,                 CycleListItem.CODEC,                  CycleListItem::createEmpty,               (i) -> new CycleListItem((CycleListItem) i).regenerateId()),
             new ItemInfo(GroupItem.class,                          "GroupItem",                     ItemType.GROUP,                      GroupItem.CODEC,                      GroupItem::createEmpty,                   (i) -> new GroupItem((GroupItem) i).regenerateId()),
             new ItemInfo(FilterGroupItem.class,                    "FilterGroupItem",               ItemType.FILTER_GROUP,               FilterGroupItem.CODEC,                FilterGroupItem::createEmpty,             (i) -> new FilterGroupItem((FilterGroupItem) i).regenerateId()),
+            new ItemInfo(MathGameItem.class,                       "MathGameItem",                  ItemType.MATH_GAME,                  MathGameItem.CODEC,                   MathGameItem::createEmpty,                (i) -> new MathGameItem((MathGameItem) i).regenerateId()),
     };
 
     private ItemsRegistry() {}

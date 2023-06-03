@@ -1,8 +1,11 @@
 package com.fazziclay.opentoday.app.items;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.ContainerItem;
 import com.fazziclay.opentoday.app.items.item.Item;
@@ -19,6 +22,8 @@ import java.util.UUID;
 import kotlin.collections.ArraysKt;
 
 public class ItemsUtils {
+    public static final int TRANSLATE_MATHGAME_PRIMITIVE_OPERATION = R.string.item_mathGame_quest_primitive_text;
+
     /**
      * <h1>WARNING! Coping include ID!!!!!</h1>
      */
@@ -117,5 +122,9 @@ public class ItemsUtils {
             }
             i--;
         }
+    }
+
+    public static String getTranslatedText(Context context, int key, Object... objects) {
+        return context.getString(key, objects);
     }
 }

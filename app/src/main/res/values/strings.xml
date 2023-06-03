@@ -375,4 +375,7 @@
     <string name="item_checkbox_fastChanges_unchecked">Remove the check mark?</string>
     <string name="item_counter_fastChanges_up">Increase the counter value?</string>
     <string name="item_counter_fastChanges_down">Decrease the counter value?</string>
+    <string name="item_mathGame">Math game</string>
+    <string name="item_mathGame_description">А math game to warm up the brain</string>
+    <string name="item_mathGame_quest_primitive_text">How much is\n%s %s %s?</string>
 </resources>

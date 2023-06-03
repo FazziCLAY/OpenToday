@@ -9,5 +9,6 @@ public enum ItemType {
     COUNTER,
     CYCLE_LIST,
     GROUP,
-    FILTER_GROUP
+    FILTER_GROUP,
+    MATH_GAME
 }
