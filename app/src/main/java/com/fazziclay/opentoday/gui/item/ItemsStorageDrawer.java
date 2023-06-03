@@ -149,7 +149,7 @@ public class ItemsStorageDrawer {
         this.created = true;
         this.adapter = new DrawerAdapter();
         this.view.setAdapter(adapter);
-        this.itemsStorage.getOnUpdateCallbacks().addCallback(CallbackImportance.DEFAULT, onItemsStorageUpdate);
+        this.itemsStorage.getOnItemsStorageCallbacks().addCallback(CallbackImportance.DEFAULT, onItemsStorageUpdate);
         this.selectionManager.getOnSelectionUpdated().addCallback(CallbackImportance.DEFAULT, selectionCallback);
 
 
@@ -164,7 +164,7 @@ public class ItemsStorageDrawer {
             throw new RuntimeException("ItemStorageDrawer destroyed!");
         }
         destroyed = true;
-        this.itemsStorage.getOnUpdateCallbacks().deleteCallback(onItemsStorageUpdate);
+        this.itemsStorage.getOnItemsStorageCallbacks().deleteCallback(onItemsStorageUpdate);
         this.selectionManager.getOnSelectionUpdated().deleteCallback(selectionCallback);
         this.view.setAdapter(null);
         this.itemViewGenerator = null;

@@ -183,7 +183,7 @@ public class ItemsEditorFragment extends Fragment {
                 return Status.NONE;
             }
         };
-        itemsStorage.getOnUpdateCallbacks().addCallback(CallbackImportance.MIN, onItemStorageChangeCallback);
+        itemsStorage.getOnItemsStorageCallbacks().addCallback(CallbackImportance.MIN, onItemStorageChangeCallback);
         runOnCreateListeners();
     }
 
@@ -214,7 +214,7 @@ public class ItemsEditorFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         if (this.itemsStorageDrawer != null) this.itemsStorageDrawer.destroy();
-        if (this.itemsStorage != null) itemsStorage.getOnUpdateCallbacks().deleteCallback(onItemStorageChangeCallback);
+        if (this.itemsStorage != null) itemsStorage.getOnItemsStorageCallbacks().deleteCallback(onItemStorageChangeCallback);
         if (this.item != null) item.getItemCallbacks().deleteCallback(itemCallback);
     }
 

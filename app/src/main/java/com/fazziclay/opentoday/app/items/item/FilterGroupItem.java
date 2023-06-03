@@ -286,7 +286,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
 
     @NonNull
     @Override
-    public CallbackStorage<OnItemsStorageUpdate> getOnUpdateCallbacks() {
+    public CallbackStorage<OnItemsStorageUpdate> getOnItemsStorageCallbacks() {
         return itemStorageUpdateCallbacks;
     }
 

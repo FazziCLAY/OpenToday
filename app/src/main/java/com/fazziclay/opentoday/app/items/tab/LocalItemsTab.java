@@ -115,8 +115,8 @@ public class LocalItemsTab extends Tab {
 
     @NonNull
     @Override
-    public CallbackStorage<OnItemsStorageUpdate> getOnUpdateCallbacks() {
-        return itemsStorage.getOnUpdateCallbacks();
+    public CallbackStorage<OnItemsStorageUpdate> getOnItemsStorageCallbacks() {
+        return itemsStorage.getOnItemsStorageCallbacks();
     }
 
     @Override
@@ -143,7 +143,7 @@ public class LocalItemsTab extends Tab {
 
         @Override
         public void updateUi(Item item) {
-            LocalItemsTab.this.getOnUpdateCallbacks().run(((callbackStorage, callback) -> callback.onUpdated(item, getItemPosition(item))));
+            LocalItemsTab.this.getOnItemsStorageCallbacks().run(((callbackStorage, callback) -> callback.onUpdated(item, getItemPosition(item))));
         }
 
         @Override

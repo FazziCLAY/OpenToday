@@ -139,8 +139,8 @@ public class Debug202305RandomTab extends Tab implements Readonly {
 
     @NonNull
     @Override
-    public CallbackStorage<OnItemsStorageUpdate> getOnUpdateCallbacks() {
-        return itemsStorage.getOnUpdateCallbacks();
+    public CallbackStorage<OnItemsStorageUpdate> getOnItemsStorageCallbacks() {
+        return itemsStorage.getOnItemsStorageCallbacks();
     }
 
     @Override

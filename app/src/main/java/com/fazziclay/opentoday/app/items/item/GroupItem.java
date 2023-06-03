@@ -93,8 +93,8 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
 
     @NonNull
     @Override
-    public CallbackStorage<OnItemsStorageUpdate> getOnUpdateCallbacks() {
-        return itemsStorage.getOnUpdateCallbacks();
+    public CallbackStorage<OnItemsStorageUpdate> getOnItemsStorageCallbacks() {
+        return itemsStorage.getOnItemsStorageCallbacks();
     }
 
     @Override
@@ -169,7 +169,7 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
 
         @Override
         public void updateUi(Item item) {
-            GroupItem.this.getOnUpdateCallbacks().run(((callbackStorage, callback) -> callback.onUpdated(item, getItemPosition(item))));
+            GroupItem.this.getOnItemsStorageCallbacks().run(((callbackStorage, callback) -> callback.onUpdated(item, getItemPosition(item))));
         }
 
         @Override

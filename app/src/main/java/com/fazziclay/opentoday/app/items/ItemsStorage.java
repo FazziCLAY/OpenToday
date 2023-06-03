@@ -24,7 +24,7 @@ import java.util.UUID;
  * @see ItemsStorage#tick(TickSession)
  * @see ItemsStorage#save()
  * @see ItemsStorage#size()
- * @see ItemsStorage#getOnUpdateCallbacks()
+ * @see ItemsStorage#getOnItemsStorageCallbacks()
  */
 public interface ItemsStorage {
     /**
@@ -114,7 +114,7 @@ public interface ItemsStorage {
      * @see OnItemsStorageUpdate
      * @see CallbackStorage
      */
-    @NonNull CallbackStorage<OnItemsStorageUpdate> getOnUpdateCallbacks();
+    @NonNull CallbackStorage<OnItemsStorageUpdate> getOnItemsStorageCallbacks();
 
     boolean isEmpty();
 }

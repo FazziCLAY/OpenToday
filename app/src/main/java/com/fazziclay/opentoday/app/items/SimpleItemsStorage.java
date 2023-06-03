@@ -111,7 +111,7 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
 
     @NonNull
     @Override
-    public CallbackStorage<OnItemsStorageUpdate> getOnUpdateCallbacks() {
+    public CallbackStorage<OnItemsStorageUpdate> getOnItemsStorageCallbacks() {
         return onUpdateCallbacks;
     }
 

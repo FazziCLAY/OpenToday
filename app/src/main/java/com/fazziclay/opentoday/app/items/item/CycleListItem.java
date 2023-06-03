@@ -162,8 +162,8 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
 
     @NonNull
     @Override
-    public CallbackStorage<OnItemsStorageUpdate> getOnUpdateCallbacks() {
-        return itemsCycleStorage.getOnUpdateCallbacks();
+    public CallbackStorage<OnItemsStorageUpdate> getOnItemsStorageCallbacks() {
+        return itemsCycleStorage.getOnItemsStorageCallbacks();
     }
 
     @Override
@@ -227,7 +227,7 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
     private class CycleItemsStorage extends SimpleItemsStorage {
         public CycleItemsStorage() {
             super(new CycleListItemController());
-            getOnUpdateCallbacks().addCallback(CallbackImportance.DEFAULT, new OnItemsStorageUpdate() {
+            getOnItemsStorageCallbacks().addCallback(CallbackImportance.DEFAULT, new OnItemsStorageUpdate() {
                 @Override
                 public Status onAdded(Item item, int pos) {
                     onCurrentItemStorageUpdateCallback.run((callbackStorage, callback) -> callback.onCurrentChanged(getCurrentItem()));
@@ -273,7 +273,7 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
 
         @Override
         public void updateUi(Item item) {
-            CycleListItem.this.getOnUpdateCallbacks().run(((callbackStorage, callback) -> callback.onUpdated(item, getItemPosition(item))));
+            CycleListItem.this.getOnItemsStorageCallbacks().run(((callbackStorage, callback) -> callback.onUpdated(item, getItemPosition(item))));
         }
 
         @Override
