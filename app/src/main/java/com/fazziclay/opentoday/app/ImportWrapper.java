@@ -62,6 +62,7 @@ public class ImportWrapper {
     private final String dialogMessage;
     private final JSONObject settings;
     private final JSONObject colorHistory;
+    private boolean newestVersion = false;
 
     private static ImportWrapper error(ErrorCode code) {
         return new ImportWrapper(null, null, null, null, null, null, true, code);
@@ -86,6 +87,15 @@ public class ImportWrapper {
 
         if (colorHistory != null) checkPerm(Permission.OVERWRITE_COLOR_HISTORY, "Color history overwrite not allowed");
         this.colorHistory = colorHistory;
+    }
+
+    private ImportWrapper setFromNewestVersion(boolean b) {
+        this.newestVersion = b;
+        return this;
+    }
+
+    public boolean isNewestVersion() {
+        return newestVersion;
     }
 
     public boolean isError() {
@@ -302,7 +312,8 @@ public class ImportWrapper {
             colorHistory = jsonObject.getJSONObject("colorHistory");
         }
 
-        return new ImportWrapper(perms, tabs, items, dialogMessage, settings, colorHistory, false, null);
+        return new ImportWrapper(perms, tabs, items, dialogMessage, settings, colorHistory, false, null)
+                .setFromNewestVersion(dataVersion > App.APPLICATION_DATA_VERSION);
     }
 
     private static boolean isVersionSupport(int v) {

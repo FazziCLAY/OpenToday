@@ -154,6 +154,11 @@ public class ImportFragment extends Fragment {
             UI.rootBack(this);
             return;
         }
+        if (importWrapper.isNewestVersion()) {
+            Toast.makeText(activity, activity.getString(R.string.toolbar_more_file_import_exception, getString(EnumsRegistry.INSTANCE.nameResId(ImportWrapper.ErrorCode.VERSION_NOT_COMPATIBLE))), Toast.LENGTH_LONG).show();
+            UI.rootBack(this);
+            return;
+        }
 
         StringBuilder perms = new StringBuilder();
         String info = "";
