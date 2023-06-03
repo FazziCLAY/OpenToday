@@ -147,6 +147,7 @@ public class Cherry {
         return json.optBoolean(key, def);
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends Enum<?>> T optEnum(String key, T def) {
         try {
             return (T) Enum.valueOf(def.getClass(), json.optString(key, def.name()));
