@@ -86,13 +86,13 @@ public class ItemUtil {
         onUpdateCallbacks.run((callbackStorage, callback) -> callback.onMoved(from, positionFrom, positionTo));
     }
 
-    public static void checkAllowedItems(Item item) {
+    public static void throwIsBreakType(Item item) {
         if (item.getClass() == Item.class) {
             throw new RuntimeException("'Item' not allowed to add (use Item children's)");
         }
     }
 
-    public static void checkAttached(Item item) {
+    public static void throwIsAttached(Item item) {
         if (item.isAttached()) {
             throw new RuntimeException("items already attached. Use item.delete() to detach");
         }
