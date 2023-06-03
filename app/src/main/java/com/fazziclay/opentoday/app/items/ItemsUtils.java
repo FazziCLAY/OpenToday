@@ -80,17 +80,16 @@ public class ItemsUtils {
     }
 
     public static void moveItems(List<Item> items, int positionFrom, int positionTo, CallbackStorage<OnItemsStorageUpdate> onUpdateCallbacks) {
+        if (positionFrom >= items.size() || positionTo >= items.size()) throw new IndexOutOfBoundsException("Attempt to move an item outside the list");
         Item from = items.get(positionFrom);
         items.remove(from);
         items.add(positionTo, from);
         onUpdateCallbacks.run((callbackStorage, callback) -> callback.onMoved(from, positionFrom, positionTo));
-        // TODO: 27.10.2022 EXPERIMENTAL CHANGES
-        //Collections.swap(this.items, positionFrom, positionTo);
     }
 
     public static void checkAllowedItems(Item item) {
         if (item.getClass() == Item.class) {
-            throw new RuntimeException("'Item' not allowed to add (add Item children's)");
+            throw new RuntimeException("'Item' not allowed to add (use Item children's)");
         }
     }
 
