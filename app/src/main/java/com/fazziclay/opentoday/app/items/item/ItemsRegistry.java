@@ -70,6 +70,11 @@ public class ItemsRegistry {
         throw new NoSuchElementException("Not found item for ItemType: " + itemType);
     }
 
+    @NonNull
+    public Item copyItem(@NonNull Item item) {
+        return get(item.getClass()).copy(item);
+    }
+
     public static class ItemInfo {
         private final Class<? extends Item> classType;
         private final String stringType;

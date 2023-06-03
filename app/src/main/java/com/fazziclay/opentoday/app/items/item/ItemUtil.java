@@ -125,4 +125,8 @@ public class ItemUtil {
     public static String getTranslatedText(Context context, int key, Object... objects) {
         return context.getString(key, objects);
     }
+
+    public static Item copyItem(Item item) {
+        return ItemsRegistry.REGISTRY.copyItem(item);
+    }
 }

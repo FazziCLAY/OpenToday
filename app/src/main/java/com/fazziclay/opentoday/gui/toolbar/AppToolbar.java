@@ -243,6 +243,7 @@ public class AppToolbar {
     }
 
 
+    @SuppressWarnings("SetTextI18n")
     private void onDebugClick() {
         LinearLayout layout = new LinearLayout(activity);
         layout.setPadding(10, 0, 10, 0);
@@ -617,7 +618,7 @@ public class AppToolbar {
             if (checkSelectionEmpty()) return;
 
             for (Selection selection : selectionManager.getSelections()) {
-                selection.moveToStorage(itemsStorage);
+                selection.moveTo(itemsStorage);
                 selectionManager.deselectItem(selection);
             }
         });
@@ -627,7 +628,7 @@ public class AppToolbar {
             if (checkSelectionEmpty()) return;
 
             for (Selection selection : selectionManager.getSelections()) {
-                selection.copyToStorage(itemsStorage);
+                selection.copyTo(itemsStorage);
                 selectionManager.deselectItem(selection);
             }
         });

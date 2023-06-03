@@ -1,6 +1,5 @@
 package com.fazziclay.opentoday.app.items.selection;
 
-import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.SelectionCallback;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
@@ -38,10 +37,12 @@ public class SelectionManager {
     }
 
     public void selectItem(Item item) {
+        if (!item.isAttached()) {
+            throw new IllegalArgumentException("Item to select is not attached!");
+        }
         if (isSelected(item)) return;
 
-        ItemsStorage parentItemsStorage = item.getParentItemsStorage();
-        Selection selection = new Selection(selectionController, parentItemsStorage, item);
+        Selection selection = new Selection(selectionController, item);
         selection.selected();
         this.selections.add(selection);
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
