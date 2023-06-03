@@ -14,7 +14,6 @@ public abstract class OnItemsStorageUpdate implements Callback {
         return Status.NONE;
     }
 
-
     public Status onPreDeleted(Item item, int position) {
         return Status.NONE;
     }
