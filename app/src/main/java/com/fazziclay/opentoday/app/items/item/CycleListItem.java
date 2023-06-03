@@ -280,6 +280,11 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
         public ItemsStorage getParentItemsStorage(Item item) {
             return CycleListItem.this;
         }
+
+        @Override
+        public UUID generateId(Item item) {
+            return UUID.randomUUID();
+        }
     }
 
     public enum TickBehavior {

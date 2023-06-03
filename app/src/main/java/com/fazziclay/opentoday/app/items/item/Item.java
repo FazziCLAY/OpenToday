@@ -142,7 +142,7 @@ public abstract class Item implements Unique {
      */
     public void attach(ItemController itemController) {
         this.controller = itemController;
-        regenerateId();
+        this.id = itemController.generateId(this);
         itemCallbacks.run((callbackStorage, callback) -> callback.attached(Item.this));
     }
 

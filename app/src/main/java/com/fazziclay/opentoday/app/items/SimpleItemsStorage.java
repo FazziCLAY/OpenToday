@@ -161,5 +161,10 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
         public ItemsStorage getParentItemsStorage(Item item) {
             return SimpleItemsStorage.this;
         }
+
+        @Override
+        public UUID generateId(Item item) {
+            return UUID.randomUUID();
+        }
     }
 }

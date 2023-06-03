@@ -176,5 +176,10 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
         public ItemsStorage getParentItemsStorage(Item item) {
             return GroupItem.this;
         }
+
+        @Override
+        public UUID generateId(Item item) {
+            return UUID.randomUUID();
+        }
     }
 }

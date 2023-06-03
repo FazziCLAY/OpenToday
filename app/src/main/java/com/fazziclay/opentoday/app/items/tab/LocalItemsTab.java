@@ -150,5 +150,10 @@ public class LocalItemsTab extends Tab {
         public ItemsStorage getParentItemsStorage(Item item) {
             return LocalItemsTab.this;
         }
+
+        @Override
+        public UUID generateId(Item item) {
+            return UUID.randomUUID();
+        }
     }
 }

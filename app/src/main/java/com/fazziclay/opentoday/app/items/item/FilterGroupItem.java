@@ -414,6 +414,11 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         public ItemsStorage getParentItemsStorage(Item item) {
             return FilterGroupItem.this;
         }
+
+        @Override
+        public UUID generateId(Item item) {
+            return UUID.randomUUID();
+        }
     }
 
     public enum TickBehavior {
