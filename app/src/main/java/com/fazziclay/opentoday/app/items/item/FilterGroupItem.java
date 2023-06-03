@@ -197,8 +197,8 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     }
 
     private void addItem(ItemFilterWrapper item, int position) {
-        ItemsUtils.checkAllowedItems(item.item);
-        ItemsUtils.checkAttached(item.item);
+        ItemUtil.checkAllowedItems(item.item);
+        ItemUtil.checkAttached(item.item);
         item.item.attach(groupItemController);
         items.add(position, item);
         itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onAdded(item.item, getItemPosition(item.item)));
@@ -296,7 +296,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
 
     @Override
     public Item getItemById(UUID itemId) {
-        return Logger.dur(TAG, "getItemById (recursive)", () -> ItemsUtils.getItemByIdRecursive(getAllItems(), itemId));
+        return Logger.dur(TAG, "getItemById (recursive)", () -> ItemUtil.getItemByIdRecursive(getAllItems(), itemId));
     }
 
     @Override
@@ -304,7 +304,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         if (!tickSession.isAllowed(this)) return;
 
         super.tick(tickSession);
-        if (tickBehavior != TickBehavior.ALL) ItemsUtils.tickOnlyImportantTargets(tickSession, getAllItems());
+        if (tickBehavior != TickBehavior.ALL) ItemUtil.tickOnlyImportantTargets(tickSession, getAllItems());
         if (tickSession.isTickTargetAllowed(TickTarget.ITEM_FILTER_GROUP_TICK)) {
             recalculate(tickSession.getGregorianCalendar());
             updateStat();

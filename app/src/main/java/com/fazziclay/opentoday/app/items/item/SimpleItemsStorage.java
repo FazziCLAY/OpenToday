@@ -52,8 +52,8 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
 
     @Override
     public void addItem(Item item, int position) {
-        ItemsUtils.checkAllowedItems(item);
-        ItemsUtils.checkAttached(item);
+        ItemUtil.checkAllowedItems(item);
+        ItemUtil.checkAttached(item);
         item.attach(simpleItemController);
         items.add(position, item);
         onUpdateCallbacks.run((callbackStorage, callback) -> callback.onAdded(item, getItemPosition(item)));
@@ -62,7 +62,7 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
 
     @Override
     public Item getItemById(UUID id) {
-        return Logger.dur(TAG, "getItemById (recursive)", () -> ItemsUtils.getItemByIdRecursive(getAllItems(), id));
+        return Logger.dur(TAG, "getItemById (recursive)", () -> ItemUtil.getItemByIdRecursive(getAllItems(), id));
     }
 
     @Override
@@ -87,7 +87,7 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
 
     @Override
     public void move(int positionFrom, int positionTo) {
-        ItemsUtils.moveItems(this.items, positionFrom, positionTo, onUpdateCallbacks);
+        ItemUtil.moveItems(this.items, positionFrom, positionTo, onUpdateCallbacks);
         save();
     }
 
@@ -114,7 +114,7 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
     }
 
     public void importData(List<Item> items) {
-        Item[] allImportItems = ItemsUtils.getAllItemsInTree(items.toArray(new Item[0]));
+        Item[] allImportItems = ItemUtil.getAllItemsInTree(items.toArray(new Item[0]));
         for (Item check1 : allImportItems) {
             if (check1.getId() == null) {
                 check1.regenerateId();
@@ -128,8 +128,8 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
 
         for (Item item : items) {
             try {
-                ItemsUtils.checkAllowedItems(item);
-                ItemsUtils.checkAttached(item);
+                ItemUtil.checkAllowedItems(item);
+                ItemUtil.checkAttached(item);
                 item.setController(simpleItemController);
                 if (item.getId() == null) {
                     item.regenerateId();

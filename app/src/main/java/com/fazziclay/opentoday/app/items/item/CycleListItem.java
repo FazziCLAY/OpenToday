@@ -68,12 +68,12 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
 
     public CycleListItem(TextItem textItem, ContainerItem containerItem) {
         super(textItem);
-        if (containerItem != null) this.itemsCycleStorage.importData(ItemsUtils.copy(containerItem.getAllItems()));
+        if (containerItem != null) this.itemsCycleStorage.importData(ItemUtil.copy(containerItem.getAllItems()));
     }
 
     public CycleListItem(CycleListItem copy) {
         super(copy);
-        this.itemsCycleStorage.importData(ItemsUtils.copy(copy.getAllItems()));
+        this.itemsCycleStorage.importData(ItemUtil.copy(copy.getAllItems()));
         this.currentItemPosition = copy.currentItemPosition;
         this.tickBehavior = copy.tickBehavior;
     }
@@ -125,7 +125,7 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
     public void tick(TickSession tickSession) {
         if (!tickSession.isAllowed(this)) return;
         super.tick(tickSession);
-        if (tickBehavior != TickBehavior.ALL) ItemsUtils.tickOnlyImportantTargets(tickSession, getAllItems());
+        if (tickBehavior != TickBehavior.ALL) ItemUtil.tickOnlyImportantTargets(tickSession, getAllItems());
         if (tickBehavior == TickBehavior.ALL) {
             itemsCycleStorage.tick(tickSession);
         } else if (tickBehavior == TickBehavior.CURRENT) {

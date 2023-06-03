@@ -93,7 +93,7 @@ public class DebugTickCounterItem extends TextItem {
         $[-#00ffff]Whitelist(%s): %s$[||]
         $[-$fff00f]PathToMe: %s
         """, getId(), counter, targets, tickSession._isWhitelist(), tickSession._getWhitelist(),
-                Arrays.toString(ItemsUtils.getPathToItem(this)));
+                Arrays.toString(ItemUtil.getPathToItem(this)));
         visibleChanged();
 
         super.tick(tickSession);

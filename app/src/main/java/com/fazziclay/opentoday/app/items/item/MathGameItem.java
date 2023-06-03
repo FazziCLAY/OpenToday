@@ -121,7 +121,7 @@ public class MathGameItem extends TextItem {
             val1 = RandomUtil.nextInt(100);
             val2 = RandomUtil.nextInt(100);
             result = operation.apply(val1, val2);
-            text = ItemsUtils.getTranslatedText(context, ItemsUtils.TRANSLATE_MATHGAME_PRIMITIVE_OPERATION, val1, operation, val2);
+            text = ItemUtil.getTranslatedText(context, ItemUtil.TRANSLATE_MATHGAME_PRIMITIVE_OPERATION, val1, operation, val2);
         }
 
         @Override

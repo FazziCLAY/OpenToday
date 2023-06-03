@@ -5,7 +5,7 @@ import android.content.Context;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.items.item.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
-import com.fazziclay.opentoday.app.items.item.ItemsUtils;
+import com.fazziclay.opentoday.app.items.item.ItemUtil;
 import com.fazziclay.opentoday.app.items.SaveInitiator;
 import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.app.items.item.Item;
@@ -113,7 +113,7 @@ public class TickThread extends Thread {
                 Item item = itemManager.getItemById(personal);
                 List<UUID> pathWhitelisted = new ArrayList<>();
                 pathWhitelisted.add(item.getId());
-                for (ItemsStorage itemsStorage : ItemsUtils.getPathToItem(item)) {
+                for (ItemsStorage itemsStorage : ItemUtil.getPathToItem(item)) {
                     if (itemsStorage instanceof Unique unique) {
                         pathWhitelisted.add(unique.getId());
                     }

@@ -37,7 +37,7 @@ import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.item.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
-import com.fazziclay.opentoday.app.items.item.ItemsUtils;
+import com.fazziclay.opentoday.app.items.item.ItemUtil;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
 import com.fazziclay.opentoday.app.items.callback.SelectionCallback;
 import com.fazziclay.opentoday.app.items.item.Item;
@@ -318,7 +318,7 @@ public class AppToolbar {
             try {
                 final String text = String.valueOf(app.getClipboardManager().getText());
                 if (ImportWrapper.isImportText(text)) {
-                    UUID id = ItemsUtils.getId(itemsStorage);
+                    UUID id = ItemUtil.getId(itemsStorage);
                     if (id == null) {
                         Toast.makeText(activity, R.string.toolbar_more_file_import_unsupported, Toast.LENGTH_SHORT).show();
                         return;
@@ -335,7 +335,7 @@ public class AppToolbar {
 
         // Import button
         viewClick(localBinding.importData, () -> {
-            UUID id = ItemsUtils.getId(itemsStorage);
+            UUID id = ItemUtil.getId(itemsStorage);
             if (id == null) {
                 Toast.makeText(activity, R.string.toolbar_more_file_import_unsupported, Toast.LENGTH_SHORT).show();
                 return;
@@ -550,7 +550,7 @@ public class AppToolbar {
 
                 if (itemInfo.isCompatibility(app.getFeatureFlags())) {
                     holder.name.setText(EnumsRegistry.INSTANCE.nameResId(itemInfo.getItemType()));
-                    viewClick(holder.create, () -> rootNavigationHost.navigate(ItemEditorFragment.create(ItemsUtils.getId(itemsStorage), itemInfo.getClassType(), getAddItemPos(settingsManager.getItemAddPosition())), true));
+                    viewClick(holder.create, () -> rootNavigationHost.navigate(ItemEditorFragment.create(ItemUtil.getId(itemsStorage), itemInfo.getClassType(), getAddItemPos(settingsManager.getItemAddPosition())), true));
                     viewClick(holder.add, () -> {
                         switch (settingsManager.getItemAddPosition()) {
                             case TOP -> itemsStorage.addItem(ItemsRegistry.REGISTRY.get(itemInfo.getClassType()).create(), 0);
