@@ -12,11 +12,11 @@ public abstract class SelectionCallback implements Callback {
     }
 
     public Status selected(Selection selection) {
-        return null;
+        return Status.NONE;
     }
 
     public Status unselected(Selection selection) {
-        return null;
+        return Status.NONE;
     }
 
     public void unselectedAll() {
