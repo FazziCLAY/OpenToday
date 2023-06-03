@@ -14,19 +14,17 @@ import java.util.UUID;
 
 public abstract class SimpleItemsStorage implements ItemsStorage {
     private static final String TAG = "SimpleItemsStorage";
-    private final List<Item> items;
-    private final ItemController simpleItemController;
+    private final List<Item> items = new ArrayList<>();
+    private final ItemController itemController;
     private final CallbackStorage<OnItemsStorageUpdate> onUpdateCallbacks = new CallbackStorage<>();
 
 
     public SimpleItemsStorage() {
-        this.items = new ArrayList<>();
-        this.simpleItemController = new SimpleItemController();
+        this.itemController = new SimpleItemController();
     }
 
     public SimpleItemsStorage(ItemController customController) {
-        this.items = new ArrayList<>();
-        this.simpleItemController = customController;
+        this.itemController = customController;
     }
 
     @NonNull
@@ -52,9 +50,9 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
 
     @Override
     public void addItem(Item item, int position) {
-        ItemUtil.checkAllowedItems(item);
-        ItemUtil.checkAttached(item);
-        item.attach(simpleItemController);
+        ItemUtil.throwIsBreakType(item);
+        ItemUtil.throwIsAttached(item);
+        item.attach(itemController);
         items.add(position, item);
         onUpdateCallbacks.run((callbackStorage, callback) -> callback.onAdded(item, getItemPosition(item)));
         save();
@@ -116,26 +114,45 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
     public void importData(List<Item> items) {
         Item[] allImportItems = ItemUtil.getAllItemsInTree(items.toArray(new Item[0]));
         for (Item check1 : allImportItems) {
+            ItemUtil.throwIsBreakType(check1);
+            ItemUtil.throwIsAttached(check1);
+
             if (check1.getId() == null) {
                 check1.regenerateId();
+                Logger.d(TAG, "importData: check1 id is null! regenerated.");
             }
             for (Item check2 : allImportItems) {
+                if (check2.getId() == null) {
+                    check2.regenerateId();
+                    Logger.d(TAG, "importData: check2 id is null! regenerated.");
+                }
                 if (check1.getId().equals(check2.getId()) && check1 != check2) {
                     check2.regenerateId();
+                    Logger.d(TAG, "importData: check1.id equals check2.id && check1 != check2. id regenerated.");
                 }
             }
         }
 
         for (Item item : items) {
-            try {
-                ItemUtil.checkAllowedItems(item);
-                ItemUtil.checkAttached(item);
-                item.setController(simpleItemController);
-                if (item.getId() == null) {
-                    item.regenerateId();
-                }
-                this.items.add(item);
-            } catch (Exception ignored) {}
+            if (item.getId() == null) {
+                item.regenerateId();
+                Logger.d(TAG, "importData: item.id is null. regenerated.");
+            }
+            item.setController(itemController);
+            this.items.add(item);
+        }
+    }
+
+    public void copyData(Item[] items) {
+        items = ItemUtil.copyIncludeIds(items).toArray(new Item[0]);
+        ItemUtil.regenerateAllIdsInTree(items);
+
+        for (Item item : items) {
+            ItemUtil.throwIsBreakType(item);
+            ItemUtil.throwIsAttached(item);
+            ItemUtil.throwIsIdNull(item);
+            item.setController(itemController);
+            this.items.add(item);
         }
     }
 
