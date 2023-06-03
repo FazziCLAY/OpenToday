@@ -16,12 +16,13 @@ import com.fazziclay.opentoday.app.items.item.ItemType;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
+import com.fazziclay.opentoday.app.items.tick.Tickable;
 import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 
 import java.util.UUID;
 
-public class Debug202305RandomTab extends Tab implements Readonly {
+public class Debug202305RandomTab extends Tab implements Tickable, Readonly {
     public static final TabCodec CODEC = new TabCodec() {
         @NonNull
         @Override

@@ -7,6 +7,7 @@ import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemManager;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
+import com.fazziclay.opentoday.app.items.tick.Tickable;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.UUID;
  * @see ItemsStorage#size()
  * @see ItemsStorage#getOnItemsStorageCallbacks()
  */
-public interface ItemsStorage {
+public interface ItemsStorage extends Tickable {
     /**
      * Add item to this ItemStorage
      * @param item item to add

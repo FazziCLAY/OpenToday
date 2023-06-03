@@ -14,6 +14,7 @@ import com.fazziclay.opentoday.app.items.notification.ItemNotificationCodecUtil;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationUtil;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.TickTarget;
+import com.fazziclay.opentoday.app.items.tick.Tickable;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
@@ -29,7 +30,7 @@ import java.util.UUID;
 /**
  * Main app count (contain information) todo add javadoc to Item :)
  */
-public abstract class Item implements Unique {
+public abstract class Item implements Unique, Tickable {
     // START - Save
     public static class ItemCodec extends AbstractItemCodec {
         private static final String KEY_ID = "id";

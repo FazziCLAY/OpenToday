@@ -11,13 +11,14 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemCodecUtil;
 import com.fazziclay.opentoday.app.items.item.ItemController;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
+import com.fazziclay.opentoday.app.items.tick.Tickable;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class LocalItemsTab extends Tab {
+public class LocalItemsTab extends Tab implements Tickable {
     public static final LocalItemsTabCodec CODEC = new LocalItemsTabCodec();
     protected static class LocalItemsTabCodec extends TabCodec {
         @NonNull
@@ -127,7 +128,7 @@ public class LocalItemsTab extends Tab {
     @NotNull
     @Override
     public String toString() {
-        return "LocalItemsTab@["+getId()+"]{"+getName()+"}";
+        return "LocalItemsTab@[ID:"+getId()+" NAME:'"+getName()+"'}";
     }
 
     private class LocalItemsTabController extends ItemController {
