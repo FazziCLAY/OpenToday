@@ -6,7 +6,7 @@ import androidx.annotation.Nullable;
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Readonly;
-import com.fazziclay.opentoday.app.items.SimpleItemsStorage;
+import com.fazziclay.opentoday.app.items.item.SimpleItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
