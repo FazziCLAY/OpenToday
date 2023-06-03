@@ -9,10 +9,12 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Handler;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.util.Linkify;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +40,7 @@ import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.LongTextItem;
+import com.fazziclay.opentoday.app.items.item.MathGameItem;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.databinding.ItemCheckboxBinding;
@@ -47,6 +50,7 @@ import com.fazziclay.opentoday.databinding.ItemDayRepeatableCheckboxBinding;
 import com.fazziclay.opentoday.databinding.ItemFilterGroupBinding;
 import com.fazziclay.opentoday.databinding.ItemGroupBinding;
 import com.fazziclay.opentoday.databinding.ItemLongtextBinding;
+import com.fazziclay.opentoday.databinding.ItemMathGameBinding;
 import com.fazziclay.opentoday.databinding.ItemTextBinding;
 import com.fazziclay.opentoday.gui.interfaces.ContentInterface;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
@@ -149,6 +153,9 @@ public class ItemViewGenerator {
         } else if (type == LongTextItem.class) {
             resultView = generateLongTextItemView((LongTextItem) item, parent);
 
+        } else if (type == MathGameItem.class) {
+            resultView = generateMathGameItemView((MathGameItem) item, parent);
+
         } else {
             Log.e("Unknown item type", "Throw exception for 3 seconds...");
             DebugUtil.sleep(3000);
@@ -175,6 +182,103 @@ public class ItemViewGenerator {
         }
         if (itemOnClick != null) viewClick(resultView, () -> itemOnClick.run(item));
         return resultView;
+    }
+
+    @ForItem(key = MathGameItem.class)
+    private View generateMathGameItemView(MathGameItem item, ViewGroup parent) {
+        final ItemMathGameBinding binding = ItemMathGameBinding.inflate(this.layoutInflater, parent, false);
+
+        final MathGameInterface gameInterface = new MathGameInterface() {
+            private String currentNumberStr = "0";
+            private int currentNumber = 0;
+
+
+            public void numberPress(byte b) {
+                currentNumberStr += b;
+                try {
+                    currentNumber = Integer.parseInt(currentNumberStr);
+                } catch (Exception ignored) {
+                    currentNumber = (int) (Math.PI * 10000000);
+                }
+                currentNumberStr = String.valueOf(currentNumber);
+                updateDisplay();
+            }
+
+            public void done() {
+                int color;
+                if (item.isResultRight(currentNumber)) {
+                    color = Color.GREEN;
+                    item.postResult(activity.getApplicationContext(), currentNumber);
+                    binding.questText.setText(item.getQuestText());
+                    binding.questText.setTextSize(item.getQuestTextSize());
+                    binding.questText.setGravity(item.getQuestTextGravity());
+                } else {
+                    color = Color.RED;
+                }
+
+                clear();
+                binding.userEnterNumber.setBackgroundColor(color);
+                new Handler().postDelayed(() -> binding.userEnterNumber.setBackgroundColor(Color.TRANSPARENT), 100);
+            }
+
+            public void clear() {
+                setValue(0);
+            }
+
+            private void setValue(int v) {
+                currentNumber = v;
+                currentNumberStr = String.valueOf(v);
+                updateDisplay();
+            }
+
+            private void updateDisplay() {
+                binding.userEnterNumber.setText(currentNumberStr);
+            }
+
+            public void invert() {
+                setValue(-currentNumber);
+            }
+
+            @Override
+            public void init() {
+                binding.questText.setText(item.getQuestText());
+                binding.questText.setTextSize(item.getQuestTextSize());
+                binding.questText.setGravity(item.getQuestTextGravity());
+
+                binding.userEnterNumber.setText(currentNumberStr);
+                viewClick(binding.userEnterNumber, this::invert);
+
+                viewClick(binding.number0, () -> numberPress((byte) 0));
+                viewClick(binding.number1, () -> numberPress((byte) 1));
+                viewClick(binding.number2, () -> numberPress((byte) 2));
+                viewClick(binding.number3, () -> numberPress((byte) 3));
+                viewClick(binding.number4, () -> numberPress((byte) 4));
+                viewClick(binding.number5, () -> numberPress((byte) 5));
+                viewClick(binding.number6, () -> numberPress((byte) 6));
+                viewClick(binding.number7, () -> numberPress((byte) 7));
+                viewClick(binding.number8, () -> numberPress((byte) 8));
+                viewClick(binding.number9, () -> numberPress((byte) 9));
+                viewClick(binding.numberClear, this::clear);
+                viewClick(binding.numberNext, this::done);
+            }
+        };
+
+        // Text
+        applyTextItemToTextView(item, binding.title);
+        gameInterface.init();
+
+        if (item.isMinimize()) {
+            binding.keyboard.setVisibility(View.GONE);
+            binding.userEnterNumber.setVisibility(View.GONE);
+            binding.questText.setGravity(Gravity.NO_GRAVITY);
+            binding.questText.setTextSize(18);
+        }
+
+        return binding.getRoot();
+    }
+
+    interface MathGameInterface {
+        void init();
     }
 
     @ForItem(key = LongTextItem.class)

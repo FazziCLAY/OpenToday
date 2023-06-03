@@ -141,6 +141,13 @@ public class DataFixer {
             isUpdated = true;
         }
 
+        if (dataVersion == 9) {
+            // nothing to fix in to10Version
+            log("v9 -> v10", "Nothing to fix while 9to10 upgrade...");
+            dataVersion = 10;
+            isUpdated = true;
+        }
+
         return dataVersion;
     }
 
@@ -352,6 +359,12 @@ public class DataFixer {
             result = items;
             from = 9;
         }
+
+        if (from == 9) {
+            // nothing to fix
+            from = 10;
+        }
+
         return result;
     }
 
@@ -363,6 +376,11 @@ public class DataFixer {
             Scheme8Fix9.tabsListFix(context, tabs);
             result = tabs;
             from = 9;
+        }
+
+        if (from == 9) {
+            // nothing to fix
+            from = 10;
         }
         return result;
     }

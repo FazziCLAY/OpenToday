@@ -41,6 +41,7 @@ object EnumsRegistry {
         EnumInfo(ItemType.CYCLE_LIST,                    R.string.item_cycleList).setItemDescription(R.string.item_cycleList_description),
         EnumInfo(ItemType.GROUP,                         R.string.item_group).setItemDescription(R.string.item_group_description),
         EnumInfo(ItemType.FILTER_GROUP,                  R.string.item_filterGroup).setItemDescription(R.string.item_filterGroup_description),
+        EnumInfo(ItemType.MATH_GAME,                     R.string.item_mathGame).setItemDescription(R.string.item_mathGame_description),
 
         EnumInfo(FilterGroupItem.TickBehavior.ALL,           R.string.filter_group_item_filter_tickBehavoir_ALL),
         EnumInfo(FilterGroupItem.TickBehavior.NOTHING,       R.string.filter_group_item_filter_tickBehavoir_NOTHING),
