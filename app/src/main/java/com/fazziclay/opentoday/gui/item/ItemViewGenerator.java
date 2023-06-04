@@ -267,6 +267,23 @@ public class ItemViewGenerator {
         applyTextItemToTextView(item, binding.title);
         gameInterface.init();
 
+        binding.keyboard.setEnabled(!previewMode);
+        binding.userEnterNumber.setEnabled(!previewMode);
+        binding.questText.setEnabled(!previewMode);
+        binding.numberClear.setEnabled(!previewMode);
+        binding.numberNext.setEnabled(!previewMode);
+        binding.number0.setEnabled(!previewMode);
+        binding.number1.setEnabled(!previewMode);
+        binding.number2.setEnabled(!previewMode);
+        binding.number3.setEnabled(!previewMode);
+        binding.number4.setEnabled(!previewMode);
+        binding.number5.setEnabled(!previewMode);
+        binding.number6.setEnabled(!previewMode);
+        binding.number7.setEnabled(!previewMode);
+        binding.number8.setEnabled(!previewMode);
+        binding.number9.setEnabled(!previewMode);
+
+
         if (item.isMinimize()) {
             binding.keyboard.setVisibility(View.GONE);
             binding.userEnterNumber.setVisibility(View.GONE);
