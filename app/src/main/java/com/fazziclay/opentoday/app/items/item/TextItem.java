@@ -57,7 +57,9 @@ public class TextItem extends Item {
     @SaveKey(key = "clickableUrls") @RequireSave private boolean clickableUrls = false;
     @SaveKey(key = "paragraphColorize") private boolean paragraphColorize = true;
 
-    protected TextItem() {}
+    protected TextItem() {
+        super();
+    }
 
     public TextItem(String text) {
         this(null, text);
