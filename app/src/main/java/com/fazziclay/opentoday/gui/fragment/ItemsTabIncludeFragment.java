@@ -250,7 +250,10 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     }
 
     private void updateViewPager(boolean smoothScroll) {
-        binding.viewPager.setCurrentItem(tabsManager.getTabPosition(tabsManager.getTabById(currentTab)), smoothScroll);
+        int position = tabsManager.getTabPosition(tabsManager.getTabById(currentTab));
+        tabsViewPagerAdapter.notifyItemChanged(position);
+        tabsViewPagerAdapter.getItemViewType(position);
+        binding.viewPager.setCurrentItem(position, smoothScroll);
     }
 
     private void setupTabs() {
@@ -405,9 +408,9 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            Tab t = tabsManager.getAllTabs()[position];
-            Logger.d(TAG, LocalViewPagerAdapter.class.getSimpleName(), "createFragment", "position=", position, "(tab by <position> in itemManager)=", t);
-            return ItemsEditorRootFragment.create(t.getId());
+            Tab tab = tabsManager.getAllTabs()[position];
+            Logger.d(TAG, LocalViewPagerAdapter.class.getSimpleName(), "createFragment", "position=", position, "(tab by <position> in itemManager)=", tab);
+            return ItemsEditorRootFragment.create(tab.getId());
         }
 
         @Override
