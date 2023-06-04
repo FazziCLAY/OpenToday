@@ -211,7 +211,10 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
     @NonNull
     @Override
     public Item copyItem(Item item) {
-        return itemsCycleStorage.copyItem(item);
+        Item p = getCurrentItem();
+        Item copyItem = itemsCycleStorage.copyItem(item);
+        if (p != getCurrentItem()) onCurrentItemStorageUpdateCallback.run((callbackStorage, callback) -> callback.onCurrentChanged(getCurrentItem()));
+        return copyItem;
     }
 
     @Override
