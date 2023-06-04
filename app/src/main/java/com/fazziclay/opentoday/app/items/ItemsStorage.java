@@ -99,8 +99,7 @@ public interface ItemsStorage extends Tickable {
     void tick(TickSession tickSession);
 
     /**
-     * Save data (Call to up (to up, to up, to up)) -> call save to ItemManager => Save all
-     * @see TabsManager#queueSave()
+     * Save data
      */
     void save();
 
