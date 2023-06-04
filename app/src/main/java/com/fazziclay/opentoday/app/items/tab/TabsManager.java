@@ -145,12 +145,14 @@ public class TabsManager implements ItemsRoot, Tickable {
         return translation;
     }
 
+    // TODO: 04.06.2023 use UUID random.
     private long _dufl = 0;
     @NotNull
     @Override
     public UUID generateUniqueId() {
         final int MAX_ITER = 1000;
         int i = 0;
+        _dufl = 0;
         UUID uuid = InlineUtil.fcu_dufl(_dufl);//UUID.randomUUID();
         while (i < MAX_ITER) {
             if (isExistById(uuid)) {
@@ -218,8 +220,8 @@ public class TabsManager implements ItemsRoot, Tickable {
         checkDestroy();
         TabUtil.throwIsAttached(tab);
 
-        tab.attach(tabController);
         this.tabs.add(tab);
+        tab.attach(tabController);
         onTabsChangedCallbacks.run((callbackStorage, callback) -> callback.onTabAdded(tab, getTabPosition(tab)));
         internalOnTabChanged();
         queueSave(SaveInitiator.USER);
@@ -388,8 +390,8 @@ public class TabsManager implements ItemsRoot, Tickable {
                     for (Tab tab : tabs) {
                         tab.setController(tabController);
                         tab.validateId();
+                        this.tabs.add(tab);
                     }
-                    this.tabs.addAll(tabs);
                 } catch (Exception e) {
                     throw new RuntimeException("TabsManager load() error! Data maybe break.", e);
                 }
@@ -397,6 +399,33 @@ public class TabsManager implements ItemsRoot, Tickable {
         }
         if (tabs.isEmpty()) {
             createLocalTab(getTranslation().get(Translation.KEY_TABS_DEFAULT_MAIN_NAME));
+        }
+
+        // Check id duplication
+        boolean detected = false;
+        List<UUID> list = new ArrayList<>();
+        for (Tab tab : tabs) {
+            UUID tabId = ItemUtil.getId(tab);
+            if (list.contains(tabId)) {
+                Logger.i(TAG, "ID Duplication detected! tab="+tab+" tabId="+tabId+"; Regenerating...");
+                tab.regenerateId();
+                detected = true;
+            }
+            list.add(tabId);
+
+            Item[] allItemsInTab = ItemUtil.getAllItemsInTree(tab.getAllItems());
+            for (Item item : allItemsInTab) {
+                UUID itemId = item.getId();
+                if (list.contains(itemId)) {
+                    Logger.i(TAG, "ID Duplication detected! tab="+tab+" tabId="+tabId+"; item="+item+" itemId="+itemId+"; Regenerating...");
+                    ItemUtil.regenerateIdForItem(item);
+                    detected = true;
+                }
+                list.add(itemId);
+            }
+        }
+        if (detected) {
+            saveAllDirect();
         }
     }
 
