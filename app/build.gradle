@@ -4,11 +4,11 @@ plugins {
 }
 
 // =====
-var isDev = true
-var beta = false
+var isDev = false
+var beta = true
 var verBuild = 125
 var verName = "1.1.4.x.0"
-var verBranch = "math_game_item" // use "RELEASE" for releases versions
+var verBranch = "1.0.5 ALPHA-BETA" // use "RELEASE" for releases versions
 var verReleaseTime = 1685605804 // in seconds
 // =====
 
