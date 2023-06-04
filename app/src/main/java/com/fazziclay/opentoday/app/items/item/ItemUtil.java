@@ -135,6 +135,11 @@ public class ItemUtil {
         return ItemsRegistry.REGISTRY.copyItem(item);
     }
 
+    public static ItemType getItemType(Item item) {
+        throwIsBreakType(item);
+        return ItemsRegistry.REGISTRY.get(item.getClass()).getItemType();
+    }
+
     public static UUID controllerGenerateItemId(ItemsRoot root, Item item) {
         if (root != null) {
             return root.generateUniqueId();
