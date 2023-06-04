@@ -1,7 +1,6 @@
 package com.fazziclay.opentoday.app.items.item;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.data.CherryOrchard;
@@ -14,10 +13,14 @@ import com.fazziclay.opentoday.app.items.item.filter.ItemFilter;
 import com.fazziclay.opentoday.app.items.item.filter.LogicContainerItemFilter;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.TickTarget;
-import com.fazziclay.opentoday.util.Logger;
+import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
+import com.fazziclay.opentoday.util.annotation.Setter;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -124,18 +127,14 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         }
     }
 
-    public void setTickBehavior(@NonNull TickBehavior tickBehavior) {
-        this.tickBehavior = tickBehavior;
-    }
-
-    @NonNull
-    public TickBehavior getTickBehavior() {
+    @Setter public void setTickBehavior(@NonNull TickBehavior o) {this.tickBehavior = o;}
+    @Getter @NonNull public TickBehavior getTickBehavior() {
         return tickBehavior;
     }
 
     @Nullable
-    public ItemFilter getItemFilter(Item item) {
-        for (ItemFilterWrapper wrapper : items) {
+    public ItemFilter getItemFilter(@NotNull Item item) {
+        for (ItemFilterWrapper wrapper : getWrappers()) {
             if (wrapper.item == item) return wrapper.filter;
         }
 
@@ -143,24 +142,32 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     }
 
     public void setItemFilter(Item item, ItemFilter itemFilter) {
-        if (itemFilter == null) throw new NullPointerException("filter can't be null");
+        if (itemFilter == null) throw new NullPointerException("ItemFilter can't be null");
 
-        for (ItemFilterWrapper wrapper : items) {
+        for (ItemFilterWrapper wrapper : getWrappers()) {
             if (wrapper.item == item) wrapper.filter = itemFilter;
         }
+        save();
+    }
+
+    private ItemFilterWrapper[] getWrappers() {
+        return items.toArray(new ItemFilterWrapper[0]);
+    }
+
+    private ItemFilterWrapper[] getActiveWrappers() {
+        return activeItems.toArray(new ItemFilterWrapper[0]);
     }
 
     public Item[] getActiveItems() {
         List<Item> ret = new ArrayList<>();
-        for (ItemFilterWrapper activeItem : activeItems) {
+        for (ItemFilterWrapper activeItem : getActiveWrappers()) {
             ret.add(activeItem.item);
         }
         return ret.toArray(new Item[0]);
     }
 
-
     public boolean isActiveItem(Item item) {
-        for (ItemFilterWrapper activeItem : activeItems) {
+        for (ItemFilterWrapper activeItem : getActiveWrappers()) {
             if (activeItem.item == item) return true;
         }
         return false;
@@ -170,7 +177,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     @Override
     public Item[] getAllItems() {
         List<Item> ret = new ArrayList<>();
-        for (ItemFilterWrapper wrapper : items) {
+        for (ItemFilterWrapper wrapper : getWrappers()) {
             ret.add(wrapper.item);
         }
         return ret.toArray(new Item[0]);
@@ -179,7 +186,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     @Override
     protected void regenerateId() {
         super.regenerateId();
-        for (ItemFilterWrapper item : items) {
+        for (ItemFilterWrapper item : getWrappers()) {
             item.item.regenerateId();
         }
     }
@@ -218,22 +225,28 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
 
     @Override
     public void deleteItem(Item item) {
-        int position = getItemPosition(item);
+        ItemFilterWrapper wrapper = getWrapperForItem(item);
+        if (wrapper == null) throw new IllegalArgumentException("Provided item not attached to this FilterGroupItem.");
+
+        int position = getWrapperPosition(wrapper);
         itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onPreDeleted(item, position));
 
-        ItemFilterWrapper toDel = null;
-        for (ItemFilterWrapper wrapper : items) {
-            if (wrapper.item == item) toDel = wrapper;
-        }
-
+        items.remove(wrapper);
         item.detach();
-        items.remove(toDel);
 
         if (!recalculate(TickSession.getLatestGregorianCalendar())) {
             visibleChanged();
         }
         itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onPostDeleted(item, position));
         save();
+    }
+
+    @Nullable
+    private ItemFilterWrapper getWrapperForItem(Item item) {
+        for (ItemFilterWrapper wrapper : getWrappers()) {
+            if (wrapper.item == item) return wrapper;
+        }
+        return null;
     }
 
     @NonNull
@@ -249,11 +262,10 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
 
     @Override
     public void move(int positionFrom, int positionTo) {
+        if (positionFrom >= size() || positionTo >= size()) throw new IndexOutOfBoundsException("positions index out bounds of items list!");
         ItemFilterWrapper item = items.get(positionFrom);
         items.remove(item);
         items.add(positionTo, item);
-        // TODO: 27.10.2022 EXPERIMENTAL CHANGES
-        //Collections.swap(items, positionFrom, positionTo);
         itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onMoved(item.item, positionFrom, positionTo));
 
         if (!recalculate(TickSession.getLatestGregorianCalendar())) {
@@ -264,14 +276,11 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
 
     @Override
     public int getItemPosition(Item item) {
-        int i = 0;
+        return items.indexOf(getWrapperForItem(item));
+    }
 
-        for (ItemFilterWrapper wrapper : items) {
-            if (wrapper.item == item) return i;
-            i++;
-        }
-
-        return -1; // like as List.indexOf() not found result
+    private int getWrapperPosition(ItemFilterWrapper wrapper) {
+        return items.indexOf(wrapper);
     }
 
     @Override
@@ -294,7 +303,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
 
     @Override
     public Item getItemById(UUID itemId) {
-        return Logger.dur(TAG, "getItemById (recursive)", () -> ItemUtil.getItemByIdRecursive(getAllItems(), itemId));
+        return ItemUtil.getItemByIdRecursive(getAllItems(), itemId);
     }
 
     @Override
