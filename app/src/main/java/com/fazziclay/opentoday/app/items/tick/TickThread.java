@@ -3,7 +3,7 @@ package com.fazziclay.opentoday.app.items.tick;
 import android.content.Context;
 
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.items.item.ItemManager;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.item.ItemUtil;
 import com.fazziclay.opentoday.app.items.SaveInitiator;
@@ -23,7 +23,7 @@ public class TickThread extends Thread {
     private static final boolean LOG_ONLY_PERSONAL = true;
 
     private boolean enabled = true;
-    private final ItemManager itemManager;
+    private final TabsManager tabsManager;
     private final TickSession defaultTickSession;
     private final List<UUID> personals = new ArrayList<>();
     private boolean currentlyExecutingTickPersonal;
@@ -34,9 +34,9 @@ public class TickThread extends Thread {
     private long firstRequestTime = 0;
     private long lastRequestTime = 0;
 
-    public TickThread(Context context, ItemManager itemManager) {
+    public TickThread(Context context, TabsManager tabsManager) {
         setName("TickThread");
-        this.itemManager = itemManager;
+        this.tabsManager = tabsManager;
         this.defaultTickSession = createTickSession(context);
         setUncaughtExceptionHandler((thread, throwable) -> Logger.e(TAG, "Exception in thread!", throwable));
     }
@@ -73,7 +73,7 @@ public class TickThread extends Thread {
                 }
 
                 if (defaultTickSession.isSaveNeeded()) {
-                    itemManager.queueSave(!personals.isEmpty() ? SaveInitiator.TICK_PERSONAL : SaveInitiator.TICK);
+                    tabsManager.queueSave(!personals.isEmpty() ? SaveInitiator.TICK_PERSONAL : SaveInitiator.TICK);
                 }
 
                 // reset requests
@@ -101,7 +101,7 @@ public class TickThread extends Thread {
     }
 
     private void tickAll() {
-        itemManager.tick(defaultTickSession);
+        tabsManager.tick(defaultTickSession);
         log("Tick all");
     }
 
@@ -110,7 +110,7 @@ public class TickThread extends Thread {
         if (personalUsePaths) {
             log("Tick personal(paths): "+ personals);
             for (UUID personal : personals) {
-                Item item = itemManager.getItemById(personal);
+                Item item = tabsManager.getItemById(personal);
                 List<UUID> pathWhitelisted = new ArrayList<>();
                 pathWhitelisted.add(item.getId());
                 for (ItemsStorage itemsStorage : ItemUtil.getPathToItem(item)) {
@@ -120,11 +120,11 @@ public class TickThread extends Thread {
                 }
                 log("Tick personal(paths): resultWhitelist for item="+item+": "+ pathWhitelisted);
                 defaultTickSession.recycleWhitelist(true, pathWhitelisted);
-                itemManager.tick(defaultTickSession);
+                tabsManager.tick(defaultTickSession);
             }
         } else {
             log("Tick personal(no-paths): "+ personals);
-            itemManager.tick(defaultTickSession, personals);
+            tabsManager.tick(defaultTickSession, personals);
         }
         currentlyExecutingTickPersonal = false;
     }
@@ -163,7 +163,7 @@ public class TickThread extends Thread {
         log("Requested no-personal");
     }
 
-    public void requestTick(List<UUID> uuids, boolean usePaths) {
+    public void requestPersonalTick(List<UUID> uuids, boolean usePaths) {
         if (!enabled) throw new RuntimeException("TickThread disabled!");
 
         if (!requested) {

@@ -65,7 +65,7 @@ public class ItemsTickReceiver extends BroadcastReceiver {
             for (String s : temp) {
                 uuids.add(UUID.fromString(s));
             }
-            tickThread.requestTick(uuids, personalTickMode.isUsePaths());
+            tickThread.requestPersonalTick(uuids, personalTickMode.isUsePaths());
         } else {
             tickThread.requestTick();
         }

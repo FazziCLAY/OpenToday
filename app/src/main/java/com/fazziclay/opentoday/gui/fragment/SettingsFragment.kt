@@ -305,7 +305,7 @@ class SettingsFragment : Fragment() {
                 .setTitle(R.string.settings_export_dialog_title)
                 .setNegativeButton(R.string.abc_cancel, null)
                 .setPositiveButton(R.string.settings_export_dialog_export) { _: DialogInterface?, _: Int ->
-                    val itemManager = App.get(context).itemManager
+                    val itemManager = App.get(context).tabsManager
                     val perms: MutableList<ImportWrapper.Permission> = ArrayList()
                     val isAllItems = binding.exportAllItems.isChecked
                     val isSettings = binding.exportSettings.isChecked

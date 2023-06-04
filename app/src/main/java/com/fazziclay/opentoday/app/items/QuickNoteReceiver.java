@@ -13,7 +13,7 @@ import androidx.core.app.RemoteInput;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.SettingsManager;
-import com.fazziclay.opentoday.app.items.item.ItemManager;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.gui.fragment.ItemsTabIncludeFragment;
 
@@ -52,7 +52,7 @@ public class QuickNoteReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, final Intent intent) {
         final App app = App.get(context);
         final SettingsManager settingsManager = app.getSettingsManager();
-        final ItemManager itemManager = app.getItemManager();
+        final TabsManager tabsManager = app.getTabsManager();
         final boolean rawTextMode;
         final String rawText;
 
@@ -72,9 +72,9 @@ public class QuickNoteReceiver extends BroadcastReceiver {
         if (rawText != null) {
             final TextItem item = new TextItem(context.getString(R.string.quickNote_notificationPattern, rawText));
             if (settingsManager.isParseTimeFromQuickNote()) item.getNotifications().addAll(ItemsTabIncludeFragment.QUICK_NOTE_NOTIFICATIONS_PARSE.run(rawText));
-            ItemsStorage itemsStorage = itemManager.getItemStorageById(settingsManager.getQuickNoteNotificationItemsStorageId());
+            ItemsStorage itemsStorage = tabsManager.getItemStorageById(settingsManager.getQuickNoteNotificationItemsStorageId());
             if (itemsStorage == null) {
-                itemsStorage = itemManager.getMainTab();
+                itemsStorage = tabsManager.getMainTab();
             }
             switch (settingsManager.getItemAddPosition()) {
                 case TOP -> itemsStorage.addItem(item, 0);

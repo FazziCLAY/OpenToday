@@ -30,7 +30,7 @@ import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.ColorHistoryManager;
 import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.SettingsManager;
-import com.fazziclay.opentoday.app.items.item.ItemManager;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
@@ -127,7 +127,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
 
     private App app;
-    private ItemManager itemManager;
+    private TabsManager tabsManager;
     private SettingsManager settingsManager;
     private ColorHistoryManager colorHistoryManager;
     private SelectionManager selectionManager;
@@ -153,7 +153,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         }
 
         app = App.get(requireContext());
-        itemManager = app.getItemManager();
+        tabsManager = app.getTabsManager();
         settingsManager = app.getSettingsManager();
         colorHistoryManager = app.getColorHistoryManager();
         selectionManager = app.getSelectionManager();
@@ -161,14 +161,14 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         
         if (mode == MODE_EDIT) {
             if (getArguments().containsKey(KEY_EDIT_TAB_ID)) {
-                Tab tab = itemManager.getTab(getArgTabId());
+                Tab tab = tabsManager.getTab(getArgTabId());
                 item = tab.getItemById(getArgItemId());
             } else {
-                item = itemManager.getItemById(getArgItemId());
+                item = tabsManager.getItemById(getArgItemId());
             }
 
         } else if (mode == MODE_CREATE) {
-            itemsStorage = itemManager.getItemStorageById(getArgItemStorageId());
+            itemsStorage = tabsManager.getItemStorageById(getArgItemStorageId());
             addItemPosition = getArgAddItemPosition();
             ItemsRegistry.ItemInfo itemInfo = ItemsRegistry.REGISTRY.get(getArgItemType());
             item = itemInfo.create();

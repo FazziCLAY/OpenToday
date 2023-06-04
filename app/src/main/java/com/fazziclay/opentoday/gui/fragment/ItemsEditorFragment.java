@@ -18,7 +18,7 @@ import androidx.fragment.app.Fragment;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.SettingsManager;
-import com.fazziclay.opentoday.app.items.item.ItemManager;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Readonly;
 import com.fazziclay.opentoday.app.items.callback.ItemCallback;
@@ -57,7 +57,7 @@ public class ItemsEditorFragment extends Fragment {
     private MainActivity activity;
     private NavigationHost navigationHost;
     private NavigationHost rootNavigationHost;
-    private ItemManager itemManager;
+    private TabsManager tabsManager;
     private SettingsManager settingsManager;
     private SelectionManager selectionManager;
     private ItemsStorage itemsStorage;
@@ -102,7 +102,7 @@ public class ItemsEditorFragment extends Fragment {
         navigationHost = (NavigationHost) getParentFragment();
         rootNavigationHost = UI.findFragmentInParents(this, MainRootFragment.class);
         App app = App.get(requireContext());
-        itemManager = app.getItemManager();
+        tabsManager = app.getTabsManager();
         settingsManager = app.getSettingsManager();
         selectionManager = app.getSelectionManager();
 
@@ -112,7 +112,7 @@ public class ItemsEditorFragment extends Fragment {
         Bundle args = getArguments();
         previewMode = args.getBoolean(EXTRA_PREVIEW_MODE);
         tabId = UUID.fromString(args.getString(EXTRA_TAB_ID));
-        tab = itemManager.getTab(tabId);
+        tab = tabsManager.getTab(tabId);
 
         isRoot = !args.containsKey(EXTRA_ITEM_ID);
         if (isRoot) {
@@ -130,11 +130,11 @@ public class ItemsEditorFragment extends Fragment {
         }
 
         if (previewMode) {
-            this.itemsStorageDrawer = ItemsStorageDrawer.builder(activity, itemManager, settingsManager, selectionManager, itemsStorage)
+            this.itemsStorageDrawer = ItemsStorageDrawer.builder(activity, tabsManager, settingsManager, selectionManager, itemsStorage)
                     .setPreviewMode()
                     .build();
         } else {
-            this.itemsStorageDrawer = ItemsStorageDrawer.builder(activity, itemManager, settingsManager, selectionManager, itemsStorage)
+            this.itemsStorageDrawer = ItemsStorageDrawer.builder(activity, tabsManager, settingsManager, selectionManager, itemsStorage)
                     .setOnItemOpenEditor((item) -> rootNavigationHost.navigate(ItemEditorFragment.edit(item.getId()), true))
                     .setStorageEditsActions(new StorageEditsActions() {
                         @Override

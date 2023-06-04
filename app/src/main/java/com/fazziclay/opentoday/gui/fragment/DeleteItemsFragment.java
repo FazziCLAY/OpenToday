@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.SettingsManager;
-import com.fazziclay.opentoday.app.items.item.ItemManager;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.databinding.FragmentDeleteItemsBinding;
@@ -53,7 +53,7 @@ public class DeleteItemsFragment extends Fragment {
 
 
     private FragmentDeleteItemsBinding binding;
-    private ItemManager itemManager;
+    private TabsManager tabsManager;
     private SettingsManager settingsManager;
     private SelectionManager selectionManager;
     private ItemViewGenerator itemViewGenerator;
@@ -63,7 +63,7 @@ public class DeleteItemsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         App app = App.get(requireContext());
-        itemManager = app.getItemManager();
+        tabsManager = app.getTabsManager();
         settingsManager = app.getSettingsManager();
         selectionManager = app.getSelectionManager();
 
@@ -71,12 +71,12 @@ public class DeleteItemsFragment extends Fragment {
         String[] r = getArguments().getStringArray("itemsToDelete");
         List<Item> u = new ArrayList<>();
         for (String s : r) {
-            u.add(itemManager.getItemById(UUID.fromString(s)));
+            u.add(tabsManager.getItemById(UUID.fromString(s)));
         }
         itemsToDelete = u.toArray(new Item[0]);
         //
 
-        itemViewGenerator = ItemViewGenerator.builder(requireActivity(), itemManager, settingsManager, selectionManager)
+        itemViewGenerator = ItemViewGenerator.builder(requireActivity(), tabsManager, settingsManager, selectionManager)
                 .setPreviewMode()
                 .build();
 

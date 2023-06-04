@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.SettingsManager;
-import com.fazziclay.opentoday.app.items.item.ItemManager;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.callback.SelectionCallback;
@@ -42,7 +42,7 @@ import java.util.List;
 public class ItemsStorageDrawer {
     private static final String TAG = "ItemStorageDrawer";
     private final Activity activity;
-    private final ItemManager itemManager;
+    private final TabsManager tabsManager;
     private final SettingsManager settingsManager;
     private final SelectionManager selectionManager;
     private final ItemsStorage itemsStorage;
@@ -112,10 +112,10 @@ public class ItemsStorageDrawer {
     private final ItemInterface onItemEditor;
 
     // Public
-    public ItemsStorageDrawer(@NonNull Activity activity, @NonNull ItemManager itemManager, SettingsManager settingsManager, SelectionManager selectionManager, ItemsStorage itemsStorage, ItemInterface itemOnClick, @NonNull ItemInterface onItemEditor, boolean previewMode, StorageEditsActions storageEdits) {
+    public ItemsStorageDrawer(@NonNull Activity activity, @NonNull TabsManager tabsManager, SettingsManager settingsManager, SelectionManager selectionManager, ItemsStorage itemsStorage, ItemInterface itemOnClick, @NonNull ItemInterface onItemEditor, boolean previewMode, StorageEditsActions storageEdits) {
         this.activity = activity;
         this.onItemEditor = onItemEditor;
-        this.itemManager = itemManager;
+        this.tabsManager = tabsManager;
         this.settingsManager = settingsManager;
         this.selectionManager = selectionManager;
         this.itemsStorage = itemsStorage;
@@ -125,7 +125,7 @@ public class ItemsStorageDrawer {
         this.previewMode = previewMode;
         this.view.setLayoutManager(new LinearLayoutManager(activity));
         this.view.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1));
-        this.itemViewGenerator = new ItemViewGenerator(this.activity, this.itemManager, settingsManager, selectionManager, previewMode, (item) -> {
+        this.itemViewGenerator = new ItemViewGenerator(this.activity, this.tabsManager, settingsManager, selectionManager, previewMode, (item) -> {
             if (this.itemOnClick == null) {
                 if (!previewMode) actionItem(item, settingsManager.getItemOnClickAction());
             } else {
@@ -135,8 +135,8 @@ public class ItemsStorageDrawer {
 
     }
 
-    public static CreateBuilder builder(Activity activity, ItemManager itemManager, SettingsManager settingsManager, SelectionManager selectionManager, ItemsStorage itemsStorage) {
-        return new CreateBuilder(activity, itemManager, settingsManager, selectionManager, itemsStorage);
+    public static CreateBuilder builder(Activity activity, TabsManager tabsManager, SettingsManager settingsManager, SelectionManager selectionManager, ItemsStorage itemsStorage) {
+        return new CreateBuilder(activity, tabsManager, settingsManager, selectionManager, itemsStorage);
     }
 
     public void create() {
@@ -353,7 +353,7 @@ public class ItemsStorageDrawer {
 
     private void showRightMenu(Item item, View itemView) {
         App app = App.get(activity);
-        ItemManager itemManager = app.getItemManager();
+        TabsManager tabsManager = app.getTabsManager();
         PopupMenu menu = new PopupMenu(activity, itemView);
         menu.setForceShowIcon(true);
         menu.inflate(R.menu.menu_item);
@@ -442,7 +442,7 @@ public class ItemsStorageDrawer {
 
     public static class CreateBuilder {
         private final Activity activity;
-        private final ItemManager itemManager;
+        private final TabsManager tabsManager;
         private final SettingsManager settingsManager;
         private SelectionManager selectionManager;
         private final ItemsStorage itemsStorage;
@@ -451,9 +451,9 @@ public class ItemsStorageDrawer {
         private ItemInterface onItemOpenEditor = null;
         private StorageEditsActions storageEditsAction = null;
 
-        public CreateBuilder(Activity activity, ItemManager itemManager, SettingsManager settingsManager, SelectionManager selectionManager, ItemsStorage itemsStorage) {
+        public CreateBuilder(Activity activity, TabsManager tabsManager, SettingsManager settingsManager, SelectionManager selectionManager, ItemsStorage itemsStorage) {
             this.activity = activity;
-            this.itemManager = itemManager;
+            this.tabsManager = tabsManager;
             this.settingsManager = settingsManager;
             this.selectionManager = selectionManager;
             this.itemsStorage = itemsStorage;
@@ -482,7 +482,7 @@ public class ItemsStorageDrawer {
         }
 
         public ItemsStorageDrawer build() {
-            return new ItemsStorageDrawer(activity, itemManager, settingsManager, selectionManager, itemsStorage, onItemClick, onItemOpenEditor, previewMode, storageEditsAction);
+            return new ItemsStorageDrawer(activity, tabsManager, settingsManager, selectionManager, itemsStorage, onItemClick, onItemOpenEditor, previewMode, storageEditsAction);
         }
     }
 

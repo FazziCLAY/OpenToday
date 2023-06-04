@@ -5,7 +5,7 @@ import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.Item;
-import com.fazziclay.opentoday.app.items.item.ItemManager;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.Tickable;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
@@ -100,7 +100,7 @@ public interface ItemsStorage extends Tickable {
 
     /**
      * Save data (Call to up (to up, to up, to up)) -> call save to ItemManager => Save all
-     * @see ItemManager#queueSave()
+     * @see TabsManager#queueSave()
      */
     void save();
 

@@ -78,7 +78,7 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
     @NonNull
     @Override
     public Item copyItem(Item item) {
-        Item copy = ItemsRegistry.REGISTRY.get(item.getClass()).copy(item);
+        Item copy = ItemUtil.copyRecursiveRegenerateIds(item);
         addItem(copy, getItemPosition(item) + 1);
         return copy;
     }

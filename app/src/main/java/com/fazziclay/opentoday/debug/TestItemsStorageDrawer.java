@@ -10,7 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.SettingsManager;
-import com.fazziclay.opentoday.app.items.item.ItemManager;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.item.GroupItem;
@@ -26,7 +26,7 @@ public class TestItemsStorageDrawer extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ItemManager itemManager = new ItemManager(new File(getExternalCacheDir(), "/tests/testItemViewGenerator.json"), new File(getExternalCacheDir(), "/tests/testItemViewGenerator.gz"));
+        TabsManager tabsManager = new TabsManager(new File(getExternalCacheDir(), "/tests/testItemViewGenerator.json"), new File(getExternalCacheDir(), "/tests/testItemViewGenerator.gz"));
         ItemInterface onClick = item -> Toast.makeText(this, "item = " + item.toString(), Toast.LENGTH_SHORT).show();
         boolean previewMode = false;
         StorageEditsActions edits = new StorageEditsActions() {
@@ -47,10 +47,10 @@ public class TestItemsStorageDrawer extends Activity {
         };
 
         ItemsStorageDrawer itemsStorageDrawer = new ItemsStorageDrawer(this,
-                itemManager,
+                tabsManager,
                 new SettingsManager(null),
-                itemManager.getSelectionManager(),
-                itemManager.getTab(new UUID(0, 0)),
+                tabsManager.getSelectionManager(),
+                tabsManager.getTab(new UUID(0, 0)),
                 onClick,
                 item -> Toast.makeText(TestItemsStorageDrawer.this, "unsupported", Toast.LENGTH_SHORT).show(),
                 previewMode,
@@ -69,6 +69,6 @@ public class TestItemsStorageDrawer extends Activity {
 
         itemsStorageDrawer.create();
 
-        add.setOnClickListener(v -> itemManager.getTab(new UUID(0, 0)).addItem(new CycleListItem("123132231213")));
+        add.setOnClickListener(v -> tabsManager.getTab(new UUID(0, 0)).addItem(new CycleListItem("123132231213")));
     }
 }

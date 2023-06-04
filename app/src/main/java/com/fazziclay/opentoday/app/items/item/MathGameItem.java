@@ -41,7 +41,10 @@ public class MathGameItem extends TextItem {
     }
 
     public MathGameItem(MathGameItem copy) {
-
+        super(copy);
+        if (copy != null) {
+            this.quest = copy.quest; // TODO: 03.06.2023 unlink?
+        }
     }
 
     @Override

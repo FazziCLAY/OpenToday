@@ -243,7 +243,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     public Item copyItem(Item item) {
         ItemFilter filter = getItemFilter(item);
 
-        Item copy = ItemsRegistry.REGISTRY.get(item.getClass()).copy(item);
+        Item copy = ItemUtil.copyRecursiveRegenerateIds(item);
         ItemFilter copyFilter = filter.copy();
         addItem(new ItemFilterWrapper(copy, copyFilter), getItemPosition(item) + 1);
         return copy;

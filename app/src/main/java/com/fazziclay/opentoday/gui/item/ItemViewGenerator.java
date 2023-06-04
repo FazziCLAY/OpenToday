@@ -29,7 +29,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.SettingsManager;
-import com.fazziclay.opentoday.app.items.item.ItemManager;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.item.ItemUtil;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
@@ -66,7 +66,7 @@ import java.util.Arrays;
 public class ItemViewGenerator {
     @NonNull private final Activity activity;
     @NonNull private final LayoutInflater layoutInflater;
-    @NonNull private final ItemManager itemManager;
+    @NonNull private final TabsManager tabsManager;
     @NonNull private final SettingsManager settingsManager;
     @NonNull private final SelectionManager selectionManager;
     private final boolean previewMode; // Disable items minimize view patch & disable buttons
@@ -74,10 +74,10 @@ public class ItemViewGenerator {
     @NonNull private final ItemInterface onItemEditor;
     private final StorageEditsActions storageEdits;
 
-    public ItemViewGenerator(@NonNull final Activity activity, @NonNull final ItemManager itemManager, @NonNull final SettingsManager settingsManager, @NonNull final SelectionManager selectionManager, final boolean previewMode, @Nullable final ItemInterface itemOnClick, @NonNull final ItemInterface onItemEditor, @NonNull final StorageEditsActions storageEdits) {
+    public ItemViewGenerator(@NonNull final Activity activity, @NonNull final TabsManager tabsManager, @NonNull final SettingsManager settingsManager, @NonNull final SelectionManager selectionManager, final boolean previewMode, @Nullable final ItemInterface itemOnClick, @NonNull final ItemInterface onItemEditor, @NonNull final StorageEditsActions storageEdits) {
         this.activity = activity;
         this.layoutInflater = activity.getLayoutInflater();
-        this.itemManager = itemManager;
+        this.tabsManager = tabsManager;
         this.settingsManager = settingsManager;
         this.selectionManager = selectionManager;
         this.previewMode = previewMode;
@@ -86,8 +86,8 @@ public class ItemViewGenerator {
         this.storageEdits = storageEdits;
     }
 
-    public static CreateBuilder builder(final Activity activity, final ItemManager itemManager, final SettingsManager settingsManager, final SelectionManager selectionManager) {
-        return new CreateBuilder(activity, itemManager, settingsManager, selectionManager);
+    public static CreateBuilder builder(final Activity activity, final TabsManager tabsManager, final SettingsManager settingsManager, final SelectionManager selectionManager) {
+        return new CreateBuilder(activity, tabsManager, settingsManager, selectionManager);
     }
 
     public View generate(final Item item, final ViewGroup parent) {
@@ -113,7 +113,7 @@ public class ItemViewGenerator {
             final CycleListItem cycleListItem = (CycleListItem) item;
             resultView = generateCycleListItemView((CycleListItem) item, parent, i -> storageEdits.onCycleListEdit(cycleListItem),
                     (linearLayout, empty) -> {
-                        final CurrentItemStorageDrawer currentItemStorageDrawer = new CurrentItemStorageDrawer(this.activity, itemManager, settingsManager, selectionManager, cycleListItem, previewMode, itemOnClick, onItemEditor, storageEdits);
+                        final CurrentItemStorageDrawer currentItemStorageDrawer = new CurrentItemStorageDrawer(this.activity, tabsManager, settingsManager, selectionManager, cycleListItem, previewMode, itemOnClick, onItemEditor, storageEdits);
                         linearLayout.addView(currentItemStorageDrawer.getView());
                         currentItemStorageDrawer.setOnUpdateListener(currentItem -> {
                             viewVisible(empty, currentItem == null, View.GONE);
@@ -128,7 +128,7 @@ public class ItemViewGenerator {
         } else if (type == GroupItem.class) {
             final GroupItem groupItem = (GroupItem) item;
             resultView = generateGroupItemView(groupItem, parent, v -> storageEdits.onGroupEdit(groupItem), viewGroup -> {
-                final ItemsStorageDrawer itemsStorageDrawer = new ItemsStorageDrawer(activity, itemManager, settingsManager, selectionManager, groupItem, itemOnClick, onItemEditor, previewMode, storageEdits);
+                final ItemsStorageDrawer itemsStorageDrawer = new ItemsStorageDrawer(activity, tabsManager, settingsManager, selectionManager, groupItem, itemOnClick, onItemEditor, previewMode, storageEdits);
                 itemsStorageDrawer.create();
                 viewGroup.addView(itemsStorageDrawer.getView());
             });
@@ -518,7 +518,7 @@ public class ItemViewGenerator {
 
     public static class CreateBuilder {
         private final Activity activity;
-        private final ItemManager itemManager;
+        private final TabsManager tabsManager;
         private final SettingsManager settingsManager;
         private final SelectionManager selectionManager;
         private boolean previewMode = false;
@@ -526,9 +526,9 @@ public class ItemViewGenerator {
         private ItemInterface onItemOpenEditor = null;
         private StorageEditsActions storageEditsAction = null;
 
-        public CreateBuilder(final Activity activity, final ItemManager itemManager, final SettingsManager settingsManager, final SelectionManager selectionManager) {
+        public CreateBuilder(final Activity activity, final TabsManager tabsManager, final SettingsManager settingsManager, final SelectionManager selectionManager) {
             this.activity = activity;
-            this.itemManager = itemManager;
+            this.tabsManager = tabsManager;
             this.settingsManager = settingsManager;
             this.selectionManager = selectionManager;
         }
@@ -556,7 +556,7 @@ public class ItemViewGenerator {
         }
 
         public ItemViewGenerator build() {
-            return new ItemViewGenerator(activity, itemManager, settingsManager, selectionManager, previewMode, onItemClick, onItemOpenEditor, storageEditsAction);
+            return new ItemViewGenerator(activity, tabsManager, settingsManager, selectionManager, previewMode, onItemClick, onItemOpenEditor, storageEditsAction);
         }
     }
 }

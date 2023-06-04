@@ -23,7 +23,7 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.SettingsManager;
-import com.fazziclay.opentoday.app.items.item.ItemManager;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
@@ -60,7 +60,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
 
     private FragmentItemsTabIncludeBinding binding;
     private App app;
-    private ItemManager itemManager;
+    private TabsManager tabsManager;
     private SettingsManager settingsManager;
     private SelectionManager selectionManager;
     private AppToolbar toolbar;
@@ -79,7 +79,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         super.onCreate(savedInstanceState);
         Logger.d(TAG, "onCreate", nullStat(savedInstanceState));
         this.app = App.get(requireContext());
-        this.itemManager = app.getItemManager();
+        this.tabsManager = app.getTabsManager();
         this.settingsManager = app.getSettingsManager();
         this.selectionManager = app.getSelectionManager();
         this.rootNavigationHost = UI.findFragmentInParents(this, MainRootFragment.class);
@@ -87,23 +87,23 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
 
         if (settingsManager.getFirstTab() == SettingsManager.FirstTab.TAB_ON_CLOSING) {
             currentTab = getLastTabId();
-            if (currentTab == null || itemManager.getTab(currentTab) == null) {
-                currentTab = itemManager.getMainTab().getId();
-                currentItemsStorage = itemManager.getMainTab();
+            if (currentTab == null || tabsManager.getTab(currentTab) == null) {
+                currentTab = tabsManager.getMainTab().getId();
+                currentItemsStorage = tabsManager.getMainTab();
             } else {
-                currentItemsStorage = itemManager.getTab(currentTab);
+                currentItemsStorage = tabsManager.getTab(currentTab);
             }
         } else if (settingsManager.getFirstTab() == SettingsManager.FirstTab.FIRST) {
-            currentTab = itemManager.getMainTab().getId();
-            currentItemsStorage = itemManager.getMainTab();
+            currentTab = tabsManager.getMainTab().getId();
+            currentItemsStorage = tabsManager.getMainTab();
         } else {
             throw new RuntimeException("Unknown firstTab settings!");
         }
 
-        this.toolbar = new AppToolbar(requireActivity(), itemManager, settingsManager, selectionManager, currentItemsStorage, rootNavigationHost, binding.toolbar, binding.toolbarMore);
+        this.toolbar = new AppToolbar(requireActivity(), tabsManager, settingsManager, selectionManager, currentItemsStorage, rootNavigationHost, binding.toolbar, binding.toolbarMore);
 
         // Tabs
-        itemManager.getOnTabsChanged().addCallback(CallbackImportance.DEFAULT, localOnTabChanged);
+        tabsManager.getOnTabsChanged().addCallback(CallbackImportance.DEFAULT, localOnTabChanged);
         binding.viewPager.setAdapter(tabsViewPagerAdapter = new LocalViewPagerAdapter(this));
         binding.viewPager.setUserInputEnabled(false);
         binding.viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
@@ -174,7 +174,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     public void onDestroy() {
         super.onDestroy();
         Logger.d(TAG, "onDestroy");
-        itemManager.getOnTabsChanged().deleteCallback(localOnTabChanged);
+        tabsManager.getOnTabsChanged().deleteCallback(localOnTabChanged);
         if (toolbar != null) toolbar.destroy();
     }
 
@@ -250,13 +250,13 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     }
 
     private void updateViewPager(boolean smoothScroll) {
-        binding.viewPager.setCurrentItem(itemManager.getTabPosition(currentTab), smoothScroll);
+        binding.viewPager.setCurrentItem(tabsManager.getTabPosition(currentTab), smoothScroll);
     }
 
     private void setupTabs() {
         binding.tabs.removeAllTabs();
 
-        for (Tab tab : itemManager.getTabs()) {
+        for (Tab tab : tabsManager.getTabs()) {
             TabLayout.Tab tabView = binding.tabs.newTab();
             tabView.setTag(tab.getId().toString());
             tabView.setText(tab.getName());
@@ -289,7 +289,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     @NonNull
     @Override
     public Tab getCurrentTab() {
-        return itemManager.getTab(getCurrentTabId());
+        return tabsManager.getTab(getCurrentTabId());
     }
 
     @Override
@@ -382,7 +382,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
                 }
             }
             if (id == null) {
-                id = itemManager.getMainTab().getId();
+                id = tabsManager.getMainTab().getId();
             }
             ItemsTabIncludeFragment.this.setCurrentTab(id);
             ItemsTabIncludeFragment.this.setItemStorageInContext(getCurrentTab());
@@ -405,14 +405,14 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            Tab t = itemManager.getTabs().get(position);
+            Tab t = tabsManager.getTabs().get(position);
             Logger.d(TAG, LocalViewPagerAdapter.class.getSimpleName(), "createFragment", "position=", position, "(tab by <position> in itemManager)=", t);
             return ItemsEditorRootFragment.create(t.getId());
         }
 
         @Override
         public int getItemCount() {
-            return itemManager.getTabs().size();
+            return tabsManager.getTabs().size();
         }
     }
 }

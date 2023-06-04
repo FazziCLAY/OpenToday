@@ -20,7 +20,7 @@ import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.datafixer.DataFixer;
 import com.fazziclay.opentoday.app.datafixer.FixResult;
-import com.fazziclay.opentoday.app.items.item.ItemManager;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tick.TickThread;
@@ -102,12 +102,12 @@ public class App extends Application {
     private final OptionalField<UUID> instanceId = new OptionalField<>(this::parseInstanceId);
     private final OptionalField<License[]> openSourceLicenses = new OptionalField<>(this::createOpenSourceLicensesArray);
     private final OptionalField<DataFixer> dataFixer = new OptionalField<>(() -> new DataFixer(this));
-    private final OptionalField<ItemManager> itemManager = new OptionalField<>(this::preCheckItemManager, ItemManager::destroy);
+    private final OptionalField<TabsManager> tabsManager = new OptionalField<>(this::preCheckItemManager, TabsManager::destroy);
     private final OptionalField<SettingsManager> settingsManager = new OptionalField<>(() -> new SettingsManager(new File(getExternalFilesDir(""), "settings.json")));
     private final OptionalField<ColorHistoryManager> colorHistoryManager = new OptionalField<>(() -> new ColorHistoryManager(new File(getExternalFilesDir(""), "color_history.json"), 10));
     private final OptionalField<PinCodeManager> pinCodeManager = new OptionalField<>(() -> new PinCodeManager(this));
     private final OptionalField<ClipboardManager> clipboardManager = new OptionalField<>(() -> getSystemService(ClipboardManager.class));
-    private final OptionalField<SelectionManager> selectionManager = new OptionalField<>(() -> getItemManager().getSelectionManager());
+    private final OptionalField<SelectionManager> selectionManager = new OptionalField<>(() -> getTabsManager().getSelectionManager());
     private final OptionalField<Telemetry> telemetry = new OptionalField<>(() -> new Telemetry(this, getSettingsManager().isTelemetry()));
     private final OptionalField<TickThread> tickThread = new OptionalField<>(this::preCheckTickThread, TickThread::requestTerminate);
     private final List<FeatureFlag> featureFlags = new ArrayList<>(App.DEBUG ? Arrays.asList(
@@ -160,7 +160,7 @@ public class App extends Application {
         Logger.i("App", "onLowMemory.");
         openSourceLicenses.free();
         dataFixer.free();
-        itemManager.free();
+        tabsManager.free();
         settingsManager.free();
         colorHistoryManager.free();
         pinCodeManager.free();
@@ -392,16 +392,16 @@ public class App extends Application {
         return telemetry.get();
     }
 
-    private ItemManager preCheckItemManager() {
+    private TabsManager preCheckItemManager() {
         final File externalFiles = getExternalFilesDir("");
-        ItemManager itemManager = new ItemManager(new File(externalFiles, "item_data.json"), new File(externalFiles, "item_data.gz"));
-        itemManager.setDebugPrintSaveStatusAlways(isFeatureFlag(FeatureFlag.ALWAYS_SHOW_SAVE_STATUS));
-        return itemManager;
+        TabsManager tabsManager = new TabsManager(new File(externalFiles, "item_data.json"), new File(externalFiles, "item_data.gz"));
+        tabsManager.setDebugPrintSaveStatusAlways(isFeatureFlag(FeatureFlag.ALWAYS_SHOW_SAVE_STATUS));
+        return tabsManager;
     }
 
     @NotNull
-    public ItemManager getItemManager() {
-        return itemManager.get();
+    public TabsManager getTabsManager() {
+        return tabsManager.get();
     }
 
     @NotNull
@@ -430,7 +430,7 @@ public class App extends Application {
     }
 
     private TickThread preCheckTickThread() {
-        TickThread tickThread = new TickThread(getApplicationContext(), getItemManager());
+        TickThread tickThread = new TickThread(getApplicationContext(), getTabsManager());
         tickThread.start();
         return tickThread;
     }

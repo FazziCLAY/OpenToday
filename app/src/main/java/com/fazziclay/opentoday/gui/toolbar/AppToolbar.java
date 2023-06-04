@@ -35,7 +35,7 @@ import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.FeatureFlag;
 import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.SettingsManager;
-import com.fazziclay.opentoday.app.items.item.ItemManager;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.item.ItemUtil;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
@@ -87,7 +87,7 @@ public class AppToolbar {
     private boolean destroyed = false;
     private boolean created = false;
     private final App app;
-    private final ItemManager itemManager;
+    private final TabsManager tabsManager;
     private final SettingsManager settingsManager;
     private final SelectionManager selectionManager;
     private ItemsStorage itemsStorage; // For context toolbar work
@@ -107,7 +107,7 @@ public class AppToolbar {
 
 
     public AppToolbar(final Activity activity,
-                      final ItemManager itemManager,
+                      final TabsManager tabsManager,
                       final SettingsManager settingsManager,
                       final SelectionManager selectionManager,
                       final ItemsStorage itemsStorage,
@@ -116,7 +116,7 @@ public class AppToolbar {
                       final ViewGroup toolbarMoreView) {
         this.app = App.get(activity);
         this.activity = activity;
-        this.itemManager = itemManager;
+        this.tabsManager = tabsManager;
         this.settingsManager = settingsManager;
         this.selectionManager = selectionManager;
         this.itemsStorage = itemsStorage;
@@ -179,7 +179,7 @@ public class AppToolbar {
         destroyed = true;
         if (selectionCallback != null) selectionManager.getOnSelectionUpdated().deleteCallback(selectionCallback);
         if (selectionCallbackTab != null) selectionManager.getOnSelectionUpdated().deleteCallback(selectionCallbackTab);
-        if (onTabsChanged != null) itemManager.getOnTabsChanged().deleteCallback(onTabsChanged);
+        if (onTabsChanged != null) tabsManager.getOnTabsChanged().deleteCallback(onTabsChanged);
         if (debugCallback != null) UI.getDebugCallbacks().deleteCallback(debugCallback);
         toolbarView.removeAllViews();
         toolbarMoreView.removeAllViews();
@@ -208,7 +208,7 @@ public class AppToolbar {
             backgroundTintFromStyle(R.style.Theme_OpenToday_Toolbar_Button, currentToolbarButton);
         }
         if (selectionCallback != null) selectionManager.getOnSelectionUpdated().deleteCallback(selectionCallback);
-        if (onTabsChanged != null) itemManager.getOnTabsChanged().deleteCallback(onTabsChanged);
+        if (onTabsChanged != null) tabsManager.getOnTabsChanged().deleteCallback(onTabsChanged);
     }
 
     private void preOnClick(final View buttonView, final Runnable runnable) {
@@ -282,7 +282,7 @@ public class AppToolbar {
         MaterialButton debugTabCreate = new MaterialButton(activity);
         debugTabCreate.setText("Create Debug202305RandomTab tab");
         viewClick(debugTabCreate, () -> {
-            itemManager.addTab(new Debug202305RandomTab());
+            tabsManager.addTab(new Debug202305RandomTab());
         });
 
         MaterialButton featureFlags = new MaterialButton(activity);
@@ -346,7 +346,7 @@ public class AppToolbar {
 
         // Save button
         viewClick(localBinding.saveAll, () -> {
-            boolean success = itemManager.saveAllDirect();
+            boolean success = tabsManager.saveAllDirect();
             if (success) Toast.makeText(activity, R.string.toolbar_more_file_saveAll_success, Toast.LENGTH_LONG).show();
         });
     }
@@ -388,7 +388,7 @@ public class AppToolbar {
 
             @Override
             public void onBindViewHolder(@NonNull TabHolder holder, int position) {
-                Tab tab = itemManager.getTabAt(position);
+                Tab tab = tabsManager.getTabAt(position);
                 holder.setText(tab.getName());
                 holder.setDisableTick(tab.isDisableTick());
                 viewClick(holder.itemView, () -> showEditTabDialog(tab));
@@ -396,7 +396,7 @@ public class AppToolbar {
 
             @Override
             public int getItemCount() {
-                return itemManager.getTabsCount();
+                return tabsManager.getTabsCount();
             }
         });
 
@@ -409,7 +409,7 @@ public class AppToolbar {
 
                 recyclerView.getAdapter().notifyItemMoved(positionFrom, positionTo);
                 lastTabReorder = System.currentTimeMillis();
-                itemManager.moveTabs(positionFrom, positionTo);
+                tabsManager.moveTabs(positionFrom, positionTo);
                 return true;
             }
 
@@ -428,7 +428,7 @@ public class AppToolbar {
             }
             return Status.NONE;
         };
-        itemManager.getOnTabsChanged().addCallback(CallbackImportance.DEFAULT, onTabsChanged);
+        tabsManager.getOnTabsChanged().addCallback(CallbackImportance.DEFAULT, onTabsChanged);
 
 
 
@@ -441,7 +441,7 @@ public class AppToolbar {
                     .setPositiveButton(R.string.toolbar_more_items_tab_add, (dialog, which) -> {
                         String text = tabNameEditText.getText().toString();
                         if (!text.trim().isEmpty()) {
-                            itemManager.createTab(tabNameEditText.getText().toString());
+                            tabsManager.createTab(tabNameEditText.getText().toString());
                         } else {
                             Toast.makeText(activity, R.string.tab_noEmptyName, Toast.LENGTH_SHORT).show();
                         }
@@ -483,12 +483,12 @@ public class AppToolbar {
                         .setTitle(activity.getString(R.string.dialog_previewDeleteItems_delete_title, String.valueOf(tab.size())))
                         .setNegativeButton(R.string.dialog_previewDeleteItems_delete_cancel, null)
                         .setPositiveButton(R.string.dialog_previewDeleteItems_delete_apply, ((dialog1, which) -> {
-                            if (itemManager.isOneTabMode()) {
+                            if (tabsManager.isOneTabMode()) {
                                 Toast.makeText(activity, R.string.toolbar_more_tabs_delete_notAllowOneTabMode, Toast.LENGTH_SHORT).show();
                                 return;
                             }
                             try {
-                                itemManager.deleteTab(tab);
+                                tabsManager.deleteTab(tab);
                             } catch (Exception e) {
                                 Toast.makeText(activity, e.toString(), Toast.LENGTH_SHORT).show();
                             }

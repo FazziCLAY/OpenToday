@@ -9,7 +9,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.SettingsManager;
-import com.fazziclay.opentoday.app.items.item.ItemManager;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.item.GroupItem;
@@ -25,7 +25,7 @@ public class TestItemViewGenerator extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ItemManager itemManager = new ItemManager(new File(getExternalCacheDir(), "/tests/testItemViewGenerator.json"), new File(getExternalCacheDir(), "/tests/testItemViewGenerator.gz"));
+        TabsManager tabsManager = new TabsManager(new File(getExternalCacheDir(), "/tests/testItemViewGenerator.json"), new File(getExternalCacheDir(), "/tests/testItemViewGenerator.gz"));
         SettingsManager settingsManager = new SettingsManager(new File(getExternalCacheDir(), "/tests/settings.json"));
         ItemInterface itemClick = item -> Toast.makeText(TestItemViewGenerator.this, "Click: " + item.toString(), Toast.LENGTH_SHORT).show();
         ItemInterface itemEditor = item -> Toast.makeText(TestItemViewGenerator.this, "Editor: " + item.toString(), Toast.LENGTH_SHORT).show();
@@ -46,7 +46,7 @@ public class TestItemViewGenerator extends Activity {
             }
         };
 
-        ItemViewGenerator itemViewGenerator = ItemViewGenerator.builder(this, itemManager, settingsManager, itemManager.getSelectionManager())
+        ItemViewGenerator itemViewGenerator = ItemViewGenerator.builder(this, tabsManager, settingsManager, tabsManager.getSelectionManager())
                 .setOnItemClick(itemClick)
                 .setStorageEditsActions(edits)
                 .setOnItemOpenEditor(itemEditor)

@@ -1,4 +1,4 @@
-package com.fazziclay.opentoday.app.items.item;
+package com.fazziclay.opentoday.app.items.tab;
 
 import android.os.Handler;
 import android.widget.Toast;
@@ -14,11 +14,15 @@ import com.fazziclay.opentoday.app.items.ItemPath;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.SaveInitiator;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
+import com.fazziclay.opentoday.app.items.item.CheckboxItem;
+import com.fazziclay.opentoday.app.items.item.CounterItem;
+import com.fazziclay.opentoday.app.items.item.CycleListItem;
+import com.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem;
+import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
+import com.fazziclay.opentoday.app.items.item.GroupItem;
+import com.fazziclay.opentoday.app.items.item.Item;
+import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
-import com.fazziclay.opentoday.app.items.tab.LocalItemsTab;
-import com.fazziclay.opentoday.app.items.tab.Tab;
-import com.fazziclay.opentoday.app.items.tab.TabCodecUtil;
-import com.fazziclay.opentoday.app.items.tab.TabController;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
@@ -43,9 +47,9 @@ import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class ItemManager {
+public class TabsManager {
     private static final boolean DEBUG_ITEMS_SET = App.debug(false);
-    private static final String TAG = "ItemManager";
+    private static final String TAG = "TabsManager";
 
     private boolean destroyed = false;
     @NonNull private final File dataOriginalFile;
@@ -58,7 +62,7 @@ public class ItemManager {
     @NonNull private final CallbackStorage<OnTabsChanged> onTabsChangedCallbacks = new CallbackStorage<>();
     @NonNull private final SelectionManager selectionManager;
 
-    public ItemManager(@NonNull final File dataOriginalFile, @NonNull final File dataCompressFile) {
+    public TabsManager(@NonNull final File dataOriginalFile, @NonNull final File dataCompressFile) {
         this.dataOriginalFile = dataOriginalFile;
         this.dataCompressFile = dataCompressFile;
         this.selectionManager = new SelectionManager();
@@ -312,12 +316,12 @@ public class ItemManager {
     private class LocalItemTabsController implements TabController {
         @Override
         public void save(@NonNull Tab tab) {
-            ItemManager.this.queueSave();
+            TabsManager.this.queueSave();
         }
         @Override
         public void nameChanged(@NonNull final Tab tab) {
-            ItemManager.this.internalOnTabChanged();
-            ItemManager.this.queueSave();
+            TabsManager.this.internalOnTabChanged();
+            TabsManager.this.queueSave();
         }
 
         @Override
@@ -442,7 +446,7 @@ public class ItemManager {
 
         private void internalSave() {
             try {
-                ItemManager.this.saveAllDirect();
+                TabsManager.this.saveAllDirect();
             } catch (Exception e) {
                 Logger.e(TAG, "SaveThread internalSave", e);
                 try {

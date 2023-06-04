@@ -33,7 +33,7 @@ public class Selection {
     }
 
     public void copyTo(ItemsStorage l) {
-        l.addItem(ItemUtil.copyItem(item));
+        l.addItem(ItemUtil.copyRecursiveRegenerateIds(item));
     }
 
     protected void selected() {

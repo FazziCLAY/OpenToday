@@ -31,6 +31,28 @@ public class ItemUtil {
         return ItemCodecUtil.importItemList(ItemCodecUtil.exportItemList(items));
     }
 
+    /**
+     * COPY ITEM & REGENERATE ALL IDS
+     * @param item item to copy
+     * @return copy item with new IDs
+     */
+    public static Item copyRecursiveRegenerateIds(Item item) {
+        Item copy = ItemUtil.copyItem(item);
+        ItemUtil.regenerateIdsInTree(copy);
+        return copy;
+    }
+
+    /**
+     * REGENERATE ALL IDS IN THIS ITEM
+     * @param item start item
+     */
+    private static void regenerateIdsInTree(Item item) {
+        item.regenerateId();
+        if (item instanceof ContainerItem containerItem) {
+            regenerateAllIdsInTree(containerItem.getAllItems());
+        }
+    }
+
     public static ItemsStorage[] getPathToItem(Item item) {
         if (!item.isAttached()) throw new IllegalArgumentException("Item not attached.");
         List<ItemsStorage> path = new ArrayList<>();

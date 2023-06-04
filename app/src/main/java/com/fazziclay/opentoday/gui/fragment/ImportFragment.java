@@ -23,7 +23,7 @@ import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.ColorHistoryManager;
 import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.SettingsManager;
-import com.fazziclay.opentoday.app.items.item.ItemManager;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
@@ -67,7 +67,7 @@ public class ImportFragment extends Fragment {
     private FragmentImportBinding binding;
     private Activity activity;
     private App app;
-    private ItemManager itemManager;
+    private TabsManager tabsManager;
     private SelectionManager selectionManager;
     private ItemsStorage itemsStorage;
     private boolean autoRun = false;
@@ -77,9 +77,9 @@ public class ImportFragment extends Fragment {
         super.onCreate(savedInstanceState);
         activity = requireActivity();
         app = App.get(requireContext());
-        itemManager = app.getItemManager();
+        tabsManager = app.getTabsManager();
         selectionManager = app.getSelectionManager();
-        itemsStorage = itemManager.getItemStorageById(UUID.fromString(getArguments().getString(KEY_ITEMS_STORAGE)));
+        itemsStorage = tabsManager.getItemStorageById(UUID.fromString(getArguments().getString(KEY_ITEMS_STORAGE)));
 
         if (getArguments().containsKey(KEY_START_TEXT)) {
             if (getArguments().getBoolean(KEY_AUTORUN)) {
@@ -249,7 +249,7 @@ public class ImportFragment extends Fragment {
 
         if (importWrapper.isPerm(ImportWrapper.Permission.ADD_TABS)) {
             for (Tab tab : importWrapper.getTabs()) {
-                itemManager.addTab(tab);
+                tabsManager.addTab(tab);
             }
         }
 
