@@ -64,7 +64,7 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
 
     @Override
     public Item getItemById(UUID id) {
-        return Logger.dur(TAG, "getItemById (recursive)", () -> ItemUtil.getItemByIdRecursive(getAllItems(), id));
+        return ItemUtil.getItemByIdRecursive(getAllItems(), id);
     }
 
     @Override
@@ -118,7 +118,6 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
     public void importData(List<Item> items) {
         Item[] allImportItems = ItemUtil.getAllItemsInTree(items.toArray(new Item[0]));
         for (Item check1 : allImportItems) {
-            Logger.d(TAG, "check1= " + check1);
             ItemUtil.throwIsBreakType(check1);
 
             if (check1.getId() == null) {
