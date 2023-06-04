@@ -143,6 +143,11 @@ public class ItemUtil {
         return UUID.randomUUID();
     }
 
+    /**
+     * <h1>Sensitive!!!</h1>
+     * <h2>Do not use this method. It is only needed to call the PROTECTED method by the tab</h2>
+     * @param item item to call PROTECTED regenerateId();
+     */
     public static void regenerateIdForItem(Item item) {
         item.regenerateId();
     }
