@@ -178,7 +178,7 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
 
         @Override
         public UUID generateId(Item item) {
-            return UUID.randomUUID();
+            return getRoot().generateUniqueId();
         }
 
         @Override

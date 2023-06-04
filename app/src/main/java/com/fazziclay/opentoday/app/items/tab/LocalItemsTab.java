@@ -155,7 +155,7 @@ public class LocalItemsTab extends Tab implements Tickable {
 
         @Override
         public UUID generateId(Item item) {
-            return UUID.randomUUID();
+            return getRoot().generateUniqueId();
         }
 
         @Override

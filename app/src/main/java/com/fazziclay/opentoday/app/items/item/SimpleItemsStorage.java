@@ -183,7 +183,7 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
 
         @Override
         public UUID generateId(Item item) {
-            return UUID.randomUUID();
+            return getRoot().generateUniqueId();
         }
 
         @Override

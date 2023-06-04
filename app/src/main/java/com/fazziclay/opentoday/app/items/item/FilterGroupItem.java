@@ -417,7 +417,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
 
         @Override
         public UUID generateId(Item item) {
-            return UUID.randomUUID();
+            return getRoot().generateUniqueId();
         }
 
         @Override

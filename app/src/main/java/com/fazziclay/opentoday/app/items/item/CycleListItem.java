@@ -284,7 +284,7 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
 
         @Override
         public UUID generateId(Item item) {
-            return UUID.randomUUID();
+            return getRoot().generateUniqueId();
         }
 
         @Override
