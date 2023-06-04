@@ -378,4 +378,5 @@
     <string name="item_mathGame">Math game</string>
     <string name="item_mathGame_description">А math game to warm up the brain</string>
     <string name="item_mathGame_quest_primitive_text">How much is\n%s %s %s?</string>
+    <string name="tab_defaultFirstName">My first tab</string>
 </resources>
