@@ -56,8 +56,8 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
     public void addItem(Item item, int position) {
         ItemUtil.throwIsBreakType(item);
         ItemUtil.throwIsAttached(item);
-        item.attach(itemController);
         items.add(position, item);
+        item.attach(itemController);
         onUpdateCallbacks.run((callbackStorage, callback) -> callback.onAdded(item, getItemPosition(item)));
         save();
     }
@@ -82,7 +82,7 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
     @NonNull
     @Override
     public Item copyItem(Item item) {
-        Item copy = ItemUtil.copyRecursiveRegenerateIds(item);
+        Item copy = ItemUtil.copyItem(item);
         addItem(copy, getItemPosition(item) + 1);
         return copy;
     }
@@ -118,8 +118,8 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
     public void importData(List<Item> items) {
         Item[] allImportItems = ItemUtil.getAllItemsInTree(items.toArray(new Item[0]));
         for (Item check1 : allImportItems) {
+            Logger.d(TAG, "check1= " + check1);
             ItemUtil.throwIsBreakType(check1);
-            ItemUtil.throwIsAttached(check1);
 
             if (check1.getId() == null) {
                 check1.regenerateId();
@@ -138,6 +138,7 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
         }
 
         for (Item item : items) {
+            ItemUtil.throwIsAttached(item);
             if (item.getId() == null) {
                 item.regenerateId();
                 Logger.d(TAG, "importData: item.id is null. regenerated.");
@@ -148,14 +149,13 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
     }
 
     public void copyData(Item[] items) {
-        items = ItemUtil.copyIncludeIds(items).toArray(new Item[0]);
-        ItemUtil.regenerateAllIdsInTree(items);
+        items = ItemUtil.copyItemsList(items).toArray(new Item[0]);
 
         for (Item item : items) {
             ItemUtil.throwIsBreakType(item);
             ItemUtil.throwIsAttached(item);
-            ItemUtil.throwIsIdNull(item);
             item.setController(itemController);
+            item.regenerateId();
             this.items.add(item);
         }
     }
@@ -183,7 +183,7 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
 
         @Override
         public UUID generateId(Item item) {
-            return getRoot().generateUniqueId();
+            return ItemUtil.controllerGenerateItemId(getRoot(), item);
         }
 
         @Override

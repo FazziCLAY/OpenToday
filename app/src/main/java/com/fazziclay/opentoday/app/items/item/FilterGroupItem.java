@@ -179,12 +179,11 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     }
 
     @Override
-    protected Item regenerateId() {
+    protected void regenerateId() {
         super.regenerateId();
         for (ItemFilterWrapper item : items) {
             item.item.regenerateId();
         }
-        return this;
     }
 
     // Item storage
@@ -200,8 +199,8 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     private void addItem(ItemFilterWrapper item, int position) {
         ItemUtil.throwIsBreakType(item.item);
         ItemUtil.throwIsAttached(item.item);
-        item.item.attach(groupItemController);
         items.add(position, item);
+        item.item.attach(groupItemController);
         itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onAdded(item.item, getItemPosition(item.item)));
         if (!recalculate(TickSession.getLatestGregorianCalendar())) {
             visibleChanged();
@@ -244,7 +243,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     public Item copyItem(Item item) {
         ItemFilter filter = getItemFilter(item);
 
-        Item copy = ItemUtil.copyRecursiveRegenerateIds(item);
+        Item copy = ItemUtil.copyItem(item);
         ItemFilter copyFilter = filter.copy();
         addItem(new ItemFilterWrapper(copy, copyFilter), getItemPosition(item) + 1);
         return copy;
@@ -417,7 +416,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
 
         @Override
         public UUID generateId(Item item) {
-            return getRoot().generateUniqueId();
+            return ItemUtil.controllerGenerateItemId(getRoot(), item);
         }
 
         @Override

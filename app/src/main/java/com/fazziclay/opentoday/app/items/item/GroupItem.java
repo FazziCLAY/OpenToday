@@ -77,12 +77,11 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
     }
 
     @Override
-    protected Item regenerateId() {
+    protected void regenerateId() {
         super.regenerateId();
         for (Item item : getAllItems()) {
             item.regenerateId();
         }
-        return this;
     }
 
     @Override
@@ -178,7 +177,7 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
 
         @Override
         public UUID generateId(Item item) {
-            return getRoot().generateUniqueId();
+            return ItemUtil.controllerGenerateItemId(getRoot(), item);
         }
 
         @Override

@@ -206,9 +206,9 @@ public class ItemViewGenerator {
 
             public void done() {
                 int color;
+                item.postResult(currentNumber);
                 if (item.isResultRight(currentNumber)) {
                     color = Color.GREEN;
-                    item.postResult(activity.getApplicationContext(), currentNumber);
                     binding.questText.setText(item.getQuestText());
                     binding.questText.setTextSize(item.getQuestTextSize());
                     binding.questText.setGravity(item.getQuestTextGravity());
@@ -423,6 +423,12 @@ public class ItemViewGenerator {
             view.setBackgroundColor(Color.BLACK);
             return;
         }
+        if (Debug.SHOW_ID_ON_ITEMTEXT) {
+            view.setText(String.valueOf(item.getId()));
+            view.setTextSize(19);
+            view.setTextColor(Color.GREEN);
+            return;
+        }
 
         final int textColor = item.isCustomTextColor() ? item.getTextColor() : ResUtil.getAttrColor(activity, R.attr.item_textColor);
         final SpannableString visibleText = item.isParagraphColorize() ? colorize(item.getText(), textColor) : SpannableString.valueOf(item.getText());
@@ -482,6 +488,7 @@ public class ItemViewGenerator {
         });
     }
 
+    @SuppressWarnings("unused")
     private String getString(int resId, Object... formatArgs) {
         return activity.getString(resId, formatArgs);
     }

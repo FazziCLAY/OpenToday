@@ -1,10 +1,10 @@
 package com.fazziclay.opentoday.app.items.item;
 
-import android.content.Context;
 import android.view.Gravity;
 
 import androidx.annotation.NonNull;
 
+import com.fazziclay.opentoday.app.Translation;
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.TickTarget;
@@ -55,7 +55,7 @@ public class MathGameItem extends TextItem {
 
         if (tickSession.isTickTargetAllowed(TickTarget.ITEM_MATH_GAME_UPDATE)) {
             if (!quest.isInitialize()) {
-                generateQuest(tickSession.getContext());
+                generateQuest();
                 visibleChanged();
             }
         }
@@ -69,8 +69,8 @@ public class MathGameItem extends TextItem {
         return quest.getGravity();
     }
 
-    public void generateQuest(Context context) {
-        quest = new PrimitiveQuest(context);
+    public void generateQuest() {
+        quest = new PrimitiveQuest();
     }
 
 
@@ -86,8 +86,8 @@ public class MathGameItem extends TextItem {
         return quest.getResult();
     }
 
-    public void postResult(Context context, int currentNumber) {
-        generateQuest(context);
+    public void postResult(int currentNumber) {
+        if (isResultRight(currentNumber)) generateQuest();
     }
 
     private static class BaseQuest {
@@ -112,19 +112,19 @@ public class MathGameItem extends TextItem {
         }
     }
 
-    private static class PrimitiveQuest extends BaseQuest {
+    private class PrimitiveQuest extends BaseQuest {
         private final Operation operation;
         private final int val1;
         private final int val2;
         private final int result;
         private final String text;
 
-        public PrimitiveQuest(Context context) {
+        public PrimitiveQuest() {
             this.operation = Operation.random();
             val1 = RandomUtil.nextInt(100);
             val2 = RandomUtil.nextInt(100);
             result = operation.apply(val1, val2);
-            text = ItemUtil.getTranslatedText(context, ItemUtil.TRANSLATE_MATHGAME_PRIMITIVE_OPERATION, val1, operation, val2);
+            text = MathGameItem.this.getRoot().getTranslation().get(Translation.KEY_MATHGAME_PRIMITIVE_OPERATION, val1, operation, val2);
         }
 
         @Override
@@ -171,10 +171,6 @@ public class MathGameItem extends TextItem {
                 case MULTIPLY -> i1 * i2;
                 case DIVIDE -> i1 / i2;
             };
-        }
-
-        public String str() {
-            return s;
         }
 
         @NonNull

@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
+import com.fazziclay.opentoday.app.items.item.ItemUtil;
 import com.fazziclay.opentoday.app.items.item.SimpleItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.Item;
@@ -155,7 +156,7 @@ public class LocalItemsTab extends Tab implements Tickable {
 
         @Override
         public UUID generateId(Item item) {
-            return getRoot().generateUniqueId();
+            return ItemUtil.controllerGenerateItemId(getRoot(), item);
         }
 
         @Override

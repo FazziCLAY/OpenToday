@@ -143,12 +143,11 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
     }
 
     @Override
-    protected Item regenerateId() {
+    protected void regenerateId() {
         super.regenerateId();
         for (Item item : getAllItems()) {
             item.regenerateId();
         }
-        return this;
     }
 
     @Override
@@ -284,7 +283,7 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
 
         @Override
         public UUID generateId(Item item) {
-            return getRoot().generateUniqueId();
+            return ItemUtil.controllerGenerateItemId(getRoot(), item);
         }
 
         @Override

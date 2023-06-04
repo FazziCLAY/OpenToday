@@ -15,14 +15,15 @@ public class TranslationImpl implements Translation {
             int i = integer;
             int resId = switch (i) {
                 case KEY_TABS_DEFAULT_MAIN_NAME -> R.string.tab_defaultFirstName;
+                case KEY_MATHGAME_PRIMITIVE_OPERATION -> R.string.item_mathGame_quest_primitive_text;
                 default -> throw new IllegalStateException("Unknown translation key: " + i);
             };
-            return translateInterface.translate(resId);
+            return translateInterface.translate(resId, args);
         }
         throw new RuntimeException("Unknown translation key type: " + key);
     }
 
     interface TranslateInterface {
-        String translate(int resId);
+        String translate(int resId, Object... args);
     }
 }

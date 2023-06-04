@@ -25,6 +25,7 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.Tickable;
+import com.fazziclay.opentoday.util.InlineUtil;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
@@ -150,19 +151,21 @@ public class TabsManager implements ItemsRoot, Tickable {
         return translation;
     }
 
+    private long _dufl = 0;
     @NotNull
     @Override
     public UUID generateUniqueId() {
         final int MAX_ITER = 1000;
         int i = 0;
-        UUID uuid = UUID.randomUUID();
+        UUID uuid = InlineUtil.fcu_dufl(_dufl);//UUID.randomUUID();
         while (i < MAX_ITER) {
             if (isExistById(uuid)) {
-                uuid = UUID.randomUUID();
+                uuid = InlineUtil.fcu_dufl(_dufl);
             } else {
                 return uuid;
             }
             i++;
+            _dufl++;
         }
         throw new RuntimeException("The maximum number of iterations (MAX_ITER="+MAX_ITER+") when generating a unique ID has been reached!");
     }
@@ -512,27 +515,8 @@ public class TabsManager implements ItemsRoot, Tickable {
     }
 
     private List<Tab> generateDebugDataSet() {
-        List<Item> tab1items = new ArrayList<>();
-        tab1items.add(new TextItem("first TextItem"));
-        tab1items.add(new CheckboxItem("first CheckboxItem", false));
-        tab1items.add(new DayRepeatableCheckboxItem("first DayRepeatableCheckboxItem", false, false, 0));
-        tab1items.add(new CycleListItem("first CycleListItem"));
-        tab1items.add(new GroupItem("first GroupItem"));
-        tab1items.add(new FilterGroupItem("first FilterGroupItem"));
-        tab1items.add(new CounterItem("first CounterItem"));
-
-        List<Item> tab2items = new ArrayList<>();
-        int i = 0;
-        while (i < 50) {
-            Random r = new Random(999);
-            if (r.nextBoolean()) tab2items.add(new TextItem("i=" + i));
-            if (r.nextBoolean()) tab2items.add(new CheckboxItem("i=" + i, (i % 2 == 0)));
-            i++;
-        }
-
         List<Tab> tabs = new ArrayList<>();
-        //addTab(new LocalItemsTab("Debug1", tab1items.toArray(new Item[0])));
-        //addTab(new LocalItemsTab("Debug2", tab2items.toArray(new Item[0])));
+        tabs.add(new Debug202305RandomTab());
         return tabs;
     }
 

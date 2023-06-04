@@ -1,17 +1,18 @@
 package com.fazziclay.opentoday.app.items.item;
 
-import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.fazziclay.opentoday.R;
+import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.TickTarget;
+import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,40 +22,28 @@ import java.util.UUID;
 import kotlin.collections.ArraysKt;
 
 public class ItemUtil {
-    public static final int TRANSLATE_MATHGAME_PRIMITIVE_OPERATION = R.string.item_mathGame_quest_primitive_text;
+    private static final String TAG = "ItemUtil";
 
-    /**
-     * <h1>WARNING! Coping include ID!!!!!</h1>
-     */
-    @NonNull
-    public static List<Item> copyIncludeIds(Item[] items) {
-        return ItemCodecUtil.importItemList(ItemCodecUtil.exportItemList(items));
+    public static void throwIsBreakType(Item item) {
+        if (item.getClass() == Item.class) {
+            throw new RuntimeException("'Item' not allowed to add (use Item children's)");
+        }
     }
 
-    /**
-     * COPY ITEM & REGENERATE ALL IDS
-     * @param item item to copy
-     * @return copy item with new IDs
-     */
-    public static Item copyRecursiveRegenerateIds(Item item) {
-        Item copy = ItemUtil.copyItem(item);
-        ItemUtil.regenerateIdsInTree(copy);
-        return copy;
+    public static void throwIsAttached(Item item) {
+        if (item.isAttached()) {
+            throw new RuntimeException("items already attached. Use item.delete() to detach");
+        }
     }
 
-    /**
-     * REGENERATE ALL IDS IN THIS ITEM
-     * @param item start item
-     */
-    private static void regenerateIdsInTree(Item item) {
-        item.regenerateId();
-        if (item instanceof ContainerItem containerItem) {
-            regenerateAllIdsInTree(containerItem.getAllItems());
+    public static void throwIsIdNull(Item item) {
+        if (item.getId() == null) {
+            throw new RuntimeException("Item id is null!");
         }
     }
 
     public static ItemsStorage[] getPathToItem(Item item) {
-        if (!item.isAttached()) throw new IllegalArgumentException("Item not attached.");
+        if (!item.isAttached()) throw new IllegalArgumentException("getPathToItem: Item is not attached.");
         List<ItemsStorage> path = new ArrayList<>();
         ItemsStorage temp = item.getParentItemsStorage();
         while (true) {
@@ -70,8 +59,8 @@ public class ItemUtil {
         return result;
     }
 
-    @NonNull
-    public static Item[] getAllItemsInTree(@NonNull Item[] list) {
+    @NotNull
+    public static Item[] getAllItemsInTree(@NotNull Item[] list) {
         List<Item> ret = new ArrayList<>();
         for (Item item : list) {
             ret.add(item);
@@ -108,21 +97,9 @@ public class ItemUtil {
         onUpdateCallbacks.run((callbackStorage, callback) -> callback.onMoved(from, positionFrom, positionTo));
     }
 
-    public static void throwIsBreakType(Item item) {
-        if (item.getClass() == Item.class) {
-            throw new RuntimeException("'Item' not allowed to add (use Item children's)");
-        }
-    }
-
-    public static void throwIsAttached(Item item) {
-        if (item.isAttached()) {
-            throw new RuntimeException("items already attached. Use item.delete() to detach");
-        }
-    }
-
     public static UUID getId(Object o) {
-        if (o instanceof Unique id) {
-            return id.getId();
+        if (o instanceof Unique unique) {
+            return unique.getId();
         }
         return null;
     }
@@ -144,28 +121,25 @@ public class ItemUtil {
         }
     }
 
-    public static String getTranslatedText(Context context, int key, Object... objects) {
-        return context.getString(key, objects);
+    @NotNull
+    public static List<Item> copyItemsList(Item[] items) {
+        List<Item> ret = new ArrayList<>();
+        for (Item item : items) {
+            ret.add(copyItem(item));
+        }
+        return ret;
     }
+
 
     public static Item copyItem(Item item) {
         return ItemsRegistry.REGISTRY.copyItem(item);
     }
 
-    /**
-     * Designed taking into account the fact that item.regenerateId changes only its ID, without children, but the current implementation also works.
-     * @param items items to regenerate
-     */
-    public static void regenerateAllIdsInTree(final Item[] items) {
-        final Item[] allItemsInTree = getAllItemsInTree(items);
-        for (final Item item : allItemsInTree) {
-            item.regenerateId();
+    public static UUID controllerGenerateItemId(ItemsRoot root, Item item) {
+        if (root != null) {
+            return root.generateUniqueId();
         }
-    }
-
-    public static void throwIsIdNull(Item item) {
-        if (item.getId() == null) {
-            throw new RuntimeException("Item id is null!");
-        }
+        Logger.w(TAG, "controllerGenerateItemId: root is null... item.attached="+item.isAttached()+" item="+item);
+        return UUID.randomUUID();
     }
 }

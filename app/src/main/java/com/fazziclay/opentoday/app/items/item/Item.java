@@ -150,7 +150,7 @@ public abstract class Item implements Unique, Tickable {
      */
     protected void attach(ItemController itemController) {
         this.controller = itemController;
-        this.id = itemController.generateId(this);
+        regenerateId();
         itemCallbacks.run((callbackStorage, callback) -> callback.attached(Item.this));
     }
 
@@ -166,9 +166,8 @@ public abstract class Item implements Unique, Tickable {
         if (tickSession.isTickTargetAllowed(TickTarget.ITEM_CALLBACKS)) itemCallbacks.run((callbackStorage, callback) -> callback.tick(Item.this));
     }
 
-    protected Item regenerateId() {
-        this.id = UUID.randomUUID();
-        return this;
+    protected void regenerateId() {
+        this.id = controller != null ? controller.generateId(this) : UUID.randomUUID();
     }
 
     protected void updateStat() {

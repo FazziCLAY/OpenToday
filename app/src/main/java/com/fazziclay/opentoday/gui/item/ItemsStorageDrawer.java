@@ -1,5 +1,6 @@
 package com.fazziclay.opentoday.gui.item;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
@@ -32,6 +33,7 @@ import com.fazziclay.opentoday.gui.dialog.DialogTextItemEditText;
 import com.fazziclay.opentoday.gui.fragment.ItemEditorFragment;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.gui.interfaces.StorageEditsActions;
+import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
@@ -351,6 +353,7 @@ public class ItemsStorageDrawer {
         }
     }
 
+    @SuppressLint("NonConstantResourceId")
     private void showRightMenu(Item item, View itemView) {
         App app = App.get(activity);
         TabsManager tabsManager = app.getTabsManager();
@@ -390,6 +393,7 @@ public class ItemsStorageDrawer {
                         Item copyItem = itemsStorage.copyItem(item);
                         onItemEditor.run(copyItem);
                     } catch (Exception e) {
+                        Logger.e(TAG, "Copy error", e);
                         Toast.makeText(activity, activity.getString(R.string.menuItem_copy_exception, e.toString()), Toast.LENGTH_SHORT).show();
                         return false;
                     }
