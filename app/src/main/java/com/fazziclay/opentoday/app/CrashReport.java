@@ -262,7 +262,11 @@ public class CrashReport {
                 "DRY in CrashReport?? :))))",
                 "DirtRenderer is love",
                 "OpenOptimizeMC is love",
-                "try also Google keep"
+                "try also Google keep",
+
+                // 2023.06.04...........
+                "ItemManager -> TabsManager",
+                "'Zakviel and Minecraft' :love:"
         };
         Random random = new Random();
         int max = comments.length;
