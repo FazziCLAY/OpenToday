@@ -104,9 +104,9 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         super(textItem);
         if (containerItem != null) {
             for (Item item : containerItem.getAllItems()) {
-                ItemFilterWrapper newWrapper = new ItemFilterWrapper(item, new LogicContainerItemFilter());
-                newWrapper.item.attach(this.groupItemController);
+                ItemFilterWrapper newWrapper = new ItemFilterWrapper(ItemUtil.copyItem(item), new LogicContainerItemFilter());
                 this.items.add(newWrapper);
+                newWrapper.item.attach(this.groupItemController);
             }
         }
     }
