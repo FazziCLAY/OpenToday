@@ -7,6 +7,8 @@ import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Unique;
+import com.fazziclay.opentoday.app.items.item.Item;
+import com.fazziclay.opentoday.app.items.item.ItemUtil;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
@@ -66,7 +68,14 @@ public abstract class Tab implements ItemsStorage, Unique {
 
     public void attach(TabController controller) {
         this.controller = controller;
+        regenerateId();
+    }
+
+    private void regenerateId() {
         this.id = controller.generateId();
+        for (Item item : getAllItems()) {
+            ItemUtil.regenerateIdForItem(item);
+        }
     }
 
     public void detach() {

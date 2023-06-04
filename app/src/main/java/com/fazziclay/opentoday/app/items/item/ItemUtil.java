@@ -142,4 +142,8 @@ public class ItemUtil {
         Logger.w(TAG, "controllerGenerateItemId: root is null... item.attached="+item.isAttached()+" item="+item);
         return UUID.randomUUID();
     }
+
+    public static void regenerateIdForItem(Item item) {
+        item.regenerateId();
+    }
 }
