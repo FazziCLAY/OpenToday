@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.SettingsManager;
+import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
@@ -49,7 +50,7 @@ public class TestItemsStorageDrawer extends Activity {
         ItemsStorageDrawer itemsStorageDrawer = new ItemsStorageDrawer(this,
                 tabsManager,
                 new SettingsManager(null),
-                tabsManager.getSelectionManager(),
+                new SelectionManager(),
                 tabsManager.getTab(new UUID(0, 0)),
                 onClick,
                 item -> Toast.makeText(TestItemsStorageDrawer.this, "unsupported", Toast.LENGTH_SHORT).show(),

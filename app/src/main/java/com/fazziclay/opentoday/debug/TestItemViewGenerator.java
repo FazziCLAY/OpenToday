@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.SettingsManager;
+import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
@@ -46,7 +47,7 @@ public class TestItemViewGenerator extends Activity {
             }
         };
 
-        ItemViewGenerator itemViewGenerator = ItemViewGenerator.builder(this, tabsManager, settingsManager, tabsManager.getSelectionManager())
+        ItemViewGenerator itemViewGenerator = ItemViewGenerator.builder(this, tabsManager, settingsManager, new SelectionManager())
                 .setOnItemClick(itemClick)
                 .setStorageEditsActions(edits)
                 .setOnItemOpenEditor(itemEditor)
