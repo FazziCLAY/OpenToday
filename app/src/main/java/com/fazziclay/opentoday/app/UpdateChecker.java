@@ -17,51 +17,68 @@ public class UpdateChecker {
     private static final long CACHE_TIMEOUT_MILLIS = 5 * 60 * 60 * 1000; // 5 hours
     private static final String TAG = "UpdateChecker";
 
+    // TODO: 04.06.2023 UNTESTED. TEST PLEASE
     public static void check(Context context, Result result) {
-        new Thread(() -> {
-            final long CURRENT_TIME = System.currentTimeMillis();
-            File cacheFile = new File(context.getExternalCacheDir(), "latest_update_check");
+        Thread thread = new UpdateCheckedThread(context, result);
+        thread.start();
+    }
+
+    public interface Result {
+        void run(boolean available, String url);
+    }
+
+    private static class UpdateCheckedThread extends Thread {
+        private final Result result;
+        private final File cacheFile;
+
+        public UpdateCheckedThread(Context context, Result result) {
+            this.result = result;
+            this.cacheFile = new File(context.getExternalCacheDir(), "latest_update_check");
+        }
+
+        private void callback(boolean available, String pageURL, boolean cached) {
+            result.run(available, pageURL);
+            Logger.d(TAG, "callback run."+(cached ? " (cached!)" : "")+" available="+available+" pageURL="+pageURL);
+        }
+
+        @Override
+        public void run() {
+            final long currentTime = System.currentTimeMillis();
+
             if (FileUtil.isExist(cacheFile)) {
                 try {
                     long latestCheck = Long.parseLong(FileUtil.getText(cacheFile));
-                    if (CURRENT_TIME - latestCheck < CACHE_TIMEOUT_MILLIS) {
-                        result.run(false, null);
-                        Logger.d(TAG, "run. available=false (CACHED!!!)");
+                    if ((currentTime - latestCheck) < CACHE_TIMEOUT_MILLIS) {
+                        callback(false, null, true);
                         return;
                     }
                 } catch (Exception e) {
-                    Logger.d(TAG, "cache exception", e);
+                    Logger.e(TAG, "cache exception", e);
                 }
             }
 
             try {
                 String stringLatestBuild = NetworkUtil.parseTextPage(V2_URL_LATEST_BUILD);
                 int latestBuild = Integer.parseInt(stringLatestBuild);
-                Logger.d(TAG, "latestBuild (remote) = " + latestBuild);
+                Logger.d(TAG, "latest_build (remote) = " + latestBuild);
 
                 if (App.VERSION_CODE < latestBuild) {
                     String latestJsonString = NetworkUtil.parseTextPage(V2_URL_LATEST);
                     JSONObject latestJson = new JSONObject(latestJsonString);
                     Logger.d(TAG, "latest.json (remote) = " + latestJsonString);
 
-
                     String url = latestJson.getString("page_url");
-                    Logger.d(TAG, "url (remote) = " + url);
-                    result.run(true, url);
-                    Logger.d(TAG, "run. available=true");
+                    Logger.d(TAG, "latest.json->url (remote) = " + url);
+                    callback(true, url, false);
                 } else {
-                    result.run(false, null);
-                    Logger.d(TAG, "run. available=false");
-                    FileUtil.setText(cacheFile, String.valueOf(CURRENT_TIME));
+                    callback(false, null, false);
+                    FileUtil.setText(cacheFile, String.valueOf(currentTime));
+                    Logger.d(TAG, "Cache file saved. Content: " + currentTime);
                 }
 
             } catch (Exception e) {
-                Logger.d(TAG, "check exception", e);
+                Logger.e(TAG, "check exception", e);
             }
-        }).start();
-    }
-
-    public interface Result {
-        void run(boolean available, String url);
+        }
     }
 }
