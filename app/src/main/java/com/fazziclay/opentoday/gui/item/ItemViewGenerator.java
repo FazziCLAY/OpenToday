@@ -3,6 +3,7 @@ package com.fazziclay.opentoday.gui.item;
 import static com.fazziclay.opentoday.util.InlineUtil.viewClick;
 import static com.fazziclay.opentoday.util.InlineUtil.viewVisible;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.res.ColorStateList;
@@ -432,6 +433,7 @@ public class ItemViewGenerator {
     }
 
     //
+    @SuppressLint("SetTextI18n")
     private void applyTextItemToTextView(final TextItem item, final TextView view) {
         if (Debug.SHOW_PATH_TO_ITEM_ON_ITEMTEXT) {
             view.setText(Arrays.toString(ItemUtil.getPathToItem(item)));
@@ -441,8 +443,8 @@ public class ItemViewGenerator {
             return;
         }
         if (Debug.SHOW_ID_ON_ITEMTEXT) {
-            view.setText(String.valueOf(item.getId()));
-            view.setTextSize(19);
+            view.setText(item.getId() + "\n\n"+ item.getText());
+            view.setTextSize(17);
             view.setTextColor(Color.GREEN);
             return;
         }
