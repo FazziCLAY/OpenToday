@@ -71,7 +71,7 @@ public abstract class Tab implements ItemsStorage, Unique {
         regenerateId();
     }
 
-    private void regenerateId() {
+    protected void regenerateId() {
         this.id = controller.generateId();
         for (Item item : getAllItems()) {
             ItemUtil.regenerateIdForItem(item);
