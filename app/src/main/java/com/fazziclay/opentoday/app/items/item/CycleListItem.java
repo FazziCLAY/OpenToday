@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.CurrentItemStorage;
+import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnCurrentItemStorageUpdate;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
@@ -284,6 +285,11 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
         @Override
         public UUID generateId(Item item) {
             return UUID.randomUUID();
+        }
+
+        @Override
+        public ItemsRoot getRoot() {
+            return CycleListItem.this.getRoot();
         }
     }
 
