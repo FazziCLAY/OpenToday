@@ -107,7 +107,7 @@ public class App extends Application {
     private final OptionalField<ColorHistoryManager> colorHistoryManager = new OptionalField<>(() -> new ColorHistoryManager(new File(getExternalFilesDir(""), "color_history.json"), 10));
     private final OptionalField<PinCodeManager> pinCodeManager = new OptionalField<>(() -> new PinCodeManager(this));
     private final OptionalField<ClipboardManager> clipboardManager = new OptionalField<>(() -> getSystemService(ClipboardManager.class));
-    private final OptionalField<SelectionManager> selectionManager = new OptionalField<>(() -> getTabsManager().getSelectionManager());
+    private final OptionalField<SelectionManager> selectionManager = new OptionalField<>(SelectionManager::new);
     private final OptionalField<Telemetry> telemetry = new OptionalField<>(() -> new Telemetry(this, getSettingsManager().isTelemetry()));
     private final OptionalField<TickThread> tickThread = new OptionalField<>(this::preCheckTickThread, TickThread::requestTerminate);
     private final List<FeatureFlag> featureFlags = new ArrayList<>(App.DEBUG ? Arrays.asList(
