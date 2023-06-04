@@ -8,13 +8,15 @@ import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.fazziclay.opentoday.R;
-import com.fazziclay.opentoday.app.items.item.Item;
+import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.items.item.ItemType;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.util.EnumUtil;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 
 public class DialogSelectItemType {
+    private final Context context;
+    private final App app;
     private final String selectButtonText;
     private String title;
     private String message;
@@ -22,9 +24,14 @@ public class DialogSelectItemType {
     private View view;
     private final SimpleSpinnerAdapter<ItemType> simpleSpinnerAdapter;
     private final Dialog dialog;
+    private final ItemTypeValidator itemTypeValidator;
 
     public DialogSelectItemType(Context context, OnSelected onSelected) {
         this(context, null, onSelected);
+    }
+
+    public DialogSelectItemType(Context context, OnSelected onSelected, ItemTypeValidator itemTypeValidator) {
+        this(context, null, onSelected, itemTypeValidator);
     }
 
     public DialogSelectItemType(Context context, int resId, OnSelected onSelected) {
@@ -32,6 +39,14 @@ public class DialogSelectItemType {
     }
 
     public DialogSelectItemType(Context context, String selectButtonText, OnSelected onSelected) {
+        this(context, selectButtonText, onSelected, type -> ItemsRegistry.REGISTRY.get(type).isCompatibility(App.get(context).getFeatureFlags()));
+    }
+
+
+    public DialogSelectItemType(Context context, String selectButtonText, OnSelected onSelected, ItemTypeValidator itemTypeValidator) {
+        this.context = context;
+        this.app = App.get(context);
+        this.itemTypeValidator = itemTypeValidator;
         if (selectButtonText == null) {
             this.selectButtonText = context.getString(R.string.dialog_selectItemType_select);
         } else {
@@ -40,7 +55,11 @@ public class DialogSelectItemType {
         this.onSelected = onSelected;
 
         this.simpleSpinnerAdapter = new SimpleSpinnerAdapter<>(context);
-        EnumUtil.addToSimpleSpinnerAdapter(context, simpleSpinnerAdapter, ItemType.values());
+        for (ItemType value : ItemType.values()) {
+            if (this.itemTypeValidator.validate(value)) {
+                EnumUtil.addToSimpleSpinnerAdapter(context, simpleSpinnerAdapter, value);
+            }
+        }
 
         final byte MODE = 2; // 1 - spinner; 2 - list
         // TODO: 2023.05.25 Add MODE selecting in constructor
@@ -56,7 +75,7 @@ public class DialogSelectItemType {
             listView.setAdapter(simpleSpinnerAdapter);
             listView.setOnItemClickListener((parent, ignoreView, position, id) -> {
                 ItemType itemType = simpleSpinnerAdapter.getItem(position);
-                onSelected.onSelected(ItemsRegistry.REGISTRY.get(itemType).getClassType());
+                onSelected.onSelected(itemType);
                 cancel();
             });
         }
@@ -69,7 +88,7 @@ public class DialogSelectItemType {
                 .setPositiveButton(this.selectButtonText, (i2, i1) -> {
                     if (MODE == 1) {
                         ItemType itemType = simpleSpinnerAdapter.getItem(((Spinner) view).getSelectedItemPosition());
-                        onSelected.onSelected(ItemsRegistry.REGISTRY.get(itemType).getClassType());
+                        onSelected.onSelected(itemType);
                     }
                 })
                 .create();
@@ -96,6 +115,11 @@ public class DialogSelectItemType {
 
     @FunctionalInterface
     public interface OnSelected {
-        void onSelected(Class<? extends Item> type);
+        void onSelected(ItemType type);
+    }
+
+    @FunctionalInterface
+    public interface ItemTypeValidator {
+        boolean validate(ItemType type);
     }
 }

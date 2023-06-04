@@ -421,13 +421,15 @@ public class ItemsStorageDrawer {
                         Transform.Result result = Transform.transform(item, type);
                         if (result.isAllow()) {
                             int pos = itemsStorage.getItemPosition(item);
-                            itemsStorage.addItem(result.getResult(), pos + 1);
+                            itemsStorage.addItem(result.generate(), pos + 1);
 
                         } else {
                             Toast.makeText(activity, R.string.transform_not_allowed, Toast.LENGTH_SHORT).show();
                         }
-                    }).setTitle(activity.getString(R.string.transform_selectTypeDialog_title))
-                            .setMessage(activity.getString(R.string.transform_selectTypeDialog_message)).show();
+                    }, (type -> Transform.isAllow(item, type)))
+                            .setTitle(activity.getString(R.string.transform_selectTypeDialog_title))
+                            .setMessage(activity.getString(R.string.transform_selectTypeDialog_message))
+                            .show();
                     break;
             }
 

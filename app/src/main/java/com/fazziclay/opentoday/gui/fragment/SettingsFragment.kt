@@ -28,6 +28,7 @@ import com.fazziclay.opentoday.app.SettingsManager
 import com.fazziclay.opentoday.app.SettingsManager.FirstTab
 import com.fazziclay.opentoday.app.items.QuickNoteReceiver
 import com.fazziclay.opentoday.app.items.item.Item
+import com.fazziclay.opentoday.app.items.item.ItemType
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry
 import com.fazziclay.opentoday.databinding.ExportBinding
 import com.fazziclay.opentoday.databinding.FragmentSettingsBinding
@@ -182,7 +183,7 @@ class SettingsFragment : Fragment() {
         })
         binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(EnumsRegistry.nameResId(settingsManager.defaultQuickNoteType.itemType)))
         viewClick(binding.defaultQuickNoteType, Runnable {
-            DialogSelectItemType(context) { type: Class<out Item?> ->
+            DialogSelectItemType(context) { type: ItemType ->
                 settingsManager.defaultQuickNoteType = ItemsRegistry.REGISTRY.get(type)
                 binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(EnumsRegistry.nameResId(settingsManager.defaultQuickNoteType.itemType)))
                 settingsManager.save()
