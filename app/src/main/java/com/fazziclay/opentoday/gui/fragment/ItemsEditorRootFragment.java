@@ -20,11 +20,14 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.items.ItemPath;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Readonly;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
+import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.tab.Tab;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.util.Logger;
@@ -36,6 +39,7 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
     private static final String EXTRA_TAB_ID = "items_editor_root_fragment_tabId";
     private static final String TAG = "ItemsEditorRootFragment";
     private TextView path;
+    private Item current;
 
     @NonNull
     public static ItemsEditorRootFragment create(@NonNull UUID tabId) {
@@ -46,6 +50,7 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
         return fragment;
     }
 
+    private TabsManager tabsManager;
     private UUID tabId;
     private Tab tab;
 
@@ -55,8 +60,9 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
         Logger.d(TAG, "onCreate", nullStat(savedInstanceState));
 
         Bundle args = getArguments();
+        this.tabsManager = App.get(requireContext()).getTabsManager();
         tabId = UUID.fromString(args.getString(EXTRA_TAB_ID));
-        tab = App.get(requireContext()).getTabsManager().getTabById(tabId);
+        tab = tabsManager.getTabById(tabId);
 
         if (savedInstanceState == null) {
             getChildFragmentManager()
@@ -100,12 +106,14 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
     }
 
     private String getPath() {
+        ItemPath itemPath = tabsManager.getPathTo(current);
         final String PATH_SEPARATOR = " / ";
         StringBuilder s = new StringBuilder(PATH_SEPARATOR);
-        int i = 0;
-        while (i < getChildFragmentManager().getBackStackEntryCount()) {
-            s.append(getChildFragmentManager().getBackStackEntryAt(i).getName().split("\n")[0]).append(PATH_SEPARATOR);
-            i++;
+        for (Object section : itemPath.getSections()) {
+            if (section instanceof Item item) {
+                String sect = EnumsRegistry.INSTANCE.name(ItemsRegistry.REGISTRY.get(item.getClass()).getItemType(), requireContext());
+                s.append(sect).append(PATH_SEPARATOR);
+            }
         }
         return s.toString().trim();
     }
@@ -117,8 +125,7 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
     @Override
     public void navigate(@NonNull Fragment fragment, boolean addToBackStack) {
         Logger.d(TAG, "navigate", "to=", fragment, "back=", addToBackStack);
-        if (!(fragment instanceof ItemsEditorFragment)) throw new RuntimeException("Other fragments not allowed.");
-        ItemsEditorFragment ief = (ItemsEditorFragment) fragment;
+        if (!(fragment instanceof ItemsEditorFragment ief)) throw new RuntimeException("Other fragments not allowed.");
 
         FragmentTransaction transaction = getChildFragmentManager()
                 .beginTransaction()
@@ -178,5 +185,11 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
         for (int i = 0; i < fm.getBackStackEntryCount(); i++) {
             fm.popBackStack();
         }
+    }
+
+    public void childAttached(ItemsEditorFragment itemsEditorFragment, Item item) {
+        Logger.d(TAG, "child attached! item="+item);
+        this.current = item;
+        updatePath();
     }
 }

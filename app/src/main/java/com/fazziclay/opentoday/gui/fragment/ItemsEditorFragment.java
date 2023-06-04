@@ -18,7 +18,6 @@ import androidx.fragment.app.Fragment;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.SettingsManager;
-import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Readonly;
 import com.fazziclay.opentoday.app.items.callback.ItemCallback;
@@ -29,6 +28,7 @@ import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.Tab;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.databinding.ItemsStorageEmptyBinding;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.activity.MainActivity;
@@ -40,9 +40,7 @@ import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 public class ItemsEditorFragment extends Fragment {
@@ -72,7 +70,6 @@ public class ItemsEditorFragment extends Fragment {
 
     private Tab tab;
     private Item item;
-    private final List<Runnable> onCreateListeners = new ArrayList<>();
     private OnItemsStorageUpdate onItemStorageChangeCallback;
     private ItemCallback itemCallback;
 
@@ -184,7 +181,6 @@ public class ItemsEditorFragment extends Fragment {
             }
         };
         itemsStorage.getOnItemsStorageCallbacks().addCallback(CallbackImportance.MIN, onItemStorageChangeCallback);
-        runOnCreateListeners();
     }
 
     private void updateNotFoundState(boolean ignoreCache, boolean none) {
@@ -206,8 +202,18 @@ public class ItemsEditorFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Logger.d(TAG, "onCreateView", nullStat(savedInstanceState));
-        if (settingsManager.isColorizeItemsEditorBackgroundByItemBackground() && item != null) layout.setBackgroundColor(item.getViewBackgroundColor());
+        if (settingsManager.isColorizeItemsEditorBackgroundByItemBackground() && item != null)
+            layout.setBackgroundColor(item.getViewBackgroundColor());
         return layout;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        ItemsEditorRootFragment root = UI.findFragmentInParents(this, ItemsEditorRootFragment.class);
+        if (root != null) {
+            root.childAttached(this, item);
+        }
     }
 
     @Override
@@ -228,10 +234,6 @@ public class ItemsEditorFragment extends Fragment {
 
     public UUID getItemId() {
         return itemId;
-    }
-
-    public void addOnCreateListener(Runnable o) {
-        onCreateListeners.add(o); // TODO: 3/11/23 remove unused onCreateListener
     }
 
     @Nullable
@@ -283,12 +285,5 @@ public class ItemsEditorFragment extends Fragment {
 
     private void editFilterGroupItemFilter(FilterGroupItem filterGroupItem, Item item) {
         rootNavigationHost.navigate(FilterGroupItemFilterEditorFragment.create(filterGroupItem.getId(), item.getId()), true);
-    }
-
-    @Deprecated
-    private void runOnCreateListeners() {
-        for (Runnable e : onCreateListeners) {
-            e.run();
-        }
     }
 }

@@ -42,6 +42,8 @@ public interface ItemsRoot {
     @Nullable
     Object getById(UUID id);
 
+    ItemPath getPathTo(Object o);
+
     /**
      * Generate not-exists id
      * @return UUID, no exist already

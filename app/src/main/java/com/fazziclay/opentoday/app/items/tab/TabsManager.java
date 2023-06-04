@@ -15,14 +15,8 @@ import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.SaveInitiator;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
-import com.fazziclay.opentoday.app.items.item.CheckboxItem;
-import com.fazziclay.opentoday.app.items.item.CounterItem;
-import com.fazziclay.opentoday.app.items.item.CycleListItem;
-import com.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem;
-import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
-import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
-import com.fazziclay.opentoday.app.items.item.TextItem;
+import com.fazziclay.opentoday.app.items.item.ItemUtil;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.Tickable;
 import com.fazziclay.opentoday.util.InlineUtil;
@@ -45,8 +39,8 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -522,33 +516,17 @@ public class TabsManager implements ItemsRoot, Tickable {
 
 
     // ==== Path ====
-    public Item getItemByPath(ItemPath itemPath) {
-        checkDestroy();
 
-        UUID tabId = itemPath.getTabId();
-        Tab tab = getTabById(tabId);
-        if (tab == null) {
-            return null;
-        }
 
-        Object o = tab;
-        for (UUID item : itemPath.getItems()) {
-            if (o instanceof ItemsStorage itemsStorage) {
-                o = itemsStorage.getItemById(item);
-            } else {
-                break;
-            }
+    @Override
+    public ItemPath getPathTo(Object o) {
+        if (o instanceof Item item) {
+            List<Object> path = new ArrayList<>(Arrays.asList(ItemUtil.getPathToItem(item)));
+            path.add(o);
+            return new ItemPath(path.toArray());
         }
-        if (o == null) {
-            return null;
-        }
-        if (o instanceof Item) {
-            return (Item) o;
-        } else {
-            throw new RuntimeException("founded not extend Item object: " + o);
-        }
+        return new ItemPath();
     }
-
 
     public void setDebugPrintSaveStatusAlways(boolean b) {
         debugPrintSaveStatusAlways = b;
