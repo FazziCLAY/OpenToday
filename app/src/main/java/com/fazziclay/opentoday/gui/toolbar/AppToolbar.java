@@ -7,8 +7,6 @@ import static com.fazziclay.opentoday.util.InlineUtil.viewVisible;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -35,17 +33,17 @@ import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.FeatureFlag;
 import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.SettingsManager;
-import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
-import com.fazziclay.opentoday.app.items.item.ItemUtil;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
 import com.fazziclay.opentoday.app.items.callback.SelectionCallback;
 import com.fazziclay.opentoday.app.items.item.Item;
+import com.fazziclay.opentoday.app.items.item.ItemUtil;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.selection.Selection;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.Debug202305RandomTab;
 import com.fazziclay.opentoday.app.items.tab.Tab;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.databinding.ToolbarBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreFileBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreItemsBinding;
@@ -65,15 +63,13 @@ import com.fazziclay.opentoday.gui.fragment.ImportFragment;
 import com.fazziclay.opentoday.gui.fragment.ItemEditorFragment;
 import com.fazziclay.opentoday.gui.fragment.SettingsFragment;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
+import com.fazziclay.opentoday.util.ClipboardUtil;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
 import com.google.android.material.button.MaterialButton;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -103,7 +99,6 @@ public class AppToolbar {
     private final NavigationHost rootNavigationHost;
     private long lastTabReorder;
 
-    private View sectionItems;
 
 
     public AppToolbar(final Activity activity,
@@ -145,8 +140,8 @@ public class AppToolbar {
         // Selection button
         selectionCallbackTab = new SelectionCallback() {
             @Override
-            public void onSelectionChanged(List<Selection> selections) {
-                boolean visible = !selections.isEmpty();
+            public void onSelectionChanged(Selection[] selections) {
+                boolean visible = selections.length != 0;
                 viewVisible(binding.toolbarSelection, visible, View.GONE);
                 if (!visible && currentToolbarButton == binding.toolbarSelection) {
                     closeMoreView();
@@ -313,11 +308,10 @@ public class AppToolbar {
         registerMoreView(localBinding.getRoot());
 
         // Import from clipboard button
-        // TODO: 2023.05.23 add ClipboardUtil
-        viewVisible(localBinding.importDataFromClipboard, ImportWrapper.isImportText(String.valueOf(app.getClipboardManager().getText())), View.GONE);
+        viewVisible(localBinding.importDataFromClipboard, ImportWrapper.isImportText(ClipboardUtil.getSelectedText(activity)), View.GONE);
         viewClick(localBinding.importDataFromClipboard, () -> {
             try {
-                final String text = String.valueOf(app.getClipboardManager().getText());
+                final String text = ClipboardUtil.getSelectedText(activity);
                 if (ImportWrapper.isImportText(text)) {
                     UUID id = ItemUtil.getId(itemsStorage);
                     if (id == null) {
@@ -613,41 +607,10 @@ public class AppToolbar {
         viewClick(localBinding.exportSelected, this::exportSelected);
         viewLong(localBinding.exportSelected, this::showExportSelectedWithMessageDialog);
 
-        // Deselect all
         viewClick(localBinding.deselectAll, selectionManager::deselectAll);
-
-        // Move selected to this
-        viewClick(localBinding.moveSelectedHere, () -> {
-            if (checkSelectionEmpty()) return;
-
-            for (Selection selection : selectionManager.getSelections()) {
-                selection.moveTo(itemsStorage);
-                selectionManager.deselectItem(selection);
-            }
-        });
-
-        // copy
-        viewClick(localBinding.copySelectedHere, () -> {
-            if (checkSelectionEmpty()) return;
-
-            for (Selection selection : selectionManager.getSelections()) {
-                selection.copyTo(itemsStorage);
-                selectionManager.deselectItem(selection);
-            }
-        });
-
-        // Delete selected
-        viewClick(localBinding.delete, () -> {
-            if (checkSelectionEmpty()) return;
-
-            List<Item> items = new ArrayList<>();
-            for (Selection selection : selectionManager.getSelections()) {
-                items.add(selection.getItem());
-            }
-
-            // Show delete dialog
-            rootNavigationHost.navigate(DeleteItemsFragment.create(items.toArray(new Item[0])), true);
-        });
+        viewClick(localBinding.moveSelectedHere, () -> selectionManager.moveAllSelectedTo(itemsStorage));
+        viewClick(localBinding.copySelectedHere, () -> selectionManager.copyAllSelectedTo(itemsStorage));
+        viewClick(localBinding.delete, () -> rootNavigationHost.navigate(DeleteItemsFragment.create(selectionManager.getItems()), true));
 
         viewClick(localBinding.editSelected, () -> {
             if (selectionManager.getSelections().length > 0) {
@@ -658,31 +621,22 @@ public class AppToolbar {
         // Add selection listener
         selectionCallback = new SelectionCallback() {
             @Override
-            public void onSelectionChanged(List<Selection> selections) {
-                localBinding.selectedInfo.setText(activity.getString(R.string.toolbar_more_selection_info, String.valueOf(selections.size())));
-                viewVisible(localBinding.editSelected, selections.size() == 1, View.GONE);
+            public void onSelectionChanged(Selection[] selections) {
+                localBinding.selectedInfo.setText(activity.getString(R.string.toolbar_more_selection_info, String.valueOf(selections.length)));
+                viewVisible(localBinding.editSelected, selections.length == 1, View.GONE);
             }
         };
-        selectionCallback.onSelectionChanged(Arrays.asList(selectionManager.getSelections())); // First run
+        selectionCallback.onSelectionChanged(selectionManager.getSelections()); // First run
         selectionManager.getOnSelectionUpdated().addCallback(CallbackImportance.MIN, selectionCallback); // Add to callbackStorage
-    }
-
-    private boolean checkSelectionEmpty() {
-        if (selectionManager.isSelectionEmpty()) {
-            Toast.makeText(activity, R.string.toolbar_more_selection_nothingSelected, Toast.LENGTH_SHORT).show();
-            return true;
-        }
-        return false;
     }
 
     private void exportSelected() {
         try {
-            ImportWrapper.Builder builder = ImportWrapper.createImport(ImportWrapper.Permission.ADD_ITEMS_TO_CURRENT);
-            for (Selection selection : selectionManager.getSelections()) {
-                builder.addItem(selection.getItem());
-            }
-            ImportWrapper importWrapper = builder.build();
-            app.getClipboardManager().setPrimaryClip(ClipData.newPlainText(activity.getString(R.string.toolbar_more_selection_export_clipdata_label), importWrapper.finalExport()));
+            ImportWrapper importWrapper = ImportWrapper.createImport(ImportWrapper.Permission.ADD_ITEMS_TO_CURRENT)
+                    .addItemAll(selectionManager.getItems())
+                    .build();
+
+            ClipboardUtil.selectText(app, R.string.toolbar_more_selection_export_clipdata_label, importWrapper.finalExport());
             Toast.makeText(activity, R.string.toolbar_more_selection_export_success, Toast.LENGTH_SHORT).show();
 
         } catch (Exception e) {
@@ -701,14 +655,12 @@ public class AppToolbar {
                     String msg = dialogMessage.getText().toString();
 
                     try {
-                        ImportWrapper.Builder builder = ImportWrapper.createImport(ImportWrapper.Permission.ADD_ITEMS_TO_CURRENT, ImportWrapper.Permission.PRE_IMPORT_SHOW_DIALOG);
-                        for (Selection selection : selectionManager.getSelections()) {
-                            builder.addItem(selection.getItem());
-                        }
-                        builder.setDialogMessage(msg);
-                        ImportWrapper importWrapper = builder.build();
-                        ClipboardManager clipboardManager = activity.getSystemService(ClipboardManager.class);
-                        clipboardManager.setPrimaryClip(ClipData.newPlainText(activity.getString(R.string.toolbar_more_selection_export_clipdata_label), importWrapper.finalExport()));
+                        ImportWrapper importWrapper = ImportWrapper.createImport(ImportWrapper.Permission.ADD_ITEMS_TO_CURRENT, ImportWrapper.Permission.PRE_IMPORT_SHOW_DIALOG)
+                                .addItemAll(selectionManager.getItems())
+                                .setDialogMessage(msg)
+                                .build();
+
+                        ClipboardUtil.selectText(app, R.string.toolbar_more_selection_export_clipdata_label, importWrapper.finalExport());
                         Toast.makeText(activity, R.string.toolbar_more_selection_export_success, Toast.LENGTH_SHORT).show();
 
                     } catch (Exception e) {

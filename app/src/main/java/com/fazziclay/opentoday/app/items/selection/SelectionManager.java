@@ -1,5 +1,6 @@
 package com.fazziclay.opentoday.app.items.selection;
 
+import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.SelectionCallback;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
@@ -46,7 +47,7 @@ public class SelectionManager {
         selection.selected();
         this.selections.add(selection);
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
-            callback.onSelectionChanged(this.selections);
+            callback.onSelectionChanged(getSelections());
             return callback.selected(selection);
         });
     }
@@ -62,7 +63,7 @@ public class SelectionManager {
 
         final Selection finalToDelete = toDelete;
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
-            callback.onSelectionChanged(this.selections);
+            callback.onSelectionChanged(getSelections());
             return callback.unselected(finalToDelete);
         });
     }
@@ -78,7 +79,7 @@ public class SelectionManager {
 
 
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
-            callback.onSelectionChanged(this.selections);
+            callback.onSelectionChanged(getSelections());
             return callback.unselected(se);
         });
     }
@@ -87,7 +88,7 @@ public class SelectionManager {
         selections.clear();
 
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
-            callback.onSelectionChanged(this.selections);
+            callback.onSelectionChanged(getSelections());
             callback.unselectedAll();
             return Status.NONE;
         });
@@ -98,5 +99,25 @@ public class SelectionManager {
             if (selection.getItem() == item) return true;
         }
         return false;
+    }
+
+    public void copyAllSelectedTo(ItemsStorage itemsStorage) {
+        for (Selection selection : getSelections()) {
+            selection.copyTo(itemsStorage);
+        }
+    }
+
+    public Item[] getItems() {
+        List<Item> items = new ArrayList<>();
+        for (Selection selection : getSelections()) {
+            items.add(selection.getItem());
+        }
+        return items.toArray(new Item[0]);
+    }
+
+    public void moveAllSelectedTo(ItemsStorage itemsStorage) {
+        for (Selection selection : getSelections()) {
+            selection.moveTo(itemsStorage);
+        }
     }
 }

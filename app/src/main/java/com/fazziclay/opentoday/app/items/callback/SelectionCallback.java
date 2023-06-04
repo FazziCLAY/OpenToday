@@ -4,10 +4,8 @@ import com.fazziclay.opentoday.app.items.selection.Selection;
 import com.fazziclay.opentoday.util.callback.Callback;
 import com.fazziclay.opentoday.util.callback.Status;
 
-import java.util.List;
-
 public abstract class SelectionCallback implements Callback {
-    public void onSelectionChanged(List<Selection> selections) {
+    public void onSelectionChanged(Selection[] selections) {
 
     }
 

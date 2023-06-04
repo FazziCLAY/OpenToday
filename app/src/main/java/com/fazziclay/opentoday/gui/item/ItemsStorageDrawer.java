@@ -39,6 +39,7 @@ import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ItemsStorageDrawer {
@@ -61,11 +62,11 @@ public class ItemsStorageDrawer {
     private final OnItemsStorageUpdate onItemsStorageUpdate = new DrawerOnItemsStorageUpdated();
     private final SelectionCallback selectionCallback = new SelectionCallback() {
         @Override
-        public void onSelectionChanged(List<Selection> selections) {
+        public void onSelectionChanged(Selection[] selections) {
             activity.runOnUiThread(() -> runInternal(selections));
         }
 
-        private void runInternal(List<Selection> selections) {
+        private void runInternal(Selection[] selections) {
             List<Selection> toUpdate = new ArrayList<>();
 
             for (Selection visibleSelection : visibleSelections) {
@@ -104,7 +105,7 @@ public class ItemsStorageDrawer {
                 }
             }
             visibleSelections.clear();
-            visibleSelections.addAll(selections);
+            visibleSelections.addAll(Arrays.asList(selections));
         }
     };
 

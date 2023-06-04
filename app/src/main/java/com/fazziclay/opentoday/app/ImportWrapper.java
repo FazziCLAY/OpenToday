@@ -165,6 +165,7 @@ public class ImportWrapper {
     }
 
     public static boolean isImportText(String content) {
+        if (content == null) return false;
         content = content.trim();
         return content.startsWith("--OPENTODAY-IMPORT-START--") && content.endsWith("--OPENTODAY-IMPORT-END--");
     }
