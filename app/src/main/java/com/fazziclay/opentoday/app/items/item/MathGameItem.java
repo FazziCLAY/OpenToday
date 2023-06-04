@@ -47,6 +47,10 @@ public class MathGameItem extends TextItem {
         }
     }
 
+    public MathGameItem(TextItem append) {
+        super(append);
+    }
+
     @Override
     public void tick(TickSession tickSession) {
         if (!tickSession.isAllowed(this)) return;
