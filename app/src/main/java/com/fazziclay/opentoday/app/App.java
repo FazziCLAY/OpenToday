@@ -102,7 +102,7 @@ public class App extends Application {
     private final OptionalField<UUID> instanceId = new OptionalField<>(this::parseInstanceId);
     private final OptionalField<License[]> openSourceLicenses = new OptionalField<>(this::createOpenSourceLicensesArray);
     private final OptionalField<DataFixer> dataFixer = new OptionalField<>(() -> new DataFixer(this));
-    private final OptionalField<TabsManager> tabsManager = new OptionalField<>(this::preCheckItemManager, TabsManager::destroy);
+    private final OptionalField<TabsManager> tabsManager = new OptionalField<>(this::preCheckTabsManager, TabsManager::destroy);
     private final OptionalField<SettingsManager> settingsManager = new OptionalField<>(() -> new SettingsManager(new File(getExternalFilesDir(""), "settings.json")));
     private final OptionalField<ColorHistoryManager> colorHistoryManager = new OptionalField<>(() -> new ColorHistoryManager(new File(getExternalFilesDir(""), "color_history.json"), 10));
     private final OptionalField<PinCodeManager> pinCodeManager = new OptionalField<>(() -> new PinCodeManager(this));
@@ -110,6 +110,7 @@ public class App extends Application {
     private final OptionalField<SelectionManager> selectionManager = new OptionalField<>(SelectionManager::new);
     private final OptionalField<Telemetry> telemetry = new OptionalField<>(() -> new Telemetry(this, getSettingsManager().isTelemetry()));
     private final OptionalField<TickThread> tickThread = new OptionalField<>(this::preCheckTickThread, TickThread::requestTerminate);
+    private final OptionalField<Translation> translation = new OptionalField<>(() -> new TranslationImpl(this::getString));
     private final List<FeatureFlag> featureFlags = new ArrayList<>(App.DEBUG ? Arrays.asList(
             FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
             //FeatureFlag.SHOW_APP_STARTUP_TIME_IN_PREMAIN_ACTIVITY,
@@ -392,9 +393,9 @@ public class App extends Application {
         return telemetry.get();
     }
 
-    private TabsManager preCheckItemManager() {
+    private TabsManager preCheckTabsManager() {
         final File externalFiles = getExternalFilesDir("");
-        TabsManager tabsManager = new TabsManager(new File(externalFiles, "item_data.json"), new File(externalFiles, "item_data.gz"));
+        TabsManager tabsManager = new TabsManager(new File(externalFiles, "item_data.json"), new File(externalFiles, "item_data.gz"), getTranslation());
         tabsManager.setDebugPrintSaveStatusAlways(isFeatureFlag(FeatureFlag.ALWAYS_SHOW_SAVE_STATUS));
         return tabsManager;
     }
@@ -402,6 +403,10 @@ public class App extends Application {
     @NotNull
     public TabsManager getTabsManager() {
         return tabsManager.get();
+    }
+
+    private Translation getTranslation() {
+        return translation.get();
     }
 
     @NotNull
