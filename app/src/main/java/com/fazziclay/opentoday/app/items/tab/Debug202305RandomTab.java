@@ -39,7 +39,7 @@ public class Debug202305RandomTab extends Tab implements Tickable, Readonly {
         }
     };
 
-    private final SimpleItemsStorage itemsStorage = new SimpleItemsStorage() {
+    private final SimpleItemsStorage itemsStorage = new SimpleItemsStorage(getRoot()) {
         @Override
         public void save() {
             // do nothing in Debug tab

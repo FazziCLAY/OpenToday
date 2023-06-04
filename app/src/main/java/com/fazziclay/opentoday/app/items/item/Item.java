@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.data.Cherry;
+import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.app.items.callback.ItemCallback;
@@ -130,6 +131,13 @@ public abstract class Item implements Unique, Tickable {
     public void visibleChanged() {
         if (isAttached()) controller.updateUi(this);
         itemCallbacks.run((callbackStorage, callback) -> callback.updateUi(Item.this));
+    }
+
+    public ItemsRoot getRoot() {
+        if (isAttached()) {
+            return controller.getRoot();
+        }
+        return null;
     }
 
     public boolean isAttached() {

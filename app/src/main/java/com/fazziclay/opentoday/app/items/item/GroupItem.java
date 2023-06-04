@@ -3,6 +3,7 @@ package com.fazziclay.opentoday.app.items.item;
 import androidx.annotation.NonNull;
 
 import com.fazziclay.opentoday.app.data.Cherry;
+import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
@@ -178,6 +179,11 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
         @Override
         public UUID generateId(Item item) {
             return UUID.randomUUID();
+        }
+
+        @Override
+        public ItemsRoot getRoot() {
+            return GroupItem.this.getRoot();
         }
     }
 }

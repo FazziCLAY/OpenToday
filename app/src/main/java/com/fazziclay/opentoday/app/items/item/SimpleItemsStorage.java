@@ -2,6 +2,7 @@ package com.fazziclay.opentoday.app.items.item;
 
 import androidx.annotation.NonNull;
 
+import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
@@ -16,15 +17,18 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
     private static final String TAG = "SimpleItemsStorage";
     private final List<Item> items = new ArrayList<>();
     private final ItemController itemController;
+    private final ItemsRoot root;
     private final CallbackStorage<OnItemsStorageUpdate> onUpdateCallbacks = new CallbackStorage<>();
 
 
-    public SimpleItemsStorage() {
+    public SimpleItemsStorage(ItemsRoot root) {
         this.itemController = new SimpleItemController();
+        this.root = root;
     }
 
     public SimpleItemsStorage(ItemController customController) {
         this.itemController = customController;
+        this.root = customController.getRoot();
     }
 
     @NonNull
@@ -180,6 +184,11 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
         @Override
         public UUID generateId(Item item) {
             return UUID.randomUUID();
+        }
+
+        @Override
+        public ItemsRoot getRoot() {
+            return root;
         }
     }
 }

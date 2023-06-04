@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.data.Cherry;
+import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.util.Logger;
@@ -52,6 +53,13 @@ public abstract class Tab implements ItemsStorage, Unique {
         this.controller = controller;
     }
 
+    public ItemsRoot getRoot() {
+        if (isAttached()) {
+            return controller.getRoot();
+        }
+        return null;
+    }
+
     public void validateId() {
         if (id == null && controller != null) id = controller.generateId();
     }
@@ -64,6 +72,10 @@ public abstract class Tab implements ItemsStorage, Unique {
     public void detach() {
         this.controller = null;
         this.id = null;
+    }
+
+    public boolean isAttached() {
+        return controller != null;
     }
 
     protected Tab() {

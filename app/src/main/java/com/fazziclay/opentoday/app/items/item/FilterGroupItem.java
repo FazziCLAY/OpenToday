@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.data.CherryOrchard;
+import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.filter.FilterCodecUtil;
@@ -417,6 +418,11 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         @Override
         public UUID generateId(Item item) {
             return UUID.randomUUID();
+        }
+
+        @Override
+        public ItemsRoot getRoot() {
+            return FilterGroupItem.this.getRoot();
         }
     }
 

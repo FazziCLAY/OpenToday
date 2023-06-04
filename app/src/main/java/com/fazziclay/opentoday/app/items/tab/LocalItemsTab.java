@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.data.Cherry;
+import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.item.SimpleItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
@@ -51,7 +52,7 @@ public class LocalItemsTab extends Tab implements Tickable {
 
     public LocalItemsTab(String name) {
         super(name);
-        itemsStorage = new SimpleItemsStorage() {
+        itemsStorage = new SimpleItemsStorage(new LocalItemsTabController()) {
             @Override
             public void save() {
                 LocalItemsTab.this.save();
@@ -155,6 +156,11 @@ public class LocalItemsTab extends Tab implements Tickable {
         @Override
         public UUID generateId(Item item) {
             return UUID.randomUUID();
+        }
+
+        @Override
+        public ItemsRoot getRoot() {
+            return LocalItemsTab.this.getRoot();
         }
     }
 }
