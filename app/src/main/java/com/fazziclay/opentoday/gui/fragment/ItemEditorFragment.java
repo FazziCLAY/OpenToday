@@ -161,14 +161,14 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         
         if (mode == MODE_EDIT) {
             if (getArguments().containsKey(KEY_EDIT_TAB_ID)) {
-                Tab tab = tabsManager.getTab(getArgTabId());
+                Tab tab = tabsManager.getTabById(getArgTabId());
                 item = tab.getItemById(getArgItemId());
             } else {
                 item = tabsManager.getItemById(getArgItemId());
             }
 
         } else if (mode == MODE_CREATE) {
-            itemsStorage = tabsManager.getItemStorageById(getArgItemStorageId());
+            itemsStorage = tabsManager.getItemsStorageById(getArgItemStorageId());
             addItemPosition = getArgAddItemPosition();
             ItemsRegistry.ItemInfo itemInfo = ItemsRegistry.REGISTRY.get(getArgItemType());
             item = itemInfo.create();

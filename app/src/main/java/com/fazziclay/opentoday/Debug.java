@@ -15,6 +15,7 @@ public class Debug {
     public static final int DEF = -1;
 
     public static long latestTick = DEF;
+    private static long latestPersonalTick = DEF;
     public static int latestTickDuration = DEF;
     public static int latestPersonalTickDuration = DEF;
     public static long latestSave = DEF;
@@ -31,7 +32,7 @@ public class Debug {
                         [App] init=%sms
                         [GUI] %sms; Toolbar-ctx=$[@italic;-#0055ff]%s$[||]""",
 
-                ago(latestTick), latestTickDuration, "$[-#ff0000]?$[||]", latestPersonalTickDuration,
+                ago(latestTick), latestTickDuration, ago(latestPersonalTick), latestPersonalTickDuration,
                 ago(latestSave), latestSaveRequestsCount,
                 appStartupTime,
                 mainActivityStartupTime, itemsStorageToolbarContext);
@@ -53,5 +54,9 @@ public class Debug {
 
     public static void ticked() {
         latestTick = System.currentTimeMillis();
+    }
+
+    public static void tickedPersonal() {
+        latestPersonalTick = System.currentTimeMillis();
     }
 }

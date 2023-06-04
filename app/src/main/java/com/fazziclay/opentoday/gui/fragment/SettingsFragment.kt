@@ -318,7 +318,7 @@ class SettingsFragment : Fragment() {
                     if (isDialogMessage) perms.add(ImportWrapper.Permission.PRE_IMPORT_SHOW_DIALOG)
                     val i = ImportWrapper.createImport(*perms.toTypedArray())
                     if (isDialogMessage) i.setDialogMessage(dialogMessage)
-                    if (isAllItems) i.addTabAll(*itemManager.tabs.toTypedArray())
+                    if (isAllItems) i.addTabAll(*itemManager.allTabs)
                     if (isSettings) {
                         try {
                             i.setSettings(settingsManager!!.exportJSONSettings())

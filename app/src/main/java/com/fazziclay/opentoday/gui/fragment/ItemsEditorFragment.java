@@ -112,7 +112,7 @@ public class ItemsEditorFragment extends Fragment {
         Bundle args = getArguments();
         previewMode = args.getBoolean(EXTRA_PREVIEW_MODE);
         tabId = UUID.fromString(args.getString(EXTRA_TAB_ID));
-        tab = tabsManager.getTab(tabId);
+        tab = tabsManager.getTabById(tabId);
 
         isRoot = !args.containsKey(EXTRA_ITEM_ID);
         if (isRoot) {

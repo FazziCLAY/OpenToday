@@ -79,7 +79,7 @@ public class ImportFragment extends Fragment {
         app = App.get(requireContext());
         tabsManager = app.getTabsManager();
         selectionManager = app.getSelectionManager();
-        itemsStorage = tabsManager.getItemStorageById(UUID.fromString(getArguments().getString(KEY_ITEMS_STORAGE)));
+        itemsStorage = tabsManager.getItemsStorageById(UUID.fromString(getArguments().getString(KEY_ITEMS_STORAGE)));
 
         if (getArguments().containsKey(KEY_START_TEXT)) {
             if (getArguments().getBoolean(KEY_AUTORUN)) {

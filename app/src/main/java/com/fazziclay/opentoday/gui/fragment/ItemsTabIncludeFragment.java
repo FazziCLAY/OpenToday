@@ -87,15 +87,15 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
 
         if (settingsManager.getFirstTab() == SettingsManager.FirstTab.TAB_ON_CLOSING) {
             currentTab = getLastTabId();
-            if (currentTab == null || tabsManager.getTab(currentTab) == null) {
-                currentTab = tabsManager.getMainTab().getId();
-                currentItemsStorage = tabsManager.getMainTab();
+            if (currentTab == null || tabsManager.getTabById(currentTab) == null) {
+                currentTab = tabsManager.getFirstTab().getId();
+                currentItemsStorage = tabsManager.getFirstTab();
             } else {
-                currentItemsStorage = tabsManager.getTab(currentTab);
+                currentItemsStorage = tabsManager.getTabById(currentTab);
             }
         } else if (settingsManager.getFirstTab() == SettingsManager.FirstTab.FIRST) {
-            currentTab = tabsManager.getMainTab().getId();
-            currentItemsStorage = tabsManager.getMainTab();
+            currentTab = tabsManager.getFirstTab().getId();
+            currentItemsStorage = tabsManager.getFirstTab();
         } else {
             throw new RuntimeException("Unknown firstTab settings!");
         }
@@ -103,7 +103,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         this.toolbar = new AppToolbar(requireActivity(), tabsManager, settingsManager, selectionManager, currentItemsStorage, rootNavigationHost, binding.toolbar, binding.toolbarMore);
 
         // Tabs
-        tabsManager.getOnTabsChanged().addCallback(CallbackImportance.DEFAULT, localOnTabChanged);
+        tabsManager.getOnTabsChangedCallbacks().addCallback(CallbackImportance.DEFAULT, localOnTabChanged);
         binding.viewPager.setAdapter(tabsViewPagerAdapter = new LocalViewPagerAdapter(this));
         binding.viewPager.setUserInputEnabled(false);
         binding.viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
@@ -174,7 +174,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     public void onDestroy() {
         super.onDestroy();
         Logger.d(TAG, "onDestroy");
-        tabsManager.getOnTabsChanged().deleteCallback(localOnTabChanged);
+        tabsManager.getOnTabsChangedCallbacks().deleteCallback(localOnTabChanged);
         if (toolbar != null) toolbar.destroy();
     }
 
@@ -250,13 +250,13 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     }
 
     private void updateViewPager(boolean smoothScroll) {
-        binding.viewPager.setCurrentItem(tabsManager.getTabPosition(currentTab), smoothScroll);
+        binding.viewPager.setCurrentItem(tabsManager.getTabPosition(tabsManager.getTabById(currentTab)), smoothScroll);
     }
 
     private void setupTabs() {
         binding.tabs.removeAllTabs();
 
-        for (Tab tab : tabsManager.getTabs()) {
+        for (Tab tab : tabsManager.getAllTabs()) {
             TabLayout.Tab tabView = binding.tabs.newTab();
             tabView.setTag(tab.getId().toString());
             tabView.setText(tab.getName());
@@ -289,7 +289,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     @NonNull
     @Override
     public Tab getCurrentTab() {
-        return tabsManager.getTab(getCurrentTabId());
+        return tabsManager.getTabById(getCurrentTabId());
     }
 
     @Override
@@ -369,7 +369,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     }
 
     // On itemManager tabs changed
-    private class LocalOnTabChanged implements OnTabsChanged {
+    private class LocalOnTabChanged extends OnTabsChanged {
         @Override
         public Status onTabsChanged(@NonNull final Tab[] tabs) {
             Logger.d(TAG, LocalOnTabChanged.class.getSimpleName(), "onTabsChanged");
@@ -382,7 +382,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
                 }
             }
             if (id == null) {
-                id = tabsManager.getMainTab().getId();
+                id = tabsManager.getFirstTab().getId();
             }
             ItemsTabIncludeFragment.this.setCurrentTab(id);
             ItemsTabIncludeFragment.this.setItemStorageInContext(getCurrentTab());
@@ -405,14 +405,14 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            Tab t = tabsManager.getTabs().get(position);
+            Tab t = tabsManager.getAllTabs()[position];
             Logger.d(TAG, LocalViewPagerAdapter.class.getSimpleName(), "createFragment", "position=", position, "(tab by <position> in itemManager)=", t);
             return ItemsEditorRootFragment.create(t.getId());
         }
 
         @Override
         public int getItemCount() {
-            return tabsManager.getTabs().size();
+            return tabsManager.getAllTabs().length;
         }
     }
 }

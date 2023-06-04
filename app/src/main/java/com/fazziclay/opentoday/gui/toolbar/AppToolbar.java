@@ -179,7 +179,7 @@ public class AppToolbar {
         destroyed = true;
         if (selectionCallback != null) selectionManager.getOnSelectionUpdated().deleteCallback(selectionCallback);
         if (selectionCallbackTab != null) selectionManager.getOnSelectionUpdated().deleteCallback(selectionCallbackTab);
-        if (onTabsChanged != null) tabsManager.getOnTabsChanged().deleteCallback(onTabsChanged);
+        if (onTabsChanged != null) tabsManager.getOnTabsChangedCallbacks().deleteCallback(onTabsChanged);
         if (debugCallback != null) UI.getDebugCallbacks().deleteCallback(debugCallback);
         toolbarView.removeAllViews();
         toolbarMoreView.removeAllViews();
@@ -208,7 +208,7 @@ public class AppToolbar {
             backgroundTintFromStyle(R.style.Theme_OpenToday_Toolbar_Button, currentToolbarButton);
         }
         if (selectionCallback != null) selectionManager.getOnSelectionUpdated().deleteCallback(selectionCallback);
-        if (onTabsChanged != null) tabsManager.getOnTabsChanged().deleteCallback(onTabsChanged);
+        if (onTabsChanged != null) tabsManager.getOnTabsChangedCallbacks().deleteCallback(onTabsChanged);
     }
 
     private void preOnClick(final View buttonView, final Runnable runnable) {
@@ -420,15 +420,18 @@ public class AppToolbar {
         new ItemTouchHelper(simpleCallback).attachToRecyclerView(localBinding.tabsRecycleView);
 
 
-        onTabsChanged = tabs -> {
-            if (System.currentTimeMillis() - lastTabReorder >= 1000) {
-                // TODO: 2023.05.23 add specific for OnTabsChanged
-                // TODO: 2023.05.23 add TabsManager
-                localBinding.tabsRecycleView.getAdapter().notifyDataSetChanged();
+        onTabsChanged = new OnTabsChanged() {
+            @Override
+            public Status onTabsChanged(@NonNull Tab[] tabs) {
+                if (System.currentTimeMillis() - lastTabReorder >= 1000) {
+                    // TODO: 2023.05.23 add specific for OnTabsChanged
+                    // TODO: 2023.05.23 add TabsManager
+                    localBinding.tabsRecycleView.getAdapter().notifyDataSetChanged();
+                }
+                return Status.NONE;
             }
-            return Status.NONE;
         };
-        tabsManager.getOnTabsChanged().addCallback(CallbackImportance.DEFAULT, onTabsChanged);
+        tabsManager.getOnTabsChangedCallbacks().addCallback(CallbackImportance.DEFAULT, onTabsChanged);
 
 
 
@@ -441,7 +444,7 @@ public class AppToolbar {
                     .setPositiveButton(R.string.toolbar_more_items_tab_add, (dialog, which) -> {
                         String text = tabNameEditText.getText().toString();
                         if (!text.trim().isEmpty()) {
-                            tabsManager.createTab(tabNameEditText.getText().toString());
+                            tabsManager.createLocalTab(tabNameEditText.getText().toString());
                         } else {
                             Toast.makeText(activity, R.string.tab_noEmptyName, Toast.LENGTH_SHORT).show();
                         }

@@ -56,7 +56,7 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
 
         Bundle args = getArguments();
         tabId = UUID.fromString(args.getString(EXTRA_TAB_ID));
-        tab = App.get(requireContext()).getTabsManager().getTab(tabId);
+        tab = App.get(requireContext()).getTabsManager().getTabById(tabId);
 
         if (savedInstanceState == null) {
             getChildFragmentManager()
