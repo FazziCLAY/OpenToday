@@ -42,8 +42,7 @@ public class DebugTickCounterItem extends TextItem {
         return new DebugTickCounterItem("", 0);
     }
 
-    @SaveKey(key = "counter") @RequireSave
-    private int counter;
+    @SaveKey(key = "counter") @RequireSave private int counter;
     private String debugStat = "";
 
     protected DebugTickCounterItem() {
@@ -91,7 +90,7 @@ public class DebugTickCounterItem extends TextItem {
         $[-#ffff00]Counter: $[-#00aaff] %s$[||]
         $[-#f0f0f0]Allowed targets: %s$[||]
         $[-#00ffff]Whitelist(%s): %s$[||]
-        $[-$fff00f]PathToMe: %s
+        $[-$fff00f]PathToMe: %s$[||]
         """, getId(), counter, targets, tickSession._isWhitelist(), tickSession._getWhitelist(),
                 Arrays.toString(ItemUtil.getPathToItem(this)));
         visibleChanged();
