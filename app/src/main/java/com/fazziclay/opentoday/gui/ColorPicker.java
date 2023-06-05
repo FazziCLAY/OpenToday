@@ -20,6 +20,10 @@ public class ColorPicker {
     private boolean showPreview;
     private boolean showAlpha;
 
+    public ColorPicker(Context context) {
+        this.context = context;
+    }
+
     public ColorPicker(Context context, int startColor) {
         this.context = context;
         this.startColor = startColor;
@@ -32,24 +36,23 @@ public class ColorPicker {
         return this;
     }
 
-    public void showDialog(int title, int negative, int positive, EditInterface editInterface) {
-        showDialog(context.getString(title), context.getString(negative), context.getString(positive), editInterface);
+    public void showDialog(int title, int negative, int positive, ColorPickerInterface colorPickerInterface) {
+        showDialog(context.getString(title), context.getString(negative), context.getString(positive), colorPickerInterface);
     }
 
-    public void showDialog(String title, String negative, String positive, EditInterface editInterface) {
-        ColorPickerView cp = new ColorPickerView(context);
-        cp.showHex(showHex);
-        cp.showPreview(showPreview);
-        cp.showAlpha(showAlpha);
-        cp.setCurrentColor(startColor);
-        cp.setOriginalColor(startColor);
+    public void showDialog(String title, String negative, String positive, ColorPickerInterface colorPickerInterface) {
+        ColorPickerView pickerView = new ColorPickerView(context);
+        pickerView.showHex(showHex);
+        pickerView.showPreview(showPreview);
+        pickerView.showAlpha(showAlpha);
+        pickerView.setCurrentColor(startColor);
+        pickerView.setOriginalColor(startColor);
 
         HorizontalScrollView historyHorizontal = new HorizontalScrollView(context);
 
         LinearLayout dialogLayout = new LinearLayout(context);
         dialogLayout.setOrientation(LinearLayout.VERTICAL);
-        dialogLayout.addView(cp);
-        dialogLayout.addView(historyHorizontal);
+        dialogLayout.addView(pickerView);
 
         if (colorHistoryManager != null) {
             ChipGroup history = new ChipGroup(context);
@@ -57,22 +60,21 @@ public class ColorPicker {
             for (int color : colors) {
                 Chip chip = new Chip(context);
                 chip.setChipBackgroundColor(ColorStateList.valueOf(color));
-                chip.setOnClickListener(v -> cp.setCurrentColor(color));
+                chip.setOnClickListener(v -> pickerView.setCurrentColor(color));
                 chip.setText(String.format("#%08x", color));
                 history.addView(chip);
             }
             historyHorizontal.addView(history);
         }
 
-
         new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setView(dialogLayout)
                 .setNegativeButton(negative, null)
                 .setPositiveButton(positive, ((_dialog1, _which) -> {
-                    int color = cp.getColor();
+                    int color = pickerView.getColor();
                     if (colorHistoryManager != null)colorHistoryManager.addColor(color);
-                    editInterface.selected(color);
+                    colorPickerInterface.selected(color);
                 }))
                 .show();
     }
@@ -87,7 +89,7 @@ public class ColorPicker {
         return this;
     }
 
-    public interface EditInterface {
+    public interface ColorPickerInterface {
         void selected(int color);
     }
 }
