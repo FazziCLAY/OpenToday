@@ -63,7 +63,6 @@ class MainActivity : AppCompatActivity(), UIRoot {
     // Activity overrides
     override fun onCreate(savedInstanceState: Bundle?) {
         val startTime = System.currentTimeMillis()
-        super.onCreate(savedInstanceState)
         Logger.d(TAG, "onCreate", nullStat(savedInstanceState))
         if (App.DEBUG) EnumsRegistry.missingChecks()
         app = App.get(this)
@@ -72,6 +71,9 @@ class MainActivity : AppCompatActivity(), UIRoot {
         app.telemetry.send(UiOpenLPacket())
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        super.onCreate(savedInstanceState)
+
         setSupportActionBar(binding.toolbar)
         supportActionBar?.hide()
         debugRunnable = Runnable {
