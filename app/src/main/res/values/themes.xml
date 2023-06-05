@@ -17,6 +17,7 @@
         <item name="windowNoTitle">true</item>
 
         <!-- Main Activity -->
+        <item name="androidToolbar_background">#BC7EFF</item>
         <item name="main_currentDate_color">#008465</item>
         <item name="disableBatteryOptimization_backgroundColor">#FF5F6A</item>
         <item name="disableBatteryOptimization_textColor">#000000</item>

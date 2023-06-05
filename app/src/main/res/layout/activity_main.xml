@@ -6,6 +6,7 @@
     tools:context="com.fazziclay.opentoday.gui.activity.MainActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
+        android:background="?attr/androidToolbar_background"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
