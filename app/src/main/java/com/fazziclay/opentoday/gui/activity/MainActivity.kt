@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
     private lateinit var currentDateHandler: Handler
     private lateinit var currentDateRunnable: Runnable
     private lateinit var currentDateCalendar: GregorianCalendar
-    private var activitySettings: Stack<ActivitySettings> = Stack()
+    private var activitySettingsStack: Stack<ActivitySettings> = Stack()
     private var debugView = false
     private var debugHandler: Handler? = null
     private lateinit var debugRunnable: Runnable
@@ -71,14 +71,15 @@ class MainActivity : AppCompatActivity(), UIRoot {
         UI.setTheme(settingsManager.theme)
         app.telemetry.send(UiOpenLPacket())
         binding = ActivityMainBinding.inflate(layoutInflater)
-        supportActionBar!!.hide()
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.hide()
         debugRunnable = Runnable {
             binding.debugInfo.text = ColorUtil.colorize(Debug.getDebugInfoText(), Color.WHITE, Color.TRANSPARENT, Typeface.NORMAL)
             if (debugView && debugHandler != null) {
                 debugHandler!!.postDelayed(this.debugRunnable, 99)
             }
         }
-        setContentView(binding.root)
         if (Debug.CUSTOM_MAINACTIVITY_BACKGROUND) binding.root.setBackgroundColor(Color.parseColor("#00ffff"))
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
@@ -114,6 +115,17 @@ class MainActivity : AppCompatActivity(), UIRoot {
         })
         updateByActivitySettings()
         Debug.mainActivityStartupTime = System.currentTimeMillis() - startTime
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        val toolbarSettings = getCurrentActivitySettings().toolbarSettings
+        if (toolbarSettings != null) {
+            if (toolbarSettings.backButtonRunnable != null) {
+                toolbarSettings.backButtonRunnable.run()
+                return true
+            }
+        }
+        return false
     }
 
     private fun setupNotifications() {
@@ -240,18 +252,15 @@ class MainActivity : AppCompatActivity(), UIRoot {
 
     override fun pushActivitySettings(a: ActivitySettings) {
         Logger.d(TAG, "pushActivitySettings(value)")
-        activitySettings.push(a)
+        activitySettingsStack.push(a)
         updateByActivitySettings()
     }
 
     override fun pushActivitySettings(a: ActivitySettingsPush) {
         Logger.d(TAG, "pushActivitySettings(interface)")
-        if (activitySettings.empty()) {
-            activitySettings.push(DEFAULT_ACTIVITY_SETTINGS)
-        }
-        val copy = activitySettings.lastElement().clone()
+        val copy = getCurrentActivitySettings().clone()
         a.validate(copy)
-        activitySettings.push(copy)
+        activitySettingsStack.push(copy)
         updateByActivitySettings()
     }
 
@@ -261,19 +270,37 @@ class MainActivity : AppCompatActivity(), UIRoot {
 
     override fun popActivitySettings() {
         Logger.d(TAG, "popActivitySettings")
-        activitySettings.pop()
+        activitySettingsStack.pop()
         updateByActivitySettings()
     }
 
-    private fun updateByActivitySettings() {
-        if (activitySettings.empty()) {
-            activitySettings.push(DEFAULT_ACTIVITY_SETTINGS)
+    private fun getCurrentActivitySettings(): ActivitySettings {
+        if (activitySettingsStack.empty()) {
+            activitySettingsStack.push(DEFAULT_ACTIVITY_SETTINGS)
         }
-        val settings = activitySettings.lastElement()
+        return activitySettingsStack.lastElement()
+    }
+
+    private fun updateByActivitySettings() {
+        val settings = getCurrentActivitySettings()
         viewVisible(binding.currentDateDate, settings.isClockVisible, View.GONE)
         viewVisible(binding.currentDateTime, settings.isClockVisible, View.GONE)
         binding.currentDateDate.isEnabled = settings.isDateClickCalendar
         binding.currentDateTime.isEnabled = settings.isDateClickCalendar
-        viewVisible(binding.notifications, activitySettings.lastElement().isNotificationsVisible, View.GONE)
+        viewVisible(binding.notifications, activitySettingsStack.lastElement().isNotificationsVisible, View.GONE)
+
+        val toolbarSettings = settings.toolbarSettings
+        if (toolbarSettings == null) {
+            supportActionBar?.hide()
+        } else {
+            supportActionBar?.show()
+            if (toolbarSettings.title != null) {
+                supportActionBar?.title = toolbarSettings.title
+            } else {
+                supportActionBar?.setTitle(toolbarSettings.titleResId)
+            }
+            supportActionBar?.setDisplayShowHomeEnabled(toolbarSettings.isBackButton)
+            supportActionBar?.setDisplayHomeAsUpEnabled(toolbarSettings.isBackButton)
+        }
     }
 }

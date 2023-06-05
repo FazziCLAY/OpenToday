@@ -6,6 +6,7 @@ public class ActivitySettings implements Cloneable {
     private boolean clockVisible = true;
     private boolean notificationsVisible = true;
     private boolean dateClickCalendar = true;
+    private ToolbarSettings toolbarSettings = null;
 
 
     public ActivitySettings setClockVisible(boolean clockVisible) {
@@ -52,5 +53,63 @@ public class ActivitySettings implements Cloneable {
 
     public boolean isDateClickCalendar() {
         return dateClickCalendar;
+    }
+
+    public ToolbarSettings getToolbarSettings() {
+        return toolbarSettings;
+    }
+
+    public void setToolbarSettings(ToolbarSettings toolbarSettings) {
+        this.toolbarSettings = toolbarSettings;
+    }
+
+    public static class ToolbarSettings {
+        private String title;
+        private int titleResId;
+        private boolean backButton;
+        private Runnable backButtonRunnable;
+
+        public static ToolbarSettings createBack(int titleResId, Runnable back) {
+            return new ToolbarSettings(null, titleResId, true, back);
+        }
+
+        public ToolbarSettings(String title, int titleResId, boolean backButton, Runnable backButtonRunnable) {
+            this.title = title;
+            this.titleResId = titleResId;
+            this.backButton = backButton;
+            this.backButtonRunnable = backButtonRunnable;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public boolean isBackButton() {
+            return backButton;
+        }
+
+        public void setBackButton(boolean backButton) {
+            this.backButton = backButton;
+        }
+
+        public Runnable getBackButtonRunnable() {
+            return backButtonRunnable;
+        }
+
+        public void setBackButtonRunnable(Runnable backButtonRunnable) {
+            this.backButtonRunnable = backButtonRunnable;
+        }
+
+        public int getTitleResId() {
+            return titleResId;
+        }
+
+        public void setTitleResId(int titleResId) {
+            this.titleResId = titleResId;
+        }
     }
 }

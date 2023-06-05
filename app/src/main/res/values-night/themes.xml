@@ -15,6 +15,9 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" >#000000</item>
 
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
         <!-- Main Activity -->
         <item name="main_currentDate_color">#00FF9A</item>
         <item name="disableBatteryOptimization_backgroundColor">#4D0000</item>

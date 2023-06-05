@@ -27,11 +27,11 @@ import com.fazziclay.opentoday.app.PinCodeManager.ContainNonDigitChars
 import com.fazziclay.opentoday.app.SettingsManager
 import com.fazziclay.opentoday.app.SettingsManager.FirstTab
 import com.fazziclay.opentoday.app.items.QuickNoteReceiver
-import com.fazziclay.opentoday.app.items.item.Item
 import com.fazziclay.opentoday.app.items.item.ItemType
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry
 import com.fazziclay.opentoday.databinding.ExportBinding
 import com.fazziclay.opentoday.databinding.FragmentSettingsBinding
+import com.fazziclay.opentoday.gui.ActivitySettings
 import com.fazziclay.opentoday.gui.EnumsRegistry
 import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType
@@ -73,6 +73,16 @@ class SettingsFragment : Fragment() {
         settingsManager = app.settingsManager
         colorHistoryManager = app.colorHistoryManager
         pinCodeManager = app.pinCodeManager
+        UI.getUIRoot(this).pushActivitySettings { a ->
+            a.isNotificationsVisible = false
+            a.isClockVisible = false
+            a.toolbarSettings = ActivitySettings.ToolbarSettings.createBack(R.string.settings_title) { UI.rootBack(this@SettingsFragment) }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        UI.getUIRoot(this).popActivitySettings()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
