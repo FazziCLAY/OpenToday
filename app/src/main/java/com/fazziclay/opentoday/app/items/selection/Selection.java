@@ -41,6 +41,6 @@ public class Selection {
     }
 
     protected void deselect() {
-        item.getItemCallbacks().deleteCallback(itemCallback);
+        item.getItemCallbacks().removeCallback(itemCallback);
     }
 }

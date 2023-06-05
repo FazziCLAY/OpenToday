@@ -220,8 +220,8 @@ public class ItemsEditorFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         if (this.itemsStorageDrawer != null) this.itemsStorageDrawer.destroy();
-        if (this.itemsStorage != null) itemsStorage.getOnItemsStorageCallbacks().deleteCallback(onItemStorageChangeCallback);
-        if (this.item != null) item.getItemCallbacks().deleteCallback(itemCallback);
+        if (this.itemsStorage != null) itemsStorage.getOnItemsStorageCallbacks().removeCallback(onItemStorageChangeCallback);
+        if (this.item != null) item.getItemCallbacks().removeCallback(itemCallback);
     }
 
     public ItemsStorage getItemStorage() {

@@ -167,8 +167,8 @@ public class ItemsStorageDrawer {
             throw new RuntimeException("ItemStorageDrawer destroyed!");
         }
         destroyed = true;
-        this.itemsStorage.getOnItemsStorageCallbacks().deleteCallback(onItemsStorageUpdate);
-        this.selectionManager.getOnSelectionUpdated().deleteCallback(selectionCallback);
+        this.itemsStorage.getOnItemsStorageCallbacks().removeCallback(onItemsStorageUpdate);
+        this.selectionManager.getOnSelectionUpdated().removeCallback(selectionCallback);
         this.view.setAdapter(null);
         this.itemViewGenerator = null;
         this.adapter = null;
@@ -180,14 +180,6 @@ public class ItemsStorageDrawer {
 
     public void setItemViewWrapper(ItemViewWrapper itemViewWrapper) {
         this.itemViewWrapper = itemViewWrapper;
-    }
-
-    public void updateItemAt(int position) {
-        adapter.notifyItemChanged(position);
-    }
-
-    public void _updateAllItems() {
-        adapter.notifyDataSetChanged();
     }
 
     // Private
@@ -302,70 +294,56 @@ public class ItemsStorageDrawer {
 
     private void actionItem(Item item, SettingsManager.ItemAction action) {
         switch (action) {
-            case OPEN_EDITOR:
-                onItemEditor.run(item);
-                break;
-
-            case SELECT_ON:
+            case OPEN_EDITOR -> onItemEditor.run(item);
+            case SELECT_ON -> {
                 selectionManager.selectItem(item);
                 item.visibleChanged();
-                break;
-
-            case SELECT_OFF:
+            }
+            case SELECT_OFF -> {
                 selectionManager.deselectItem(item);
                 item.visibleChanged();
-                break;
-
-            case MINIMIZE_REVERT:
+            }
+            case MINIMIZE_REVERT -> {
                 item.setMinimize(!item.isMinimize());
                 item.visibleChanged();
                 item.save();
-                break;
-
-            case MINIMIZE_OFF:
+            }
+            case MINIMIZE_OFF -> {
                 item.setMinimize(false);
                 item.visibleChanged();
                 item.save();
-                break;
-
-
-            case MINIMIZE_ON:
+            }
+            case MINIMIZE_ON -> {
                 item.setMinimize(true);
                 item.visibleChanged();
                 item.save();
-                break;
-
-            case SELECT_REVERT:
+            }
+            case SELECT_REVERT -> {
                 if (selectionManager.isSelected(item)) {
                     selectionManager.deselectItem(item);
                 } else {
                     selectionManager.selectItem(item);
                 }
                 item.visibleChanged();
-                break;
-
-            case DELETE_REQUEST:
-                new AlertDialog.Builder(activity)
-                        .setTitle(R.string.dialogItem_delete_title)
-                        .setNegativeButton(R.string.dialogItem_delete_cancel, null)
-                        .setPositiveButton(R.string.dialogItem_delete_apply, ((dialog1, which) -> item.delete()))
-                        .show();
-
+            }
+            case DELETE_REQUEST -> new AlertDialog.Builder(activity)
+                    .setTitle(R.string.dialogItem_delete_title)
+                    .setNegativeButton(R.string.dialogItem_delete_cancel, null)
+                    .setPositiveButton(R.string.dialogItem_delete_apply, ((dialog1, which) -> item.delete()))
+                    .show();
         }
     }
 
     @SuppressLint("NonConstantResourceId")
     private void showRightMenu(Item item, View itemView) {
         App app = App.get(activity);
-        TabsManager tabsManager = app.getTabsManager();
         PopupMenu menu = new PopupMenu(activity, itemView);
         menu.setForceShowIcon(true);
         menu.inflate(R.menu.menu_item);
         menu.getMenu().findItem(R.id.minimize).setChecked(item.isMinimize());
         menu.getMenu().findItem(R.id.selected).setChecked(selectionManager.isSelected(item));
         menu.getMenu().setGroupEnabled(R.id.textItem, item instanceof TextItem);
-        if (item instanceof TextItem) {
-            TextItem textItem = (TextItem) item;
+        if (item instanceof TextItem textItem) {
             menu.getMenu().findItem(R.id.textItem_clickableUrls).setChecked(textItem.isClickableUrls());
         }
         menu.getMenu().findItem(R.id.transform).setVisible(true);
@@ -401,16 +379,14 @@ public class ItemsStorageDrawer {
                     break;
 
                 case R.id.textItem_clickableUrls:
-                    if (item instanceof TextItem) {
-                        TextItem textItem = (TextItem) item;
+                    if (item instanceof TextItem textItem) {
                         textItem.setClickableUrls(!textItem.isClickableUrls());
                         save = true;
                     }
                     break;
 
                 case R.id.textItem_editText:
-                    if (item instanceof TextItem) {
-                        TextItem textItem = (TextItem) item;
+                    if (item instanceof TextItem textItem) {
                         DialogTextItemEditText d = new DialogTextItemEditText(activity, textItem);
                         d.show();
                     }

@@ -46,7 +46,7 @@ public class CurrentItemStorageDrawer {
     }
 
     public void destroy() {
-        currentItemStorage.getOnCurrentItemStorageUpdateCallbacks().deleteCallback(listener);
+        currentItemStorage.getOnCurrentItemStorageUpdateCallbacks().removeCallback(listener);
         view.removeAllViews();
     }
 

@@ -172,10 +172,10 @@ public class AppToolbar {
         }
         Logger.d(TAG, "destroy");
         destroyed = true;
-        if (selectionCallback != null) selectionManager.getOnSelectionUpdated().deleteCallback(selectionCallback);
-        if (selectionCallbackTab != null) selectionManager.getOnSelectionUpdated().deleteCallback(selectionCallbackTab);
-        if (onTabsChanged != null) tabsManager.getOnTabsChangedCallbacks().deleteCallback(onTabsChanged);
-        if (debugCallback != null) UI.getDebugCallbacks().deleteCallback(debugCallback);
+        if (selectionCallback != null) selectionManager.getOnSelectionUpdated().removeCallback(selectionCallback);
+        if (selectionCallbackTab != null) selectionManager.getOnSelectionUpdated().removeCallback(selectionCallbackTab);
+        if (onTabsChanged != null) tabsManager.getOnTabsChangedCallbacks().removeCallback(onTabsChanged);
+        if (debugCallback != null) UI.getDebugCallbacks().removeCallback(debugCallback);
         toolbarView.removeAllViews();
         toolbarMoreView.removeAllViews();
         this.binding = null;
@@ -202,8 +202,8 @@ public class AppToolbar {
         if (currentToolbarButton != null) {
             backgroundTintFromStyle(R.style.Theme_OpenToday_Toolbar_Button, currentToolbarButton);
         }
-        if (selectionCallback != null) selectionManager.getOnSelectionUpdated().deleteCallback(selectionCallback);
-        if (onTabsChanged != null) tabsManager.getOnTabsChangedCallbacks().deleteCallback(onTabsChanged);
+        if (selectionCallback != null) selectionManager.getOnSelectionUpdated().removeCallback(selectionCallback);
+        if (onTabsChanged != null) tabsManager.getOnTabsChangedCallbacks().removeCallback(onTabsChanged);
     }
 
     private void preOnClick(final View buttonView, final Runnable runnable) {
@@ -276,9 +276,7 @@ public class AppToolbar {
 
         MaterialButton debugTabCreate = new MaterialButton(activity);
         debugTabCreate.setText("Create Debug202305RandomTab tab");
-        viewClick(debugTabCreate, () -> {
-            tabsManager.addTab(new Debug202305RandomTab());
-        });
+        viewClick(debugTabCreate, () -> tabsManager.addTab(new Debug202305RandomTab()));
 
         MaterialButton featureFlags = new MaterialButton(activity);
         featureFlags.setText("Feature flags");
