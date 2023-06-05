@@ -405,7 +405,8 @@ public class App extends Application {
         return tabsManager.get();
     }
 
-    private Translation getTranslation() {
+    @NotNull
+    public Translation getTranslation() {
         return translation.get();
     }
 
