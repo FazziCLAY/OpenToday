@@ -76,7 +76,7 @@ public class DeleteItemsFragment extends Fragment {
         itemsToDelete = u.toArray(new Item[0]);
         //
 
-        itemViewGenerator = ItemViewGenerator.builder(requireActivity(), tabsManager, settingsManager, selectionManager)
+        itemViewGenerator = ItemViewGenerator.builder(requireActivity(), settingsManager, selectionManager)
                 .setPreviewMode()
                 .build();
 

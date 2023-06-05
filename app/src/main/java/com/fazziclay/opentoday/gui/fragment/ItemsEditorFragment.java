@@ -127,11 +127,11 @@ public class ItemsEditorFragment extends Fragment {
         }
 
         if (previewMode) {
-            this.itemsStorageDrawer = ItemsStorageDrawer.builder(activity, tabsManager, settingsManager, selectionManager, itemsStorage)
+            this.itemsStorageDrawer = ItemsStorageDrawer.builder(activity, settingsManager, selectionManager, itemsStorage)
                     .setPreviewMode()
                     .build();
         } else {
-            this.itemsStorageDrawer = ItemsStorageDrawer.builder(activity, tabsManager, settingsManager, selectionManager, itemsStorage)
+            this.itemsStorageDrawer = ItemsStorageDrawer.builder(activity, settingsManager, selectionManager, itemsStorage)
                     .setOnItemOpenEditor((item) -> rootNavigationHost.navigate(ItemEditorFragment.edit(item.getId()), true))
                     .setStorageEditsActions(new StorageEditsActions() {
                         @Override

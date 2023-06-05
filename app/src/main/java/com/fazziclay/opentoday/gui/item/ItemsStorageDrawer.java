@@ -45,7 +45,6 @@ import java.util.List;
 public class ItemsStorageDrawer {
     private static final String TAG = "ItemStorageDrawer";
     private final Activity activity;
-    private final TabsManager tabsManager;
     private final SettingsManager settingsManager;
     private final SelectionManager selectionManager;
     private final ItemsStorage itemsStorage;
@@ -115,10 +114,9 @@ public class ItemsStorageDrawer {
     private final ItemInterface onItemEditor;
 
     // Public
-    public ItemsStorageDrawer(@NonNull Activity activity, @NonNull TabsManager tabsManager, SettingsManager settingsManager, SelectionManager selectionManager, ItemsStorage itemsStorage, ItemInterface itemOnClick, @NonNull ItemInterface onItemEditor, boolean previewMode, StorageEditsActions storageEdits) {
+    public ItemsStorageDrawer(@NonNull Activity activity, SettingsManager settingsManager, SelectionManager selectionManager, ItemsStorage itemsStorage, ItemInterface itemOnClick, @NonNull ItemInterface onItemEditor, boolean previewMode, StorageEditsActions storageEdits) {
         this.activity = activity;
         this.onItemEditor = onItemEditor;
-        this.tabsManager = tabsManager;
         this.settingsManager = settingsManager;
         this.selectionManager = selectionManager;
         this.itemsStorage = itemsStorage;
@@ -128,7 +126,7 @@ public class ItemsStorageDrawer {
         this.previewMode = previewMode;
         this.view.setLayoutManager(new LinearLayoutManager(activity));
         this.view.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1));
-        this.itemViewGenerator = new ItemViewGenerator(this.activity, this.tabsManager, settingsManager, selectionManager, previewMode, (item) -> {
+        this.itemViewGenerator = new ItemViewGenerator(this.activity, settingsManager, selectionManager, previewMode, (item) -> {
             if (this.itemOnClick == null) {
                 if (!previewMode) actionItem(item, settingsManager.getItemOnClickAction());
             } else {
@@ -138,8 +136,8 @@ public class ItemsStorageDrawer {
 
     }
 
-    public static CreateBuilder builder(Activity activity, TabsManager tabsManager, SettingsManager settingsManager, SelectionManager selectionManager, ItemsStorage itemsStorage) {
-        return new CreateBuilder(activity, tabsManager, settingsManager, selectionManager, itemsStorage);
+    public static CreateBuilder builder(Activity activity, SettingsManager settingsManager, SelectionManager selectionManager, ItemsStorage itemsStorage) {
+        return new CreateBuilder(activity, settingsManager, selectionManager, itemsStorage);
     }
 
     public void create() {
@@ -425,18 +423,16 @@ public class ItemsStorageDrawer {
 
     public static class CreateBuilder {
         private final Activity activity;
-        private final TabsManager tabsManager;
         private final SettingsManager settingsManager;
-        private SelectionManager selectionManager;
+        private final SelectionManager selectionManager;
         private final ItemsStorage itemsStorage;
         private boolean previewMode = false;
         private ItemInterface onItemClick = null;
         private ItemInterface onItemOpenEditor = null;
         private StorageEditsActions storageEditsAction = null;
 
-        public CreateBuilder(Activity activity, TabsManager tabsManager, SettingsManager settingsManager, SelectionManager selectionManager, ItemsStorage itemsStorage) {
+        public CreateBuilder(Activity activity, SettingsManager settingsManager, SelectionManager selectionManager, ItemsStorage itemsStorage) {
             this.activity = activity;
-            this.tabsManager = tabsManager;
             this.settingsManager = settingsManager;
             this.selectionManager = selectionManager;
             this.itemsStorage = itemsStorage;
@@ -465,7 +461,7 @@ public class ItemsStorageDrawer {
         }
 
         public ItemsStorageDrawer build() {
-            return new ItemsStorageDrawer(activity, tabsManager, settingsManager, selectionManager, itemsStorage, onItemClick, onItemOpenEditor, previewMode, storageEditsAction);
+            return new ItemsStorageDrawer(activity, settingsManager, selectionManager, itemsStorage, onItemClick, onItemOpenEditor, previewMode, storageEditsAction);
         }
     }
 

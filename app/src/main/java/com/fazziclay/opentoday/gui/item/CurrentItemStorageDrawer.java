@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.CurrentItemStorage;
-import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.callback.OnCurrentItemStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
@@ -22,7 +21,6 @@ import com.fazziclay.opentoday.util.callback.Status;
 
 public class CurrentItemStorageDrawer {
     private final Activity activity;
-    private final TabsManager tabsManager;
     private final SelectionManager selectionManager;
     private final LinearLayout view;
     private final CurrentItemStorage currentItemStorage;
@@ -30,14 +28,13 @@ public class CurrentItemStorageDrawer {
     private final OnUpdateListener listener = new OnUpdateListener();
     private OnCurrentItemStorageUpdate userListener = null;
 
-    public CurrentItemStorageDrawer(Activity activity, TabsManager tabsManager, SettingsManager settingsManager, SelectionManager selectionManager, CurrentItemStorage currentItemStorage, boolean previewMode, ItemInterface onItemClick, ItemInterface onItemEditor, StorageEditsActions storageEdits) {
+    public CurrentItemStorageDrawer(Activity activity, SettingsManager settingsManager, SelectionManager selectionManager, CurrentItemStorage currentItemStorage, boolean previewMode, ItemInterface onItemClick, ItemInterface onItemEditor, StorageEditsActions storageEdits) {
         this.activity = activity;
         this.view = new LinearLayout(activity);
-        this.tabsManager = tabsManager;
         this.selectionManager = selectionManager;
         this.view.setOrientation(LinearLayout.VERTICAL);
         this.currentItemStorage = currentItemStorage;
-        this.itemViewGenerator = new ItemViewGenerator(activity, tabsManager, settingsManager, selectionManager, previewMode, onItemClick, onItemEditor, storageEdits);
+        this.itemViewGenerator = new ItemViewGenerator(activity, settingsManager, selectionManager, previewMode, onItemClick, onItemEditor, storageEdits);
     }
 
     public void create() {
