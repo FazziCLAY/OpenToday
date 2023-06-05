@@ -20,12 +20,12 @@ import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.datafixer.DataFixer;
 import com.fazziclay.opentoday.app.datafixer.FixResult;
-import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.tick.TickThread;
+import com.fazziclay.opentoday.debug.TestItemViewGenerator;
 import com.fazziclay.opentoday.gui.activity.CrashReportActivity;
-import com.fazziclay.opentoday.gui.activity.OpenSourceLicensesActivity;
 import com.fazziclay.opentoday.util.DebugUtil;
 import com.fazziclay.opentoday.util.License;
 import com.fazziclay.opentoday.util.Logger;
@@ -73,7 +73,7 @@ public class App extends Application {
     public static final boolean DEBUG_TICK_NOTIFICATION = debug(false);
     public static final int DEBUG_MAIN_ACTIVITY_START_SLEEP = debug(false) ? 6000 : 0;
     public static final int DEBUG_APP_START_SLEEP = debug(false) ? 8000 : 0;
-    public static Class<? extends Activity> DEBUG_MAIN_ACTIVITY = debug(false) ? OpenSourceLicensesActivity.class : null;
+    public static Class<? extends Activity> DEBUG_MAIN_ACTIVITY = debug(false) ? TestItemViewGenerator.class : null;
     public static final boolean DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY = false;
 
     public static boolean debug(boolean b) {
@@ -333,7 +333,9 @@ public class App extends Application {
 
         // === If fatal: crash app. ===
         if (fatal && androidUncaughtHandler != null) {
-            DebugUtil.sleep(250);
+            try {
+                Thread.sleep(250);
+            } catch (Exception ignore) {}
             androidUncaughtHandler.uncaughtException(crashReport.getThread(), crashReport.getThrowable());
         }
     }
