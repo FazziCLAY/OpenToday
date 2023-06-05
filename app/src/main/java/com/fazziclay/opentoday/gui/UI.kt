@@ -93,14 +93,18 @@ object UI {
 
         @JvmStatic
         fun showCrashWithMessageDialog(context: Context?, exceptionMessagePattern: String?) {
-            Toast.makeText(context, R.string.manuallyCrash_crash, Toast.LENGTH_SHORT).show()
             val message = EditText(context)
             message.setHint(R.string.manuallyCrash_dialog_inputHint)
             val dialog: Dialog = AlertDialog.Builder(context)
                     .setTitle(R.string.manuallyCrash_dialog_title)
                     .setView(message)
                     .setMessage(R.string.manuallyCrash_dialog_message)
-                    .setPositiveButton(R.string.manuallyCrash_dialog_apply) { _: DialogInterface?, _: Int -> throw RuntimeException(String.format(exceptionMessagePattern!!, message.text.toString())) }
+                    .setPositiveButton(R.string.manuallyCrash_dialog_apply) { _: DialogInterface?, _: Int ->
+                        run {
+                            Toast.makeText(context, R.string.manuallyCrash_crash, Toast.LENGTH_SHORT).show()
+                            throw RuntimeException(String.format(exceptionMessagePattern!!, message.text.toString()))
+                        }
+                    }
                     .setNegativeButton(R.string.manuallyCrash_dialog_cancel, null)
                     .create()
             dialog.setCanceledOnTouchOutside(false)
@@ -144,7 +148,7 @@ object UI {
             scrollView.addView(view)
             val dialog: Dialog = AlertDialog.Builder(context)
                     .setView(scrollView)
-                    .setTitle("DEBUG: FeatureFlags")
+                    .setTitle("Debug feature flags")
                     .setNegativeButton(R.string.abc_cancel, null)
                     .create()
             dialog.setCanceledOnTouchOutside(false)
