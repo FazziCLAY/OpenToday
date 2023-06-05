@@ -9,7 +9,6 @@ import android.app.AlertDialog;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -29,9 +28,6 @@ import androidx.appcompat.content.res.AppCompatResources;
 
 import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
-import com.fazziclay.opentoday.app.SettingsManager;
-import com.fazziclay.opentoday.app.items.tab.TabsManager;
-import com.fazziclay.opentoday.app.items.item.ItemUtil;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
@@ -40,10 +36,10 @@ import com.fazziclay.opentoday.app.items.item.DebugTickCounterItem;
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
+import com.fazziclay.opentoday.app.items.item.ItemUtil;
 import com.fazziclay.opentoday.app.items.item.LongTextItem;
 import com.fazziclay.opentoday.app.items.item.MathGameItem;
 import com.fazziclay.opentoday.app.items.item.TextItem;
-import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.databinding.ItemCheckboxBinding;
 import com.fazziclay.opentoday.databinding.ItemCounterBinding;
 import com.fazziclay.opentoday.databinding.ItemCycleListBinding;
@@ -53,7 +49,6 @@ import com.fazziclay.opentoday.databinding.ItemGroupBinding;
 import com.fazziclay.opentoday.databinding.ItemLongtextBinding;
 import com.fazziclay.opentoday.databinding.ItemMathGameBinding;
 import com.fazziclay.opentoday.databinding.ItemTextBinding;
-import com.fazziclay.opentoday.gui.interfaces.ContentInterface;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.gui.interfaces.StorageEditsActions;
 import com.fazziclay.opentoday.util.ColorUtil;
@@ -65,28 +60,27 @@ import com.fazziclay.opentoday.util.callback.Status;
 import java.util.Arrays;
 
 public class ItemViewGenerator {
+    private static final String TAG = "ItemViewGenerator";
     @NonNull private final Activity activity;
     @NonNull private final LayoutInflater layoutInflater;
-    @NonNull private final SettingsManager settingsManager;
-    @NonNull private final SelectionManager selectionManager;
-    private final boolean previewMode; // Disable items minimize view patch & disable buttons
+    @NonNull private final ItemViewGeneratorBehavior itemViewGeneratorBehavior;
+    @NonNull private final ItemsStorageDrawerGenerator itemsStorageDrawerGenerator;
+    @NonNull private final StorageEditsActions storageEdits;
     @Nullable private final ItemInterface itemOnClick; // Action when view click
-    @NonNull private final ItemInterface onItemEditor;
-    private final StorageEditsActions storageEdits;
+    private final boolean previewMode; // Disable items minimize view patch & disable buttons
 
-    public ItemViewGenerator(@NonNull final Activity activity, @NonNull final SettingsManager settingsManager, @NonNull final SelectionManager selectionManager, final boolean previewMode, @Nullable final ItemInterface itemOnClick, @NonNull final ItemInterface onItemEditor, @NonNull final StorageEditsActions storageEdits) {
+    public ItemViewGenerator(@NonNull final Activity activity, @NonNull final ItemViewGeneratorBehavior itemViewGeneratorBehavior, final boolean previewMode, @Nullable final ItemInterface itemOnClick, @NonNull final StorageEditsActions storageEdits, @NonNull ItemsStorageDrawerGenerator itemsStorageDrawerGenerator) {
         this.activity = activity;
         this.layoutInflater = activity.getLayoutInflater();
-        this.settingsManager = settingsManager;
-        this.selectionManager = selectionManager;
+        this.itemViewGeneratorBehavior = itemViewGeneratorBehavior;
         this.previewMode = previewMode;
         this.itemOnClick = itemOnClick;
-        this.onItemEditor = onItemEditor;
         this.storageEdits = storageEdits;
+        this.itemsStorageDrawerGenerator = itemsStorageDrawerGenerator;
     }
 
-    public static CreateBuilder builder(final Activity activity, final SettingsManager settingsManager, final SelectionManager selectionManager) {
-        return new CreateBuilder(activity, settingsManager, selectionManager);
+    public static CreateBuilder builder(final Activity activity, final ItemViewGeneratorBehavior itemViewGeneratorBehavior, final ItemsStorageDrawerGenerator itemsStorageDrawerGenerator) {
+        return new CreateBuilder(activity, itemViewGeneratorBehavior, itemsStorageDrawerGenerator);
     }
 
     public View generate(final Item item, final ViewGroup parent) {
@@ -94,7 +88,7 @@ public class ItemViewGenerator {
         final View resultView;
 
         if (type == Item.class) {
-            throw new RuntimeException("Illegal itemType. Use Object extends Item");
+            throw new RuntimeException("Illegal itemType to generate view. Use children's of Item");
 
         } else if (type == TextItem.class) {
             resultView = generateTextItemView((TextItem) item, parent);
@@ -109,45 +103,16 @@ public class ItemViewGenerator {
             resultView = generateDayRepeatableCheckboxItemView((DayRepeatableCheckboxItem) item, parent);
 
         } else if (type == CycleListItem.class) {
-            final CycleListItem cycleListItem = (CycleListItem) item;
-            resultView = generateCycleListItemView((CycleListItem) item, parent, i -> storageEdits.onCycleListEdit(cycleListItem),
-                    (linearLayout, empty) -> {
-                        final CurrentItemStorageDrawer currentItemStorageDrawer = new CurrentItemStorageDrawer(this.activity, settingsManager, selectionManager, cycleListItem, previewMode, itemOnClick, onItemEditor, storageEdits);
-                        linearLayout.addView(currentItemStorageDrawer.getView());
-                        currentItemStorageDrawer.setOnUpdateListener(currentItem -> {
-                            viewVisible(empty, currentItem == null, View.GONE);
-                            return Status.NONE;
-                        });
-                        currentItemStorageDrawer.create();
-                    });
+            resultView = generateCycleListItemView((CycleListItem) item, parent);
 
         } else if (type == CounterItem.class) {
             resultView = generateCounterItemView((CounterItem) item, parent);
 
         } else if (type == GroupItem.class) {
-            final GroupItem groupItem = (GroupItem) item;
-            resultView = generateGroupItemView(groupItem, parent, v -> storageEdits.onGroupEdit(groupItem), viewGroup -> {
-                final ItemsStorageDrawer itemsStorageDrawer = new ItemsStorageDrawer(activity, settingsManager, selectionManager, groupItem, itemOnClick, onItemEditor, previewMode, storageEdits);
-                itemsStorageDrawer.create();
-                viewGroup.addView(itemsStorageDrawer.getView());
-            });
+            resultView = generateGroupItemView((GroupItem) item, parent);
 
         } else if (type == FilterGroupItem.class) {
-            final FilterGroupItem filterGroupItem = (FilterGroupItem) item;
-            resultView = generateFilterGroupItemView(filterGroupItem, parent, v -> storageEdits.onFilterGroupEdit(filterGroupItem), linearLayout -> {
-                for (Item activeItem : filterGroupItem.getActiveItems()) {
-                    final ItemViewHolder holder = new ItemViewHolder(activity);
-                    holder.layout.addView(generate(activeItem, linearLayout));
-
-                    if (selectionManager.isSelected(activeItem)) {
-                        holder.layout.setForeground(new ColorDrawable(ResUtil.getAttrColor(activity, R.attr.item_selectionForegroundColor)));
-                    } else {
-                        holder.layout.setForeground(null);
-                    }
-
-                    linearLayout.addView(holder.layout);
-                }
-            });
+            resultView = generateFilterGroupItemView((FilterGroupItem) item, parent);
 
         } else if (type == LongTextItem.class) {
             resultView = generateLongTextItemView((LongTextItem) item, parent);
@@ -156,9 +121,10 @@ public class ItemViewGenerator {
             resultView = generateMathGameItemView((MathGameItem) item, parent);
 
         } else {
-            Log.e("Unknown item type", "Throw exception for 3 seconds...");
+            RuntimeException exception = new RuntimeException("Unexpected item type '" + type.getName() + "'! check ItemViewGenerator for fix this.");
+            Log.e(TAG, "Unexpected item type to generate view. (wait 3000ms in DebugUtil.sleep())", exception);
             DebugUtil.sleep(3000);
-            throw new RuntimeException("Unknown item type '" + type.getName() + "'! check ItemViewGenerator!");
+            throw exception;
         }
 
         // Minimal height
@@ -171,7 +137,7 @@ public class ItemViewGenerator {
 
         // Minimize view patch
         if (!previewMode && item.isMinimize()) {
-            if (settingsManager.isMinimizeGrayColor()) {
+            if (itemViewGeneratorBehavior.isMinimizeGrayColor()) {
                 resultView.setForeground(AppCompatResources.getDrawable(activity, R.drawable.shape));
                 resultView.setForegroundTintList(ColorStateList.valueOf(Color.parseColor("#44f0fff0")));
             }
@@ -180,7 +146,12 @@ public class ItemViewGenerator {
             resultView.setLayoutParams(layoutParams);
         }
         if (itemOnClick != null) viewClick(resultView, () -> itemOnClick.run(item));
+        applyForeground(resultView, item);
         return resultView;
+    }
+
+    private void applyForeground(View view, Item item) {
+        view.setForeground(itemViewGeneratorBehavior.getForeground(item));
     }
 
     @ForItem(key = MathGameItem.class)
@@ -293,6 +264,14 @@ public class ItemViewGenerator {
         return binding.getRoot();
     }
 
+    public void destroy() {
+
+    }
+
+    public void create() {
+
+    }
+
     interface MathGameInterface {
         void init();
     }
@@ -323,7 +302,7 @@ public class ItemViewGenerator {
     }
 
     @ForItem(key = FilterGroupItem.class)
-    private View generateFilterGroupItemView(final FilterGroupItem item, final ViewGroup parent, View.OnClickListener editButtonClick, ContentInterface contentInterface) {
+    private View generateFilterGroupItemView(final FilterGroupItem item, final ViewGroup parent) {
         final ItemFilterGroupBinding binding = ItemFilterGroupBinding.inflate(this.layoutInflater, parent, false);
 
         // Text
@@ -331,17 +310,22 @@ public class ItemViewGenerator {
 
         // FilterGroup
         if (!item.isMinimize()) {
-            contentInterface.run(binding.content);
+            for (Item activeItem : item.getActiveItems()) {
+                final ItemViewHolder holder = new ItemViewHolder(activity);
+                holder.layout.addView(generate(activeItem, binding.content));
+
+                binding.content.addView(holder.layout);
+            }
         }
 
         binding.externalEditor.setEnabled(!previewMode);
-        binding.externalEditor.setOnClickListener(editButtonClick);
+        binding.externalEditor.setOnClickListener(_ignore -> storageEdits.onFilterGroupEdit(item));
 
         return binding.getRoot();
     }
 
     @ForItem(key = GroupItem.class)
-    private View generateGroupItemView(GroupItem item, ViewGroup parent, View.OnClickListener editButtonClick, ContentInterface contentInterface) {
+    private View generateGroupItemView(GroupItem item, ViewGroup parent) {
         final ItemGroupBinding binding = ItemGroupBinding.inflate(this.layoutInflater, parent, false);
 
         // Text
@@ -349,10 +333,13 @@ public class ItemViewGenerator {
 
         // Group
         if (!item.isMinimize()) {
-            contentInterface.run(binding.content);
+            // TODO: 05.06.2023 use for-loop for generate all internal item separately?
+            final ItemsStorageDrawer itemsStorageDrawer = itemsStorageDrawerGenerator.generate(item);
+            itemsStorageDrawer.create();
+            binding.content.addView(itemsStorageDrawer.getView());
         }
         binding.externalEditor.setEnabled(!previewMode);
-        binding.externalEditor.setOnClickListener(editButtonClick);
+        binding.externalEditor.setOnClickListener(_ignore -> storageEdits.onGroupEdit(item));
 
         return binding.getRoot();
     }
@@ -376,7 +363,7 @@ public class ItemViewGenerator {
     }
 
     @ForItem(key = CycleListItem.class)
-    public View generateCycleListItemView(CycleListItem item, ViewGroup parent, View.OnClickListener editButtonClick, ContentInterfaceE contentInterface) {
+    public View generateCycleListItemView(CycleListItem item, ViewGroup parent) {
         final ItemCycleListBinding binding = ItemCycleListBinding.inflate(this.layoutInflater, parent, false);
 
         // Text
@@ -389,10 +376,16 @@ public class ItemViewGenerator {
         binding.previous.setOnClickListener(v -> item.previous());
 
         binding.externalEditor.setEnabled(!previewMode);
-        binding.externalEditor.setOnClickListener(editButtonClick);
+        binding.externalEditor.setOnClickListener(_ignore -> storageEdits.onCycleListEdit(item));
 
         if (!item.isMinimize()) {
-            contentInterface.run(binding.content, binding.empty);
+            final CurrentItemStorageDrawer currentItemStorageDrawer = new CurrentItemStorageDrawer(this.activity, this, item);
+            binding.content.addView(currentItemStorageDrawer.getView());
+            currentItemStorageDrawer.setOnUpdateListener(currentItem -> {
+                viewVisible(binding.empty, currentItem == null, View.GONE);
+                return Status.NONE;
+            });
+            currentItemStorageDrawer.create();
         } else {
             binding.empty.setVisibility(View.GONE);
         }
@@ -519,13 +512,12 @@ public class ItemViewGenerator {
     }
 
     private void runFastChanges(String message, Runnable runnable) {
-        if (settingsManager.isConfirmFastChanges()) {
+        if (itemViewGeneratorBehavior.isConfirmFastChanges()) {
             new AlertDialog.Builder(activity)
                     .setTitle(R.string.fastChanges_dialog_title)
                     .setMessage(message)
                     .setNeutralButton(R.string.fastChanges_dialog_dontAsk, (_ignore, __ignore) -> {
-                        settingsManager.setConfirmFastChanges(false);
-                        settingsManager.save();
+                        itemViewGeneratorBehavior.setConfirmFastChanges(false);
                         runnable.run();
                     })
                     .setNegativeButton(R.string.fastChanges_dialog_cancel, null)
@@ -536,23 +528,18 @@ public class ItemViewGenerator {
         }
     }
 
-    private interface ContentInterfaceE {
-        void run(final LinearLayout linearLayout, final View empty);
-    }
-
     public static class CreateBuilder {
         private final Activity activity;
-        private final SettingsManager settingsManager;
-        private final SelectionManager selectionManager;
+        private final ItemViewGeneratorBehavior itemViewGeneratorBehavior;
+        private final ItemsStorageDrawerGenerator itemsStorageDrawerGenerator;
         private boolean previewMode = false;
         private ItemInterface onItemClick = null;
-        private ItemInterface onItemOpenEditor = null;
         private StorageEditsActions storageEditsAction = null;
 
-        public CreateBuilder(final Activity activity, final SettingsManager settingsManager, final SelectionManager selectionManager) {
+        public CreateBuilder(final Activity activity, final ItemViewGeneratorBehavior itemViewGeneratorBehavior, final ItemsStorageDrawerGenerator itemsStorageDrawerGenerator) {
             this.activity = activity;
-            this.settingsManager = settingsManager;
-            this.selectionManager = selectionManager;
+            this.itemViewGeneratorBehavior = itemViewGeneratorBehavior;
+            this.itemsStorageDrawerGenerator = itemsStorageDrawerGenerator;
         }
 
         public CreateBuilder setPreviewMode() {
@@ -560,14 +547,13 @@ public class ItemViewGenerator {
             return this;
         }
 
-        public CreateBuilder setOnItemClick(ItemInterface i) {
-            this.onItemClick = i;
+        public CreateBuilder setPreviewMode(boolean b) {
+            this.previewMode = b;
             return this;
         }
 
-
-        public CreateBuilder setOnItemOpenEditor(ItemInterface i) {
-            this.onItemOpenEditor = i;
+        public CreateBuilder setOnItemClick(ItemInterface i) {
+            this.onItemClick = i;
             return this;
         }
 
@@ -578,7 +564,7 @@ public class ItemViewGenerator {
         }
 
         public ItemViewGenerator build() {
-            return new ItemViewGenerator(activity, settingsManager, selectionManager, previewMode, onItemClick, onItemOpenEditor, storageEditsAction);
+            return new ItemViewGenerator(activity, itemViewGeneratorBehavior, previewMode, onItemClick, storageEditsAction, itemsStorageDrawerGenerator);
         }
     }
 }

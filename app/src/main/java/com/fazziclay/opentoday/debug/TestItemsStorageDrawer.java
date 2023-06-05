@@ -1,6 +1,7 @@
 package com.fazziclay.opentoday.debug;
 
 import android.app.Activity;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.Translation;
+import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
@@ -18,6 +20,7 @@ import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.gui.interfaces.StorageEditsActions;
+import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
 import com.fazziclay.opentoday.gui.item.ItemsStorageDrawer;
 
 import java.io.File;
@@ -54,8 +57,42 @@ public class TestItemsStorageDrawer extends Activity {
         };
 
         ItemsStorageDrawer itemsStorageDrawer = new ItemsStorageDrawer(this,
-                tabsManager,
-                new SettingsManager(null),
+                new ItemViewGeneratorBehavior() {
+                    @Override
+                    public boolean isMinimizeGrayColor() {
+                        return false;
+                    }
+
+                    @Override
+                    public SettingsManager.ItemAction getItemOnClickAction() {
+                        return null;
+                    }
+
+                    @Override
+                    public boolean isScrollToAddedItem() {
+                        return false;
+                    }
+
+                    @Override
+                    public SettingsManager.ItemAction getItemOnLeftAction() {
+                        return null;
+                    }
+
+                    @Override
+                    public boolean isConfirmFastChanges() {
+                        return false;
+                    }
+
+                    @Override
+                    public void setConfirmFastChanges(boolean b) {
+
+                    }
+
+                    @Override
+                    public Drawable getForeground(Item item) {
+                        return null;
+                    }
+                },
                 new SelectionManager(),
                 tabsManager.getTabById(new UUID(0, 0)),
                 onClick,

@@ -19,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.SettingsManager;
-import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.callback.SelectionCallback;
@@ -45,13 +44,12 @@ import java.util.List;
 public class ItemsStorageDrawer {
     private static final String TAG = "ItemStorageDrawer";
     private final Activity activity;
-    private final SettingsManager settingsManager;
+    private final ItemViewGeneratorBehavior itemViewGeneratorBehavior;
     private final SelectionManager selectionManager;
     private final ItemsStorage itemsStorage;
     private final RecyclerView view;
-    private StorageEditsActions storageEdits;
     private RecyclerView.Adapter<ItemViewHolder> adapter;
-    private ItemViewGenerator itemViewGenerator;
+    private final ItemViewGenerator itemViewGenerator;
     private final Thread originalThread;
 
     private boolean destroyed = false;
@@ -59,65 +57,17 @@ public class ItemsStorageDrawer {
 
     private final List<Selection> visibleSelections = new ArrayList<>();
     private final OnItemsStorageUpdate onItemsStorageUpdate = new DrawerOnItemsStorageUpdated();
-    private final SelectionCallback selectionCallback = new SelectionCallback() {
-        @Override
-        public void onSelectionChanged(Selection[] selections) {
-            activity.runOnUiThread(() -> runInternal(selections));
-        }
-
-        private void runInternal(Selection[] selections) {
-            List<Selection> toUpdate = new ArrayList<>();
-
-            for (Selection visibleSelection : visibleSelections) {
-                boolean contain = false;
-                for (Selection selection : selections) {
-                    if (visibleSelection.getItem() == selection.getItem()) {
-                        contain = true;
-                        break;
-                    }
-                }
-                if (!contain) {
-                    toUpdate.add(visibleSelection);
-                }
-            }
-
-            for (Selection selection : selections) {
-                boolean contain = false;
-                for (Selection visibleSelection : visibleSelections) {
-                    if (visibleSelection.getItem() == selection.getItem()) {
-                        contain = true;
-                        break;
-                    }
-                }
-                if (!contain) {
-                    toUpdate.add(selection);
-                }
-            }
-
-            for (Selection selection : toUpdate) {
-                int pos = itemsStorage.getItemPosition(selection.getItem());
-                Runnable updateRunnable = () -> adapter.notifyItemChanged(pos);
-                if (Thread.currentThread() == originalThread) {
-                    updateRunnable.run();
-                } else {
-                    activity.runOnUiThread(updateRunnable);
-                }
-            }
-            visibleSelections.clear();
-            visibleSelections.addAll(Arrays.asList(selections));
-        }
-    };
-
+    private final SelectionCallback selectionCallback = new DrawerSelectionCallback();
     private final ItemInterface itemOnClick;
     private final boolean previewMode;
     private ItemViewWrapper itemViewWrapper = null;
     private final ItemInterface onItemEditor;
 
     // Public
-    public ItemsStorageDrawer(@NonNull Activity activity, SettingsManager settingsManager, SelectionManager selectionManager, ItemsStorage itemsStorage, ItemInterface itemOnClick, @NonNull ItemInterface onItemEditor, boolean previewMode, StorageEditsActions storageEdits) {
+    public ItemsStorageDrawer(@NonNull Activity activity, ItemViewGeneratorBehavior itemViewGeneratorBehavior, SelectionManager selectionManager, ItemsStorage itemsStorage, ItemInterface itemOnClick, @NonNull ItemInterface onItemEditor, boolean previewMode, StorageEditsActions storageEdits) {
         this.activity = activity;
         this.onItemEditor = onItemEditor;
-        this.settingsManager = settingsManager;
+        this.itemViewGeneratorBehavior = itemViewGeneratorBehavior;
         this.selectionManager = selectionManager;
         this.itemsStorage = itemsStorage;
         this.originalThread = Thread.currentThread();
@@ -126,49 +76,53 @@ public class ItemsStorageDrawer {
         this.previewMode = previewMode;
         this.view.setLayoutManager(new LinearLayoutManager(activity));
         this.view.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1));
-        this.itemViewGenerator = new ItemViewGenerator(this.activity, settingsManager, selectionManager, previewMode, (item) -> {
+        this.itemViewGenerator = new ItemViewGenerator(this.activity, itemViewGeneratorBehavior, previewMode, (item) -> {
             if (this.itemOnClick == null) {
-                if (!previewMode) actionItem(item, settingsManager.getItemOnClickAction());
+                if (!previewMode)
+                    actionItem(item, itemViewGeneratorBehavior.getItemOnClickAction());
             } else {
                 this.itemOnClick.run(item);
             }
-        }, onItemEditor, storageEdits);
+        }, storageEdits, itemsStorage1 -> ItemsStorageDrawer.builder(activity, itemViewGeneratorBehavior, selectionManager, itemsStorage1)
+                .setOnItemOpenEditor(onItemEditor)
+                .setStorageEditsActions(storageEdits)
+                .build());
 
     }
 
-    public static CreateBuilder builder(Activity activity, SettingsManager settingsManager, SelectionManager selectionManager, ItemsStorage itemsStorage) {
-        return new CreateBuilder(activity, settingsManager, selectionManager, itemsStorage);
+    public static CreateBuilder builder(Activity activity, ItemViewGeneratorBehavior itemViewGeneratorBehavior, SelectionManager selectionManager, ItemsStorage itemsStorage) {
+        return new CreateBuilder(activity, itemViewGeneratorBehavior, selectionManager, itemsStorage);
     }
 
     public void create() {
         if (destroyed) {
-            throw new RuntimeException("ItemStorageDrawer destroyed!");
+            throw new RuntimeException("ItemsStorageDrawer already destroyed!");
         }
         if (created) {
-            throw new RuntimeException("ItemStorageDrawer created!");
+            throw new RuntimeException("ItemsStorageDrawer already created!");
         }
         this.created = true;
         this.adapter = new DrawerAdapter();
         this.view.setAdapter(adapter);
         this.itemsStorage.getOnItemsStorageCallbacks().addCallback(CallbackImportance.DEFAULT, onItemsStorageUpdate);
         this.selectionManager.getOnSelectionUpdated().addCallback(CallbackImportance.DEFAULT, selectionCallback);
-
+        this.itemViewGenerator.create();
 
         if (!previewMode) new ItemTouchHelper(new DrawerTouchCallback()).attachToRecyclerView(view);
     }
 
     public void destroy() {
         if (!created) {
-            throw new RuntimeException("ItemStorageDrawer no created!");
+            throw new RuntimeException("ItemsStorageDrawer no created!");
         }
         if (destroyed) {
-            throw new RuntimeException("ItemStorageDrawer destroyed!");
+            throw new RuntimeException("ItemsStorageDrawer already destroyed!");
         }
         destroyed = true;
         this.itemsStorage.getOnItemsStorageCallbacks().removeCallback(onItemsStorageUpdate);
         this.selectionManager.getOnSelectionUpdated().removeCallback(selectionCallback);
         this.view.setAdapter(null);
-        this.itemViewGenerator = null;
+        this.itemViewGenerator.destroy();
         this.adapter = null;
     }
 
@@ -186,7 +140,7 @@ public class ItemsStorageDrawer {
         public Status onAdded(Item item, int pos) {
             rou(() -> {
                 runAdapter((adapter) -> adapter.notifyItemInserted(pos));
-                if (settingsManager.isScrollToAddedItem()) view.smoothScrollToPosition(pos);
+                if (itemViewGeneratorBehavior.isScrollToAddedItem()) view.smoothScrollToPosition(pos);
             });
             return Status.NONE;
         }
@@ -278,7 +232,7 @@ public class ItemsStorageDrawer {
                 int positionFrom = viewHolder.getAdapterPosition();
                 Item item = ItemsStorageDrawer.this.itemsStorage.getAllItems()[positionFrom];
                 item.visibleChanged();
-                actionItem(item, settingsManager.getItemOnLeftAction());
+                actionItem(item, itemViewGeneratorBehavior.getItemOnLeftAction());
 
             } else if (direction == ItemTouchHelper.RIGHT) {
                 int position = viewHolder.getAdapterPosition();
@@ -334,7 +288,6 @@ public class ItemsStorageDrawer {
 
     @SuppressLint("NonConstantResourceId")
     private void showRightMenu(Item item, View itemView) {
-        App app = App.get(activity);
         PopupMenu menu = new PopupMenu(activity, itemView);
         menu.setForceShowIcon(true);
         menu.inflate(R.menu.menu_item);
@@ -423,7 +376,7 @@ public class ItemsStorageDrawer {
 
     public static class CreateBuilder {
         private final Activity activity;
-        private final SettingsManager settingsManager;
+        private final ItemViewGeneratorBehavior viewGeneratorBehavior;
         private final SelectionManager selectionManager;
         private final ItemsStorage itemsStorage;
         private boolean previewMode = false;
@@ -431,9 +384,9 @@ public class ItemsStorageDrawer {
         private ItemInterface onItemOpenEditor = null;
         private StorageEditsActions storageEditsAction = null;
 
-        public CreateBuilder(Activity activity, SettingsManager settingsManager, SelectionManager selectionManager, ItemsStorage itemsStorage) {
+        public CreateBuilder(Activity activity, ItemViewGeneratorBehavior viewGeneratorBehavior, SelectionManager selectionManager, ItemsStorage itemsStorage) {
             this.activity = activity;
-            this.settingsManager = settingsManager;
+            this.viewGeneratorBehavior = viewGeneratorBehavior;
             this.selectionManager = selectionManager;
             this.itemsStorage = itemsStorage;
         }
@@ -461,11 +414,60 @@ public class ItemsStorageDrawer {
         }
 
         public ItemsStorageDrawer build() {
-            return new ItemsStorageDrawer(activity, settingsManager, selectionManager, itemsStorage, onItemClick, onItemOpenEditor, previewMode, storageEditsAction);
+            return new ItemsStorageDrawer(activity, viewGeneratorBehavior, selectionManager, itemsStorage, onItemClick, onItemOpenEditor, previewMode, storageEditsAction);
         }
     }
 
     private interface AdapterInterface {
         void run(RecyclerView.Adapter<ItemViewHolder> adapter);
+    }
+
+    private class DrawerSelectionCallback extends SelectionCallback {
+        @Override
+        public void onSelectionChanged(Selection[] selections) {
+            activity.runOnUiThread(() -> runInternal(selections));
+        }
+
+        private void runInternal(Selection[] selections) {
+            List<Selection> toUpdate = new ArrayList<>();
+
+            for (Selection visibleSelection : visibleSelections) {
+                boolean contain = false;
+                for (Selection selection : selections) {
+                    if (visibleSelection.getItem() == selection.getItem()) {
+                        contain = true;
+                        break;
+                    }
+                }
+                if (!contain) {
+                    toUpdate.add(visibleSelection);
+                }
+            }
+
+            for (Selection selection : selections) {
+                boolean contain = false;
+                for (Selection visibleSelection : visibleSelections) {
+                    if (visibleSelection.getItem() == selection.getItem()) {
+                        contain = true;
+                        break;
+                    }
+                }
+                if (!contain) {
+                    toUpdate.add(selection);
+                }
+            }
+
+            for (Selection selection : toUpdate) {
+                int pos = itemsStorage.getItemPosition(selection.getItem());
+                Runnable updateRunnable = () -> adapter.notifyItemChanged(pos);
+                if (Thread.currentThread() == originalThread) {
+                    updateRunnable.run();
+                } else {
+                    activity.runOnUiThread(updateRunnable);
+                }
+            }
+            visibleSelections.clear();
+            visibleSelections.addAll(Arrays.asList(selections));
+        }
     }
 }

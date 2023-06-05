@@ -1,6 +1,8 @@
 package com.fazziclay.opentoday.debug;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -9,16 +11,19 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.SettingsManager;
-import com.fazziclay.opentoday.app.Translation;
-import com.fazziclay.opentoday.app.items.selection.SelectionManager;
-import com.fazziclay.opentoday.app.items.tab.TabsManager;
+import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.item.GroupItem;
+import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.TextItem;
+import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.gui.interfaces.StorageEditsActions;
 import com.fazziclay.opentoday.gui.item.ItemViewGenerator;
+import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
+import com.fazziclay.opentoday.gui.item.ItemsStorageDrawer;
+import com.fazziclay.opentoday.gui.item.ItemsStorageDrawerGenerator;
 
 import java.io.File;
 
@@ -27,13 +32,7 @@ public class TestItemViewGenerator extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        TabsManager tabsManager = new TabsManager(new File(getExternalCacheDir(), "/tests/testItemViewGenerator.json"), new File(getExternalCacheDir(), "/tests/testItemViewGenerator.gz"), new Translation() {
-            @Override
-            public String get(Object key, Object... args) {
-                return null;
-            }
-        });
-        SettingsManager settingsManager = new SettingsManager(new File(getExternalCacheDir(), "/tests/settings.json"));
+        SelectionManager selectionManager = new SelectionManager();
         ItemInterface itemClick = item -> Toast.makeText(TestItemViewGenerator.this, "Click: " + item.toString(), Toast.LENGTH_SHORT).show();
         ItemInterface itemEditor = item -> Toast.makeText(TestItemViewGenerator.this, "Editor: " + item.toString(), Toast.LENGTH_SHORT).show();
         StorageEditsActions edits = new StorageEditsActions() {
@@ -53,18 +52,64 @@ public class TestItemViewGenerator extends Activity {
             }
         };
 
-        ItemViewGenerator itemViewGenerator = ItemViewGenerator.builder(this, tabsManager, settingsManager, new SelectionManager())
+        ItemViewGenerator itemViewGenerator = ItemViewGenerator.builder(this, new ItemViewGeneratorBehavior() {
+                    @Override
+                    public boolean isMinimizeGrayColor() {
+                        return false;
+                    }
+
+                    @Override
+                    public SettingsManager.ItemAction getItemOnClickAction() {
+                        return null;
+                    }
+
+                    @Override
+                    public boolean isScrollToAddedItem() {
+                        return false;
+                    }
+
+                    @Override
+                    public SettingsManager.ItemAction getItemOnLeftAction() {
+                        return null;
+                    }
+
+                    @Override
+                    public boolean isConfirmFastChanges() {
+                        return false;
+                    }
+
+                    @Override
+                    public void setConfirmFastChanges(boolean b) {
+
+                    }
+
+                    @Override
+                    public Drawable getForeground(Item item) {
+                        return null;
+                    }
+                }, new ItemsStorageDrawerGenerator() {
+                    @Override
+                    public ItemsStorageDrawer generate(ItemsStorage itemsStorage) {
+                        return null;
+                    }
+                })
                 .setOnItemClick(itemClick)
                 .setStorageEditsActions(edits)
-                .setOnItemOpenEditor(itemEditor)
                 .build();
 
-        CycleListItem r = new CycleListItem("1232134r34");
-        r.addItem(TextItem.createEmpty());
+
         CycleListItem item = new CycleListItem("Simple CycleList");
+        item.setViewBackgroundColor(Color.RED);
+        item.setViewCustomBackgroundColor(true);
         item.addItem(new TextItem("123"));
         item.addItem(new TextItem("1232134r34"));
-        item.addItem(r);
+
+
+        CycleListItem root = new CycleListItem("1232134r34");
+        root.addItem(TextItem.createEmpty());
+        item.addItem(root);
+
+
         item.addItem(new GroupItem("Group"));
 
         View view = itemViewGenerator.generate(item, null);

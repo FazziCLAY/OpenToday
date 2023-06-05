@@ -5,6 +5,8 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -12,15 +14,21 @@ import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.App
 import com.fazziclay.opentoday.app.FeatureFlag
+import com.fazziclay.opentoday.app.SettingsManager
+import com.fazziclay.opentoday.app.items.item.Item
+import com.fazziclay.opentoday.app.items.selection.SelectionManager
 import com.fazziclay.opentoday.app.items.tick.ItemsTickReceiver
 import com.fazziclay.opentoday.gui.callbacks.UIDebugCallback
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost
+import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior
 import com.fazziclay.opentoday.util.InlineUtil
+import com.fazziclay.opentoday.util.ResUtil
 import com.fazziclay.opentoday.util.callback.CallbackStorage
 import com.fazziclay.opentoday.util.callback.Status
 import java.util.UUID
@@ -70,6 +78,52 @@ object UI {
     @JvmStatic
     fun setTheme(i: Int) {
         AppCompatDelegate.setDefaultNightMode(i)
+    }
+
+    @JvmStatic
+    fun getItemViewGeneratorBehaviorFromSettings(context: Context, settingsManager: SettingsManager, selectionManager: SelectionManager): ItemViewGeneratorBehavior {
+        return object :
+            ItemViewGeneratorBehavior {
+            override fun isMinimizeGrayColor(): Boolean {
+                return settingsManager.isMinimizeGrayColor
+            }
+
+            override fun getItemOnClickAction(): SettingsManager.ItemAction {
+                return settingsManager.itemOnClickAction
+            }
+
+            override fun isScrollToAddedItem(): Boolean {
+                return settingsManager.isScrollToAddedItem
+            }
+
+            override fun getItemOnLeftAction(): SettingsManager.ItemAction {
+                return settingsManager.itemOnLeftAction
+            }
+
+            override fun isConfirmFastChanges(): Boolean {
+                return settingsManager.isConfirmFastChanges
+            }
+
+            override fun setConfirmFastChanges(b: Boolean) {
+                settingsManager.isConfirmFastChanges = b
+                settingsManager.save()
+            }
+
+            override fun getForeground(item: Item?): Drawable? {
+                return if (selectionManager.isSelected(item)) ColorDrawable(
+                    ResUtil.getAttrColor(
+                        context,
+                        R.attr.item_selectionForegroundColor
+                    )
+                ) else {
+                    val v = ActivityCompat.getDrawable(context,
+                        R.drawable.ic_launcher_foreground
+                    )
+                    v?.alpha = 50
+                    return v
+                }
+            }
+        }
     }
 
     object Debug {
