@@ -25,6 +25,7 @@ import com.fazziclay.opentoday.databinding.NotificationUpdateAvailableBinding
 import com.fazziclay.opentoday.gui.ActivitySettings
 import com.fazziclay.opentoday.gui.EnumsRegistry
 import com.fazziclay.opentoday.gui.UI
+import com.fazziclay.opentoday.gui.UIRoot
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember
 import com.fazziclay.opentoday.util.ColorUtil
@@ -36,13 +37,14 @@ import com.fazziclay.opentoday.util.NetworkUtil
 import java.text.SimpleDateFormat
 import java.util.GregorianCalendar
 import java.util.Locale
+import java.util.Stack
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), UIRoot {
     companion object {
         private const val TAG = "MainActivity"
         private const val CONTAINER_ID = R.id.mainActivity_rootFragmentContainer
+        private val DEFAULT_ACTIVITY_SETTINGS: ActivitySettings = ActivitySettings()
     }
-
     private lateinit var binding: ActivityMainBinding
     private lateinit var app: App
     private lateinit var settingsManager: SettingsManager
@@ -52,8 +54,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var currentDateHandler: Handler
     private lateinit var currentDateRunnable: Runnable
     private lateinit var currentDateCalendar: GregorianCalendar
-    private var activitySettings: ActivitySettings = ActivitySettings()
-        .setClockVisible(true).setNotificationsVisible(true)
+    private var activitySettings: Stack<ActivitySettings> = Stack()
     private var debugView = false
     private var debugHandler: Handler? = null
     private lateinit var debugRunnable: Runnable
@@ -111,7 +112,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
-
+        updateByActivitySettings()
         Debug.mainActivityStartupTime = System.currentTimeMillis() - startTime
     }
 
@@ -237,13 +238,42 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun pushActivitySettings(a: ActivitySettings) {
-        activitySettings = a
+    override fun pushActivitySettings(a: ActivitySettings) {
+        Logger.d(TAG, "pushActivitySettings(value)")
+        activitySettings.push(a)
+        updateByActivitySettings()
+    }
+
+    override fun pushActivitySettings(a: ActivitySettingsPush) {
+        Logger.d(TAG, "pushActivitySettings(interface)")
+        if (activitySettings.empty()) {
+            activitySettings.push(DEFAULT_ACTIVITY_SETTINGS)
+        }
+        val copy = activitySettings.lastElement().clone()
+        a.validate(copy)
+        activitySettings.push(copy)
+        updateByActivitySettings()
+    }
+
+    fun interface ActivitySettingsPush {
+        fun validate(a: ActivitySettings)
+    }
+
+    override fun popActivitySettings() {
+        Logger.d(TAG, "popActivitySettings")
+        activitySettings.pop()
         updateByActivitySettings()
     }
 
     private fun updateByActivitySettings() {
-        viewVisible(binding.currentDateDate, activitySettings.isClockVisible, View.GONE)
-        viewVisible(binding.notifications, activitySettings.isNotificationsVisible, View.GONE)
+        if (activitySettings.empty()) {
+            activitySettings.push(DEFAULT_ACTIVITY_SETTINGS)
+        }
+        val settings = activitySettings.lastElement()
+        viewVisible(binding.currentDateDate, settings.isClockVisible, View.GONE)
+        viewVisible(binding.currentDateTime, settings.isClockVisible, View.GONE)
+        binding.currentDateDate.isEnabled = settings.isDateClickCalendar
+        binding.currentDateTime.isEnabled = settings.isDateClickCalendar
+        viewVisible(binding.notifications, activitySettings.lastElement().isNotificationsVisible, View.GONE)
     }
 }

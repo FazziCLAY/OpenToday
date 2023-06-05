@@ -29,6 +29,16 @@ class EnterPinCodeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         app = App.get(requireContext())
+        UI.getUIRoot(this).pushActivitySettings { a ->
+            a.isNotificationsVisible = false
+            a.isClockVisible = true
+            a.isDateClickCalendar = false
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        UI.getUIRoot(this).popActivitySettings()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

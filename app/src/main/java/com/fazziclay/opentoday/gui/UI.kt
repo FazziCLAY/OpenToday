@@ -43,6 +43,15 @@ object UI {
     }
 
     @JvmStatic
+    fun getUIRoot(fragment: Fragment): UIRoot {
+        val activity = fragment.requireActivity()
+        if (activity is UIRoot) {
+            return activity
+        }
+        throw RuntimeException("This fragment activity not is UIRoot. Ops...")
+    }
+
+    @JvmStatic
     fun rootBack(fragment: Fragment) {
         val host = findFragmentInParents(fragment, MainRootFragment::class.java) ?: throw RuntimeException("Fragment is not contains MainRootFragment in parents!")
         host.popBackStack()
@@ -50,7 +59,7 @@ object UI {
 
     @JvmStatic
     fun getDebugCallbacks(): CallbackStorage<UIDebugCallback> {
-        return debugCallbacks;
+        return debugCallbacks
     }
 
     @JvmStatic

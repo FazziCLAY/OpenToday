@@ -1,8 +1,11 @@
 package com.fazziclay.opentoday.gui;
 
-public class ActivitySettings {
+import org.jetbrains.annotations.NotNull;
+
+public class ActivitySettings implements Cloneable {
     private boolean clockVisible = true;
     private boolean notificationsVisible = true;
+    private boolean dateClickCalendar = true;
 
 
     public ActivitySettings setClockVisible(boolean clockVisible) {
@@ -31,5 +34,23 @@ public class ActivitySettings {
 
     public boolean isNotificationsVisible() {
         return notificationsVisible;
+    }
+
+    @NotNull
+    public ActivitySettings clone() {
+        try {
+            return (ActivitySettings) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ActivitySettings setDateClickCalendar(boolean b) {
+        this.dateClickCalendar = b;
+        return this;
+    }
+
+    public boolean isDateClickCalendar() {
+        return dateClickCalendar;
     }
 }
