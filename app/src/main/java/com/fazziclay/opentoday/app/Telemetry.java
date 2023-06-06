@@ -320,6 +320,7 @@ public class Telemetry {
             return Objects.hash(isEnabled, host, port);
         }
 
+        @NonNull
         @Override
         public String toString() {
             return "TelemetryStatus[" +
@@ -327,7 +328,5 @@ public class Telemetry {
                     "host=" + host + ", " +
                     "port=" + port + ']';
         }
-
-
-        }
+    }
 }
