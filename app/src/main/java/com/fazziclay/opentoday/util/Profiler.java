@@ -5,6 +5,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+// unused: delete?
 public class Profiler {
     private final String key;
     private final long constructorTime;
