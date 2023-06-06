@@ -195,12 +195,6 @@ public class App extends Application {
             Debug.free();
             TimeUtil.free();
         }
-        if (level >= TRIM_MEMORY_COMPLETE) {
-            //settingsManager.free();
-            //itemManager.free();
-            //tickThread.free();
-            //selectionManager.free();
-        }
     }
 
     public boolean isPinCodeNeed() {
