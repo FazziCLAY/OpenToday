@@ -289,6 +289,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
             binding.debugLogsSizeDown.visibility = View.GONE
             binding.debugLogsSwitch.visibility = View.GONE
             binding.debugLogsText.text = ""
+            binding.debugLogsScroll.visibility = View.GONE
         }
     }
 
