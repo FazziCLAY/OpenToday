@@ -111,6 +111,8 @@
     <!-- Settings -->
     <style name="OpenToday.Base.Settings" />
     <style name="OpenToday.Base.Settings.Root">
-        <item name="android:padding">5sp</item>
+        <item name="android:paddingStart">5sp</item>
+        <item name="android:paddingEnd">5sp</item>
+        <item name="android:paddingBottom">10sp</item>
     </style>
 </resources>
