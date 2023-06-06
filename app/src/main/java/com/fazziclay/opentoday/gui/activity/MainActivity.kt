@@ -1,5 +1,6 @@
 package com.fazziclay.opentoday.gui.activity
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.graphics.Color
 import android.graphics.Typeface
@@ -7,6 +8,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +17,7 @@ import com.fazziclay.opentoday.Debug
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.App
 import com.fazziclay.opentoday.app.FeatureFlag
+import com.fazziclay.opentoday.app.ImportantDebugCallback
 import com.fazziclay.opentoday.app.SettingsManager
 import com.fazziclay.opentoday.app.Telemetry.UiClosedLPacket
 import com.fazziclay.opentoday.app.Telemetry.UiOpenLPacket
@@ -25,6 +29,7 @@ import com.fazziclay.opentoday.databinding.NotificationUpdateAvailableBinding
 import com.fazziclay.opentoday.gui.ActivitySettings
 import com.fazziclay.opentoday.gui.EnumsRegistry
 import com.fazziclay.opentoday.gui.UI
+import com.fazziclay.opentoday.gui.UINotification
 import com.fazziclay.opentoday.gui.UIRoot
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember
@@ -34,6 +39,8 @@ import com.fazziclay.opentoday.util.InlineUtil.viewClick
 import com.fazziclay.opentoday.util.InlineUtil.viewVisible
 import com.fazziclay.opentoday.util.Logger
 import com.fazziclay.opentoday.util.NetworkUtil
+import com.fazziclay.opentoday.util.callback.CallbackImportance
+import com.fazziclay.opentoday.util.callback.Status
 import java.text.SimpleDateFormat
 import java.util.GregorianCalendar
 import java.util.Locale
@@ -59,6 +66,20 @@ class MainActivity : AppCompatActivity(), UIRoot {
     private var debugHandler: Handler? = null
     private lateinit var debugRunnable: Runnable
     private var debugViewSize = 13
+    @SuppressLint("SetTextI18n")
+    private var importantDebugCallback = ImportantDebugCallback { m ->
+        val text = TextView(this@MainActivity)
+        val p = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        p.topMargin = 10
+        p.bottomMargin = 10
+        text.layoutParams = p
+        text.setBackgroundColor(Color.RED)
+        text.text = "Debug: $m"
+        addNotification(UINotification.create(text, 2500).setEndCallback {
+            Logger.d(TAG, "ImportantDebugCallback notification ended successfully")
+        })
+        Status.NONE
+    }
 
     // Activity overrides
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,6 +138,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
         })
         updateByActivitySettings()
         Debug.mainActivityStartupTime = System.currentTimeMillis() - startTime
+        app.importantDebugCallbacks.addCallback(CallbackImportance.DEFAULT, importantDebugCallback)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -140,6 +162,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
         Logger.d(TAG, "onDestroy")
         app.telemetry.send(UiClosedLPacket())
         currentDateHandler.removeCallbacks(currentDateRunnable)
+        app.importantDebugCallbacks.removeCallback(importantDebugCallback)
     }
 
     // Current Date
@@ -196,6 +219,8 @@ class MainActivity : AppCompatActivity(), UIRoot {
                     if (url != null) {
                         viewClick(updateAvailableLayout.root, Runnable { NetworkUtil.openBrowser(this@MainActivity, url) })
                     }
+                } else {
+                    ImportantDebugCallback.pushStatic("update checked return false..")
                 }
             }
         }
@@ -208,6 +233,18 @@ class MainActivity : AppCompatActivity(), UIRoot {
         val b = NotificationDebugappBinding.inflate(layoutInflater)
         b.notificationText.text = getString(R.string.debug_app, App.VERSION_BRANCH)
         binding.notifications.addView(b.root)
+    }
+
+    override fun addNotification(notification: UINotification) {
+        binding.notifications.addView(notification.view)
+        notification.attach {
+            binding.notifications.removeView(notification.view)
+        }
+        if (notification.duration != UINotification.DURATION_PERMANENT) {
+            Handler(mainLooper).postDelayed({
+                notification.remove()
+            }, notification.duration)
+        }
     }
 
     fun toggleLogsOverlay() {

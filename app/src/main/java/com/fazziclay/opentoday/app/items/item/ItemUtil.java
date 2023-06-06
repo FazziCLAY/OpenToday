@@ -3,6 +3,7 @@ package com.fazziclay.opentoday.app.items.item;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.fazziclay.opentoday.app.ImportantDebugCallback;
 import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Unique;
@@ -83,10 +84,20 @@ public class ItemUtil {
 
     @Nullable
     public static Item getItemById(@NonNull Item[] allItems, @NonNull UUID id) {
+        UUID find = null;
+        Item findItem = null;
+
         for (Item item : allItems) {
-            if (id.equals(item.getId())) return item;
+            if (id.equals(item.getId())) {
+                if (find != null) {
+                    ImportantDebugCallback.pushStatic(TAG + " getItemById id duplicate: findItem="+findItem+" find="+find + "item="+item);
+                }
+
+                find = id;
+                findItem = item;
+            }
         }
-        return null;
+        return findItem;
     }
 
     public static void moveItems(List<Item> items, int positionFrom, int positionTo, CallbackStorage<OnItemsStorageUpdate> onUpdateCallbacks) {

@@ -1,6 +1,7 @@
 package com.fazziclay.opentoday.gui
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
@@ -55,6 +56,14 @@ object UI {
             return activity
         }
         throw RuntimeException("This fragment activity not is UIRoot. Ops...")
+    }
+
+    @JvmStatic
+    fun getUIRoot(activity: Activity): UIRoot {
+        if (activity is UIRoot) {
+            return activity
+        }
+        throw RuntimeException("This activity not is UIRoot. Ops...")
     }
 
     @JvmStatic

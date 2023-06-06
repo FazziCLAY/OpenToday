@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import com.fazziclay.javaneoutil.FileUtil;
 import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.ImportantDebugCallback;
 import com.fazziclay.opentoday.app.Translation;
 import com.fazziclay.opentoday.app.data.CherryOrchard;
 import com.fazziclay.opentoday.app.items.ItemPath;
@@ -83,12 +84,19 @@ public class TabsManager implements ItemsRoot, Tickable {
     public Tab getTabById(@NotNull UUID uuid) {
         checkDestroy();
 
+        UUID find = null;
+        Tab findTab = null;
         for (Tab tab : getAllTabs()) {
             if (uuid.equals(tab.getId())) {
-                return tab;
+                if (find != null) {
+                    ImportantDebugCallback.pushStatic(TAG + " getTabById id duplicate: findTab="+findTab+" find="+find + "tab="+tab);
+                }
+
+                find = uuid;
+                findTab = tab;
             }
         }
-        return null;
+        return findTab;
     }
 
     @Override

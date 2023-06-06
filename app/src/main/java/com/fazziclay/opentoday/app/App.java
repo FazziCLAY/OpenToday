@@ -29,6 +29,7 @@ import com.fazziclay.opentoday.gui.activity.CrashReportActivity;
 import com.fazziclay.opentoday.util.DebugUtil;
 import com.fazziclay.opentoday.util.License;
 import com.fazziclay.opentoday.util.Logger;
+import com.fazziclay.opentoday.util.callback.CallbackStorage;
 import com.fazziclay.opentoday.util.time.TimeUtil;
 
 import org.jetbrains.annotations.NotNull;
@@ -111,6 +112,7 @@ public class App extends Application {
     private final OptionalField<Telemetry> telemetry = new OptionalField<>(() -> new Telemetry(this, getSettingsManager().isTelemetry()));
     private final OptionalField<TickThread> tickThread = new OptionalField<>(this::preCheckTickThread, TickThread::requestTerminate);
     private final OptionalField<Translation> translation = new OptionalField<>(() -> new TranslationImpl(this::getString));
+    private final OptionalField<CallbackStorage<ImportantDebugCallback>> importantDebugCallbacks = new OptionalField<>(CallbackStorage::new);
     private final List<FeatureFlag> featureFlags = new ArrayList<>(App.DEBUG ? Arrays.asList(
             FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
             //FeatureFlag.SHOW_APP_STARTUP_TIME_IN_PREMAIN_ACTIVITY,
@@ -461,5 +463,9 @@ public class App extends Application {
     @NotNull
     public File getLogsFile() {
         return logsFile;
+    }
+
+    public CallbackStorage<ImportantDebugCallback> getImportantDebugCallbacks() {
+        return importantDebugCallbacks.get();
     }
 }
