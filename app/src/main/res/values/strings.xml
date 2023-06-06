@@ -384,4 +384,5 @@
     <string name="notification_ui_tooLongPinCode_title">Pin-code too long</string>
     <string name="notification_ui_tooLongPinCode_text">Your current pin is too long.\nSo it was off. Configure the pin code again</string>
     <string name="settings_pincode_enable_tooLongError">Pin-code is too long</string>
+    <string name="changelogFragment_toolbar_title">Wha\'s new</string>
 </resources>

@@ -11,7 +11,6 @@ import com.fazziclay.opentoday.app.App
 import com.fazziclay.opentoday.databinding.FragmentAboutBinding
 import com.fazziclay.opentoday.gui.ActivitySettings
 import com.fazziclay.opentoday.gui.UI
-import com.fazziclay.opentoday.gui.activity.ChangelogActivity
 import com.fazziclay.opentoday.gui.activity.OpenSourceLicensesActivity
 import com.fazziclay.opentoday.util.InlineUtil.viewClick
 import com.fazziclay.opentoday.util.NetworkUtil
@@ -57,7 +56,7 @@ class AboutFragment : Fragment() {
         viewClick(binding.issues, Runnable { NetworkUtil.openBrowser(requireActivity(), LINK_ISSUES) })
         viewClick(binding.licenses, Runnable { requireActivity().startActivity(OpenSourceLicensesActivity.createLaunchIntent(requireContext())) })
         viewClick(binding.ok, Runnable { UI.rootBack(this) })
-        viewClick(binding.changelog, Runnable { requireActivity().startActivity(ChangelogActivity.createLaunchIntent(requireContext())) })
+        viewClick(binding.changelog, Runnable { UI.findFragmentInParents(this, MainRootFragment::class.java)!!.navigate(ChangelogFragment.create(), true) })
         return binding.root
     }
 
