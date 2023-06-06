@@ -541,11 +541,6 @@ public class ItemViewGenerator {
             this.itemViewGeneratorBehavior = itemViewGeneratorBehavior;
         }
 
-        public CreateBuilder setPreviewMode() {
-            this.previewMode = true;
-            return this;
-        }
-
         public CreateBuilder setPreviewMode(boolean b) {
             this.previewMode = b;
             return this;
