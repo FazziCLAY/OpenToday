@@ -4,7 +4,6 @@ import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.SelectionCallback;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
-import com.fazziclay.opentoday.util.callback.Status;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +12,7 @@ public class SelectionManager {
     // Selection
     private final List<Selection> selections = new ArrayList<>();
     private final CallbackStorage<SelectionCallback> onSelectionUpdated = new CallbackStorage<>();
-    private final SelectionController selectionController = new SelectionController() {
-        @Override
-        public void detached(Selection selection) {
-            deselectItem(selection);
-        }
-    };
+    private final SelectionController selectionController = this::deselectItem;
 
     public SelectionManager() {
 
@@ -50,6 +44,7 @@ public class SelectionManager {
             callback.onSelectionChanged(getSelections());
             return callback.selected(selection);
         });
+        item.visibleChanged();
     }
 
     public void deselectItem(Item item) {
@@ -66,22 +61,19 @@ public class SelectionManager {
             callback.onSelectionChanged(getSelections());
             return callback.unselected(finalToDelete);
         });
+        item.visibleChanged();
     }
 
     public void deselectItem(Selection se) {
         if (!isSelected(se.getItem())) return;
-        Selection toDelete = null;
-        for (Selection selection : this.selections) {
-            if (selection == se) toDelete = selection;
-        }
-        selections.remove(toDelete);
-        toDelete.deselect();
-
+        selections.remove(se);
+        se.deselect();
 
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
             callback.onSelectionChanged(getSelections());
             return callback.unselected(se);
         });
+        se.getItem().visibleChanged();
     }
 
     public void deselectAll() {
@@ -89,8 +81,7 @@ public class SelectionManager {
 
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
             callback.onSelectionChanged(getSelections());
-            callback.unselectedAll();
-            return Status.NONE;
+            return callback.unselectedAll();
         });
     }
 

@@ -34,10 +34,6 @@ import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public class ItemsStorageDrawer {
     private static final String TAG = "ItemStorageDrawer";
     private final Activity activity;
@@ -51,8 +47,6 @@ public class ItemsStorageDrawer {
 
     private boolean destroyed = false;
     private boolean created = false;
-
-    private final List<Selection> visibleSelections = new ArrayList<>();
     private final OnItemsStorageUpdate onItemsStorageUpdate = new DrawerOnItemsStorageUpdated();
     private final SelectionCallback selectionCallback = new DrawerSelectionCallback();
     private final ItemInterface itemOnClick;
@@ -424,50 +418,29 @@ public class ItemsStorageDrawer {
 
     private class DrawerSelectionCallback extends SelectionCallback {
         @Override
-        public void onSelectionChanged(Selection[] selections) {
-            activity.runOnUiThread(() -> runInternal(selections));
+        public Status selected(Selection selection) {
+            if (selection.getItem().getParentItemsStorage() == itemsStorage) {
+                int pos = itemsStorage.getItemPosition(selection.getItem());
+                adapter.notifyItemChanged(pos);
+            }
+
+            return Status.NONE;
         }
 
-        private void runInternal(Selection[] selections) {
-            List<Selection> toUpdate = new ArrayList<>();
-
-            for (Selection visibleSelection : visibleSelections) {
-                boolean contain = false;
-                for (Selection selection : selections) {
-                    if (visibleSelection.getItem() == selection.getItem()) {
-                        contain = true;
-                        break;
-                    }
-                }
-                if (!contain) {
-                    toUpdate.add(visibleSelection);
-                }
-            }
-
-            for (Selection selection : selections) {
-                boolean contain = false;
-                for (Selection visibleSelection : visibleSelections) {
-                    if (visibleSelection.getItem() == selection.getItem()) {
-                        contain = true;
-                        break;
-                    }
-                }
-                if (!contain) {
-                    toUpdate.add(selection);
-                }
-            }
-
-            for (Selection selection : toUpdate) {
+        @Override
+        public Status unselected(Selection selection) {
+            if (selection.getItem().getParentItemsStorage() == itemsStorage) {
                 int pos = itemsStorage.getItemPosition(selection.getItem());
-                Runnable updateRunnable = () -> adapter.notifyItemChanged(pos);
-                if (Thread.currentThread() == originalThread) {
-                    updateRunnable.run();
-                } else {
-                    activity.runOnUiThread(updateRunnable);
-                }
+                adapter.notifyItemChanged(pos);
             }
-            visibleSelections.clear();
-            visibleSelections.addAll(Arrays.asList(selections));
+
+            return Status.NONE;
+        }
+
+        @Override
+        public Status unselectedAll() {
+            runAdapter(RecyclerView.Adapter::notifyDataSetChanged);
+            return Status.NONE;
         }
     }
 }

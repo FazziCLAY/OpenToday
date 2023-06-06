@@ -17,7 +17,7 @@ public abstract class SelectionCallback implements Callback {
         return Status.NONE;
     }
 
-    public void unselectedAll() {
-
+    public Status unselectedAll() {
+        return Status.NONE;
     }
 }
