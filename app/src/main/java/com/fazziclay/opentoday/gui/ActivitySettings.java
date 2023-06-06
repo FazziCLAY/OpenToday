@@ -73,6 +73,10 @@ public class ActivitySettings implements Cloneable {
             return new ToolbarSettings(null, titleResId, true, back);
         }
 
+        public static ToolbarSettings createBack(String title, Runnable back) {
+            return new ToolbarSettings(title, 0, true, back);
+        }
+
         public ToolbarSettings(String title, int titleResId, boolean backButton, Runnable backButtonRunnable) {
             this.title = title;
             this.titleResId = titleResId;

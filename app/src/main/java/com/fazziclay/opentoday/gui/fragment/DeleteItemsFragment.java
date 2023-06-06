@@ -22,7 +22,9 @@ import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.databinding.FragmentDeleteItemsBinding;
+import com.fazziclay.opentoday.gui.ActivitySettings;
 import com.fazziclay.opentoday.gui.UI;
+import com.fazziclay.opentoday.gui.activity.MainActivity;
 import com.fazziclay.opentoday.gui.item.ItemViewGenerator;
 import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
 import com.fazziclay.opentoday.gui.item.ItemViewHolder;
@@ -82,6 +84,17 @@ public class DeleteItemsFragment extends Fragment {
         itemViewGenerator = ItemViewGenerator.builder(requireActivity(), new DeleteViewGeneratorBehavior())
                 .setPreviewMode(true)
                 .build();
+
+        UI.getUIRoot(this).pushActivitySettings(a -> {
+            a.setNotificationsVisible(false);
+            a.setToolbarSettings(ActivitySettings.ToolbarSettings.createBack(requireActivity().getString(R.string.dialog_previewDeleteItems_delete_title, String.valueOf(itemsToDelete.length)), () -> UI.rootBack(DeleteItemsFragment.this)));
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        UI.getUIRoot(this).popActivitySettings();
     }
 
     @Nullable
