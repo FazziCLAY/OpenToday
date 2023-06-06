@@ -73,7 +73,7 @@ public class App extends Application {
     public static final boolean DEBUG_TICK_NOTIFICATION = debug(false);
     public static final int DEBUG_MAIN_ACTIVITY_START_SLEEP = debug(false) ? 6000 : 0;
     public static final int DEBUG_APP_START_SLEEP = debug(false) ? 8000 : 0;
-    public static Class<? extends Activity> DEBUG_MAIN_ACTIVITY = debug(true) ? TestItemViewGenerator.class : null;
+    public static Class<? extends Activity> DEBUG_MAIN_ACTIVITY = debug(false) ? TestItemViewGenerator.class : null;
     public static final boolean DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY = false;
 
     public static boolean debug(boolean b) {
