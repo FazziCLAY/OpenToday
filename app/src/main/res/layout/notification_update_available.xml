@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:id="@+id/update_available"
+<RelativeLayout android:id="@+id/update_available"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/shape"
     android:backgroundTint="?attr/updateAvailable_backgroundColor"
     android:padding="5sp"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageView
+        android:id="@+id/update_available_icon"
+        android:layout_width="40sp"
+        android:layout_height="40sp"
+        android:src="@mipmap/ic_launcher"
+        android:importantForAccessibility="no" />
 
     <TextView
+        android:layout_toEndOf="@id/update_available_icon"
         android:layout_width="match_parent"
+        android:paddingStart="5sp"
         android:layout_height="wrap_content"
         android:text="@string/update_available"
         android:textColor="?attr/updateAvailable_textColor"
-        android:textSize="20sp"
-        app:drawableLeftCompat="@drawable/update_available" />
-</FrameLayout>
+        android:textSize="20sp"/>
+</RelativeLayout>
