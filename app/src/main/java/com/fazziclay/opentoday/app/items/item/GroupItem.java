@@ -158,6 +158,7 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
         @Override
         public void delete(Item item) {
             GroupItem.this.deleteItem(item);
+            visibleChanged();
         }
 
         @Override
@@ -168,6 +169,7 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
         @Override
         public void updateUi(Item item) {
             GroupItem.this.getOnItemsStorageCallbacks().run(((callbackStorage, callback) -> callback.onUpdated(item, getItemPosition(item))));
+            visibleChanged();
         }
 
         @Override
