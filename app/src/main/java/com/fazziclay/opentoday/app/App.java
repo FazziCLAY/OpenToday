@@ -5,7 +5,6 @@ import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
@@ -109,7 +108,6 @@ public class App extends Application {
     private final OptionalField<SettingsManager> settingsManager = new OptionalField<>(() -> new SettingsManager(new File(getExternalFilesDir(""), "settings.json")));
     private final OptionalField<ColorHistoryManager> colorHistoryManager = new OptionalField<>(() -> new ColorHistoryManager(new File(getExternalFilesDir(""), "color_history.json"), 10));
     private final OptionalField<PinCodeManager> pinCodeManager = new OptionalField<>(() -> new PinCodeManager(this));
-    private final OptionalField<ClipboardManager> clipboardManager = new OptionalField<>(() -> getSystemService(ClipboardManager.class));
     private final OptionalField<SelectionManager> selectionManager = new OptionalField<>(SelectionManager::new);
     private final OptionalField<Telemetry> telemetry = new OptionalField<>(() -> new Telemetry(this, getSettingsManager().isTelemetry()));
     private final OptionalField<TickThread> tickThread = new OptionalField<>(this::preCheckTickThread, TickThread::requestTerminate);
@@ -169,7 +167,6 @@ public class App extends Application {
         settingsManager.free();
         colorHistoryManager.free();
         pinCodeManager.free();
-        clipboardManager.free();
         selectionManager.free();
         telemetry.free();
         tickThread.free();
@@ -197,7 +194,6 @@ public class App extends Application {
             pinCodeManager.free();
             Debug.free();
             TimeUtil.free();
-            clipboardManager.free();
         }
         if (level >= TRIM_MEMORY_COMPLETE) {
             //settingsManager.free();
@@ -429,11 +425,6 @@ public class App extends Application {
     @NotNull
     public PinCodeManager getPinCodeManager() {
         return pinCodeManager.get();
-    }
-
-    @NotNull
-    public ClipboardManager getClipboardManager() {
-        return clipboardManager.get();
     }
 
     @NotNull
