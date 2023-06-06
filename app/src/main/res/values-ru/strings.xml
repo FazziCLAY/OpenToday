@@ -4,7 +4,7 @@
     <string name="abc_cancel">Отмена</string>
     <string name="abc_error_browserNotFound">Пожалуйста установите web-браузер</string>
     <string name="abc_ok">ОК</string>
-    <string name="aboutapp_title">О программе OpenToday:</string>
+    <string name="aboutapp_title">О программе</string>
     <string name="aboutapp_ok">ОК</string>
     <string name="about_licenses">OpenSource лицензии</string>
     <string name="aboutapp_text_version">Версия:</string>

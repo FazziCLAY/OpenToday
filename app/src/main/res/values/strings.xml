@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name" translatable="false">OpenToday</string>
     <string name="abc_ok">OK</string>
-    <string name="aboutapp_title">About OpenToday:</string>
+    <string name="aboutapp_title">About</string>
     <string name="toolbar_more_opentoday_debug_restartActivity">DEBUG: Restart activity</string>
     <string name="aboutapp_text_version">Version:</string>
     <string name="aboutapp_text_package">Package:</string>
