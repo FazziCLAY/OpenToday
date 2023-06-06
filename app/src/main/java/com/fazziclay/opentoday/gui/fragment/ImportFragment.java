@@ -29,6 +29,7 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.databinding.FragmentImportBinding;
+import com.fazziclay.opentoday.gui.ActivitySettings;
 import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.util.NetworkUtil;
@@ -88,6 +89,17 @@ public class ImportFragment extends Fragment {
                 importData(s);
             }
         }
+
+        UI.getUIRoot(this).pushActivitySettings(a -> {
+            a.setNotificationsVisible(false);
+            a.setToolbarSettings(ActivitySettings.ToolbarSettings.createBack(R.string.importFragment_title, () -> UI.rootBack(this)));
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        UI.getUIRoot(this).popActivitySettings();
     }
 
     @Nullable
@@ -167,6 +179,8 @@ public class ImportFragment extends Fragment {
             if (perms.length() > 0) perms.append("\n");
             String desc = getDescription(permission);
             if (ONLY_DESCRIPTION) {
+                // ReplaceNullCheck required height android version
+                //noinspection ReplaceNullCheck
                 if (desc == null) {
                     perms.append("* ").append(permission.name());
                 } else {

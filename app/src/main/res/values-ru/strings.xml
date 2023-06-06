@@ -377,4 +377,5 @@
     <string name="item_mathGame_description">Математическая игра поможет размять мозг простыми задачками</string>
     <string name="item_mathGame_quest_primitive_text">Сколько будет %s %s %s</string>
     <string name="tab_defaultFirstName">Моя первая вкладка</string>
+    <string name="importFragment_title">Импортировать…</string>
 </resources>
