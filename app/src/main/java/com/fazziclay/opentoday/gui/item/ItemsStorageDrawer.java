@@ -233,16 +233,14 @@ public class ItemsStorageDrawer {
 
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            final int position = viewHolder.getAdapterPosition();
+            final Item item = ItemsStorageDrawer.this.itemsStorage.getAllItems()[position];
+            runAdapter(adapter1 -> adapter1.notifyItemChanged(position));
+
             if (direction == ItemTouchHelper.LEFT) {
-                int positionFrom = viewHolder.getAdapterPosition();
-                Item item = ItemsStorageDrawer.this.itemsStorage.getAllItems()[positionFrom];
-                item.visibleChanged();
                 actionItem(item, itemViewGeneratorBehavior.getItemOnLeftAction());
 
             } else if (direction == ItemTouchHelper.RIGHT) {
-                int position = viewHolder.getAdapterPosition();
-                Item item = ItemsStorageDrawer.this.itemsStorage.getAllItems()[position];
-                item.visibleChanged();
                 ItemViewHolder itemViewHolder = (ItemViewHolder) viewHolder;
                 showRightMenu(item, itemViewHolder.layout.getChildAt(0));
             }
@@ -296,16 +294,17 @@ public class ItemsStorageDrawer {
         if (itemView == null) {
             Logger.w(TAG, "showRightMenu view is null...");
         }
+        if (!item.isAttached()) {
+            throw new RuntimeException("Item is not attached");
+        }
         PopupMenu menu = new PopupMenu(activity, itemView);
         menu.setForceShowIcon(true);
         menu.inflate(R.menu.menu_item);
         menu.getMenu().findItem(R.id.minimize).setChecked(item.isMinimize());
         menu.getMenu().findItem(R.id.selected).setChecked(selectionManager.isSelected(item));
-        menu.getMenu().setGroupEnabled(R.id.textItem, item instanceof TextItem);
         if (item instanceof TextItem textItem) {
             menu.getMenu().findItem(R.id.textItem_clickableUrls).setChecked(textItem.isClickableUrls());
         }
-        menu.getMenu().findItem(R.id.transform).setVisible(true);
         menu.setOnMenuItemClickListener(menuItem -> {
             boolean save = false;
             SettingsManager.ItemAction itemAction = null;
@@ -370,7 +369,7 @@ public class ItemsStorageDrawer {
 
             if (itemAction != null) actionItem(item, itemAction);
             if (save) item.save();
-            item.visibleChanged();
+            runAdapter(adapter1 -> adapter1.notifyItemChanged(itemsStorage.getItemPosition(item)));
             return true;
         });
         menu.setGravity(Gravity.END);
