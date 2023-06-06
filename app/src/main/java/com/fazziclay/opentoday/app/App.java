@@ -32,6 +32,7 @@ import com.fazziclay.opentoday.util.callback.CallbackStorage;
 import com.fazziclay.opentoday.util.time.TimeUtil;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -296,7 +297,7 @@ public class App extends Application {
         App.crash(context, CrashReport.create(exception), false);
     }
 
-    private static void crash(Context context, final CrashReport crashReport, boolean fatal) {
+    private static void crash(@Nullable Context context, @NotNull final CrashReport crashReport, boolean fatal) {
         if (context == null) context = App.get();
         crashReport.setFatal(CrashReport.FatalEnum.fromBoolean(fatal));
 
@@ -314,7 +315,7 @@ public class App extends Application {
         } catch (Exception ignored) {}
 
         // === If fatal: notify user ===
-        if (fatal) {
+        if (fatal || App.DEBUG) {
             sendCrashNotification(context, crashReportFile);
         }
 
@@ -332,6 +333,8 @@ public class App extends Application {
             } catch (Exception ignore) {}
             androidUncaughtHandler.uncaughtException(crashReport.getThread(), crashReport.getThrowable());
         }
+
+        if (!fatal) ImportantDebugCallback.pushStatic("App.crash() no fatal.\nException: " + crashReport.getThrowable() + "\n\ntext:\n"+crashReport.convertToText());
     }
 
     private static void sendCrashNotification(final Context context, File fileToCrash) {
