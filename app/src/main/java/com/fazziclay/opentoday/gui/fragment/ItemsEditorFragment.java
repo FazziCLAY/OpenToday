@@ -3,6 +3,7 @@ package com.fazziclay.opentoday.gui.fragment;
 import static com.fazziclay.opentoday.util.InlineUtil.nullStat;
 
 import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +34,7 @@ import com.fazziclay.opentoday.databinding.ItemsStorageEmptyBinding;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.activity.MainActivity;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
-import com.fazziclay.opentoday.gui.interfaces.StorageEditsActions;
+import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
 import com.fazziclay.opentoday.gui.item.ItemsStorageDrawer;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.ResUtil;
@@ -126,29 +127,67 @@ public class ItemsEditorFragment extends Fragment {
             }
         }
 
+        ItemViewGeneratorBehavior behavior = new ItemViewGeneratorBehavior() {
+            @Override
+            public boolean isMinimizeGrayColor() {
+                return settingsManager.isMinimizeGrayColor();
+            }
+
+            @Override
+            public SettingsManager.ItemAction getItemOnClickAction() {
+                return settingsManager.getItemOnClickAction();
+            }
+
+            @Override
+            public boolean isScrollToAddedItem() {
+                return settingsManager.isScrollToAddedItem();
+            }
+
+            @Override
+            public SettingsManager.ItemAction getItemOnLeftAction() {
+                return settingsManager.getItemOnLeftAction();
+            }
+
+            @Override
+            public boolean isConfirmFastChanges() {
+                return settingsManager.isConfirmFastChanges();
+            }
+
+            @Override
+            public void setConfirmFastChanges(boolean b) {
+                settingsManager.setConfirmFastChanges(b);
+                settingsManager.save();
+            }
+
+            @Override
+            public Drawable getForeground(Item item) {
+                return UI.itemSelectionForeground(activity, item, selectionManager);
+            }
+
+            @Override
+            public void onGroupEdit(GroupItem groupItem) {
+                navigationHost.navigate(createItem(tabId, groupItem.getId(), (groupItem instanceof Readonly)), true);
+            }
+
+            @Override
+            public void onCycleListEdit(CycleListItem cycleListItem) {
+                navigationHost.navigate(createItem(tabId, cycleListItem.getId(), (cycleListItem instanceof Readonly)), true);
+            }
+
+            @Override
+            public void onFilterGroupEdit(FilterGroupItem filterGroupItem) {
+                navigationHost.navigate(createItem(tabId, filterGroupItem.getId(), (filterGroupItem instanceof Readonly)), true);
+            }
+        };
+
+        // TODO: 06.06.2023 what,
         if (previewMode) {
-            this.itemsStorageDrawer = ItemsStorageDrawer.builder(activity, UI.getItemViewGeneratorBehaviorFromSettings(activity, settingsManager, selectionManager), selectionManager, itemsStorage)
+            this.itemsStorageDrawer = ItemsStorageDrawer.builder(activity, behavior, selectionManager, itemsStorage)
                     .setPreviewMode()
                     .build();
         } else {
-            this.itemsStorageDrawer = ItemsStorageDrawer.builder(activity, UI.getItemViewGeneratorBehaviorFromSettings(activity, settingsManager, selectionManager), selectionManager, itemsStorage)
+            this.itemsStorageDrawer = ItemsStorageDrawer.builder(activity, behavior, selectionManager, itemsStorage)
                     .setOnItemOpenEditor((item) -> rootNavigationHost.navigate(ItemEditorFragment.edit(item.getId()), true))
-                    .setStorageEditsActions(new StorageEditsActions() {
-                        @Override
-                        public void onGroupEdit(@NonNull GroupItem groupItem) {
-                            navigationHost.navigate(createItem(tabId, groupItem.getId(), (groupItem instanceof Readonly)), true);
-                        }
-
-                        @Override
-                        public void onCycleListEdit(@NonNull CycleListItem cycleListItem) {
-                            navigationHost.navigate(createItem(tabId, cycleListItem.getId(), (cycleListItem instanceof Readonly)), true);
-                        }
-
-                        @Override
-                        public void onFilterGroupEdit(@NonNull FilterGroupItem filterGroupItem) {
-                            navigationHost.navigate(createItem(tabId, filterGroupItem.getId(), (filterGroupItem instanceof Readonly)), true);
-                        }
-                    })
                     .build();
         }
 

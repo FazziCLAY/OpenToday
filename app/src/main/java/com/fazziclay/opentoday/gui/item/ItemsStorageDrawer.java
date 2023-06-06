@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fazziclay.opentoday.R;
-import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
@@ -64,7 +63,7 @@ public class ItemsStorageDrawer {
     private final ItemInterface onItemEditor;
 
     // Public
-    public ItemsStorageDrawer(@NonNull Activity activity, ItemViewGeneratorBehavior itemViewGeneratorBehavior, SelectionManager selectionManager, ItemsStorage itemsStorage, ItemInterface itemOnClick, @NonNull ItemInterface onItemEditor, boolean previewMode, StorageEditsActions storageEdits) {
+    public ItemsStorageDrawer(@NonNull Activity activity, ItemViewGeneratorBehavior itemViewGeneratorBehavior, SelectionManager selectionManager, ItemsStorage itemsStorage, ItemInterface itemOnClick, @NonNull ItemInterface onItemEditor, boolean previewMode) {
         this.activity = activity;
         this.onItemEditor = onItemEditor;
         this.itemViewGeneratorBehavior = itemViewGeneratorBehavior;
@@ -83,10 +82,7 @@ public class ItemsStorageDrawer {
             } else {
                 this.itemOnClick.run(item);
             }
-        }, storageEdits, itemsStorage1 -> ItemsStorageDrawer.builder(activity, itemViewGeneratorBehavior, selectionManager, itemsStorage1)
-                .setOnItemOpenEditor(onItemEditor)
-                .setStorageEditsActions(storageEdits)
-                .build());
+        });
 
     }
 
@@ -382,7 +378,6 @@ public class ItemsStorageDrawer {
         private boolean previewMode = false;
         private ItemInterface onItemClick = null;
         private ItemInterface onItemOpenEditor = null;
-        private StorageEditsActions storageEditsAction = null;
 
         public CreateBuilder(Activity activity, ItemViewGeneratorBehavior viewGeneratorBehavior, SelectionManager selectionManager, ItemsStorage itemsStorage) {
             this.activity = activity;
@@ -407,14 +402,8 @@ public class ItemsStorageDrawer {
             return this;
         }
 
-
-        public CreateBuilder setStorageEditsActions(StorageEditsActions i) {
-            this.storageEditsAction = i;
-            return this;
-        }
-
         public ItemsStorageDrawer build() {
-            return new ItemsStorageDrawer(activity, viewGeneratorBehavior, selectionManager, itemsStorage, onItemClick, onItemOpenEditor, previewMode, storageEditsAction);
+            return new ItemsStorageDrawer(activity, viewGeneratorBehavior, selectionManager, itemsStorage, onItemClick, onItemOpenEditor, previewMode);
         }
     }
 

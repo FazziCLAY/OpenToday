@@ -92,13 +92,27 @@ public class TestItemsStorageDrawer extends Activity {
                     public Drawable getForeground(Item item) {
                         return null;
                     }
+
+                    @Override
+                    public void onGroupEdit(GroupItem groupItem) {
+
+                    }
+
+                    @Override
+                    public void onCycleListEdit(CycleListItem cycleListItem) {
+
+                    }
+
+                    @Override
+                    public void onFilterGroupEdit(FilterGroupItem filterGroupItem) {
+
+                    }
                 },
                 new SelectionManager(),
                 tabsManager.getTabById(new UUID(0, 0)),
                 onClick,
                 item -> Toast.makeText(TestItemsStorageDrawer.this, "unsupported", Toast.LENGTH_SHORT).show(),
-                previewMode,
-                edits);
+                previewMode);
 
 
         Button add = new Button(this);

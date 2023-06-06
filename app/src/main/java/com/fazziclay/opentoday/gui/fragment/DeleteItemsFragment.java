@@ -16,15 +16,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.SettingsManager;
+import com.fazziclay.opentoday.app.items.item.CycleListItem;
+import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
+import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
-import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.databinding.FragmentDeleteItemsBinding;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.item.ItemViewGenerator;
 import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
 import com.fazziclay.opentoday.gui.item.ItemViewHolder;
-import com.fazziclay.opentoday.gui.item.ItemsStorageDrawer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +61,6 @@ public class DeleteItemsFragment extends Fragment {
 
     private FragmentDeleteItemsBinding binding;
     private TabsManager tabsManager;
-    private SelectionManager selectionManager;
     private ItemViewGenerator itemViewGenerator;
     private Item[] itemsToDelete;
 
@@ -69,7 +69,6 @@ public class DeleteItemsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         App app = App.get(requireContext());
         tabsManager = app.getTabsManager();
-        selectionManager = app.getSelectionManager();
 
         // parse
         String[] r = getArguments().getStringArray(KEY_ITEMS_TO_DELETE);
@@ -80,10 +79,9 @@ public class DeleteItemsFragment extends Fragment {
         itemsToDelete = u.toArray(new Item[0]);
         // parse END
 
-        itemViewGenerator = ItemViewGenerator.builder(requireActivity(), new DeleteViewGeneratorBehavior(), (itemsStorage -> ItemsStorageDrawer.builder(requireActivity(), new DeleteViewGeneratorBehavior(), selectionManager, itemsStorage).build()))
-                .setPreviewMode()
+        itemViewGenerator = ItemViewGenerator.builder(requireActivity(), new DeleteViewGeneratorBehavior())
+                .setPreviewMode(true)
                 .build();
-
     }
 
     @Nullable
@@ -165,6 +163,21 @@ public class DeleteItemsFragment extends Fragment {
         @Override
         public Drawable getForeground(Item item) {
             return null;
+        }
+
+        @Override
+        public void onGroupEdit(GroupItem groupItem) {
+
+        }
+
+        @Override
+        public void onCycleListEdit(CycleListItem cycleListItem) {
+
+        }
+
+        @Override
+        public void onFilterGroupEdit(FilterGroupItem filterGroupItem) {
+
         }
     }
 }
