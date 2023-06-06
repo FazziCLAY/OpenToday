@@ -34,6 +34,7 @@ public class Status {
         private boolean isChangeImportance;
         private CallbackImportance newImportance;
 
+        // TODO: 06.06.2023 rename to setRemoveCallback
         public Builder setDeleteCallback(boolean deleteCallback) {
             this.isDeleteCallback = deleteCallback;
             return this;
