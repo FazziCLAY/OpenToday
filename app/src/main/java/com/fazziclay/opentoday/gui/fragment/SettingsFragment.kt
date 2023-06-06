@@ -172,7 +172,6 @@ class SettingsFragment : Fragment() {
         binding.colorHistoryLocked.isChecked = colorHistoryManager.isLocked
         viewClick(binding.colorHistoryLocked, Runnable {
             colorHistoryManager.isLocked = binding.colorHistoryLocked.isChecked
-            colorHistoryManager.save()
         })
 
         // Export
