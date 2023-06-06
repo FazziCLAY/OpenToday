@@ -180,6 +180,14 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         if (item == null) {
             throw new RuntimeException("Item is null!");
         }
+
+        UI.getUIRoot(this).pushActivitySettings(a -> a.setNotificationsVisible(false));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        UI.getUIRoot(this).popActivitySettings();
     }
 
     @Nullable
@@ -331,10 +339,6 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         return unsavedChanges;
     }
 
-    @FunctionalInterface
-    public interface OnEditDone {
-        void run(Item item);
-    }
 
     public static class UserException extends Exception {
         public UserException(String m) {
@@ -371,20 +375,18 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.defaultBackgroundColor.setChecked(!item.isViewCustomBackgroundColor());
             temp_backgroundColor = item.getViewBackgroundColor();
             updateTextColorIndicator(activity);
-            viewClick(binding.viewBackgroundColorEdit, () -> {
-                new ColorPicker(activity, temp_backgroundColor)
-                        .setting(true, true, true)
-                        .setColorHistoryManager(colorHistoryManager)
-                        .showDialog(R.string.dialogItem_module_item_backgroundColor_dialog_title,
-                                R.string.dialogItem_module_item_backgroundColor_dialog_cancel,
-                                R.string.dialogItem_module_item_backgroundColor_dialog_apply,
-                                (color) -> {
-                                    temp_backgroundColor = color;
-                                    binding.defaultBackgroundColor.setChecked(false);
-                                    updateTextColorIndicator(activity);
-                                    onEditStart.run();
-                                });
-            });
+            viewClick(binding.viewBackgroundColorEdit, () -> new ColorPicker(activity, temp_backgroundColor)
+                    .setting(true, true, true)
+                    .setColorHistoryManager(colorHistoryManager)
+                    .showDialog(R.string.dialogItem_module_item_backgroundColor_dialog_title,
+                            R.string.dialogItem_module_item_backgroundColor_dialog_cancel,
+                            R.string.dialogItem_module_item_backgroundColor_dialog_apply,
+                            (color) -> {
+                                temp_backgroundColor = color;
+                                binding.defaultBackgroundColor.setChecked(false);
+                                updateTextColorIndicator(activity);
+                                onEditStart.run();
+                            }));
             binding.minimize.setChecked(item.isMinimize());
             //viewVisible(binding.copyItemId, app.isFeatureFlag(FeatureFlag.ITEM_EDITOR_SHOW_COPY_ID_BUTTON), View.GONE);
             viewClick(binding.copyItemId, () -> {
@@ -426,8 +428,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         private void updateNotificationPreview(Item item, Activity activity) {
             StringBuilder text = new StringBuilder();
             for (ItemNotification notification : item.getNotifications()) {
-                if (notification instanceof DayItemNotification) {
-                    DayItemNotification d = (DayItemNotification) notification;
+                if (notification instanceof DayItemNotification d) {
                     text.append(String.format("#%s - %s - %s", d.getNotificationId(), activity.getString(R.string.itemNotification_day), TimeUtil.convertToHumanTime(d.getTime(), ConvertMode.HHMM))).append("\n");
                 }
             }
@@ -495,20 +496,18 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.defaultTextColor.setChecked(!textItem.isCustomTextColor());
             temp_textColor = textItem.getTextColor();
             updateTextColorIndicator(activity);
-            binding.textColorEdit.setOnClickListener(v -> {
-                new ColorPicker(activity, temp_textColor)
-                        .setting(true, true, true)
-                        .setColorHistoryManager(colorHistoryManager)
-                        .showDialog(R.string.dialogItem_module_text_textColor_dialog_title,
-                                R.string.dialogItem_module_text_textColor_dialog_cancel,
-                                R.string.dialogItem_module_text_textColor_dialog_apply,
-                                (color) -> {
-                                    temp_textColor = color;
-                                    binding.defaultTextColor.setChecked(false);
-                                    updateTextColorIndicator(activity);
-                                    onEditStart.run();
-                                });
-            });
+            binding.textColorEdit.setOnClickListener(v -> new ColorPicker(activity, temp_textColor)
+                    .setting(true, true, true)
+                    .setColorHistoryManager(colorHistoryManager)
+                    .showDialog(R.string.dialogItem_module_text_textColor_dialog_title,
+                            R.string.dialogItem_module_text_textColor_dialog_cancel,
+                            R.string.dialogItem_module_text_textColor_dialog_apply,
+                            (color) -> {
+                                temp_textColor = color;
+                                binding.defaultTextColor.setChecked(false);
+                                updateTextColorIndicator(activity);
+                                onEditStart.run();
+                            }));
 
             binding.paragraphColorize.setChecked(textItem.isParagraphColorize());
             binding.paragraphColorize.setOnClickListener(v -> onEditStart.run());
@@ -584,20 +583,18 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.defaultTextColor.setChecked(!longTextItem.isCustomLongTextColor());
             temp_textColor = longTextItem.getLongTextColor();
             updateTextColorIndicator(activity);
-            binding.textColorEdit.setOnClickListener(v -> {
-                new ColorPicker(activity, temp_textColor)
-                        .setting(true, true, true)
-                        .setColorHistoryManager(colorHistoryManager)
-                        .showDialog(R.string.dialogItem_module_longtext_textColor_dialog_title,
-                                R.string.dialogItem_module_longtext_textColor_dialog_cancel,
-                                R.string.dialogItem_module_longtext_textColor_dialog_apply,
-                                (color) -> {
-                                    temp_textColor = color;
-                                    binding.defaultTextColor.setChecked(false);
-                                    updateTextColorIndicator(activity);
-                                    onEditStart.run();
-                                });
-            });
+            binding.textColorEdit.setOnClickListener(v -> new ColorPicker(activity, temp_textColor)
+                    .setting(true, true, true)
+                    .setColorHistoryManager(colorHistoryManager)
+                    .showDialog(R.string.dialogItem_module_longtext_textColor_dialog_title,
+                            R.string.dialogItem_module_longtext_textColor_dialog_cancel,
+                            R.string.dialogItem_module_longtext_textColor_dialog_apply,
+                            (color) -> {
+                                temp_textColor = color;
+                                binding.defaultTextColor.setChecked(false);
+                                updateTextColorIndicator(activity);
+                                onEditStart.run();
+                            }));
 
             binding.clickableUrls.setChecked(longTextItem.isLongTextClickableUrls());
 
