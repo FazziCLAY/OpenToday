@@ -108,7 +108,8 @@ public class ItemUtil {
             TickTarget.ITEM_FILTER_GROUP_TICK,
             TickTarget.ITEM_DAY_REPEATABLE_CHECKBOX_UPDATE,
             TickTarget.ITEM_NOTIFICATIONS,
-            TickTarget.ITEM_NOTIFICATION_SCHEDULE);
+            TickTarget.ITEM_NOTIFICATION_SCHEDULE,
+            TickTarget.ITEM_MATH_GAME_UPDATE);
     public static void tickOnlyImportantTargets(TickSession tickSession, Item[] items) {
         // NOTE: No use 'for-loop' (self-delete item in tick => ConcurrentModificationException)
         int i = items.length - 1;
