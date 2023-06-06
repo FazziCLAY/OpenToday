@@ -378,4 +378,8 @@
     <string name="item_mathGame_quest_primitive_text">Сколько будет %s %s %s</string>
     <string name="tab_defaultFirstName">Моя первая вкладка</string>
     <string name="importFragment_title">Импортировать…</string>
+    <string name="settings_pincode_enable_emptyError">Ошибка: Пин-код не может быть пустым</string>
+    <string name="notification_ui_tooLongPinCode_title">Пин-код слишком длинный</string>
+    <string name="notification_ui_tooLongPinCode_text">Ваш текущий пин-код слишком длинный.\nПоэтому он был выключен. Настройте пин-код заново</string>
+    <string name="settings_pincode_enable_tooLongError">Пин-код слишком длинный</string>
 </resources>

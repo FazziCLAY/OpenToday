@@ -202,12 +202,21 @@ public class App extends Application {
         return this.getPinCodeManager().isPinCodeSet();
     }
 
+    public boolean isPinCodeTooLong() {
+        return getPinCodeManager().getPinCode().length() > PinCodeManager.MAX_LENGTH;
+    }
+
     public boolean isPinCodeAllow(String p) {
+        if (getPinCodeManager().getPinCode().length() > PinCodeManager.MAX_LENGTH) {
+            if (p.length() >= PinCodeManager.MAX_LENGTH) {
+                return this.getPinCodeManager().getPinCode().startsWith(p);
+            }
+        }
         return p.equals(this.getPinCodeManager().getPinCode());
     }
 
     public int getPinCodeLength() {
-        return this.getPinCodeManager().getPinCode().length();
+        return Math.min(getPinCodeManager().getPinCode().length(), PinCodeManager.MAX_LENGTH);
     }
 
     private void registryNotificationsChannels() {

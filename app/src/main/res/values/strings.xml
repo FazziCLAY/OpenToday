@@ -380,4 +380,8 @@
     <string name="item_mathGame_quest_primitive_text">How much is\n%s %s %s?</string>
     <string name="tab_defaultFirstName">My first tab</string>
     <string name="importFragment_title">Import</string>
+    <string name="settings_pincode_enable_emptyError">Error: Pin-code can\'t be empty!</string>
+    <string name="notification_ui_tooLongPinCode_title">Pin-code too long</string>
+    <string name="notification_ui_tooLongPinCode_text">Your current pin is too long.\nSo it was off. Configure the pin code again</string>
+    <string name="settings_pincode_enable_tooLongError">Pin-code is too long</string>
 </resources>

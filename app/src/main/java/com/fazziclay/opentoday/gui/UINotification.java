@@ -42,7 +42,7 @@ public class UINotification {
     }
 
     public void remove() {
-        this.remove.run();
-        this.onEnded.run();
+        if (this.remove != null) this.remove.run();
+        if (this.onEnded != null) this.onEnded.run();
     }
 }

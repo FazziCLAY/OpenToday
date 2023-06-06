@@ -6,6 +6,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.DialogInterface
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +24,8 @@ import com.fazziclay.opentoday.app.App
 import com.fazziclay.opentoday.app.ColorHistoryManager
 import com.fazziclay.opentoday.app.ImportWrapper
 import com.fazziclay.opentoday.app.PinCodeManager
-import com.fazziclay.opentoday.app.PinCodeManager.ContainNonDigitChars
+import com.fazziclay.opentoday.app.PinCodeManager.PinCodeNotValidateException
+import com.fazziclay.opentoday.app.PinCodeManager.ValidationException
 import com.fazziclay.opentoday.app.SettingsManager
 import com.fazziclay.opentoday.app.SettingsManager.FirstTab
 import com.fazziclay.opentoday.app.items.QuickNoteReceiver
@@ -283,22 +285,31 @@ class SettingsFragment : Fragment() {
                         Toast.makeText(app, R.string.settings_pincode_disable_success, Toast.LENGTH_SHORT).show()
                     } else {
                         val t = EditText(requireContext())
+                        t.inputType = InputType.TYPE_CLASS_NUMBER
                         t.setHint(R.string.settings_pincode_enable_hint)
                         AlertDialog.Builder(requireContext())
                                 .setTitle(R.string.settings_pincode_enable_title)
                                 .setMessage(R.string.settings_pincode_enable_message)
                                 .setView(t)
-                                .setPositiveButton(R.string.settings_pincode_enable_apply) { _: DialogInterface?, _: Int ->
+                                .setPositiveButton(R.string.settings_pincode_enable_apply) EnterNewPinCodeDialog@ { _: DialogInterface?, _: Int ->
                                     try {
                                         pinCodeManager.enablePinCode(t.text.toString())
                                         pinCodeCallback.run()
                                         Toast.makeText(app, R.string.settings_pincode_enable_success, Toast.LENGTH_SHORT).show()
                                     } catch (e: Exception) {
-                                        if (e is ContainNonDigitChars) {
-                                            Toast.makeText(app, R.string.settings_pincode_enable_nonDigitsError, Toast.LENGTH_SHORT).show()
-                                        } else {
-                                            Toast.makeText(app, R.string.settings_pincode_enable_unknownError, Toast.LENGTH_SHORT).show()
+                                        if (e is PinCodeNotValidateException) {
+                                            if (e.validationException == ValidationException.CONTAINS_NON_DIGITS_CHARS) {
+                                                Toast.makeText(app, R.string.settings_pincode_enable_nonDigitsError, Toast.LENGTH_SHORT).show()
+                                                return@EnterNewPinCodeDialog
+                                            } else if (e.validationException == ValidationException.EMPTY) {
+                                                Toast.makeText(app, R.string.settings_pincode_enable_emptyError, Toast.LENGTH_SHORT).show()
+                                                return@EnterNewPinCodeDialog
+                                            } else if (e.validationException == ValidationException.TOO_LONG) {
+                                                Toast.makeText(app, R.string.settings_pincode_enable_tooLongError, Toast.LENGTH_SHORT).show()
+                                                return@EnterNewPinCodeDialog
+                                            }
                                         }
+                                        Toast.makeText(app, R.string.settings_pincode_enable_unknownError, Toast.LENGTH_SHORT).show()
                                     }
                                 }
                                 .setNegativeButton(R.string.settings_pincode_enable_cancel, null)
