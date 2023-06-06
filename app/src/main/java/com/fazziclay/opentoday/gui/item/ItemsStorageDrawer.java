@@ -244,7 +244,7 @@ public class ItemsStorageDrawer {
                 Item item = ItemsStorageDrawer.this.itemsStorage.getAllItems()[position];
                 item.visibleChanged();
                 ItemViewHolder itemViewHolder = (ItemViewHolder) viewHolder;
-                showRightMenu(item, itemViewHolder.itemView);
+                showRightMenu(item, itemViewHolder.layout.getChildAt(0));
             }
         }
     }
@@ -293,6 +293,9 @@ public class ItemsStorageDrawer {
 
     @SuppressLint("NonConstantResourceId")
     private void showRightMenu(Item item, View itemView) {
+        if (itemView == null) {
+            Logger.w(TAG, "showRightMenu view is null...");
+        }
         PopupMenu menu = new PopupMenu(activity, itemView);
         menu.setForceShowIcon(true);
         menu.inflate(R.menu.menu_item);
