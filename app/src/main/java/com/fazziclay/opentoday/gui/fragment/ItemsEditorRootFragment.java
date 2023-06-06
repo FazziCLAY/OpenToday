@@ -25,7 +25,6 @@ import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Readonly;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
-import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.gui.EnumsRegistry;
@@ -109,7 +108,7 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
         ItemPath itemPath = tabsManager.getPathTo(current);
         final String PATH_SEPARATOR = " / ";
         StringBuilder s = new StringBuilder(PATH_SEPARATOR);
-        for (Object section : itemPath.getSections()) {
+        for (Object section : itemPath.sections()) {
             if (section instanceof Item item) {
                 String sect = EnumsRegistry.INSTANCE.name(ItemsRegistry.REGISTRY.get(item.getClass()).getItemType(), requireContext());
                 s.append(sect).append(PATH_SEPARATOR);
