@@ -11,20 +11,22 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.App
-import com.fazziclay.opentoday.app.items.tab.TabsManager
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem
 import com.fazziclay.opentoday.app.items.item.Item
 import com.fazziclay.opentoday.app.items.item.filter.DateItemFilter
 import com.fazziclay.opentoday.app.items.item.filter.ItemFilter
 import com.fazziclay.opentoday.app.items.item.filter.ItemStatItemFilter
 import com.fazziclay.opentoday.app.items.item.filter.LogicContainerItemFilter
+import com.fazziclay.opentoday.app.items.tab.TabsManager
 import com.fazziclay.opentoday.databinding.FragmentFilterGroupItemFilterEditorBinding
+import com.fazziclay.opentoday.gui.ActivitySettings
+import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.gui.interfaces.Destroy
 import com.fazziclay.opentoday.gui.part.DateItemFilterPartEditor
 import com.fazziclay.opentoday.gui.part.ItemStatFilterPartEditor
 import com.fazziclay.opentoday.gui.part.LogicContainerItemFilterPartEditor
 import kotlinx.coroutines.Runnable
-import java.util.*
+import java.util.UUID
 
 class FilterGroupItemFilterEditorFragment : Fragment() {
     companion object {
@@ -105,6 +107,10 @@ class FilterGroupItemFilterEditorFragment : Fragment() {
 
             rootFilter = filterGroup.getItemFilter(item)!!
         }
+
+        UI.getUIRoot(this).pushActivitySettings { a: ActivitySettings ->
+            a.isNotificationsVisible = false
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -116,6 +122,7 @@ class FilterGroupItemFilterEditorFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         part?.destroy()
+        UI.getUIRoot(this).popActivitySettings()
     }
 
     private fun setupView() {
