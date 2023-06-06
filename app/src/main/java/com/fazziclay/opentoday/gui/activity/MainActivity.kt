@@ -46,6 +46,7 @@ import java.util.GregorianCalendar
 import java.util.Locale
 import java.util.Stack
 
+@SuppressLint("NonConstantResourceId")
 class MainActivity : AppCompatActivity(), UIRoot {
     companion object {
         private const val TAG = "MainActivity"
@@ -330,7 +331,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
         viewVisible(binding.currentDateTime, settings.isClockVisible, View.GONE)
         binding.currentDateDate.isEnabled = settings.isDateClickCalendar
         binding.currentDateTime.isEnabled = settings.isDateClickCalendar
-        viewVisible(binding.notifications, activitySettingsStack.lastElement().isNotificationsVisible, View.GONE)
+        viewVisible(binding.notifications, settings.isNotificationsVisible || App.DEBUG_ALWAYS_SHOW_UI_NOTIFICATIONS, View.GONE)
 
         val toolbarSettings = settings.toolbarSettings
         if (toolbarSettings == null) {
