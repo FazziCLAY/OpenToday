@@ -78,6 +78,7 @@ public class UpdateChecker {
 
             } catch (Exception e) {
                 Logger.e(TAG, "check exception", e);
+                ImportantDebugCallback.pushStatic("UpdateChecker exception: " + e);
             }
         }
     }
