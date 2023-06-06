@@ -23,7 +23,7 @@ public class TranslationImpl implements Translation {
         throw new RuntimeException("Unknown translation key type: " + key);
     }
 
-    interface TranslateInterface {
+    public interface TranslateInterface {
         String translate(int resId, Object... args);
     }
 }
