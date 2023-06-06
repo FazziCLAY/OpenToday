@@ -2,7 +2,7 @@ package com.fazziclay.opentoday.gui.item;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.graphics.drawable.ColorDrawable;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,9 +30,7 @@ import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType;
 import com.fazziclay.opentoday.gui.dialog.DialogTextItemEditText;
 import com.fazziclay.opentoday.gui.fragment.ItemEditorFragment;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
-import com.fazziclay.opentoday.gui.interfaces.StorageEditsActions;
 import com.fazziclay.opentoday.util.Logger;
-import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
 
@@ -43,13 +41,13 @@ import java.util.List;
 public class ItemsStorageDrawer {
     private static final String TAG = "ItemStorageDrawer";
     private final Activity activity;
+    private final ItemViewGenerator itemViewGenerator;
     private final ItemViewGeneratorBehavior itemViewGeneratorBehavior;
     private final SelectionManager selectionManager;
     private final ItemsStorage itemsStorage;
     private final RecyclerView view;
     private RecyclerView.Adapter<ItemViewHolder> adapter;
-    private final ItemViewGenerator itemViewGenerator;
-    private final Thread originalThread;
+    private final Thread originalThread; // always is main(UI) thread.
 
     private boolean destroyed = false;
     private boolean created = false;
@@ -64,33 +62,31 @@ public class ItemsStorageDrawer {
 
     // Public
     public ItemsStorageDrawer(@NonNull Activity activity, ItemViewGeneratorBehavior itemViewGeneratorBehavior, SelectionManager selectionManager, ItemsStorage itemsStorage, ItemInterface itemOnClick, @NonNull ItemInterface onItemEditor, boolean previewMode) {
+        this.originalThread = Thread.currentThread();
+        if (this.originalThread != Looper.getMainLooper().getThread()) {
+            throw new RuntimeException("Creating an ItemsStorageDrawer object is allowed only in the main thread");
+        }
+
         this.activity = activity;
-        this.onItemEditor = onItemEditor;
         this.itemViewGeneratorBehavior = itemViewGeneratorBehavior;
         this.selectionManager = selectionManager;
         this.itemsStorage = itemsStorage;
-        this.originalThread = Thread.currentThread();
+        this.onItemEditor = onItemEditor;
         this.view = new RecyclerView(activity);
         this.itemOnClick = itemOnClick;
         this.previewMode = previewMode;
         this.view.setLayoutManager(new LinearLayoutManager(activity));
         this.view.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1));
-        this.itemViewGenerator = new ItemViewGenerator(this.activity, itemViewGeneratorBehavior, previewMode, (item) -> {
-            if (this.itemOnClick == null) {
-                if (!previewMode)
-                    actionItem(item, itemViewGeneratorBehavior.getItemOnClickAction());
-            } else {
-                this.itemOnClick.run(item);
-            }
-        });
-
+        this.itemViewGenerator = new ItemViewGenerator(this.activity, itemViewGeneratorBehavior, previewMode, this::onItemClick);
     }
+
 
     public static CreateBuilder builder(Activity activity, ItemViewGeneratorBehavior itemViewGeneratorBehavior, SelectionManager selectionManager, ItemsStorage itemsStorage) {
         return new CreateBuilder(activity, itemViewGeneratorBehavior, selectionManager, itemsStorage);
     }
 
     public void create() {
+        throwIsBadThread();
         if (destroyed) {
             throw new RuntimeException("ItemsStorageDrawer already destroyed!");
         }
@@ -122,6 +118,28 @@ public class ItemsStorageDrawer {
         this.adapter = null;
     }
 
+    private void onItemClick(Item item) {
+        if (this.itemOnClick != null) {
+            this.itemOnClick.run(item);
+            return;
+        }
+        if (!previewMode) {
+            actionItem(item, itemViewGeneratorBehavior.getItemOnClickAction());
+        }
+    }
+
+    private void throwIsBadThread() {
+        if (Thread.currentThread() != originalThread) throw new RuntimeException("Access from non-original thread.");
+    }
+
+    private void runOnUiThread(Runnable r) {
+        if (Thread.currentThread() == originalThread) {
+            r.run();
+        } else {
+            activity.runOnUiThread(r);
+        }
+    }
+
     public View getView() {
         return this.view;
     }
@@ -134,7 +152,7 @@ public class ItemsStorageDrawer {
     private class DrawerOnItemsStorageUpdated extends OnItemsStorageUpdate {
         @Override
         public Status onAdded(Item item, int pos) {
-            rou(() -> {
+            runOnUiThread(() -> {
                 runAdapter((adapter) -> adapter.notifyItemInserted(pos));
                 if (itemViewGeneratorBehavior.isScrollToAddedItem()) view.smoothScrollToPosition(pos);
             });
@@ -143,24 +161,20 @@ public class ItemsStorageDrawer {
 
         @Override
         public Status onPreDeleted(Item item, int pos) {
-            rou(() -> runAdapter((adapter) -> adapter.notifyItemRemoved(pos)));
+            runOnUiThread(() -> runAdapter((adapter) -> adapter.notifyItemRemoved(pos)));
             return Status.NONE;
         }
 
         @Override
         public Status onMoved(Item item, int from, int to) {
-            rou(() -> runAdapter((adapter) -> adapter.notifyItemMoved(from, to)));
+            runOnUiThread(() -> runAdapter((adapter) -> adapter.notifyItemMoved(from, to)));
             return Status.NONE;
         }
 
         @Override
         public Status onUpdated(Item item, int pos) {
-            rou(() -> runAdapter(adapter -> adapter.notifyItemChanged(pos)));
+            runOnUiThread(() -> runAdapter(adapter -> adapter.notifyItemChanged(pos)));
             return Status.NONE;
-        }
-
-        private void rou(Runnable runnable) {
-            activity.runOnUiThread(runnable);
         }
     }
 
@@ -172,7 +186,8 @@ public class ItemsStorageDrawer {
     }
     
     private View generateViewForItem(Item item) {
-        return itemViewGenerator.generate(item, view);
+        boolean previewMode = this.previewMode || selectionManager.isSelected(item);
+        return itemViewGenerator.generate(item, view, previewMode);
     }
 
     private class DrawerAdapter extends RecyclerView.Adapter<ItemViewHolder> {
@@ -189,12 +204,6 @@ public class ItemsStorageDrawer {
 
             holder.layout.removeAllViews();
             holder.layout.addView((itemViewWrapper != null) ? itemViewWrapper.wrap(item, view) : view);
-
-            if (selectionManager.isSelected(item)) {
-                holder.layout.setForeground(new ColorDrawable(ResUtil.getAttrColor(activity, R.attr.item_selectionForegroundColor)));
-            } else {
-                holder.layout.setForeground(null);
-            }
         }
 
         @Override
