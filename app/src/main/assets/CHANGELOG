@@ -1,6 +1,9 @@
-# Changelog v??? 1.1.4 (2023.06.??)
-Changelog now use formatting: $[-#ffff00;=#0000ff;@bold]Hello!
-Todo: write changelog
+$[@bold;-#00FF00]# Changelog v??? 1.1.4 (2023.06.??)$[||]
+Changelog now use formatting: $[-#ffff00;=#0000ff;@bold]Hello!$[||]
+$[-#ffff00]Todo: write changelog$[||]
+owo!
+
+
 
 # Changelog v124 1.1.3 (2023.06.01)
 Ticks:
@@ -21,8 +24,8 @@ Other:
 * Fix debug layouts & more debug tools
 
 # Changelog v114 1.1
-* Added formatting support for TextItem. The ColorUtil.colorize(...) function is used. Example: Hello $[-#ffffff;=#000000;@bolditalic]Worl$[||]d
-    - new system added: $[||] - reset all
+* Added formatting support for TextItem. The ColorUtil.colorize(...) function is used. Example: Hello \$[-#ffffff;=#000000;@bolditalic]Worl\$[||]d
+    - new system added: \$[||] - reset all
 
 * Add 'What's new' button to AboutFragment
 * Add Release Time to AboutFragment
