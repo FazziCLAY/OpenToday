@@ -6,10 +6,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,7 +21,6 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.SettingsManager;
-import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
@@ -33,9 +30,10 @@ import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.Tab;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.databinding.FragmentItemsTabIncludeBinding;
-import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.gui.UI;
+import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType;
 import com.fazziclay.opentoday.gui.interfaces.CurrentItemsTab;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.gui.toolbar.AppToolbar;
@@ -218,27 +216,22 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         });
 
         binding.quickNoteAdd.setOnLongClickListener(v -> {
-            PopupMenu popupMenu = new PopupMenu(requireContext(), binding.quickNoteAdd);
+            new DialogSelectItemType(requireContext(), (type) -> {
+                ItemsRegistry.ItemInfo registryItem = ItemsRegistry.REGISTRY.get(type);
+                settingsManager.setDefaultQuickNoteType(registryItem);
+                settingsManager.save();
 
-            for (ItemsRegistry.ItemInfo registryItem : ItemsRegistry.REGISTRY.getAllItems()) {
-                if (!registryItem.isCompatibility(app.getFeatureFlags())) {
-                    continue;
+                String text = binding.quickNoteText.getText().toString();
+                Item item = registryItem.create();
+                binding.quickNoteText.setText("");
+
+                if (item instanceof TextItem) ((TextItem) item).setText(text);
+                if (settingsManager.isParseTimeFromQuickNote()) item.getNotifications().addAll(QUICK_NOTE_NOTIFICATIONS_PARSE.run(text));
+                switch (settingsManager.getItemAddPosition()) {
+                    case TOP -> currentItemsStorage.addItem(item, 0);
+                    case BOTTOM -> currentItemsStorage.addItem(item);
                 }
-                MenuItem menuItem = popupMenu.getMenu().add(EnumsRegistry.INSTANCE.nameResId(registryItem.getItemType()));
-                menuItem.setOnMenuItemClickListener(clicked -> {
-                    String text = binding.quickNoteText.getText().toString();
-                    Item item = registryItem.create();
-                    if (item instanceof TextItem) ((TextItem) item).setText(text);
-                    if (settingsManager.isParseTimeFromQuickNote()) item.getNotifications().addAll(QUICK_NOTE_NOTIFICATIONS_PARSE.run(text));
-                    switch (settingsManager.getItemAddPosition()) {
-                        case TOP -> currentItemsStorage.addItem(item, 0);
-                        case BOTTOM -> currentItemsStorage.addItem(item);
-                    }
-                    return true;
-                });
-            }
-
-            popupMenu.show();
+            }).show();
             return true;
         });
     }
