@@ -141,12 +141,5 @@
             android:layout_height="wrap_content"
             android:text="@string/about_licenses"
             android:layout_gravity="start" />
-
-        <Button
-            android:id="@+id/ok"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/aboutapp_ok"
-            android:layout_gravity="end|bottom"/>
     </LinearLayout>
 </ScrollView>

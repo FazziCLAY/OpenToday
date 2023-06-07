@@ -55,7 +55,6 @@ class AboutFragment : Fragment() {
         viewClick(binding.sourceCode, Runnable { NetworkUtil.openBrowser(requireActivity(), LINK_OPENSOURCE) })
         viewClick(binding.issues, Runnable { NetworkUtil.openBrowser(requireActivity(), LINK_ISSUES) })
         viewClick(binding.licenses, Runnable { requireActivity().startActivity(OpenSourceLicensesActivity.createLaunchIntent(requireContext())) })
-        viewClick(binding.ok, Runnable { UI.rootBack(this) })
         viewClick(binding.changelog, Runnable { UI.findFragmentInParents(this, MainRootFragment::class.java)!!.navigate(ChangelogFragment.create(), true) })
         return binding.root
     }
