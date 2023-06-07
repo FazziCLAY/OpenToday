@@ -4,7 +4,7 @@
 
     <TextView
         android:id="@+id/toolbar_tabs_tabsListTitle"
-        android:text="@string/toolbar_tabs_title"
+        android:text="@string/toolbar_more_tabs_title"
         style="@style/Theme.OpenToday.Toolbar.Section.Text.Tabs.TabsListTitle" />
 
 

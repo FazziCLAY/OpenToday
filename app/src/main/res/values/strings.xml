@@ -311,9 +311,6 @@
     <string name="toolbar_more_items_add_exception">Error: %s</string>
     <string name="toolbar_more_items_changeOnClick">On item click</string>
     <string name="toolbar_more_items_changeOnLeftSwipe">On left swipe</string>
-    <string name="toolbar_more_items_tab_add">Add</string>
-    <string name="toolbar_more_items_tab_apply">Apply</string>
-    <string name="toolbar_more_items_tab_delete">Delete</string>
     <string name="toolbar_more_opentoday_about">About</string>
     <string name="toolbar_more_opentoday_calendar">Calendar</string>
     <string name="toolbar_more_opentoday_debug_personalTick">DEBUG: Personal tick</string>
@@ -337,16 +334,19 @@
     <string name="toolbar_more_selection_info">Selected: %s</string>
     <string name="toolbar_more_selection_moveSelectedHere">Move selected here</string>
     <string name="toolbar_more_tabs_addNewTab">Add new tab</string>
+    <string name="toolbar_more_tabs_addNew_dialog_title">Add new tab</string>
+    <string name="toolbar_more_tabs_addNew_name_hint">Enter tab name…</string>
     <string name="toolbar_more_tabs_delete_notAllowOneTabMode">You cannot delete a tab because it is the only one.</string>
+    <string name="toolbar_more_tabs_edit_dialog_title">Edit tab \'%s\'</string>
+    <string name="toolbar_more_tabs_edit_disableTick">Disable tick</string>
+    <string name="toolbar_more_tabs_edit_name_hint">Enter new tab name…</string>
+    <string name="toolbar_more_tabs_tab_add">Add</string>
+    <string name="toolbar_more_tabs_tab_apply">Apply</string>
+    <string name="toolbar_more_tabs_tab_delete">Delete</string>
+    <string name="toolbar_more_tabs_title">Tabs list:</string>
     <string name="toolbar_opentoday" translatable="false">@string/abc_opentoday</string>
     <string name="toolbar_selection">Selection</string>
     <string name="toolbar_tabs">Tabs</string>
-    <string name="toolbar_tabs_addNew_dialog_title">Add new tab</string>
-    <string name="toolbar_tabs_addNew_name_hint">Enter tab name…</string>
-    <string name="toolbar_tabs_edit_dialog_title">Edit tab \'%s\'</string>
-    <string name="toolbar_tabs_edit_disableTick">Disable tick</string>
-    <string name="toolbar_tabs_edit_name_hint">Enter new tab name…</string>
-    <string name="toolbar_tabs_title">Tabs list:</string>
     <string name="transform_not_allowed">Transformation is impossible</string>
     <string name="transform_selectTypeDialog_message" />
     <string name="transform_selectTypeDialog_title">Select result type</string>
