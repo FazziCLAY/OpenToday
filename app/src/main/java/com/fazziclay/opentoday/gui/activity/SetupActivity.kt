@@ -8,12 +8,11 @@ import com.fazziclay.opentoday.databinding.ActivitySetupBinding
 import com.fazziclay.opentoday.util.InlineUtil.viewClick
 
 class SetupActivity : AppCompatActivity() {
-    private lateinit var binding: ActivitySetupBinding
 
+    private lateinit var binding: ActivitySetupBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        supportActionBar!!.hide()
         binding = ActivitySetupBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewClick(binding.done, this::done)
