@@ -16,6 +16,8 @@ import com.fazziclay.opentoday.util.annotation.SaveKey;
 import java.util.UUID;
 
 public abstract class Tab implements ItemsStorage, Unique {
+    private static final String TAG = "Tab";
+
     protected static class TabCodec extends AbstractTabCodec {
         private static final String KEY_ID = "id";
         private static final String KEY_NAME = "name";
@@ -59,6 +61,7 @@ public abstract class Tab implements ItemsStorage, Unique {
         if (isAttached()) {
             return controller.getRoot();
         }
+        Logger.w(TAG, "Attempt to getRoot in unattached Tab.");
         return null;
     }
 
@@ -72,7 +75,11 @@ public abstract class Tab implements ItemsStorage, Unique {
     }
 
     protected void regenerateId() {
-        this.id = controller.generateId();
+        if (controller != null) {
+            this.id = controller.generateId();
+        } else {
+            Logger.w(TAG, "Attempt to regenerateId in unattached Tab.");
+        }
         for (Item item : getAllItems()) {
             ItemUtil.regenerateIdForItem(item);
         }
@@ -108,7 +115,11 @@ public abstract class Tab implements ItemsStorage, Unique {
 
     @Override
     public void save() {
-        if (controller != null) controller.save(this);
+        if (controller != null) {
+            controller.save(this);
+        } else {
+            Logger.w(TAG, "Attempt to save in unattached Tab.");
+        }
     }
 
     public boolean isDisableTick() {
