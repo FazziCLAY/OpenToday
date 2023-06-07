@@ -7,11 +7,16 @@ import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.util.time.TimeUtil;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.function.Supplier;
 
 public class Logger {
     private static final String ANDROID_LOG_TAG = "OpenTodayLogger";
     private static final StringBuilder LOGS = new StringBuilder();
+    private static final String[] SHOW_STACKTRACE_IF_CONTAINS = {
+            "[Tab] Attempt to getRoot in unattached Tab.",
+    };
 
     public static <T> T dur(String tag, String message, Supplier<T> supplier) {
         if (!App.LOG) return supplier.get();
@@ -42,10 +47,23 @@ public class Logger {
     }
 
     private static void log(final String s) {
+        log(s, false);
+    }
+
+    private static void log(final String s, boolean noChecks) {
         final String time = TimeUtil.getDebugDate(System.currentTimeMillis());
         LOGS.append("[").append(time).append("] ").append(s).append("\n");
 
         logToFile("[" + time + "] " + s + "\n");
+        if (noChecks) return;
+
+        for (String ifContain : SHOW_STACKTRACE_IF_CONTAINS) {
+            if (s.contains(ifContain)) {
+                Exception exception = new Exception(s);
+                log(stackTrace(exception), true);
+                exception.printStackTrace();
+            }
+        }
     }
 
     private static void logToFile(String s) {
@@ -60,6 +78,14 @@ public class Logger {
         } else {
             FileUtil.setText(file, TimeUtil.getDebugDate(System.currentTimeMillis()) + " == LOG FILE SIZE > 1024*1024. RESETTING ==\n" + s);
         }
+    }
+
+    private static String stackTrace(Throwable throwable) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        throwable.printStackTrace(pw);
+        pw.flush();
+        return sw.toString();
     }
 
     public static void e(String tag, String m, Throwable e) {
