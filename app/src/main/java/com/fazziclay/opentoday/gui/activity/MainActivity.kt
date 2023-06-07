@@ -143,6 +143,11 @@ class MainActivity : AppCompatActivity(), UIRoot {
         updateByActivitySettings()
         Debug.mainActivityStartupTime = System.currentTimeMillis() - startTime
         app.importantDebugCallbacks.addCallback(CallbackImportance.DEFAULT, importantDebugCallback)
+        Logger.i(TAG, "------------------")
+        Logger.d(TAG, "Example debug message", 10, 20, 30, Exception("Exception in debug logging"))
+        Logger.w(TAG, "Example warning message")
+        Logger.e(TAG, "Example error message", Exception("Example exception for logger"))
+        Logger.i(TAG, "------------------")
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -268,7 +273,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
             binding.debugLogsSwitch.visibility = View.VISIBLE
             binding.debugLogsSwitch.setOnClickListener {
                 viewVisible(binding.debugLogsScroll, binding.debugLogsSwitch.isChecked, View.GONE)
-                binding.debugLogsText.text = Logger.getLOGS().toString()
+                binding.debugLogsText.text = ColorUtil.colorize(Logger.getLOGS().toString(), Color.BLUE, Color.TRANSPARENT, 0)
             }
             binding.debugLogsSwitch.setOnLongClickListener {
                 toggleLogsOverlay()
