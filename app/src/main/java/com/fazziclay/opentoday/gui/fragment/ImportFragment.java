@@ -200,18 +200,18 @@ public class ImportFragment extends Fragment {
         }
 
         if (info.isEmpty()) {
-            info = activity.getString(R.string.empty); // TODO: 12.11.2022 use other resID
+            info = activity.getString(R.string.importFragment_dialog_main_info_empty);
         }
 
         new AlertDialog.Builder(activity)
                 .setTitle(R.string.importFragment_dialog_main_title)
                 .setMessage(getString(R.string.importFragment_dialog_main_message, perms.toString(), info))
-                .setNegativeButton(R.string.importFragment_dialog_main_cancel, (fdsoijh, hfjgds) -> {
+                .setNegativeButton(R.string.importFragment_dialog_main_cancel, (_ignore00, _ignore11) -> {
                     if (autoRun) {
                         UI.rootBack(this);
                     }
                 })
-                .setPositiveButton(R.string.importFragment_dialog_main_import, (ignore0, ignore1) -> {
+                .setPositiveButton(R.string.importFragment_dialog_main_import, (_ignore0, _ignore1) -> {
                     if (importWrapper.isPerm(ImportWrapper.Permission.PRE_IMPORT_SHOW_DIALOG)) {
                         new AlertDialog.Builder(requireActivity())
                                 .setTitle(R.string.importFragment_dialog_importMessage_title)

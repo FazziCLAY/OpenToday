@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<string name="_migration_clickToDetails">[DEPRECATED] Click to details</string>
-    <string name="_migration_dialogStart">[DEPRECATED] Start</string>
-    <string name="_migration_shortDescription">[DEPRECATED] \nIt\'s time to update the app to the release version!\nThis means that you need to go through some steps to update the application.</string>
-    <string name="_migration_title">[DEPRECATED] Time for Migration!</string>
     <string name="abc_cancel">Cancel</string>
     <string name="abc_coped">Coped!</string>
     <string name="abc_done_button">Done!</string>
     <string name="abc_error_browserNotFound">Please install web-browser</string>
     <string name="abc_ok">OK</string>
+    <string name="abc_opentoday" translatable="false">OpenToday</string>
     <string name="abc_success">Successfully</string>
     <string name="about_licenses">OpenSource licences</string>
     <string name="aboutapp_ok">OK</string>
@@ -20,11 +17,10 @@
     <string name="aboutapp_text_sourceCode">Source Code</string>
     <string name="aboutapp_text_version">Version:</string>
     <string name="aboutapp_title">About</string>
-    <string name="add_new_tab">Add new tab</string>
-    <string name="app_name" translatable="false">OpenToday</string>
+    <string name="toolbar_more_tabs_addNewTab">Add new tab</string>
     <string name="changelogFragment_toolbar_title">What\'s new</string>
-    <string name="counter_step">Counter step</string>
-    <string name="counter_value">Counter value</string>
+    <string name="fragment_itemEditor_module_counter_step">Counter step</string>
+    <string name="fragment_itemEditor_module_counter_value">Counter value</string>
     <string name="crash_activity_sendToDeveloper">Send to developer</string>
     <string name="crash_notification_big_summary" translatable="false">""</string>
     <string name="crash_notification_big_text" translatable="false">""</string>
@@ -38,10 +34,10 @@
     <string name="cycleListItem_tickBehavior_nothing">Nothing</string>
     <string name="dayRepeatable_latestRegenerate">Latest reset: %s</string>
     <string name="dayRepeatable_startValue">Start value</string>
-    <string name="debug_app">This is debug build! (for developers only)\nBranch: %s</string>
+    <string name="notification_ui_debugApp">This is debug build! (for developers only)\nBranch: %s</string>
     <string name="dialogItem_apply">Save</string>
     <string name="dialogItem_cancel">Cancel</string>
-    <string name="dialogItem_cancel_unsaved_contunue">Keep editing</string>
+    <string name="dialogItem_cancel_unsaved_continue">Keep editing</string>
     <string name="dialogItem_cancel_unsaved_discard">Discard changes!</string>
     <string name="dialogItem_cancel_unsaved_title">Unsaved changes!</string>
     <string name="dialogItem_delete">Delete</string>
@@ -88,7 +84,6 @@
     <string name="dialog_itemNotification_title">Notification title</string>
     <string name="dialog_itemNotification_vibrate">Vibrate</string>
     <string name="dialog_item_module_cyclelist_tickMode">Tick mode</string>
-    <string name="dialog_item_module_cyclelist_warninigApply">Important: The changes are applied immediately here! And it will be impossible to cancel them</string>
     <string name="dialog_item_module_item_backgroundColor_edit">Edit</string>
     <string name="dialog_item_module_item_backgroundColor_hint">Background Color</string>
     <string name="dialog_item_module_item_copyItemId">Copy item id</string>
@@ -109,8 +104,7 @@
     <string name="dialog_selectItemAction_message">Click to select</string>
     <string name="dialog_selectItemAction_title">Select Action</string>
     <string name="dialog_selectItemType_select">Select</string>
-    <string name="disable_battery_optimization_warning">Add app to battery optimization exceptions\nFor correct work of notifications and application</string>
-    <string name="empty"><![CDATA[<Empty>]]></string>
+    <string name="item_cycleList_empty"><![CDATA[<Empty>]]></string>
     <string name="enter_pincode_timeout">Try later (reopen app)</string>
     <string name="enter_pincode_title">Enter pin-code</string>
     <string name="exit_tab_2_count">Press back once more to exit.</string>
@@ -346,7 +340,7 @@
     <string name="toolbar_more_selection_moveSelectedHere">Move selected here</string>
     <string name="toolbar_more_selection_nothingSelected">Nothing selected</string>
     <string name="toolbar_more_tabs_delete_notAllowOneTabMode">Delete not allow!</string>
-    <string name="toolbar_opentoday" translatable="false">OpenToday</string>
+    <string name="toolbar_opentoday" translatable="false">@string/abc_opentoday</string>
     <string name="toolbar_selection">Selection</string>
     <string name="toolbar_tabs">Tabs</string>
     <string name="toolbar_tabs_addNew_dialog_title">Add new tab</string>
@@ -358,7 +352,8 @@
     <string name="transform_not_allowed">Transform not allowed</string>
     <string name="transform_selectTypeDialog_message" />
     <string name="transform_selectTypeDialog_title">Select result type</string>
-    <string name="uidialog_edit_textentry_clickableUrls">Clickable URLs</string>
-    <string name="unknown" translatable="false">Unknown</string>
-    <string name="update_available">Update available! Click to download</string>
+    <string name="item_text_clickableUrls">Clickable URLs</string>
+    <string name="abc_unknown" translatable="false">Unknown</string>
+    <string name="notification_ui_updateAvailable">Update available! Click to download</string>
+    <string name="importFragment_dialog_main_info_empty">Empty…</string>
 </resources>

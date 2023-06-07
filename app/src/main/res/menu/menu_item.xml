@@ -34,5 +34,5 @@
         android:title="@string/menuItem_delete" />
 
 
-    <item android:checkable="true" android:id="@+id/textItem_clickableUrls" android:title="@string/uidialog_edit_textentry_clickableUrls" />
+    <item android:checkable="true" android:id="@+id/textItem_clickableUrls" android:title="@string/item_text_clickableUrls" />
 </menu>

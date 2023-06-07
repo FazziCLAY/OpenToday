@@ -71,7 +71,7 @@
             android:id="@+id/empty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/empty" />
+            android:text="@string/item_cycleList_empty" />
 
     </LinearLayout>
 </LinearLayout>

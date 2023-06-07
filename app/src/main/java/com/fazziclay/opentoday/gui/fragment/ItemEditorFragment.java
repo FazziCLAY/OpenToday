@@ -306,7 +306,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         }
         new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.dialogItem_cancel_unsaved_title)
-                .setNegativeButton(R.string.dialogItem_cancel_unsaved_contunue, null)
+                .setNegativeButton(R.string.dialogItem_cancel_unsaved_continue, null)
                 .setPositiveButton(R.string.dialogItem_cancel_unsaved_discard, ((dialog1, which) -> cancel()))
                 .show();
     }

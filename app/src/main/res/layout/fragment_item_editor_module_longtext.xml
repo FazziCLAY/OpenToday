@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="0sp"
-        android:text="@string/uidialog_edit_textentry_clickableUrls" />
+        android:text="@string/item_text_clickableUrls" />
 
     <TextView
         android:layout_width="match_parent"

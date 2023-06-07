@@ -97,7 +97,7 @@ object EnumsRegistry {
     fun name(e: Enum<*>, context: Context): String = context.getString(nameResId(e))
 
     class EnumInfo(var e: Enum<*>, var nameResId: Int) {
-        var itemDescriptionResId: Int = R.string.unknown
+        var itemDescriptionResId: Int = R.string.abc_unknown
 
         fun setItemDescription(i: Int): EnumInfo {
             itemDescriptionResId = i

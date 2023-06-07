@@ -235,7 +235,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
         if (!App.DEBUG || app.isFeatureFlag(FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION)) return
 
         val b = NotificationDebugappBinding.inflate(layoutInflater)
-        b.notificationText.text = getString(R.string.debug_app, App.VERSION_BRANCH)
+        b.notificationText.text = getString(R.string.notification_ui_debugApp, App.VERSION_BRANCH)
         binding.notifications.addView(b.root)
     }
 

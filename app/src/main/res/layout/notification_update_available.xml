@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:paddingStart="5sp"
         android:layout_height="wrap_content"
-        android:text="@string/update_available"
+        android:text="@string/notification_ui_updateAvailable"
         android:textColor="?attr/updateAvailable_textColor"
         android:textSize="20sp"/>
 </RelativeLayout>

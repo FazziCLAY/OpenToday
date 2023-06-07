@@ -17,7 +17,7 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addTab"
-        android:contentDescription="@string/add_new_tab"
+        android:contentDescription="@string/toolbar_more_tabs_addNewTab"
         style="@style/Theme.OpenToday.Toolbar.Section.Button.Tabs.Add"
         android:layout_alignBaseline="@id/tabsRecycleView"
         android:layout_alignParentEnd="true" />

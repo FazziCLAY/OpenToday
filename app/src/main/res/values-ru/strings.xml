@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="_migration_clickToDetails">[DEPRECATED] Нажмите для деталей</string>
-    <string name="_migration_dialogStart">[DEPRECATED] Начать</string>
-    <string name="_migration_shortDescription">[DEPRECATED] \nПришло время обновить приложение до релизной версии!\nЭто означает что вам нужно проделать некоторые шаги для обновления приложения.</string>
-    <string name="_migration_title">[DEPRECATED] Время для миграции!</string>
     <string name="abc_cancel">Отмена</string>
     <string name="abc_coped">Скопированно!</string>
     <string name="abc_done_button">Готово!</string>
@@ -20,10 +16,10 @@
     <string name="aboutapp_text_sourceCode">Исходный код</string>
     <string name="aboutapp_text_version">Версия:</string>
     <string name="aboutapp_title">О программе</string>
-    <string name="add_new_tab">Добавить новую вкладку</string>
+    <string name="toolbar_more_tabs_addNewTab">Добавить новую вкладку</string>
     <string name="changelogFragment_toolbar_title">Что нового</string>
-    <string name="counter_step">Шаг счётчика</string>
-    <string name="counter_value">Значение счётчика</string>
+    <string name="fragment_itemEditor_module_counter_step">Шаг счётчика</string>
+    <string name="fragment_itemEditor_module_counter_value">Значение счётчика</string>
     <string name="crash_activity_sendToDeveloper">Отправить разработчику</string>
     <string name="crash_notification_big_title">OpenToday завершился с ошибкой</string>
     <string name="crash_notification_text">Нажмите для деталей</string>
@@ -34,10 +30,10 @@
     <string name="cycleListItem_tickBehavior_nothing">Ничего</string>
     <string name="dayRepeatable_latestRegenerate">Последний сброс: %s</string>
     <string name="dayRepeatable_startValue">Начальное значение</string>
-    <string name="debug_app">Это отладочный билд! (только для разработки)\nBranch: %s</string>
+    <string name="notification_ui_debugApp">Это отладочный билд! (только для разработки)\nBranch: %s</string>
     <string name="dialogItem_apply">Сохранить</string>
     <string name="dialogItem_cancel">Отмена</string>
-    <string name="dialogItem_cancel_unsaved_contunue">Вернуться</string>
+    <string name="dialogItem_cancel_unsaved_continue">Вернуться</string>
     <string name="dialogItem_cancel_unsaved_discard">Отменить изменения!</string>
     <string name="dialogItem_cancel_unsaved_title">Несохранённые изменения</string>
     <string name="dialogItem_delete">Удалить</string>
@@ -83,7 +79,6 @@
     <string name="dialog_itemNotification_title">Заголовок уведомления</string>
     <string name="dialog_itemNotification_vibrate">Вибрация</string>
     <string name="dialog_item_module_cyclelist_tickMode">Поведение тика</string>
-    <string name="dialog_item_module_cyclelist_warninigApply">Важно: Изменения тут применяются сразу! И их невозможно будет отменить</string>
     <string name="dialog_item_module_item_backgroundColor_edit">Редактировать</string>
     <string name="dialog_item_module_item_backgroundColor_hint">Фоновый цвет</string>
     <string name="dialog_item_module_item_copyItemId">Копировать АйДи айтема</string>
@@ -104,8 +99,7 @@
     <string name="dialog_selectItemAction_message">Нажмите что бы выбрать</string>
     <string name="dialog_selectItemAction_title">Выберите действие</string>
     <string name="dialog_selectItemType_select">Выбрать</string>
-    <string name="disable_battery_optimization_warning">Добавьте приложение в исключения оптимизации батареи\nЭто необходимо для корректной работы уведомледний и приложения</string>
-    <string name="empty"><![CDATA[<Пусто>]]></string>
+    <string name="item_cycleList_empty"><![CDATA[<Пусто>]]></string>
     <string name="enter_pincode_timeout">Попробуйте позже (перезайдите в приложение)</string>
     <string name="enter_pincode_title">Введите пин-код</string>
     <string name="exit_tab_2_count">Нажмите еще раз чтобы выйти</string>
@@ -352,6 +346,7 @@
     <string name="transform_not_allowed">Трансформация не разрешена</string>
     <string name="transform_selectTypeDialog_message" />
     <string name="transform_selectTypeDialog_title">Выберите тип результата</string>
-    <string name="uidialog_edit_textentry_clickableUrls">Выделять ссылки</string>
-    <string name="update_available">Доступно обновление! Нажмите для скачивания</string>
+    <string name="item_text_clickableUrls">Выделять ссылки</string>
+    <string name="notification_ui_updateAvailable">Доступно обновление! Нажмите для скачивания</string>
+    <string name="importFragment_dialog_main_info_empty">Пусто...</string>
 </resources>
