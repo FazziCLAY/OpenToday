@@ -28,6 +28,7 @@ import com.fazziclay.opentoday.gui.activity.CrashReportActivity;
 import com.fazziclay.opentoday.util.DebugUtil;
 import com.fazziclay.opentoday.util.License;
 import com.fazziclay.opentoday.util.Logger;
+import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 import com.fazziclay.opentoday.util.time.TimeUtil;
 
@@ -116,7 +117,6 @@ public class App extends Application {
     private final OptionalField<CallbackStorage<ImportantDebugCallback>> importantDebugCallbacks = new OptionalField<>(CallbackStorage::new);
     private final List<FeatureFlag> featureFlags = new ArrayList<>(App.DEBUG ? Arrays.asList(
             FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
-            //FeatureFlag.SHOW_APP_STARTUP_TIME_IN_PREMAIN_ACTIVITY,
             //FeatureFlag.ALWAYS_SHOW_SAVE_STATUS,
             //FeatureFlag.DISABLE_AUTOMATIC_TICK,
             //FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION,
@@ -174,6 +174,7 @@ public class App extends Application {
 
         Debug.free();
         TimeUtil.free();
+        RandomUtil.free();
     }
 
     @Override
@@ -195,6 +196,7 @@ public class App extends Application {
             pinCodeManager.free();
             Debug.free();
             TimeUtil.free();
+            RandomUtil.free();
         }
     }
 
