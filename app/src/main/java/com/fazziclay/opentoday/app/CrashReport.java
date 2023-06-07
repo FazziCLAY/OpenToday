@@ -81,7 +81,7 @@ public class CrashReport {
                  * DEBUG_MAIN_ACTIVITY_START_SLEEP: %_APPLICATION_DEBUG_MAIN_ACTIVITY_START_SLEEP_%
                  * DEBUG_APP_START_SLEEP: %_APPLICATION_DEBUG_APP_START_SLEEP_%
                  * DEBUG_MAIN_ACTIVITY: %_APPLICATION_DEBUG_MAIN_ACTIVITY_%
-                 * DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY: %_APPLICATION_DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY_%
+                 * DEBUG_TEST_EXCEPTION_ON_LAUNCH: %_DEBUG_TEST_EXCEPTION_ON_LAUNCH_%
                  * featureFlags: %_FEATURE_FLAGS_%
 
                 Device:
@@ -157,7 +157,7 @@ public class CrashReport {
         text = text.replace("%_APPLICATION_DEBUG_MAIN_ACTIVITY_START_SLEEP_%", getText(App.DEBUG_MAIN_ACTIVITY_START_SLEEP));
         text = text.replace("%_APPLICATION_DEBUG_APP_START_SLEEP_%", getText(App.DEBUG_APP_START_SLEEP));
         text = text.replace("%_APPLICATION_DEBUG_MAIN_ACTIVITY_%", getText(App.DEBUG_MAIN_ACTIVITY));
-        text = text.replace("%_APPLICATION_DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY_%", getText(App.DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY));
+        text = text.replace("%_DEBUG_TEST_EXCEPTION_ON_LAUNCH_%", getText(App.DEBUG_TEST_EXCEPTION_ON_LAUNCH));
         text = text.replace("%_TIME_FORMATTED_%", getText(() -> {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss SSS", Locale.ENGLISH);
             return dateFormat.format(new Date(this.crashTimeMillis));

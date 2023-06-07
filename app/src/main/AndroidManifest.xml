@@ -19,11 +19,10 @@
 
         <!-- Activities -->
         <activity
-            android:name="com.fazziclay.opentoday.gui.activity.PreMainActivity"
+            android:name="com.fazziclay.opentoday.gui.activity.LauncherActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
