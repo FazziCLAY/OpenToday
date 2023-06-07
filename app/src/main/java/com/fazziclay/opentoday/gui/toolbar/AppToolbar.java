@@ -70,6 +70,8 @@ import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
 import com.google.android.material.button.MaterialButton;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Random;
 import java.util.UUID;
 
@@ -97,7 +99,6 @@ public class AppToolbar {
     private View itemsSectionCacheView = null;
     private OnMoreVisibleChanged onMoreVisibleChangedListener = null;
     private final NavigationHost rootNavigationHost;
-    private long lastTabReorder;
 
 
 
@@ -152,6 +153,12 @@ public class AppToolbar {
         viewVisible(binding.toolbarSelection, !selectionManager.isSelectionEmpty(), View.GONE);
 
         debugCallback = new UIDebugCallback() {
+            @Override
+            public void featureFlagsChanged(@NotNull FeatureFlag featureFlag, boolean state) {
+                // reset cache if feature flags changed
+                itemsSectionCacheView = null;
+            }
+
             @Override
             public void debugChange(boolean visible) {
                 viewVisible(binding.toolbarDebug, visible, View.GONE);
@@ -399,8 +406,8 @@ public class AppToolbar {
                 int positionFrom = viewHolder.getAdapterPosition();
                 int positionTo = target.getAdapterPosition();
 
-                recyclerView.getAdapter().notifyItemMoved(positionFrom, positionTo);
-                lastTabReorder = System.currentTimeMillis();
+                // Adapter receive notifyItemMoved from onTabsChanged callback
+                // recyclerView.getAdapter().notifyItemMoved(positionFrom, positionTo);
                 tabsManager.moveTabs(positionFrom, positionTo);
                 return true;
             }
@@ -414,12 +421,26 @@ public class AppToolbar {
 
         onTabsChanged = new OnTabsChanged() {
             @Override
-            public Status onTabsChanged(@NonNull Tab[] tabs) {
-                if (System.currentTimeMillis() - lastTabReorder >= 1000) {
-                    // TODO: 2023.05.23 add specific for OnTabsChanged
-                    // TODO: 2023.05.23 add TabsManager
-                    localBinding.tabsRecycleView.getAdapter().notifyDataSetChanged();
-                }
+            public Status onTabPostDeleted(Tab tab, int position) {
+                localBinding.tabsRecycleView.getAdapter().notifyItemRemoved(position);
+                return Status.NONE;
+            }
+
+            @Override
+            public Status onTabAdded(Tab tab, int position) {
+                localBinding.tabsRecycleView.getAdapter().notifyItemInserted(position);
+                return Status.NONE;
+            }
+
+            @Override
+            public Status onTabMoved(Tab tab, int fromPos, int toPos) {
+                localBinding.tabsRecycleView.getAdapter().notifyItemMoved(fromPos, toPos);
+                return Status.NONE;
+            }
+
+            @Override
+            public Status onTabRenamed(Tab tab, int position) {
+                localBinding.tabsRecycleView.getAdapter().notifyItemChanged(position);
                 return Status.NONE;
             }
         };
@@ -429,11 +450,11 @@ public class AppToolbar {
 
         viewClick(localBinding.addTab, () -> {
             EditText tabNameEditText = new EditText(activity);
-            tabNameEditText.setHint(R.string.toolbar_tabs_addNew_name_hint);
+            tabNameEditText.setHint(R.string.toolbar_more_tabs_addNew_name_hint);
             new AlertDialog.Builder(activity)
-                    .setTitle(R.string.toolbar_tabs_addNew_dialog_title)
+                    .setTitle(R.string.toolbar_more_tabs_addNew_dialog_title)
                     .setView(tabNameEditText)
-                    .setPositiveButton(R.string.toolbar_more_items_tab_add, (dialog, which) -> {
+                    .setPositiveButton(R.string.toolbar_more_tabs_tab_add, (dialog, which) -> {
                         String text = tabNameEditText.getText().toString();
                         if (!text.trim().isEmpty()) {
                             tabsManager.createLocalTab(tabNameEditText.getText().toString());
@@ -451,20 +472,20 @@ public class AppToolbar {
         dialogView.setOrientation(LinearLayout.VERTICAL);
 
         EditText tabNameEditText = new EditText(activity);
-        tabNameEditText.setHint(R.string.toolbar_tabs_edit_name_hint);
+        tabNameEditText.setHint(R.string.toolbar_more_tabs_edit_name_hint);
         tabNameEditText.setText(tab.getName());
 
         CheckBox disableTick = new CheckBox(activity);
-        disableTick.setText(R.string.toolbar_tabs_edit_disableTick);
+        disableTick.setText(R.string.toolbar_more_tabs_edit_disableTick);
         disableTick.setChecked(tab.isDisableTick());
 
         dialogView.addView(tabNameEditText);
         dialogView.addView(disableTick);
 
         new AlertDialog.Builder(activity)
-                .setTitle(activity.getString(R.string.toolbar_tabs_edit_dialog_title, tab.getName()))
+                .setTitle(activity.getString(R.string.toolbar_more_tabs_edit_dialog_title, tab.getName()))
                 .setView(dialogView)
-                .setPositiveButton(R.string.toolbar_more_items_tab_apply, (dialog, which) -> {
+                .setPositiveButton(R.string.toolbar_more_tabs_tab_apply, (dialog, which) -> {
                     String text = tabNameEditText.getText().toString();
                     if (!text.trim().isEmpty()) {
                         tab.setName(text);
@@ -474,7 +495,7 @@ public class AppToolbar {
                     tab.setDisableTick(disableTick.isChecked());
                 })
                 .setNegativeButton(R.string.abc_cancel, null)
-                .setNeutralButton(R.string.toolbar_more_items_tab_delete, (dialog, w) -> new AlertDialog.Builder(activity)
+                .setNeutralButton(R.string.toolbar_more_tabs_tab_delete, (dialog, w) -> new AlertDialog.Builder(activity)
                         .setTitle(activity.getString(R.string.fragment_deleteItems_delete_title, String.valueOf(tab.size())))
                         .setNegativeButton(R.string.fragment_deleteItems_delete_cancel, null)
                         .setPositiveButton(R.string.fragment_deleteItems_delete_apply, ((dialog1, which) -> {
@@ -493,13 +514,13 @@ public class AppToolbar {
                 .show();
     }
 
-    private class H extends RecyclerView.ViewHolder {
+    private class ItemTypeViewHolder extends RecyclerView.ViewHolder {
         private final TextView name;
         private final Button create;
         private final Button add;
         private final Button description;
 
-        public H(ViewGroup parent) {
+        public ItemTypeViewHolder(ViewGroup parent) {
             super(new FrameLayout(activity));
             ToolbarMoreItemsItemBinding b = ToolbarMoreItemsItemBinding.inflate(activity.getLayoutInflater(), parent, false);
             this.name = b.name;
@@ -526,7 +547,7 @@ public class AppToolbar {
         registerMoreView(itemsSectionCacheView = localBinding.getRoot());
 
         localBinding.items.setLayoutManager(new LinearLayoutManager(activity, RecyclerView.VERTICAL, false));
-        localBinding.items.setAdapter(new RecyclerView.Adapter<H>() {
+        localBinding.items.setAdapter(new RecyclerView.Adapter<ItemTypeViewHolder>() {
             private int getAddItemPos(SettingsManager.ItemAddPosition fromSettings) {
                 return switch (fromSettings) {
                     case TOP -> ItemEditorFragment.VALUE_ADD_ITEM_POSITION_TOP;
@@ -536,12 +557,12 @@ public class AppToolbar {
 
             @NonNull
             @Override
-            public H onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                return new H(parent);
+            public ItemTypeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                return new ItemTypeViewHolder(parent);
             }
 
             @Override
-            public void onBindViewHolder(@NonNull H holder, int position) {
+            public void onBindViewHolder(@NonNull ItemTypeViewHolder holder, int position) {
                 ItemsRegistry.ItemInfo itemInfo = ItemsRegistry.REGISTRY.getAllItems()[position];
 
                 if (itemInfo.isCompatibility(app.getFeatureFlags())) {
