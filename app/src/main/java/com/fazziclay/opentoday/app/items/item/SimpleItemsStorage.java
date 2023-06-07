@@ -17,18 +17,15 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
     private static final String TAG = "SimpleItemsStorage";
     private final List<Item> items = new ArrayList<>();
     private final ItemController itemController;
-    private final ItemsRoot root;
     private final CallbackStorage<OnItemsStorageUpdate> onUpdateCallbacks = new CallbackStorage<>();
 
 
     public SimpleItemsStorage(ItemsRoot root) {
-        this.itemController = new SimpleItemController();
-        this.root = root;
+        this.itemController = new SimpleItemController(root);
     }
 
     public SimpleItemsStorage(ItemController customController) {
         this.itemController = customController;
-        this.root = customController.getRoot();
     }
 
     @NonNull
@@ -160,6 +157,12 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
     }
 
     private class SimpleItemController extends ItemController {
+        private final ItemsRoot root;
+
+        public SimpleItemController(ItemsRoot root) {
+            this.root = root;
+        }
+
         @Override
         public void delete(Item item) {
             SimpleItemsStorage.this.deleteItem(item);
