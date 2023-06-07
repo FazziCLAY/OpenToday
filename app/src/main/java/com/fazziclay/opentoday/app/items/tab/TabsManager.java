@@ -20,7 +20,6 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemUtil;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.Tickable;
-import com.fazziclay.opentoday.util.InlineUtil;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
@@ -153,23 +152,19 @@ public class TabsManager implements ItemsRoot, Tickable {
         return translation;
     }
 
-    // TODO: 04.06.2023 use UUID random.
-    private long _dufl = 0;
     @NotNull
     @Override
     public UUID generateUniqueId() {
         final int MAX_ITER = 1000;
         int i = 0;
-        _dufl = 0;
-        UUID uuid = InlineUtil.fcu_dufl(_dufl);//UUID.randomUUID();
+        UUID uuid = UUID.randomUUID();
         while (i < MAX_ITER) {
             if (isExistById(uuid)) {
-                uuid = InlineUtil.fcu_dufl(_dufl);
+                uuid = UUID.randomUUID();
             } else {
                 return uuid;
             }
             i++;
-            _dufl++;
         }
         throw new RuntimeException("The maximum number of iterations (MAX_ITER="+MAX_ITER+") when generating a unique ID has been reached!");
     }
