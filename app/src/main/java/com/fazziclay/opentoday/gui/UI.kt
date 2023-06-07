@@ -180,6 +180,10 @@ object UI {
                             return@RunCallbackInterface Status.NONE
                         })
                     }
+                    debugCallbacks.run(CallbackStorage.RunCallbackInterface { _, callback ->
+                        callback.featureFlagsChanged(featureFlag, `is`)
+                        return@RunCallbackInterface Status.NONE
+                    })
                 })
                 val textView = TextView(context)
                 textView.text = featureFlag.description
