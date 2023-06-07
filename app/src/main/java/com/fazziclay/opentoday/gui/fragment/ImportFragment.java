@@ -92,7 +92,7 @@ public class ImportFragment extends Fragment {
 
         UI.getUIRoot(this).pushActivitySettings(a -> {
             a.setNotificationsVisible(false);
-            a.setToolbarSettings(ActivitySettings.ToolbarSettings.createBack(R.string.importFragment_title, () -> UI.rootBack(this)));
+            a.setToolbarSettings(ActivitySettings.ToolbarSettings.createBack(R.string.fragment_import_title, () -> UI.rootBack(this)));
         });
     }
 
@@ -192,31 +192,31 @@ public class ImportFragment extends Fragment {
         }
 
         if (importWrapper.isPerm(ImportWrapper.Permission.ADD_ITEMS_TO_CURRENT)) {
-            info = info + activity.getString(R.string.importFragment_dialog_main_info_items, String.valueOf(importWrapper.getItems().size())) + "\n";
+            info = info + activity.getString(R.string.fragment_import_dialog_main_info_items, String.valueOf(importWrapper.getItems().size())) + "\n";
         }
 
         if (importWrapper.isPerm(ImportWrapper.Permission.ADD_TABS)) {
-            info = info + activity.getString(R.string.importFragment_dialog_main_info_tabs, String.valueOf(importWrapper.getTabs().size())) + "\n";
+            info = info + activity.getString(R.string.fragment_import_dialog_main_info_tabs, String.valueOf(importWrapper.getTabs().size())) + "\n";
         }
 
         if (info.isEmpty()) {
-            info = activity.getString(R.string.importFragment_dialog_main_info_empty);
+            info = activity.getString(R.string.fragment_import_dialog_main_info_empty);
         }
 
         new AlertDialog.Builder(activity)
-                .setTitle(R.string.importFragment_dialog_main_title)
-                .setMessage(getString(R.string.importFragment_dialog_main_message, perms.toString(), info))
-                .setNegativeButton(R.string.importFragment_dialog_main_cancel, (_ignore00, _ignore11) -> {
+                .setTitle(R.string.fragment_import_dialog_main_title)
+                .setMessage(getString(R.string.fragment_import_dialog_main_message, perms.toString(), info))
+                .setNegativeButton(R.string.fragment_import_dialog_main_cancel, (_ignore00, _ignore11) -> {
                     if (autoRun) {
                         UI.rootBack(this);
                     }
                 })
-                .setPositiveButton(R.string.importFragment_dialog_main_import, (_ignore0, _ignore1) -> {
+                .setPositiveButton(R.string.fragment_import_dialog_main_import, (_ignore0, _ignore1) -> {
                     if (importWrapper.isPerm(ImportWrapper.Permission.PRE_IMPORT_SHOW_DIALOG)) {
                         new AlertDialog.Builder(requireActivity())
-                                .setTitle(R.string.importFragment_dialog_importMessage_title)
+                                .setTitle(R.string.fragment_import_dialog_importMessage_title)
                                 .setMessage(importWrapper.getDialogMessage())
-                                .setPositiveButton(R.string.importFragment_dialog_importMessage_import, (ignore2, ignore3) -> directImport(importWrapper))
+                                .setPositiveButton(R.string.fragment_import_dialog_importMessage_import, (ignore2, ignore3) -> directImport(importWrapper))
                                 .show();
                     } else {
                         directImport(importWrapper);
@@ -229,14 +229,14 @@ public class ImportFragment extends Fragment {
     private String getDescription(ImportWrapper.Permission permission) {
         return switch (permission) {
             case ADD_ITEMS_TO_CURRENT ->
-                    activity.getString(R.string.import_permission_ADD_ITEMS_TO_CURRENT);
-            case ADD_TABS -> activity.getString(R.string.import_permission_ADD_TABS);
+                    activity.getString(R.string.importWrapper_permission_ADD_ITEMS_TO_CURRENT);
+            case ADD_TABS -> activity.getString(R.string.importWrapper_permission_ADD_TABS);
             case PRE_IMPORT_SHOW_DIALOG ->
-                    activity.getString(R.string.import_permission_PRE_IMPORT_SHOW_DIALOG);
+                    activity.getString(R.string.importWrapper_permission_PRE_IMPORT_SHOW_DIALOG);
             case OVERWRITE_SETTINGS ->
-                    activity.getString(R.string.import_permission_OVERWRITE_SETTINGS);
+                    activity.getString(R.string.importWrapper_permission_OVERWRITE_SETTINGS);
             case OVERWRITE_COLOR_HISTORY ->
-                    activity.getString(R.string.import_permission_OVERWRITE_COLOR_HISTORY);
+                    activity.getString(R.string.importWrapper_permission_OVERWRITE_COLOR_HISTORY);
         };
 
     }

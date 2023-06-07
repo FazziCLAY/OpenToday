@@ -25,14 +25,15 @@
         <Button
             android:id="@+id/cancel"
             android:layout_width="wrap_content"
-            android:text="@string/dialogItem_cancel"
+            android:text="@string/fragment_itemEditor_cancel"
             android:layout_height="wrap_content"
             style="?android:attr/buttonBarButtonStyle" />
 
+        <!-- TODO: external @string-->
         <Button
             android:id="@+id/apply"
             android:layout_width="wrap_content"
-            android:text="@string/dialogItem_apply"
+            android:text="@string/fragment_itemEditor_apply"
             android:layout_height="wrap_content"
             style="?android:attr/buttonBarButtonStyle" />
     </LinearLayout>

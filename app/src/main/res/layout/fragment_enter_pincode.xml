@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="@string/enter_pincode_title"
+        android:text="@string/fragment_enterPincode_title"
         android:textSize="33sp" />
 
     <TextView
@@ -26,7 +26,7 @@
         android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/enter_pincode_timeout"
+        android:text="@string/fragment_enterPincode_timeout"
         android:textColor="#ff0000"
         android:textSize="20sp"
         android:layout_marginTop="20sp"

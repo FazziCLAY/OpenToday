@@ -305,9 +305,9 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             return;
         }
         new AlertDialog.Builder(requireContext())
-                .setTitle(R.string.dialogItem_cancel_unsaved_title)
-                .setNegativeButton(R.string.dialogItem_cancel_unsaved_continue, null)
-                .setPositiveButton(R.string.dialogItem_cancel_unsaved_discard, ((dialog1, which) -> cancel()))
+                .setTitle(R.string.fragment_itemEditor_cancel_unsaved_title)
+                .setNegativeButton(R.string.fragment_itemEditor_cancel_unsaved_continue, null)
+                .setPositiveButton(R.string.fragment_itemEditor_cancel_unsaved_discard, ((dialog1, which) -> cancel()))
                 .show();
     }
 
@@ -317,9 +317,9 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
     public static void deleteRequest(Context context, Item item, Runnable onDelete) {
         new AlertDialog.Builder(context)
-                .setTitle(R.string.dialogItem_delete_title)
-                .setNegativeButton(R.string.dialogItem_delete_cancel, null)
-                .setPositiveButton(R.string.dialogItem_delete_apply, ((dialog1, which) -> {
+                .setTitle(R.string.fragment_itemEditor_delete_title)
+                .setNegativeButton(R.string.fragment_itemEditor_delete_cancel, null)
+                .setPositiveButton(R.string.fragment_itemEditor_delete_apply, ((dialog1, which) -> {
                     item.delete();
                     if (onDelete != null) onDelete.run();
                 }))
@@ -378,9 +378,9 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             viewClick(binding.viewBackgroundColorEdit, () -> new ColorPicker(activity, temp_backgroundColor)
                     .setting(true, true, true)
                     .setColorHistoryManager(colorHistoryManager)
-                    .showDialog(R.string.dialogItem_module_item_backgroundColor_dialog_title,
-                            R.string.dialogItem_module_item_backgroundColor_dialog_cancel,
-                            R.string.dialogItem_module_item_backgroundColor_dialog_apply,
+                    .showDialog(R.string.fragment_itemEditor_module_item_backgroundColor_dialog_title,
+                            R.string.fragment_itemEditor_module_item_backgroundColor_dialog_cancel,
+                            R.string.fragment_itemEditor_module_item_backgroundColor_dialog_apply,
                             (color) -> {
                                 temp_backgroundColor = color;
                                 binding.defaultBackgroundColor.setChecked(false);
@@ -499,9 +499,9 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.textColorEdit.setOnClickListener(v -> new ColorPicker(activity, temp_textColor)
                     .setting(true, true, true)
                     .setColorHistoryManager(colorHistoryManager)
-                    .showDialog(R.string.dialogItem_module_text_textColor_dialog_title,
-                            R.string.dialogItem_module_text_textColor_dialog_cancel,
-                            R.string.dialogItem_module_text_textColor_dialog_apply,
+                    .showDialog(R.string.fragment_itemEditor_module_text_textColor_dialog_title,
+                            R.string.fragment_itemEditor_module_text_textColor_dialog_cancel,
+                            R.string.fragment_itemEditor_module_text_textColor_dialog_apply,
                             (color) -> {
                                 temp_textColor = color;
                                 binding.defaultTextColor.setChecked(false);
@@ -586,9 +586,9 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.textColorEdit.setOnClickListener(v -> new ColorPicker(activity, temp_textColor)
                     .setting(true, true, true)
                     .setColorHistoryManager(colorHistoryManager)
-                    .showDialog(R.string.dialogItem_module_longtext_textColor_dialog_title,
-                            R.string.dialogItem_module_longtext_textColor_dialog_cancel,
-                            R.string.dialogItem_module_longtext_textColor_dialog_apply,
+                    .showDialog(R.string.fragment_itemEditor_module_longtext_textColor_dialog_title,
+                            R.string.fragment_itemEditor_module_longtext_textColor_dialog_cancel,
+                            R.string.fragment_itemEditor_module_longtext_textColor_dialog_apply,
                             (color) -> {
                                 temp_textColor = color;
                                 binding.defaultTextColor.setChecked(false);
@@ -697,7 +697,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
                 g.set(Calendar.DAY_OF_YEAR, dayRepeatableCheckboxItem.getLatestDayOfYear());
                 date = dateFormat.format(g.getTime());
             }
-            binding.latestReset.setText(activity.getString(R.string.dayRepeatable_latestRegenerate, date));
+            binding.latestReset.setText(activity.getString(R.string.item_dayRepeatableCheckbox_latestRegenerate, date));
         }
 
         @Override

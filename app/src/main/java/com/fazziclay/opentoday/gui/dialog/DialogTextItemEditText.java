@@ -66,9 +66,9 @@ public class DialogTextItemEditText {
         }
 
         new AlertDialog.Builder(activity)
-                .setTitle(R.string.dialogItem_cancel_unsaved_title)
-                .setNegativeButton(R.string.dialogItem_cancel_unsaved_continue, null)
-                .setPositiveButton(R.string.dialogItem_cancel_unsaved_discard, ((fd23, which) -> cancel()))
+                .setTitle(R.string.fragment_itemEditor_cancel_unsaved_title)
+                .setNegativeButton(R.string.fragment_itemEditor_cancel_unsaved_continue, null)
+                .setPositiveButton(R.string.fragment_itemEditor_cancel_unsaved_discard, ((fd23, which) -> cancel()))
                 .show();
     }
 

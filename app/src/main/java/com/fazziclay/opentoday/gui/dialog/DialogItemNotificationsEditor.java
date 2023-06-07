@@ -33,6 +33,7 @@ public class DialogItemNotificationsEditor {
     private final DialogItemNotificationsEditorBinding binding;
     private final View view;
 
+    // TODO: 07.06.2023 fix all
     public DialogItemNotificationsEditor(Activity activity, Item item, Runnable o) {
 
         this.activity = activity;
@@ -59,21 +60,20 @@ public class DialogItemNotificationsEditor {
 
                 ItemNotificationBinding b = ItemNotificationBinding.inflate(activity.getLayoutInflater(), parent, false);
 
-                if (itemNotification instanceof DayItemNotification) {
-                    DayItemNotification d = (DayItemNotification) itemNotification;
+                if (itemNotification instanceof DayItemNotification d) {
                     b.text.setText(String.format("#%s - %s - %s", d.getNotificationId(), activity.getString(R.string.itemNotification_day), TimeUtil.convertToHumanTime(d.getTime(), ConvertMode.HHMM)));
                 }
 
                 b.delete.setOnClickListener(v -> {
                     new AlertDialog.Builder(activity)
-                            .setTitle(R.string.dialogItem_delete_title)
-                            .setPositiveButton(R.string.dialogItem_delete_apply, (ee, eee) -> {
+                            .setTitle(R.string.fragment_itemEditor_delete_title)
+                            .setPositiveButton(R.string.fragment_itemEditor_delete_apply, (ee, eee) -> {
                                 item.getNotifications().remove(itemNotification);
                                 item.save();
                                 notifyDataSetChanged();
                                 updateEmptyView(item.getNotifications().isEmpty());
                             })
-                            .setNegativeButton(R.string.dialogItem_delete_cancel, null)
+                            .setNegativeButton(R.string.fragment_itemEditor_delete_cancel, null)
                             .show();
                 });
 

@@ -116,7 +116,7 @@
             android:backgroundTint="#720FD4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/aboutapp_text_changelog"
+            android:text="@string/aboutapp_click_changelog"
             android:layout_gravity="center_horizontal" />
 
         <Button
@@ -124,7 +124,7 @@
             app:drawableEndCompat="@android:drawable/ic_menu_set_as"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/aboutapp_text_sourceCode"
+            android:text="@string/aboutapp_click_sourceCode"
             android:layout_gravity="start" />
 
         <Button
@@ -132,14 +132,14 @@
             app:drawableEndCompat="@android:drawable/ic_menu_set_as"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/aboutapp_text_issues"
+            android:text="@string/aboutapp_click_issues"
             android:layout_gravity="start" />
 
         <Button
             android:id="@+id/licenses"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/about_licenses"
+            android:text="@string/aboutapp_click_licenses"
             android:layout_gravity="start" />
     </LinearLayout>
 </ScrollView>

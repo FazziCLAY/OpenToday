@@ -102,7 +102,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/date_and_time_format"
-            android:text="@string/settings_сolorHistoryLocked" />
+            android:text="@string/settings_colorHistoryLocked" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/isTelemetry"

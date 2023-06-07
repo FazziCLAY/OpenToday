@@ -276,9 +276,9 @@ public class ItemsStorageDrawer {
                 item.visibleChanged();
             }
             case DELETE_REQUEST -> new AlertDialog.Builder(activity)
-                    .setTitle(R.string.dialogItem_delete_title)
-                    .setNegativeButton(R.string.dialogItem_delete_cancel, null)
-                    .setPositiveButton(R.string.dialogItem_delete_apply, ((dialog1, which) -> item.delete()))
+                    .setTitle(R.string.fragment_itemEditor_delete_title)
+                    .setNegativeButton(R.string.fragment_itemEditor_delete_cancel, null)
+                    .setPositiveButton(R.string.fragment_itemEditor_delete_apply, ((dialog1, which) -> item.delete()))
                     .show();
         }
     }

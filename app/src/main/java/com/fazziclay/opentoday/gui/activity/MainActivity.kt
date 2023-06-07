@@ -124,7 +124,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
                 val exit = Runnable { this@MainActivity.finish() }
                 val def = Runnable {
                     if (System.currentTimeMillis() - lastExitClick > 2000) {
-                        Toast.makeText(this@MainActivity, R.string.exit_tab_2_count, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@MainActivity, R.string.abc_pressAgainForExitWarning, Toast.LENGTH_SHORT).show()
                         lastExitClick = System.currentTimeMillis()
                     } else {
                         exit.run()

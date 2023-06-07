@@ -23,7 +23,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/dialog_item_module_cyclelist_tickMode" />
+        android:text="@string/fragment_itemEditor_module_cyclelist_tickMode" />
 
     <Spinner
         android:id="@+id/itemsCycleBackgroundWork"

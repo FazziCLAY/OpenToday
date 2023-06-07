@@ -64,11 +64,11 @@ class FilterGroupItemFilterEditorFragment : Fragment() {
                 is ItemStatItemFilter -> {
                     val part = ItemStatFilterPartEditor(context, LayoutInflater.from(context), itemFilter, item, saveSignal)
                     destroy = part
-                    view = part.rootView;
+                    view = part.rootView
                 }
                 else -> {
                     val part = TextView(context)
-                    part.text = context.getString(R.string.filter_group_item_filter_editor_error_unknownFilter, itemFilter?.javaClass?.canonicalName)
+                    part.text = context.getString(R.string.fragment_filterGroup_itemFilter_editor_error_unknownFilter, itemFilter?.javaClass?.canonicalName)
                     view = part
                     destroy = object : Destroy {
                         override fun destroy() {
@@ -86,7 +86,7 @@ class FilterGroupItemFilterEditorFragment : Fragment() {
         }
     }
 
-    private lateinit var binding: FragmentFilterGroupItemFilterEditorBinding;
+    private lateinit var binding: FragmentFilterGroupItemFilterEditorBinding
     private lateinit var app: App
     private lateinit var tabsManager: TabsManager
     private lateinit var filterGroup: FilterGroupItem

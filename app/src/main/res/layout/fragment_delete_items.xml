@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:drawableTop="@android:drawable/ic_menu_close_clear_cancel"
             android:layout_margin="5sp"
-            android:text="@string/dialogItem_cancel"
+            android:text="@string/fragment_itemEditor_cancel"
             style="@style/Widget.AppCompat.Button" />
 
         <Button
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:drawableTop="@android:drawable/ic_menu_delete"
             android:layout_margin="5sp"
-            android:text="@string/dialogItem_delete"
+            android:text="@string/fragment_itemEditor__delete"
             style="@style/Widget.AppCompat.Button" />
     </LinearLayout>
 </LinearLayout>

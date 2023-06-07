@@ -10,11 +10,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="23sp"
-        android:text="@string/dialog_item_module_longtext_text_title"/>
+        android:text="@string/fragment_itemEditor_module_longtext_text_title"/>
 
     <EditText
         android:id="@+id/text"
-        android:hint="@string/dialog_item_module_longtext_text_hint"
+        android:hint="@string/fragment_itemEditor_module_longtext_text_hint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:importantForAutofill="no"

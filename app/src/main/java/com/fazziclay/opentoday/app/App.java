@@ -221,8 +221,8 @@ public class App extends Application {
 
     private void registryNotificationsChannels() {
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
-        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_QUCIKNOTE_CHANNEL, getString(R.string.notification_quickNote_title), NotificationManager.IMPORTANCE_HIGH));
-        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_ITEMS_CHANNEL, getString(R.string.notification_items_title), NotificationManager.IMPORTANCE_HIGH));
+        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_QUCIKNOTE_CHANNEL, getString(R.string.notificationChannel_quickNote_title), NotificationManager.IMPORTANCE_HIGH));
+        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_ITEMS_CHANNEL, getString(R.string.notificationChannel_items_title), NotificationManager.IMPORTANCE_HIGH));
     }
 
     /**
@@ -349,7 +349,7 @@ public class App extends Application {
     private static void sendCrashNotification(final Context context, File fileToCrash) {
         // === NOTIFICATION ===
         final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_CRASH_CHANNEL, context.getString(R.string.notification_crash_title), NotificationManager.IMPORTANCE_DEFAULT));
+        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_CRASH_CHANNEL, context.getString(R.string.notificationChannel_crash_title), NotificationManager.IMPORTANCE_DEFAULT));
 
         final int flag;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -367,7 +367,7 @@ public class App extends Application {
                         .setBigContentTitle(context.getString(R.string.crash_notification_big_title))
                         .setSummaryText(context.getString(R.string.crash_notification_big_summary)))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setContentIntent(PendingIntent.getActivity(context, 0, CrashReportActivity.createLaunchIntent(context, fileToCrash.getAbsolutePath()), flag))
+                .setContentIntent(PendingIntent.getActivity(context, new Random().nextInt(), CrashReportActivity.createLaunchIntent(context, fileToCrash.getAbsolutePath()), flag))
                 .setAutoCancel(true)
                 .build());
 

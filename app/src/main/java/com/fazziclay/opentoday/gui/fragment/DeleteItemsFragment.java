@@ -86,7 +86,7 @@ public class DeleteItemsFragment extends Fragment {
 
         UI.getUIRoot(this).pushActivitySettings(a -> {
             a.setNotificationsVisible(false);
-            a.setToolbarSettings(ActivitySettings.ToolbarSettings.createBack(requireActivity().getString(R.string.dialog_previewDeleteItems_delete_title, String.valueOf(itemsToDelete.length)), () -> UI.rootBack(DeleteItemsFragment.this)));
+            a.setToolbarSettings(ActivitySettings.ToolbarSettings.createBack(requireActivity().getString(R.string.fragment_deleteItems_delete_title, String.valueOf(itemsToDelete.length)), () -> UI.rootBack(DeleteItemsFragment.this)));
         });
     }
 
@@ -123,9 +123,9 @@ public class DeleteItemsFragment extends Fragment {
         });
 
         binding.deleteButton.setOnClickListener(v -> new AlertDialog.Builder(requireContext())
-                .setTitle(requireActivity().getString(R.string.dialog_previewDeleteItems_delete_title, String.valueOf(itemsToDelete.length)))
-                .setNegativeButton(R.string.dialog_previewDeleteItems_delete_cancel, null)
-                .setPositiveButton(R.string.dialog_previewDeleteItems_delete_apply, ((_dialog1, _which) -> {
+                .setTitle(requireActivity().getString(R.string.fragment_deleteItems_delete_title, String.valueOf(itemsToDelete.length)))
+                .setNegativeButton(R.string.fragment_deleteItems_delete_cancel, null)
+                .setPositiveButton(R.string.fragment_deleteItems_delete_apply, ((_dialog1, _which) -> {
                     for (Item item : itemsToDelete) {
                         item.delete();
                     }

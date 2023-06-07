@@ -2,7 +2,6 @@ package com.fazziclay.opentoday.gui.part;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
@@ -141,7 +140,7 @@ public class DateItemFilterPartEditor implements Destroy {
             public int getCurrentValue() {
                 return calendar.get(Calendar.DAY_OF_MONTH);
             }
-        }, binding.dayOfMonth, R.string.dialog_editItemFilter_dayOfMonth);
+        }, binding.dayOfMonth, R.string.itemFilter_dateAndTime_dayOfMonth);
         setupRow(new SetupInterface() {
             @Override
             public IntegerValue get() {
@@ -158,7 +157,7 @@ public class DateItemFilterPartEditor implements Destroy {
             public int getCurrentValue() {
                 return calendar.get(Calendar.DAY_OF_WEEK);
             }
-        }, binding.dayOfWeek, R.string.dialog_editItemFilter_dayOfWeek, new SimpleSpinnerAdapter<Integer>(context)
+        }, binding.dayOfWeek, R.string.itemFilter_dateAndTime_dayOfWeek, new SimpleSpinnerAdapter<Integer>(context)
                 .add("(1) " + weekdays[1], 1)
                 .add("(2) " + weekdays[2], 2)
                 .add("(3) " + weekdays[3], 3)
@@ -199,7 +198,7 @@ public class DateItemFilterPartEditor implements Destroy {
             public int getCurrentValue() {
                 return calendar.get(Calendar.DAY_OF_YEAR);
             }
-        }, binding.dayOfYear, R.string.dialog_editItemFilter_dayOfYear);
+        }, binding.dayOfYear, R.string.itemFilter_dateAndTime_dayOfYear);
         setupRow(new SetupInterface() {
             @Override
             public IntegerValue get() {
@@ -215,7 +214,7 @@ public class DateItemFilterPartEditor implements Destroy {
             public int getCurrentValue() {
                 return calendar.get(Calendar.HOUR_OF_DAY);
             }
-        }, binding.hour, R.string.dialog_editItemFilter_hour);
+        }, binding.hour, R.string.itemFilter_dateAndTime_hour);
 
         setupRow(new SetupInterface() {
             @Override
@@ -232,7 +231,7 @@ public class DateItemFilterPartEditor implements Destroy {
             public int getCurrentValue() {
                 return calendar.get(Calendar.MINUTE);
             }
-        }, binding.minute, R.string.dialog_editItemFilter_minute);
+        }, binding.minute, R.string.itemFilter_dateAndTime_minute);
 
         setupRow(new SetupInterface() {
             @Override
@@ -301,7 +300,7 @@ public class DateItemFilterPartEditor implements Destroy {
         });
 
         SimpleSpinnerAdapter<String> simpleSpinnerAdapter = new SimpleSpinnerAdapter<String>(context)
-                .add(context.getString(R.string.dialog_editItemFilter_disable), "disable")
+                .add(context.getString(R.string.itemFilter_dateAndTime_disable), "disable")
                 .add("==", "==")
                 .add(">", ">")
                 .add(">=", ">=")
