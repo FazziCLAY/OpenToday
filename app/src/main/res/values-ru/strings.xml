@@ -383,4 +383,5 @@
     <string name="notification_ui_tooLongPinCode_text">Ваш текущий пин-код слишком длинный.\nПоэтому он был выключен. Настройте пин-код заново</string>
     <string name="settings_pincode_enable_tooLongError">Пин-код слишком длинный</string>
     <string name="changelogFragment_toolbar_title">Что нового</string>
+    <string name="setup_theme_title">Выберите комфортную тему</string>
 </resources>

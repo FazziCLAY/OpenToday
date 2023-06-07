@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="3sp">
+    android:padding="10sp">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        tools:ignore="UselessParent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -23,7 +25,7 @@
                 android:text="@string/app_name" />
 
             <CheckBox
-                android:id="@+id/telemetry"
+                android:id="@+id/setup_telemetry"
                 android:layout_width="match_parent"
                 android:checked="true"
                 android:layout_height="wrap_content"
@@ -34,8 +36,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
+            <Space
+                android:layout_width="0sp"
+                android:layout_height="20sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/setup_theme_title" />
+
+            <Spinner
+                android:id="@+id/setup_theme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
             <Button
-                android:id="@+id/done"
+                android:id="@+id/setup_done"
                 android:layout_width="wrap_content"
                 android:layout_gravity="end"
                 android:text="@string/abc_done_button"
