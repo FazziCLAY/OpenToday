@@ -238,6 +238,7 @@ public class TabsManager implements ItemsRoot, Tickable {
         int position = getTabPosition(tab);
         onTabsChangedCallbacks.run((callbackStorage, callback) -> callback.onTabPreDeleted(tab, position));
         this.tabs.remove(tab);
+        tab.detach();
         onTabsChangedCallbacks.run((callbackStorage, callback) -> callback.onTabPostDeleted(tab, position));
         internalOnTabChanged();
         queueSave(SaveInitiator.USER);
