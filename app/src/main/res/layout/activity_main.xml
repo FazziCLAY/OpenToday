@@ -54,7 +54,7 @@
     <ScrollView
         android:id="@+id/debug_logs_scroll"
         android:visibility="gone"
-        android:background="#33222222"
+        android:background="#33000000"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

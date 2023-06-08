@@ -67,6 +67,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
     private var debugHandler: Handler? = null
     private lateinit var debugRunnable: Runnable
     private var debugViewSize = 13
+    private var debugViewBackground: Int = 0x33000000
     @SuppressLint("SetTextI18n")
     private var importantDebugCallback = ImportantDebugCallback { m ->
         if (!App.DEBUG_IMPORTANT_NOTIFICATIONS) return@ImportantDebugCallback Status.Builder()
@@ -275,7 +276,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
             binding.debugLogsSwitch.visibility = View.VISIBLE
             binding.debugLogsSwitch.setOnClickListener {
                 viewVisible(binding.debugLogsScroll, binding.debugLogsSwitch.isChecked, View.GONE)
-                binding.debugLogsText.text = ColorUtil.colorize(Logger.getLOGS().toString(), Color.BLUE, Color.TRANSPARENT, 0, true)
+                binding.debugLogsText.text = ColorUtil.colorize("\n\n\n\n\n\n"+Logger.getLOGS().toString(), Color.BLUE, Color.TRANSPARENT, 0, false)
             }
             binding.debugLogsSwitch.setOnLongClickListener {
                 toggleLogsOverlay()
@@ -289,6 +290,17 @@ class MainActivity : AppCompatActivity(), UIRoot {
             binding.debugLogsSizeDown.setOnClickListener {
                 debugViewSize--
                 binding.debugLogsText.textSize = debugViewSize.toFloat()
+            }
+
+            binding.debugLogsSizeUp.setOnLongClickListener {
+                debugViewBackground+=0x21000000
+                binding.debugLogsScroll.setBackgroundColor(debugViewBackground)
+                return@setOnLongClickListener true
+            }
+            binding.debugLogsSizeDown.setOnLongClickListener {
+                debugViewBackground-=0x21000000
+                binding.debugLogsScroll.setBackgroundColor(debugViewBackground)
+                return@setOnLongClickListener true
             }
         } else {
             debugHandler?.removeCallbacks(debugRunnable)
