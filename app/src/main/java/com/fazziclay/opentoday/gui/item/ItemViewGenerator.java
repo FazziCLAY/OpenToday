@@ -436,9 +436,8 @@ public class ItemViewGenerator {
             return;
         }
         if (Debug.SHOW_ID_ON_ITEMTEXT) {
-            view.setText(item.getId() + "\n\n"+ item.getText());
+            view.setText(ColorUtil.colorize(item.getText() + "\n$[-#aaaaaa;S12]" + item.getId(), Color.WHITE, Color.TRANSPARENT, Typeface.NORMAL));
             view.setTextSize(17);
-            view.setTextColor(Color.GREEN);
             return;
         }
 
