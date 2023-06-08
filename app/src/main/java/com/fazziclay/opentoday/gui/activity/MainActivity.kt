@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
     @SuppressLint("SetTextI18n")
     private var importantDebugCallback = ImportantDebugCallback { m ->
         if (!App.DEBUG_IMPORTANT_NOTIFICATIONS) return@ImportantDebugCallback Status.Builder()
-            .setDeleteCallback(true)
+            .setRemoveCallback(true)
             .build()
         val text = TextView(this@MainActivity)
         val p = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
