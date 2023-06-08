@@ -78,7 +78,7 @@ public class ColorHistoryManager {
                 locked = j.optBoolean("locked", false);
                 JSONArray ja = j.getJSONArray("history");
                 int i = 0;
-                while (i < ja.length()) {
+                while (i < Math.min(ja.length(), maxSize)) {
                     int color = ja.getInt(i);
                     history[i] = color;
                     i++;
@@ -101,6 +101,7 @@ public class ColorHistoryManager {
     }
 
     public void importData(JSONObject colorHistory) {
+        if (dataFile == null) return;
         FileUtil.setText(dataFile, colorHistory.toString());
         size = 0;
         load();
