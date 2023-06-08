@@ -391,6 +391,11 @@ public class ItemsStorageDrawer {
             this.itemsStorage = itemsStorage;
         }
 
+        public CreateBuilder setPreviewMode(boolean b) {
+            this.previewMode = b;
+            return this;
+        }
+
         public CreateBuilder setPreviewMode() {
             this.previewMode = true;
             return this;

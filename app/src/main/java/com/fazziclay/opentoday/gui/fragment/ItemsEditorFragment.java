@@ -180,16 +180,11 @@ public class ItemsEditorFragment extends Fragment {
             }
         };
 
-        // TODO: 06.06.2023 what,
-        if (previewMode) {
-            this.itemsStorageDrawer = ItemsStorageDrawer.builder(activity, behavior, selectionManager, itemsStorage)
-                    .setPreviewMode()
-                    .build();
-        } else {
-            this.itemsStorageDrawer = ItemsStorageDrawer.builder(activity, behavior, selectionManager, itemsStorage)
-                    .setOnItemOpenEditor((item) -> rootNavigationHost.navigate(ItemEditorFragment.edit(item.getId()), true))
-                    .build();
-        }
+        this.itemsStorageDrawer = ItemsStorageDrawer.builder(activity, behavior, selectionManager, itemsStorage)
+                .setPreviewMode(previewMode)
+                .setOnItemOpenEditor((item) -> rootNavigationHost.navigate(ItemEditorFragment.edit(item.getId()), true))
+                .setOnItemTextEditor((item) -> rootNavigationHost.navigate(ItemTextEditorFragment.create(item.getId()), true))
+                .build();
 
         if (item instanceof FilterGroupItem) {
             applyFilterGroupViewPatch((FilterGroupItem) item);
