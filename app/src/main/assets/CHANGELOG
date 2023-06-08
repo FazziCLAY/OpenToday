@@ -1,5 +1,6 @@
-$[@bold;-#00FF00]# Changelog v??? 1.1.4 (2023.06.??)$[||]
-Changelog now use formatting: $[-#ffff00;=#0000ff;@bold]Hello!$[||]
+$[@bold;-#00FF00;S25]# Changelog v??? 1.1.4 (2023.06.??)$[||]
+* Changelog now use formatting: $[-#ffff00;=#0000ff;@bold]Hello!$[||]
+* New formatting system: size. \$[S20] - size=20
 $[-#ffff00]Todo: write changelog$[||]
 owo!
 
