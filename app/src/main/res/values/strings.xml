@@ -254,7 +254,7 @@
     <string name="settings_firstDayOfWeek_title">First day of week</string>
     <string name="settings_firstTab_first">First</string>
     <string name="settings_firstTab_onClosed">On close moment</string>
-    <string name="settings_firstTab_title">Default tab</string>
+    <string name="settings_firstTab_title">Startup tab</string>
     <string name="settings_isTelemetry">@string/setup_telemetry</string>
     <string name="settings_itemAddPosition_BOTTOM">Bottom</string>
     <string name="settings_itemAddPosition_TOP">Top</string>
