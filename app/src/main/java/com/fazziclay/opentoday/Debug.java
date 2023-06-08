@@ -40,7 +40,7 @@ public class Debug {
     }
 
     public static void free() {
-        itemsStorageToolbarContext = null;
+        itemsStorageToolbarContext = "(Debug.free() called)";
     }
 
     public static long ago(long l) {
