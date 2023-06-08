@@ -48,7 +48,6 @@ public class ColorPicker {
         pickerView.setCurrentColor(startColor);
         pickerView.setOriginalColor(startColor);
 
-        HorizontalScrollView historyHorizontal = new HorizontalScrollView(context);
 
         LinearLayout dialogLayout = new LinearLayout(context);
         dialogLayout.setOrientation(LinearLayout.VERTICAL);
@@ -64,7 +63,9 @@ public class ColorPicker {
                 chip.setText(String.format("#%08x", color));
                 history.addView(chip);
             }
+            HorizontalScrollView historyHorizontal = new HorizontalScrollView(context);
             historyHorizontal.addView(history);
+            dialogLayout.addView(historyHorizontal);
         }
 
         new AlertDialog.Builder(context)
