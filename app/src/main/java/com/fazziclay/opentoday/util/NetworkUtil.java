@@ -25,10 +25,10 @@ public class NetworkUtil {
     private static final HashMap<String, String> DEBUG_CONTENTS = new HashMap<>();
 
     static {
-        NETWORK_LISTENERS.add((logKey, state, url, result) -> Logger.d(TAG, "Networking '"+logKey+"' State: " + state + " URL: " + url + " Result: " + result));
-        if (App.DEBUG) {
+        if (App.DEBUG) NETWORK_LISTENERS.add((logKey, state, url, result) -> Logger.d(TAG, "Networking '"+logKey+"' State: " + state + " URL: " + url + " Result: " + result));
+        if (App.DEBUG_NETWORK_UTIL_SHADOWCONTENT) {
             // Update checked test
-            //DEBUG_CONTENTS.put("https://fazziclay.github.io/api/project_3/v2/latest_build", "999");
+            DEBUG_CONTENTS.put("https://fazziclay.github.io/api/project_3/v2/latest_build", "999");
         }
     }
 
@@ -56,7 +56,7 @@ public class NetworkUtil {
             bufferedReader.close();
         } else {
             result.append(getDebugURLContent(url)).append("\n");
-            debugMessage = "(!) WARNING THIS CONTENT IS DEBUG IN NETWORK UTIL: ";
+            debugMessage = "(!) WARNING THIS CONTENT IS SHADOW-DEBUG-CONTENT IN NETWORK UTIL: ";
         }
 
         final String ret = result.substring(0, result.lastIndexOf("\n"));
