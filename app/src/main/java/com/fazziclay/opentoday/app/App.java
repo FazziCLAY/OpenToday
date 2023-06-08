@@ -77,9 +77,9 @@ public class App extends Application {
     public static final int DEBUG_APP_START_SLEEP = debug(false) ? 8000 : 0;
     public static Class<? extends Activity> DEBUG_MAIN_ACTIVITY = debug(false) ? TestItemViewGenerator.class : null;
     public static final boolean DEBUG_TEST_EXCEPTION_ON_LAUNCH = false;
-    public static final boolean DEBUG_IMPORTANT_NOTIFICATIONS = debug(true);
+    public static final boolean DEBUG_IMPORTANT_NOTIFICATIONS = debug(false);
     public static final boolean DEBUG_ALWAYS_SHOW_UI_NOTIFICATIONS = debug(false);
-    public static final boolean DEBUG_LOG_ALL_IN_MAINACTIVITY = debug(true);
+    public static final boolean DEBUG_LOG_ALL_IN_MAINACTIVITY = debug(false);
 
     public static boolean debug(boolean b) {
         return (DEBUG && b);
@@ -120,7 +120,7 @@ public class App extends Application {
             FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
             //FeatureFlag.ALWAYS_SHOW_SAVE_STATUS,
             //FeatureFlag.DISABLE_AUTOMATIC_TICK,
-            //FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION,
+            FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION,
             FeatureFlag.TOOLBAR_DEBUG
     ) : Collections.emptyList());
     private long appStartupTime = 0;
