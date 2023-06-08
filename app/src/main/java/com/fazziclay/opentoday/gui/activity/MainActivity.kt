@@ -143,11 +143,13 @@ class MainActivity : AppCompatActivity(), UIRoot {
         updateByActivitySettings()
         Debug.mainActivityStartupTime = System.currentTimeMillis() - startTime
         app.importantDebugCallbacks.addCallback(CallbackImportance.DEFAULT, importantDebugCallback)
-        Logger.i(TAG, "------------------")
-        Logger.d(TAG, "Example debug message", 10, 20, 30, Exception("Exception in debug logging"))
-        Logger.w(TAG, "Example warning message")
-        Logger.e(TAG, "Example error message", Exception("Example exception for logger"))
-        Logger.i(TAG, "------------------")
+        if (App.DEBUG_LOG_ALL_IN_MAINACTIVITY) {
+            Logger.i(TAG, "------------------")
+            Logger.d(TAG, "Example debug message", 10, 20, 30, Exception("Exception in debug logging"))
+            Logger.w(TAG, "Example warning message")
+            Logger.e(TAG, "Example error message", Exception("Example exception for logger"))
+            Logger.i(TAG, "------------------")
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
