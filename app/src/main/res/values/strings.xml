@@ -20,6 +20,9 @@
     <string name="aboutapp_title">About</string>
     <string name="changelogFragment_toolbar_title">What\'s new</string>
     <string name="crash_activity_sendToDeveloper">Send to developer</string>
+    <string name="crash_activity_sendToDeveloper_agree">I agree</string>
+    <string name="crash_activity_sendToDeveloper_message">Sending anonymous statistics is disabled in your settings.\n\nThe following data will be used:\n* The text of the crash report that you see on the screen\n* IP address</string>
+    <string name="crash_activity_sendToDeveloper_title">Send crash-report?</string>
     <string name="crash_notification_big_summary" translatable="false">""</string>
     <string name="crash_notification_big_text" translatable="false">""</string>
     <string name="crash_notification_big_title">OpenToday crashed</string>

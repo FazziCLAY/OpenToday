@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Objects;
+import java.util.UUID;
 
 import ru.fazziclay.opentoday.telemetry.TelemetryPackets;
 import ru.fazziclay.opentoday.telemetry.packet.Packet20004Login;
@@ -50,6 +51,10 @@ public class Telemetry {
 
     public void setEnabled(boolean enabled) {
         this.isEnabled = enabled;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
     }
 
     public void queryTelemetryStatus() {
@@ -264,6 +269,10 @@ public class Telemetry {
     public static class CrashReportLPacket extends LPacket {
         public CrashReportLPacket(CrashReport crashReport) {
             super(false, true, new Packet20006CrashReport(crashReport.getID(), crashReport.getThrowable().toString(), crashReport.convertToText()));
+        }
+
+        public CrashReportLPacket(UUID id, String throwable, String crashText) {
+            super(false, true, new Packet20006CrashReport(id, throwable, crashText));
         }
     }
 

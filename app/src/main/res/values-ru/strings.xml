@@ -18,6 +18,9 @@
     <string name="aboutapp_title">О программе</string>
     <string name="changelogFragment_toolbar_title">Что нового</string>
     <string name="crash_activity_sendToDeveloper">Отправить разработчику</string>
+    <string name="crash_activity_sendToDeveloper_agree">Я согласен</string>
+    <string name="crash_activity_sendToDeveloper_message">Отправка анонимной статистики отключена в настройках.\n\nЭти данные будут использованы:\n* Текст отчёта об ошибке, который вы видите на экране\n* IP-адресс</string>
+    <string name="crash_activity_sendToDeveloper_title">Отправить отчёт об ошибке?</string>
     <string name="crash_notification_big_title">OpenToday завершился с ошибкой</string>
     <string name="crash_notification_text">Нажмите для деталей</string>
     <string name="crash_notification_title">Ошибка приложения OpenToday</string>

@@ -327,7 +327,7 @@ public class App extends Application {
 
         // === If fatal: notify user ===
         if (fatal || App.DEBUG) {
-            sendCrashNotification(context, crashReportFile);
+            sendCrashNotification(context, crashReportFile, crashReport);
         }
 
         // Telemetry
@@ -348,7 +348,7 @@ public class App extends Application {
         if (!fatal) ImportantDebugCallback.pushStatic("App.crash() no fatal.\nException: " + crashReport.getThrowable() + "\n\ntext:\n"+crashReport.convertToText());
     }
 
-    private static void sendCrashNotification(final Context context, File fileToCrash) {
+    private static void sendCrashNotification(final Context context, File fileToCrash, CrashReport crashReport) {
         // === NOTIFICATION ===
         final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
         notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_CRASH_CHANNEL, context.getString(R.string.notificationChannel_crash_title), NotificationManager.IMPORTANCE_DEFAULT));
@@ -369,7 +369,7 @@ public class App extends Application {
                         .setBigContentTitle(context.getString(R.string.crash_notification_big_title))
                         .setSummaryText(context.getString(R.string.crash_notification_big_summary)))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setContentIntent(PendingIntent.getActivity(context, new Random().nextInt(), CrashReportActivity.createLaunchIntent(context, fileToCrash.getAbsolutePath()), flag))
+                .setContentIntent(PendingIntent.getActivity(context, new Random().nextInt(), CrashReportActivity.createLaunchIntent(context, fileToCrash.getAbsolutePath(), crashReport.getID(), crashReport.getThrowable().toString()), flag))
                 .setAutoCancel(true)
                 .build());
 
