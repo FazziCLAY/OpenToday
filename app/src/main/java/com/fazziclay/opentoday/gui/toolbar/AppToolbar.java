@@ -12,6 +12,8 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -45,6 +47,7 @@ import com.fazziclay.opentoday.app.items.tab.Debug202305RandomTab;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.databinding.ToolbarBinding;
+import com.fazziclay.opentoday.databinding.ToolbarMoreDebugBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreFileBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreItemsBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreItemsItemBinding;
@@ -68,11 +71,9 @@ import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
-import com.google.android.material.button.MaterialButton;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Random;
 import java.util.UUID;
 
 public class AppToolbar {
@@ -94,6 +95,8 @@ public class AppToolbar {
     private SelectionCallback selectionCallbackTab = null; // (Selection TAB) On selection changed. For runtime update selection information
     private OnTabsChanged onTabsChanged = null;
     private UIDebugCallback debugCallback = null;
+    private Handler debugTabHandler = null;
+    private Runnable debugRunnable = null;
 
     // Cache
     private View itemsSectionCacheView = null;
@@ -183,6 +186,7 @@ public class AppToolbar {
         if (selectionCallbackTab != null) selectionManager.getOnSelectionUpdated().removeCallback(selectionCallbackTab);
         if (onTabsChanged != null) tabsManager.getOnTabsChangedCallbacks().removeCallback(onTabsChanged);
         if (debugCallback != null) UI.getDebugCallbacks().removeCallback(debugCallback);
+        if (debugTabHandler != null) debugTabHandler.removeCallbacks(debugRunnable);
         toolbarView.removeAllViews();
         toolbarMoreView.removeAllViews();
         this.binding = null;
@@ -211,6 +215,7 @@ public class AppToolbar {
         }
         if (selectionCallback != null) selectionManager.getOnSelectionUpdated().removeCallback(selectionCallback);
         if (onTabsChanged != null) tabsManager.getOnTabsChangedCallbacks().removeCallback(onTabsChanged);
+        if (debugTabHandler != null) debugTabHandler.removeCallbacks(debugRunnable);
     }
 
     private void preOnClick(final View buttonView, final Runnable runnable) {
@@ -247,23 +252,31 @@ public class AppToolbar {
 
     @SuppressWarnings("SetTextI18n")
     private void onDebugClick() {
-        LinearLayout layout = new LinearLayout(activity);
-        layout.setPadding(10, 0, 10, 0);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        registerMoreView(layout);
-        layout.setBackgroundColor(new Random().nextInt());
+        ToolbarMoreDebugBinding l = ToolbarMoreDebugBinding.inflate(activity.getLayoutInflater(), toolbarMoreView, false);
+        registerMoreView(l.getRoot());
+        l.getRoot().setBackgroundColor(0x95000000);
 
-        Button overlay = new Button(activity);
-        overlay.setText("Logs Overlay");
-        viewClick(overlay, () -> ((MainActivity) activity).toggleLogsOverlay());
+        debugTabHandler = new Handler(Looper.getMainLooper());
+        debugRunnable = new Runnable() {
+            int color = Color.RED;
+            int padding = 0;
+            int paddingModifier = 1;
+            @Override
+            public void run() {
+                color += 0x050301;
+                padding+= paddingModifier;
+                l.onlyTrue.setTextColor(color | 0xFF000000);
+                l.onlyTrue.setPadding(padding, 0, 0, 0);
+                if (padding > 50) paddingModifier = -1;
+                if (padding < 0) paddingModifier = 1;
+                debugTabHandler.postDelayed(this, 1);
+            }
+        };
+        debugTabHandler.postDelayed(debugRunnable, 1);
 
-        Button personalTick = new Button(activity);
-        personalTick.setText("Personal tick");
-        viewClick(personalTick, () -> UI.Debug.showPersonalTickDialog(activity));
-
-        Button restartActivity = new Button(activity);
-        restartActivity.setText("Restart activity");
-        viewClick(restartActivity, () -> {
+        viewClick(l.logsOverlay, () -> ((MainActivity) activity).toggleLogsOverlay());
+        viewClick(l.personalTick, () -> UI.Debug.showPersonalTickDialog(activity));
+        viewClick(l.restartActivity, () -> {
             activity.finish();
             Intent intent = new Intent(activity, activity.getClass());
             try {
@@ -271,40 +284,15 @@ public class AppToolbar {
             } catch (Exception ignored) {}
             activity.startActivity(intent);
         });
-
-
-        MaterialButton resetSetup = new MaterialButton(activity);
-        resetSetup.setText("Reset setup");
-        viewClick(resetSetup, () -> {
+        viewClick(l.resetSetup, () -> {
             activity.getSharedPreferences(App.SHARED_NAME, Context.MODE_PRIVATE).edit().putBoolean(App.SHARED_KEY_IS_SETUP_DONE, false).apply();
             activity.finish();
             activity.startActivity(new Intent(activity, SetupActivity.class));
         });
-
-        MaterialButton debugTabCreate = new MaterialButton(activity);
-        debugTabCreate.setText("Create Debug202305RandomTab tab");
-        viewClick(debugTabCreate, () -> tabsManager.addTab(new Debug202305RandomTab()));
-
-        MaterialButton featureFlags = new MaterialButton(activity);
-        featureFlags.setText("Feature flags");
-        viewClick(featureFlags, () -> UI.Debug.showFeatureFlagsDialog(app, activity));
-
-        MaterialButton crash = new MaterialButton(activity);
-        crash.setText("CRASH");
-        viewClick(crash, () -> UI.Debug.showCrashWithMessageDialog(activity, "Toolbar->Debug->Crash: %s"));
-
-        // Position
-        layout.addView(overlay);
-        layout.addView(personalTick);
-        layout.addView(restartActivity);
-        layout.addView(resetSetup);
-        layout.addView(debugTabCreate);
-        layout.addView(featureFlags);
-        layout.addView(crash);
-
-        TextView textView = new TextView(activity);
-        layout.addView(textView);
-        textView.setText("FazziCLAY is god.");
+        viewClick(l.create202305DebugTab, () -> tabsManager.addTab(new Debug202305RandomTab()));
+        viewClick(l.featureFlags, () -> UI.Debug.showFeatureFlagsDialog(app, activity));
+        viewClick(l.crash, () -> Toast.makeText(activity, "Long-press for crash", Toast.LENGTH_SHORT).show());
+        viewLong(l.crash, () -> UI.Debug.showCrashWithMessageDialog(activity, "Toolbar->Debug->Crash: %s"));
     }
 
 

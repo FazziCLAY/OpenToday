@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="5sp"
+    android:paddingEnd="5sp"
+    tools:ignore="HardcodedText">
+
+    <TextView
+        android:id="@+id/onlyTrue"
+        android:textSize="16sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="FazziCLAY is god." />
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_below="@id/onlyTrue"
+        android:id="@+id/logsOverlay"
+        android:text="Logs overlay"
+        android:backgroundTint="#ff00ff"
+        android:textAllCaps="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/personalTick"
+        android:text="Personal tick"
+        android:layout_below="@id/onlyTrue"
+        android:layout_toEndOf="@id/logsOverlay"
+        android:layout_width="wrap_content"
+        android:layout_marginStart="3sp"
+        android:textAllCaps="false"
+        android:layout_height="wrap_content"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/restartActivity"
+        android:text="Restart activity"
+        android:layout_below="@id/logsOverlay"
+        android:textAllCaps="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/resetSetup"
+        android:text="Reset setup"
+        android:layout_toEndOf="@id/restartActivity"
+        android:layout_below="@id/logsOverlay"
+        android:layout_marginStart="3sp"
+        android:layout_width="wrap_content"
+        android:textAllCaps="false"
+        android:layout_height="wrap_content"/>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/create202305DebugTab"
+        android:text="Debug202305RandomTab"
+        android:drawableStart="@drawable/ic_launcher_foreground"
+        android:layout_below="@id/restartActivity"
+        android:backgroundTint="#00C030"
+        android:textAllCaps="false"
+        android:layout_width="wrap_content"
+        android:layout_height="40sp"
+        android:contentDescription="Create Debug202305RandomTab" />
+
+    <Button
+        android:id="@+id/featureFlags"
+        android:text="Feature flags"
+        android:layout_below="@id/restartActivity"
+        android:layout_toEndOf="@id/create202305DebugTab"
+        android:layout_width="wrap_content"
+        android:layout_marginStart="3sp"
+        android:textAllCaps="false"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/crash"
+        android:text="Crash"
+        android:backgroundTint="#D3BC08"
+        android:layout_below="@id/create202305DebugTab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+</RelativeLayout>
