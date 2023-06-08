@@ -79,7 +79,7 @@ public class ColorUtil {
 
             if (chars[oi] == '\\') {
                 if (oi + 1 < chars.length && chars[oi + 1] == '$') {
-                    toAppend = "$";
+                    toAppend = "$[";
                     oi += 2;
                 }
             } else if (chars[oi] == '$' && (oi - 1 < 0 || chars[oi] != '\\')) {
@@ -211,11 +211,11 @@ public class ColorUtil {
     }
 
     public static <T> T getLatestElement(List<T> list) {
-        return list.size() <= 0 ? null : list.get(list.size()-1);
+        return list.size() == 0 ? null : list.get(list.size()-1);
     }
 
     public static <T> T getLatestElement(T[] list) {
-        return list.length <= 0 ? null : list[list.length-1];
+        return list.length == 0 ? null : list[list.length-1];
     }
 
     /**
