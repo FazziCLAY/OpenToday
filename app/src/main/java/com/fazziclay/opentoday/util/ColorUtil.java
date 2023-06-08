@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StrikethroughSpan;
@@ -53,6 +54,7 @@ public class ColorUtil {
         int currentBackgroundSpan = defaultBgColor;
         int currentStyleSpan = defaultStyle;
         boolean currentStrikeOut = false;
+        int currentSize = 0;
 
         List<SpanText> spanTextList = new ArrayList<>();
 
@@ -93,6 +95,7 @@ public class ColorUtil {
                                     currentBackgroundSpan = defaultBgColor;
                                     currentStyleSpan = defaultStyle;
                                     currentStrikeOut = false;
+                                    currentSize = 0;
                                     continue;
                                 }
                                 char systemType = system.charAt(0);
@@ -129,6 +132,9 @@ public class ColorUtil {
                                     if (systemValue.equals("reset")) style = defaultStyle;
                                     currentStyleSpan = style;
                                     currentStrikeOut = systemValue.contains("~");
+                                } else if (systemType == 'S') {
+                                    currentSize = Integer.parseInt(systemValue);
+                                    if (systemValue.equals("reset")) currentSize = 0;
                                 }
                             }
                         }
@@ -152,6 +158,7 @@ public class ColorUtil {
                 }
                 SpanText n = new SpanText(toAppend, currentForegroundSpan, currentBackgroundSpan, currentStyleSpan, latestStart);
                 n.strikeOut = currentStrikeOut;
+                n.size = currentSize;
                 spanTextList.add(n);
             }
 
@@ -178,6 +185,7 @@ public class ColorUtil {
             if (spanText.strikeOut) spannableText.setSpan(new StrikethroughSpan(), start, end, Spannable.SPAN_COMPOSING);
             spannableText.setSpan(new BackgroundColorSpan(spanText.bgColor), start, end, Spanned.SPAN_COMPOSING);
             spannableText.setSpan(new StyleSpan(spanText.style), start, end, Spanned.SPAN_COMPOSING);
+            if (spanText.size > 0) spannableText.setSpan(new AbsoluteSizeSpan(spanText.size, true), start, end, Spanned.SPAN_COMPOSING);
             i++;
         }
         return spannableText;
@@ -195,6 +203,7 @@ public class ColorUtil {
      * @see ColorUtil#colorize(String, int, int, int)
      * **/
     private static class SpanText {
+        public int size;
         boolean strikeOut;
         String text;
         int fgColor;
