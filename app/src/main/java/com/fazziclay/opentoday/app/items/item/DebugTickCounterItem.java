@@ -87,7 +87,7 @@ public class DebugTickCounterItem extends TextItem {
         debugStat = String.format("""
         === Debug tick counter ===
         ID: %s
-        $[-#ffff00]Counter: $[-#00aaff] %s$[||]
+        $[-#ffff00;S16]Counter: $[-#00aaff] %s$[||]
         $[-#f0f0f0]Allowed targets: %s$[||]
         $[-#00ffff]Whitelist(%s): %s$[||]
         $[-$fff00f]PathToMe: %s$[||]
