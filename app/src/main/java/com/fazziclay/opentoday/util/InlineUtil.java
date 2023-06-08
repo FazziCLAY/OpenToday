@@ -11,7 +11,7 @@ import java.util.GregorianCalendar;
 import java.util.UUID;
 
 // Utility-class
-// USE: import static ru.fazziclay.lifeschedule.util.InlineUtil.*;
+// USE: import static com.fazziclay.opentoday.util.InlineUtil.*;
 public class InlineUtil {
     /**
      * Print message to System.in stream (System.out.println(o))
