@@ -142,8 +142,11 @@ public class ColorUtil {
                                     currentStyleSpan = style;
                                     currentStrikeOut = systemValue.contains("~");
                                 } else if (systemType == 'S') {
-                                    currentSize = Integer.parseInt(systemValue);
-                                    if (systemValue.equals("reset")) currentSize = 0;
+                                    try {
+                                        currentSize = Integer.parseInt(systemValue);
+                                    } catch (Exception ignored) {
+                                        if (systemValue.equals("reset")) currentSize = 0;
+                                    }
                                 }
                             }
                         }
