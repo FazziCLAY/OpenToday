@@ -275,7 +275,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
             binding.debugLogsSwitch.visibility = View.VISIBLE
             binding.debugLogsSwitch.setOnClickListener {
                 viewVisible(binding.debugLogsScroll, binding.debugLogsSwitch.isChecked, View.GONE)
-                binding.debugLogsText.text = ColorUtil.colorize(Logger.getLOGS().toString(), Color.BLUE, Color.TRANSPARENT, 0)
+                binding.debugLogsText.text = ColorUtil.colorize(Logger.getLOGS().toString(), Color.BLUE, Color.TRANSPARENT, 0, true)
             }
             binding.debugLogsSwitch.setOnLongClickListener {
                 toggleLogsOverlay()

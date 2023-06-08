@@ -34,6 +34,14 @@ public class ColorUtil {
     }
 
     /**
+     * @see #colorize(String, int, int, int, boolean)
+     */
+    public static SpannableString colorize(String text, int defaultFgColor, int defaultBgColor, int defaultStyle) {
+        return colorize(text, defaultFgColor, defaultBgColor, defaultStyle, false);
+    }
+
+
+    /**
      * Return {@link SpannableString} from string. Formatting:
      * <p>$[] - system</p>
      * <p>$[0] - 0 - type</p>
@@ -45,7 +53,7 @@ public class ColorUtil {
      * @see Spannable
      * @see SpannableString
      * **/
-    public static SpannableString colorize(String text, int defaultFgColor, int defaultBgColor, int defaultStyle) {
+    public static SpannableString colorize(String text, int defaultFgColor, int defaultBgColor, int defaultStyle, boolean showSystems) {
         if (text == null) return null;
 
         StringBuilder log = new StringBuilder();
@@ -67,6 +75,7 @@ public class ColorUtil {
             boolean appendOld = true;
             boolean appendNew = true;
             String toAppend = "";
+            String toAppendSystem = "";
 
             if (chars[oi] == '\\') {
                 if (oi + 1 < chars.length && chars[oi + 1] == '$') {
@@ -138,6 +147,9 @@ public class ColorUtil {
                                 }
                             }
                         }
+                        if (showSystems) {
+                            toAppendSystem = text.substring(oi, _i+1);
+                        }
                         oi = _i;
                     }
 
@@ -149,13 +161,20 @@ public class ColorUtil {
 
             if (oi >= chars.length) continue;
             SpanText latestSpan = getLatestElement(spanTextList);
-            if (spanTextList.size() > 0 && latestSpan != null && latestSpan.spanEquals(currentForegroundSpan, currentBackgroundSpan, currentStyleSpan, currentStrikeOut)) {
+            if (toAppendSystem.isEmpty() && spanTextList.size() > 0 && latestSpan != null && latestSpan.spanEquals(currentForegroundSpan, currentBackgroundSpan, currentStyleSpan, currentStrikeOut, currentSize)) {
                 latestSpan.appendText(toAppend);
             } else {
                 int latestStart = ni;
                 if (latestSpan != null) {
                     latestStart = latestSpan.end;
                 }
+                if (showSystems) {
+                    SpanText sys = new SpanText(toAppendSystem, Color.LTGRAY, Color.BLACK, Typeface.NORMAL, latestStart);
+                    sys.size = 10;
+                    spanTextList.add(sys);
+                    latestStart = sys.end;
+                }
+
                 SpanText n = new SpanText(toAppend, currentForegroundSpan, currentBackgroundSpan, currentStyleSpan, latestStart);
                 n.strikeOut = currentStrikeOut;
                 n.size = currentSize;
@@ -227,8 +246,8 @@ public class ColorUtil {
             end = start + text.length();
         }
 
-        public boolean spanEquals(int fgColor, int bgColor, int style, boolean strikeOut) {
-            return (this.fgColor == fgColor && this.bgColor == bgColor && this.style == style && this.strikeOut == strikeOut);
+        public boolean spanEquals(int fgColor, int bgColor, int style, boolean strikeOut, int size) {
+            return (this.fgColor == fgColor && this.bgColor == bgColor && this.style == style && this.strikeOut == strikeOut && this.size == size);
         }
 
         @NonNull
