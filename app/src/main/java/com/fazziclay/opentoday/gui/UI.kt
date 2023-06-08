@@ -15,7 +15,6 @@ import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.App
@@ -99,11 +98,7 @@ object UI {
                 R.attr.item_selectionForegroundColor
             )
         ) else {
-            val v = ActivityCompat.getDrawable(context,
-                R.drawable.ic_launcher_foreground
-            )
-            v?.alpha = 50
-            return v
+            return null
         }
     }
 
