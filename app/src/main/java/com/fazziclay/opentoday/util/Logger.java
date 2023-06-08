@@ -52,7 +52,7 @@ public class Logger {
 
     private static void log(Level level, final String s, boolean noChecks) {
         final String time = TimeUtil.getDebugDate(System.currentTimeMillis());
-        LOGS.append(level.getUiprefix()).append("[").append(time).append("] ").append(s).append(level.getUisuffix()).append("\n");
+        LOGS.append(level.getUiprefix()).append("[").append("$[S10]").append(time).append("$[Sreset]").append("] ").append(s).append(level.getUisuffix()).append("\n");
 
         logToFile("[" + time + "] " + s + "\n");
         if (noChecks) return;
@@ -131,7 +131,7 @@ public class Logger {
         ERROR("$[-#ff1111]", "$[||]"),
         WARNING("$[-#FFFF00]", "$[||]"),
         INFO("$[-#ffffff;=#77000000]", "$[||]"),
-        DEBUG("$[-#999999]", "$[||]");
+        DEBUG("$[-#d9d9d9]", "$[||]");
 
         private final String uiprefix;
         private final String uisuffix;
