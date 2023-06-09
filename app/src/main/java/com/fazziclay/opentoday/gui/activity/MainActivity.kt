@@ -364,6 +364,12 @@ class MainActivity : AppCompatActivity(), UIRoot {
             }
             supportActionBar?.setDisplayShowHomeEnabled(toolbarSettings.isBackButton)
             supportActionBar?.setDisplayHomeAsUpEnabled(toolbarSettings.isBackButton)
+            if (toolbarSettings.menu != 0 && toolbarSettings.menuInterface != null) {
+                binding.toolbar.inflateMenu(toolbarSettings.menu)
+                toolbarSettings.menuInterface.run(binding.toolbar.menu)
+            } else if (binding.toolbar.menu != null) {
+                binding.toolbar.menu.close()
+            }
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.fazziclay.opentoday.gui;
 
+import android.view.Menu;
+
 import org.jetbrains.annotations.NotNull;
 
 public class ActivitySettings implements Cloneable {
@@ -68,6 +70,8 @@ public class ActivitySettings implements Cloneable {
         private int titleResId;
         private boolean backButton;
         private Runnable backButtonRunnable;
+        private int menu = 0; // 0 - not-exist
+        private MenuInterface menuInterface;
 
         public static ToolbarSettings createBack(int titleResId, Runnable back) {
             return new ToolbarSettings(null, titleResId, true, back);
@@ -114,6 +118,24 @@ public class ActivitySettings implements Cloneable {
 
         public void setTitleResId(int titleResId) {
             this.titleResId = titleResId;
+        }
+
+        public int getMenu() {
+            return menu;
+        }
+
+        public MenuInterface getMenuInterface() {
+            return menuInterface;
+        }
+
+        public ToolbarSettings setMenu(int resId, MenuInterface menuInterface) {
+            this.menu = resId;
+            this.menuInterface = menuInterface;
+            return this;
+        }
+
+        public interface MenuInterface {
+            void run(Menu menu);
         }
     }
 }
