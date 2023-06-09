@@ -80,7 +80,7 @@ public class App extends Application {
     public static final boolean DEBUG_IMPORTANT_NOTIFICATIONS = debug(false);
     public static final boolean DEBUG_ALWAYS_SHOW_UI_NOTIFICATIONS = debug(false);
     public static final boolean DEBUG_LOG_ALL_IN_MAINACTIVITY = debug(false);
-    public static final boolean DEBUG_NETWORK_UTIL_SHADOWCONTENT = debug(true);
+    public static final boolean DEBUG_NETWORK_UTIL_SHADOWCONTENT = debug(false);
 
     public static boolean debug(boolean b) {
         return (DEBUG && b);
