@@ -19,6 +19,8 @@ public class ColorPicker {
     private boolean showHex;
     private boolean showPreview;
     private boolean showAlpha;
+    private Runnable neutralDialogButtonRunnable = null;
+    private String neutralDialogButtonText = null;
 
     public ColorPicker(Context context) {
         this.context = context;
@@ -68,7 +70,7 @@ public class ColorPicker {
             dialogLayout.addView(historyHorizontal);
         }
 
-        new AlertDialog.Builder(context)
+        AlertDialog.Builder builder = new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setView(dialogLayout)
                 .setNegativeButton(negative, null)
@@ -76,8 +78,13 @@ public class ColorPicker {
                     int color = pickerView.getColor();
                     if (colorHistoryManager != null)colorHistoryManager.addColor(color);
                     colorPickerInterface.selected(color);
-                }))
-                .show();
+                }));
+
+        if (neutralDialogButtonRunnable != null && neutralDialogButtonText != null) {
+            builder.setNeutralButton(neutralDialogButtonText, (_ignore, _ignore0) -> neutralDialogButtonRunnable.run());
+        }
+
+        builder.show();
     }
 
     public ColorPicker setStartColor(int color) {
@@ -87,6 +94,12 @@ public class ColorPicker {
 
     public ColorPicker setColorHistoryManager(ColorHistoryManager colorHistoryManager) {
         this.colorHistoryManager = colorHistoryManager;
+        return this;
+    }
+
+    public ColorPicker setNeutralDialogButton(String text, Runnable runnable) {
+        this.neutralDialogButtonText = text;
+        this.neutralDialogButtonRunnable = runnable;
         return this;
     }
 
