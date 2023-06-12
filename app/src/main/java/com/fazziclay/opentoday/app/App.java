@@ -114,7 +114,7 @@ public class App extends Application {
     private final OptionalField<PinCodeManager> pinCodeManager = new OptionalField<>(() -> new PinCodeManager(this));
     private final OptionalField<SelectionManager> selectionManager = new OptionalField<>(SelectionManager::new);
     private final OptionalField<Telemetry> telemetry = new OptionalField<>(() -> new Telemetry(this, getSettingsManager().isTelemetry()));
-    private final OptionalField<TickThread> tickThread = new OptionalField<>(this::preCheckTickThread, TickThread::requestTerminate);
+    private final OptionalField<TickThread> tickThread = new OptionalField<>(this::preCheckTickThread, TickThread::requestTerminate, this::validateTickThread);
     private final OptionalField<Translation> translation = new OptionalField<>(() -> new TranslationImpl(this::getString));
     private final OptionalField<CallbackStorage<ImportantDebugCallback>> importantDebugCallbacks = new OptionalField<>(CallbackStorage::new);
     private final List<FeatureFlag> featureFlags = new ArrayList<>(App.DEBUG ? Arrays.asList(
@@ -446,6 +446,13 @@ public class App extends Application {
         TickThread tickThread = new TickThread(getApplicationContext(), getTabsManager());
         tickThread.start();
         return tickThread;
+    }
+
+    private TickThread validateTickThread(TickThread t) {
+        if (t.isEnabled()) {
+            return t;
+        }
+        return preCheckTickThread();
     }
 
     @NotNull
