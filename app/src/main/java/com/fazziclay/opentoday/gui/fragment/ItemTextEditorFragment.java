@@ -190,7 +190,7 @@ public class ItemTextEditorFragment extends Fragment {
         while (i >= 0) {
             if (s.charAt(i) == ']') break;
             if (s.charAt(i) == '[') {
-                if (i-1 > 0 && s.charAt(i-1) == '$') {
+                if (i-1 >= 0 && s.charAt(i-1) == '$') {
                     systemStart = i;
                     break;
                 }
