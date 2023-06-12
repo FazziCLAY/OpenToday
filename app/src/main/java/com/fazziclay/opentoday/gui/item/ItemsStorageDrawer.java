@@ -248,6 +248,7 @@ public class ItemsStorageDrawer {
         CrashReportContext.FRONT.push("ItemsStorageDrawer.actionItem");
         switch (action) {
             case OPEN_EDITOR -> onItemEditor.run(item);
+            case OPEN_TEXT_EDITOR -> onItemTextEditor.run(item);
             case SELECT_ON -> selectionManager.selectItem(item);
             case SELECT_OFF -> selectionManager.deselectItem(item);
             case MINIMIZE_REVERT -> {

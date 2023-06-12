@@ -211,6 +211,7 @@ public class SettingsManager {
 
     public enum ItemAction {
         OPEN_EDITOR,
+        OPEN_TEXT_EDITOR,
         SELECT_REVERT,
         SELECT_ON,
         SELECT_OFF,

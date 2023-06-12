@@ -19,6 +19,7 @@ object EnumsRegistry {
         EnumInfo(SettingsManager.FirstTab.FIRST,                    R.string.settings_firstTab_first),
         EnumInfo(SettingsManager.FirstTab.TAB_ON_CLOSING,           R.string.settings_firstTab_onClosed),
         EnumInfo(SettingsManager.ItemAction.OPEN_EDITOR,            R.string.itemAction_OPEN_EDITOR),
+        EnumInfo(SettingsManager.ItemAction.OPEN_TEXT_EDITOR,       R.string.itemAction_OPEN_TEXT_EDITOR),
         EnumInfo(SettingsManager.ItemAction.SELECT_REVERT,          R.string.itemAction_SELECT_REVERT),
         EnumInfo(SettingsManager.ItemAction.SELECT_ON,              R.string.itemAction_SELECT_ON),
         EnumInfo(SettingsManager.ItemAction.SELECT_OFF,             R.string.itemAction_SELECT_OFF),
