@@ -12,7 +12,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.Translation;
 import com.fazziclay.opentoday.app.TranslationImpl;
 import com.fazziclay.opentoday.app.items.ItemPath;
@@ -39,29 +38,9 @@ public class TestItemViewGenerator extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+/*
         ItemInterface itemClick = item -> Toast.makeText(TestItemViewGenerator.this, "Click: " + item.toString(), Toast.LENGTH_SHORT).show();
         ItemViewGeneratorBehavior behavior = new ItemViewGeneratorBehavior() {
-            @Override
-            public boolean isMinimizeGrayColor() {
-                return false;
-            }
-
-            @Override
-            public SettingsManager.ItemAction getItemOnClickAction() {
-                return null;
-            }
-
-            @Override
-            public boolean isScrollToAddedItem() {
-                return false;
-            }
-
-            @Override
-            public SettingsManager.ItemAction getItemOnLeftAction() {
-                return null;
-            }
-
             @Override
             public boolean isConfirmFastChanges() {
                 return false;
@@ -189,6 +168,6 @@ public class TestItemViewGenerator extends Activity {
             }
         };
         itemsStorage.addItem(item);
-        item.tick(new TickSession(this, new GregorianCalendar(), new GregorianCalendar(), 0, false));
+        item.tick(new TickSession(this, new GregorianCalendar(), new GregorianCalendar(), 0, false)); */
     }
 }

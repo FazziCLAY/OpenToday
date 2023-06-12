@@ -29,7 +29,7 @@ public class TestItemsStorageDrawer extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+/*
         TabsManager tabsManager = new TabsManager(new File(getExternalCacheDir(), "/tests/testItemViewGenerator.json"), new File(getExternalCacheDir(), "/tests/testItemViewGenerator.gz"), new Translation() {
             @Override
             public String get(Object key, Object... args) {
@@ -112,5 +112,7 @@ public class TestItemsStorageDrawer extends Activity {
         itemsStorageDrawer.create();
 
         add.setOnClickListener(v -> tabsManager.getTabById(new UUID(0, 0)).addItem(new CycleListItem("123132231213")));
+        */
+
     }
 }
