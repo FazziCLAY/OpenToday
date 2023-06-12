@@ -5,6 +5,7 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 
 public abstract class MinBaseAdapter extends BaseAdapter {
+    // TODO: 09.06.2023 what? move to mintextwatcher
     public static void after(EditText text, Runnable o) {
         text.addTextChangedListener(new MinTextWatcher(){
             @Override
