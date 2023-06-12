@@ -88,7 +88,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     private static final String KEY_ADD_ITEM_POSITION = "create:addItemPosition";
     public static final int VALUE_ADD_ITEM_POSITION_TOP = 0;
     public static final int VALUE_ADD_ITEM_POSITION_BOTTOM = -1;
-    private static final boolean DEBUG_SHOW_EDIT_START = App.debug(true);
+    private static final boolean DEBUG_SHOW_EDIT_START = App.debug(false);
 
     public static ItemEditorFragment create(UUID itemStorageId, Class<? extends Item> itemType, int addItemPosition) {
         ItemEditorFragment result = new ItemEditorFragment();
