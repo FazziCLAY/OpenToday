@@ -119,7 +119,7 @@ public class ItemTextEditorFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         UI.getUIRoot(this).popActivitySettings();
-        Debug.itemtexteditor = null;
+        Debug.itemTextEditor = null;
     }
 
     private void openFormattingHelp() {
@@ -216,7 +216,7 @@ public class ItemTextEditorFragment extends Fragment {
             system = null;
         }
 
-        Debug.itemtexteditor = String.format("SysSTART=%s; SysEND=%s s=%s", systemStart, systemEnd, system);
+        Debug.itemTextEditor = String.format("SysSTART=%s; SysEND=%s s=%s", systemStart, systemEnd, system);
 
         viewVisible(binding.addSystem, !isSystem(), View.GONE);
         viewVisible(binding.deleteSystem, isSystem(), View.GONE);
