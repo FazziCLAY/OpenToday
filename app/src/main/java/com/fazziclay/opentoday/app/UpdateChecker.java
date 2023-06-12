@@ -17,14 +17,13 @@ public class UpdateChecker {
     private static final long CACHE_TIMEOUT_MILLIS = 5 * 60 * 60 * 1000; // 5 hours
     private static final String TAG = "UpdateChecker";
 
-    // TODO: 04.06.2023 UNTESTED. TEST PLEASE
     public static void check(Context context, Result result) {
         Thread thread = new UpdateCheckedThread(context, result);
         thread.start();
     }
 
     public interface Result {
-        void run(boolean available, String url);
+        void run(boolean available, String url, String name);
     }
 
     private static class UpdateCheckedThread extends Thread {
@@ -36,9 +35,9 @@ public class UpdateChecker {
             this.cacheFile = new File(context.getExternalCacheDir(), "latest_update_check");
         }
 
-        private void callback(boolean available, String pageURL, boolean cached) {
-            result.run(available, pageURL);
-            Logger.d(TAG, "callback run."+(cached ? " (cached!)" : "")+" available="+available+" pageURL="+pageURL);
+        private void callback(boolean available, String pageURL, String name, boolean cached) {
+            result.run(available, pageURL, name);
+            Logger.d(TAG, "callback run."+(cached ? " (cached!)" : "")+" available="+available+" pageURL="+pageURL+" name="+name);
         }
 
         @Override
@@ -49,7 +48,7 @@ public class UpdateChecker {
                 try {
                     long latestCheck = Long.parseLong(FileUtil.getText(cacheFile));
                     if ((currentTime - latestCheck) < CACHE_TIMEOUT_MILLIS) {
-                        callback(false, null, true);
+                        callback(false, null, null, true);
                         return;
                     }
                 } catch (Exception e) {
@@ -68,10 +67,11 @@ public class UpdateChecker {
                     Logger.d(TAG, "latest.json (remote) = " + latestJsonString);
 
                     String url = latestJson.getString("page_url");
+                    String name = latestJson.optString("name", "OT");
                     Logger.d(TAG, "latest.json->url (remote) = " + url);
-                    callback(true, url, false);
+                    callback(true, url, name, false);
                 } else {
-                    callback(false, null, false);
+                    callback(false, null, null, false);
                     FileUtil.setText(cacheFile, String.valueOf(currentTime));
                     Logger.d(TAG, "Cache file saved. Content: " + currentTime);
                 }

@@ -15,6 +15,7 @@
         android:importantForAccessibility="no" />
 
     <TextView
+        android:id="@+id/update_available_text"
         android:layout_toEndOf="@id/update_available_icon"
         android:layout_width="match_parent"
         android:paddingStart="5sp"

@@ -225,7 +225,7 @@
     <string name="notification_ui_debugApp">This is debug build! (for developers only)\nBranch: %s</string>
     <string name="notification_ui_tooLongPinCode_text">Your current pin is too long.\nSo it was off. Configure the pin code again</string>
     <string name="notification_ui_tooLongPinCode_title">Pin-code too long</string>
-    <string name="notification_ui_updateAvailable">Update available! Click to download</string>
+    <string name="notification_ui_updateAvailable">Update \'%s\' is available! Click to download</string>
     <string name="openSourceLicense_cantStart">Can\'t start this activity</string>
     <string name="openSourceLicense_cantStart_assesPath">Can\'t start this activity: assesPath is null!</string>
     <string name="openSourceLicense_cantStart_exception">Exception: %s</string>

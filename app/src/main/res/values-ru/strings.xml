@@ -219,7 +219,7 @@
     <string name="notification_ui_debugApp">Это отладочный билд! (только для разработки)\nBranch: %s</string>
     <string name="notification_ui_tooLongPinCode_text">Ваш текущий пин-код слишком длинный.\nПоэтому он был выключен. Настройте пин-код заново</string>
     <string name="notification_ui_tooLongPinCode_title">Пин-код слишком длинный</string>
-    <string name="notification_ui_updateAvailable">Доступно обновление! Нажмите чтобы скачать</string>
+    <string name="notification_ui_updateAvailable">Доступно обновление \'%s\'! Нажмите чтобы скачать</string>
     <string name="openSourceLicense_cantStart">Невозможно запустить активити</string>
     <string name="openSourceLicense_cantStart_assesPath">Невозможно запустить активити: assesPath is null</string>
     <string name="openSourceLicense_cantStart_exception">Ошибка: %s</string>

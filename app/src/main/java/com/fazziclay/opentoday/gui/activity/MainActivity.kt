@@ -158,7 +158,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
 
     override fun onPause() {
         super.onPause()
-        CrashReportContext.mainActivityPause();
+        CrashReportContext.mainActivityPause()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -233,10 +233,13 @@ class MainActivity : AppCompatActivity(), UIRoot {
 
     // Update checker
     private fun setupUpdateAvailableNotify() {
-        UpdateChecker.check(app) { available: Boolean, url: String? ->
+        UpdateChecker.check(app) { available: Boolean, url: String?, name: String? ->
             runOnUiThread {
                 if (available) {
                     val updateAvailableLayout = NotificationUpdateAvailableBinding.inflate(layoutInflater)
+                    updateAvailableLayout.updateAvailableText.text = getString(R.string.notification_ui_updateAvailable,
+                        name ?: "OTN"
+                    )
                     binding.notifications.addView(updateAvailableLayout.root)
                     if (url != null) {
                         viewClick(updateAvailableLayout.root, Runnable { NetworkUtil.openBrowser(this@MainActivity, url) })
