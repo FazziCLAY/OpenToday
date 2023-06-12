@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import com.fazziclay.javaneoutil.FileUtil;
 import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.CrashReportContext;
 import com.fazziclay.opentoday.app.ImportantDebugCallback;
 import com.fazziclay.opentoday.app.Translation;
 import com.fazziclay.opentoday.app.data.CherryOrchard;
@@ -317,6 +318,7 @@ public class TabsManager implements ItemsRoot, Tickable {
 
     // ==== Tick ====
     public void tick(TickSession tickSession, List<UUID> uuids) {
+        CrashReportContext.BACK.push("TabsManager tick personal");
         checkDestroy();
 
         Debug.tickedPersonal();
@@ -328,10 +330,12 @@ public class TabsManager implements ItemsRoot, Tickable {
                 }
             }
         });
+        CrashReportContext.BACK.pop();
     }
 
     @Override
     public void tick(TickSession tickSession) {
+        CrashReportContext.BACK.push("TabsManager tick");
         checkDestroy();
 
         Debug.ticked();
@@ -341,6 +345,7 @@ public class TabsManager implements ItemsRoot, Tickable {
                 tab.tick(tickSession);
             }
         });
+        CrashReportContext.BACK.pop();
     }
 
 

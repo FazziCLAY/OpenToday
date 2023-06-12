@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.App
 import com.fazziclay.opentoday.app.ColorHistoryManager
+import com.fazziclay.opentoday.app.CrashReportContext
 import com.fazziclay.opentoday.app.ImportWrapper
 import com.fazziclay.opentoday.app.PinCodeManager
 import com.fazziclay.opentoday.app.PinCodeManager.PinCodeNotValidateException
@@ -70,6 +71,7 @@ class SettingsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        CrashReportContext.FRONT.push("SettingsFragment")
         Logger.d(TAG, "onCreate")
         app = App.get(requireContext())
         settingsManager = app.settingsManager
@@ -84,6 +86,7 @@ class SettingsFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        CrashReportContext.FRONT.pop()
         UI.getUIRoot(this).popActivitySettings()
     }
 

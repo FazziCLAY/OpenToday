@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fazziclay.opentoday.R;
+import com.fazziclay.opentoday.app.CrashReportContext;
 import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
@@ -244,6 +245,7 @@ public class ItemsStorageDrawer {
     }
 
     private void actionItem(Item item, SettingsManager.ItemAction action) {
+        CrashReportContext.FRONT.push("ItemsStorageDrawer.actionItem");
         switch (action) {
             case OPEN_EDITOR -> onItemEditor.run(item);
             case SELECT_ON -> selectionManager.selectItem(item);
@@ -276,6 +278,7 @@ public class ItemsStorageDrawer {
                     .setPositiveButton(R.string.fragment_itemEditor_delete_apply, ((dialog1, which) -> item.delete()))
                     .show();
         }
+        CrashReportContext.FRONT.pop();
     }
 
     @SuppressLint("NonConstantResourceId")

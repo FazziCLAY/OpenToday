@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.fazziclay.opentoday.Debug
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.App
+import com.fazziclay.opentoday.app.CrashReportContext
 import com.fazziclay.opentoday.app.FeatureFlag
 import com.fazziclay.opentoday.app.ImportantDebugCallback
 import com.fazziclay.opentoday.app.SettingsManager
@@ -89,6 +90,8 @@ class MainActivity : AppCompatActivity(), UIRoot {
     // Activity overrides
     override fun onCreate(savedInstanceState: Bundle?) {
         val startTime = System.currentTimeMillis()
+        CrashReportContext.mainActivityCreate()
+        CrashReportContext.FRONT.push("MainActivity")
         Logger.d(TAG, "onCreate", nullStat(savedInstanceState))
         if (App.DEBUG) EnumsRegistry.missingChecks()
         app = App.get(this)
@@ -153,6 +156,11 @@ class MainActivity : AppCompatActivity(), UIRoot {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        CrashReportContext.mainActivityPause();
+    }
+
     override fun onSupportNavigateUp(): Boolean {
         val toolbarSettings = getCurrentActivitySettings().toolbarSettings
         if (toolbarSettings != null) {
@@ -175,6 +183,8 @@ class MainActivity : AppCompatActivity(), UIRoot {
         app.telemetry.send(UiClosedLPacket())
         currentDateHandler.removeCallbacks(currentDateRunnable)
         app.importantDebugCallbacks.removeCallback(importantDebugCallback)
+        CrashReportContext.mainActivityDestroy()
+        CrashReportContext.FRONT.pop()
     }
 
     // Current Date

@@ -144,6 +144,7 @@ public class App extends Application {
             instance = this;
             setupCrashReporter();
             DebugUtil.sleep(DEBUG_APP_START_SLEEP);
+            CrashReportContext.BACK.push("App onCreate");
 
             logsFile = new File(getExternalCacheDir(), "latest.log");
             final FixResult fixResult = Logger.dur("App", "[DataFixer] fixToCurrentVersion", () -> getDataFixer().fixToCurrentVersion());

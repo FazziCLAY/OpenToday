@@ -95,6 +95,10 @@ public class TimeUtil {
         return SIMPLE_DATE_FORMAT.get().format(t);
     }
 
+    public static String getDebugDate() {
+        return SIMPLE_DATE_FORMAT.get().format(System.currentTimeMillis());
+    }
+
     public static void free() {
         SIMPLE_DATE_FORMAT.free();
     }

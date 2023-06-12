@@ -3,6 +3,7 @@ package com.fazziclay.opentoday;
 import androidx.annotation.NonNull;
 
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.CrashReportContext;
 
 /**
  * Collect debug info and other debug constants
@@ -33,13 +34,15 @@ public class Debug {
                         [Save] %s ago; req=%s
                         [App] init=%sms
                         [GUI] %sms; Toolbar-ctx=$[@italic;-#0055ff]%s$[||]
-                        [ItemTextEditor] %s""",
+                        [ItemTextEditor] %s
+                        $[-ff0000][CrashReportContext] %s$[||]""",
 
                 ago(latestTick), latestTickDuration, ago(latestPersonalTick), latestPersonalTickDuration,
                 ago(latestSave), latestSaveRequestsCount,
                 appStartupTime,
                 mainActivityStartupTime, itemsStorageToolbarContext,
-                itemtexteditor);
+                itemtexteditor,
+                CrashReportContext.getAsString());
     }
 
     public static void free() {

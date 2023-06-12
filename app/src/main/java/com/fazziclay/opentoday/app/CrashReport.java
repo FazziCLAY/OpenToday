@@ -99,6 +99,9 @@ public class CrashReport {
                  * App.debug(true): %_DEBUG_RESULT_OF_TRUE_APP_DEBUG_FUNCTION_%
                 %_DEBUG_GET_TEXT_%
                 
+                CrashReportContext:
+                %_CRASH_REPORT_CONTEXT_%
+                
                 Logger:
                 %_L_LOGS_%
 
@@ -106,6 +109,7 @@ public class CrashReport {
                 %_ALL_STACK_TRACES_%
                 --- OpenToday Crash ---
                 """;
+        text = text.replace("%_CRASH_REPORT_CONTEXT_%", getText(CrashReportContext::getAsString));
         text = text.replace("%_DEBUG_RESULT_OF_FALSE_APP_DEBUG_FUNCTION_%", getText(() -> App.debug(false)));
         text = text.replace("%_DEBUG_RESULT_OF_TRUE_APP_DEBUG_FUNCTION_%", getText(() -> App.debug(true)));
         text = text.replace("%_APPLICATION_VERSION_RELEASE_TIME_%", getText(() -> App.VERSION_RELEASE_TIME + " (" + TimeUtil.getDebugDate(App.VERSION_RELEASE_TIME*1000) + ")"));
