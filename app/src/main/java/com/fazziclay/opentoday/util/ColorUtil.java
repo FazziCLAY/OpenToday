@@ -114,10 +114,10 @@ public class ColorUtil {
 
             if (chars[oi] == '\\') {
                 if (oi + 1 < chars.length && chars[oi + 1] == '$') {
-                    toAppend = "$[";
-                    oi += 2;
+                    toAppend = "$";
+                    oi += 1;
                 }
-            } else if (chars[oi] == '$' && (oi - 1 < 0 || chars[oi] != '\\')) {
+            } else if (chars[oi] == '$' && (oi - 1 < 0 || chars[oi] != '\\') && (oi + 1 < chars.length && chars[oi + 1] == '[')) {
                 if (oi + 1 < chars.length && chars[oi + 1] == '[') {
                     boolean closeSymbol = false;
                     int _i = oi + 2;
