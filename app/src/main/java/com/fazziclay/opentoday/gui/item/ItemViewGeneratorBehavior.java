@@ -2,21 +2,12 @@ package com.fazziclay.opentoday.gui.item;
 
 import android.graphics.drawable.Drawable;
 
-import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 
 public interface ItemViewGeneratorBehavior {
-
-    boolean isMinimizeGrayColor();
-
-    SettingsManager.ItemAction getItemOnClickAction();
-
-    boolean isScrollToAddedItem();
-
-    SettingsManager.ItemAction getItemOnLeftAction();
 
     boolean isConfirmFastChanges();
 

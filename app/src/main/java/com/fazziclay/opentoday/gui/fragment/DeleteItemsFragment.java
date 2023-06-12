@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.item.GroupItem;
@@ -143,33 +142,12 @@ public class DeleteItemsFragment extends Fragment {
     private static class DeleteViewGeneratorBehavior implements ItemViewGeneratorBehavior {
 
         @Override
-        public boolean isMinimizeGrayColor() {
-            return false;
-        }
-
-        @Override
-        public SettingsManager.ItemAction getItemOnClickAction() {
-            return null;
-        }
-
-        @Override
-        public boolean isScrollToAddedItem() {
-            return false;
-        }
-
-        @Override
-        public SettingsManager.ItemAction getItemOnLeftAction() {
-            return null;
-        }
-
-        @Override
         public boolean isConfirmFastChanges() {
             return false;
         }
 
         @Override
         public void setConfirmFastChanges(boolean b) {
-
         }
 
         @Override
@@ -179,17 +157,14 @@ public class DeleteItemsFragment extends Fragment {
 
         @Override
         public void onGroupEdit(GroupItem groupItem) {
-
         }
 
         @Override
         public void onCycleListEdit(CycleListItem cycleListItem) {
-
         }
 
         @Override
         public void onFilterGroupEdit(FilterGroupItem filterGroupItem) {
-
         }
     }
 }

@@ -39,7 +39,7 @@ public class ItemsStorageDrawer {
     private static final String TAG = "ItemStorageDrawer";
     private final Activity activity;
     private final ItemViewGenerator itemViewGenerator;
-    private final ItemViewGeneratorBehavior itemViewGeneratorBehavior;
+    private final ItemsStorageDrawerBehavior behavior;
     private final SelectionManager selectionManager;
     private final ItemsStorage itemsStorage;
     private final RecyclerView view;
@@ -57,29 +57,28 @@ public class ItemsStorageDrawer {
     @Nullable private final ItemInterface onItemTextEditor;
 
     // Public
-    public ItemsStorageDrawer(@NonNull Activity activity, ItemViewGeneratorBehavior itemViewGeneratorBehavior, SelectionManager selectionManager, ItemsStorage itemsStorage, ItemInterface itemOnClick, @NonNull ItemInterface onItemEditor, @Nullable ItemInterface onItemTextEditor, boolean previewMode) {
-        this.onItemTextEditor = onItemTextEditor;
+    public ItemsStorageDrawer(@NonNull Activity activity, ItemsStorageDrawerBehavior itemsStorageDrawerBehavior, ItemViewGeneratorBehavior itemViewGeneratorBehavior, SelectionManager selectionManager, ItemsStorage itemsStorage, ItemInterface itemOnClick, @NonNull ItemInterface onItemEditor, @Nullable ItemInterface onItemTextEditor, boolean previewMode) {
         this.originalThread = Thread.currentThread();
         if (this.originalThread != Looper.getMainLooper().getThread()) {
             throw new RuntimeException("Creating an ItemsStorageDrawer object is allowed only in the main thread");
         }
-
         this.activity = activity;
-        this.itemViewGeneratorBehavior = itemViewGeneratorBehavior;
+        this.behavior = itemsStorageDrawerBehavior;
         this.selectionManager = selectionManager;
         this.itemsStorage = itemsStorage;
+        this.onItemTextEditor = onItemTextEditor;
         this.onItemEditor = onItemEditor;
-        this.view = new RecyclerView(activity);
         this.itemOnClick = itemOnClick;
         this.previewMode = previewMode;
+        this.view = new RecyclerView(activity);
         this.view.setLayoutManager(new LinearLayoutManager(activity));
         this.view.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1));
         this.itemViewGenerator = new ItemViewGenerator(this.activity, itemViewGeneratorBehavior, previewMode, this::onItemClick);
     }
 
 
-    public static CreateBuilder builder(Activity activity, ItemViewGeneratorBehavior itemViewGeneratorBehavior, SelectionManager selectionManager, ItemsStorage itemsStorage) {
-        return new CreateBuilder(activity, itemViewGeneratorBehavior, selectionManager, itemsStorage);
+    public static CreateBuilder builder(Activity activity, ItemsStorageDrawerBehavior behavior, ItemViewGeneratorBehavior itemViewGeneratorBehavior, SelectionManager selectionManager, ItemsStorage itemsStorage) {
+        return new CreateBuilder(activity, behavior, itemViewGeneratorBehavior, selectionManager, itemsStorage);
     }
 
     public void create() {
@@ -121,7 +120,7 @@ public class ItemsStorageDrawer {
             return;
         }
         if (!previewMode) {
-            actionItem(item, itemViewGeneratorBehavior.getItemOnClickAction());
+            actionItem(item, behavior.getItemOnClickAction());
         }
     }
 
@@ -151,7 +150,7 @@ public class ItemsStorageDrawer {
         public Status onAdded(Item item, int pos) {
             runOnUiThread(() -> {
                 runAdapter((adapter) -> adapter.notifyItemInserted(pos));
-                if (itemViewGeneratorBehavior.isScrollToAddedItem()) view.smoothScrollToPosition(pos);
+                if (behavior.isScrollToAddedItem()) view.smoothScrollToPosition(pos);
             });
             return Status.NONE;
         }
@@ -235,7 +234,7 @@ public class ItemsStorageDrawer {
             runAdapter(adapter1 -> adapter1.notifyItemChanged(position));
 
             if (direction == ItemTouchHelper.LEFT) {
-                actionItem(item, itemViewGeneratorBehavior.getItemOnLeftAction());
+                actionItem(item, behavior.getItemOnLeftAction());
 
             } else if (direction == ItemTouchHelper.RIGHT) {
                 ItemViewHolder itemViewHolder = (ItemViewHolder) viewHolder;
@@ -373,6 +372,7 @@ public class ItemsStorageDrawer {
 
     public static class CreateBuilder {
         private final Activity activity;
+        private final ItemsStorageDrawerBehavior behavior;
         private final ItemViewGeneratorBehavior viewGeneratorBehavior;
         private final SelectionManager selectionManager;
         private final ItemsStorage itemsStorage;
@@ -381,8 +381,9 @@ public class ItemsStorageDrawer {
         private ItemInterface onItemOpenEditor = null;
         private ItemInterface onItemTextEditor = null;
 
-        public CreateBuilder(Activity activity, ItemViewGeneratorBehavior viewGeneratorBehavior, SelectionManager selectionManager, ItemsStorage itemsStorage) {
+        public CreateBuilder(Activity activity, ItemsStorageDrawerBehavior behavior, ItemViewGeneratorBehavior viewGeneratorBehavior, SelectionManager selectionManager, ItemsStorage itemsStorage) {
             this.activity = activity;
+            this.behavior = behavior;
             this.viewGeneratorBehavior = viewGeneratorBehavior;
             this.selectionManager = selectionManager;
             this.itemsStorage = itemsStorage;
@@ -414,7 +415,7 @@ public class ItemsStorageDrawer {
         }
 
         public ItemsStorageDrawer build() {
-            return new ItemsStorageDrawer(activity, viewGeneratorBehavior, selectionManager, itemsStorage, onItemClick, onItemOpenEditor, onItemTextEditor, previewMode);
+            return new ItemsStorageDrawer(activity, behavior, viewGeneratorBehavior, selectionManager, itemsStorage, onItemClick, onItemOpenEditor, onItemTextEditor, previewMode);
         }
     }
 

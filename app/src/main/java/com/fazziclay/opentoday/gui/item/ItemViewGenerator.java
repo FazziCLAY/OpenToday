@@ -136,11 +136,6 @@ public class ItemViewGenerator {
 
         // Minimize view patch
         if (!previewMode && item.isMinimize()) {
-            // TODO: 06.06.2023 applyForeground?
-            if (behavior.isMinimizeGrayColor()) {
-                resultView.setForeground(AppCompatResources.getDrawable(activity, R.drawable.shape));
-                resultView.setForegroundTintList(ColorStateList.valueOf(Color.parseColor("#44f0fff0")));
-            }
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(0, 0, 15, 0);
             resultView.setLayoutParams(layoutParams);
