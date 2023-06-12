@@ -19,6 +19,7 @@ import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.datafixer.DataFixer;
 import com.fazziclay.opentoday.app.datafixer.FixResult;
+import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.TabsManager;
@@ -478,5 +479,8 @@ public class App extends Application {
 
     public CallbackStorage<ImportantDebugCallback> getImportantDebugCallbacks() {
         return importantDebugCallbacks.get();
+    }
+    public ItemsRoot getItemsRoot() {
+        return getTabsManager();
     }
 }
