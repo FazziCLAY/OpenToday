@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
         addNotification(UINotification.create(text, 2500).setEndCallback {
             Logger.d(TAG, "ImportantDebugCallback notification ended successfully")
         })
-        Status.NONE
+        return@ImportantDebugCallback Status.NONE
     }
 
     // Activity overrides
