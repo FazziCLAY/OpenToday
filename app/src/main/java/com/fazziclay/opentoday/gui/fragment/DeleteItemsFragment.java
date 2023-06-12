@@ -15,11 +15,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
-import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.databinding.FragmentDeleteItemsBinding;
 import com.fazziclay.opentoday.gui.ActivitySettings;
 import com.fazziclay.opentoday.gui.UI;
@@ -60,7 +60,7 @@ public class DeleteItemsFragment extends Fragment {
 
 
     private FragmentDeleteItemsBinding binding;
-    private TabsManager tabsManager;
+    private ItemsRoot itemsRoot;
     private ItemViewGenerator itemViewGenerator;
     private Item[] itemsToDelete;
 
@@ -68,13 +68,13 @@ public class DeleteItemsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         App app = App.get(requireContext());
-        tabsManager = app.getTabsManager();
+        itemsRoot = app.getItemsRoot();
 
         // parse
         String[] r = getArguments().getStringArray(KEY_ITEMS_TO_DELETE);
         List<Item> u = new ArrayList<>();
         for (String s : r) {
-            u.add(tabsManager.getItemById(UUID.fromString(s)));
+            u.add(itemsRoot.getItemById(UUID.fromString(s)));
         }
         itemsToDelete = u.toArray(new Item[0]);
         // parse END
