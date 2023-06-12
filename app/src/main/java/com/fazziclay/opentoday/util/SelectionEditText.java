@@ -8,8 +8,6 @@ import androidx.annotation.Nullable;
 
 public class SelectionEditText extends androidx.appcompat.widget.AppCompatEditText {
     private OnSelectionChangedListener onSelectionChangedListener = null;
-    private int selectionStart = -1;
-    private int selectionEnd = -1;
 
     public SelectionEditText(@NonNull Context context) {
         super(context);
@@ -25,8 +23,6 @@ public class SelectionEditText extends androidx.appcompat.widget.AppCompatEditTe
 
     @Override
     protected void onSelectionChanged(int selStart, int selEnd) {
-        this.selectionStart = selStart;
-        this.selectionEnd = selEnd;
         if (onSelectionChangedListener != null) {
             onSelectionChangedListener.onSelectionChanged(this, selStart, selEnd);
         }
@@ -39,16 +35,6 @@ public class SelectionEditText extends androidx.appcompat.widget.AppCompatEditTe
 
     public OnSelectionChangedListener getOnSelectionChangedListener() {
         return onSelectionChangedListener;
-    }
-
-    @Override
-    public int getSelectionStart() {
-        return selectionStart;
-    }
-
-    @Override
-    public int getSelectionEnd() {
-        return selectionEnd;
     }
 
     public interface OnSelectionChangedListener {
