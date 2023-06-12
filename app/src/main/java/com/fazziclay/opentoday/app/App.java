@@ -99,7 +99,6 @@ public class App extends Application {
     }
 
     public static App get() {
-        Logger.w("App", "call get() without context");
         return instance;
     }
 
