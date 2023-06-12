@@ -98,6 +98,7 @@ public class TickThread extends Thread {
         }
         log("Thread done.");
         interrupt();
+        enabled = false;
     }
 
     private void tickAll() {
@@ -193,6 +194,10 @@ public class TickThread extends Thread {
 
     public void requestTerminate() {
         this.enabled = false;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 
     public GregorianCalendar getGregorianCalendar() {
