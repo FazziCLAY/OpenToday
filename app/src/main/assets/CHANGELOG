@@ -1,8 +1,41 @@
 $[@bold;-#00FF00;S25]# Changelog v??? 1.1.4 (2023.06.??)$[||]
 * Changelog now use formatting: $[-#ffff00;=#0000ff;@bold]Hello!$[||]
 * New formatting system: size. \$[S20] - size=20
-$[-#ffff00]Todo: write changelog$[||]
-owo!
+* Import: теперь импорт с более высокой версии невозможен
+* Лишние FeatureFlags удалены
+* Новые коментарии в CrashReport
+* CrashReport уведомление исправлено
+* CrashReportActivity added "Send to developer" button if send anonymous statistic disabled
+* ColorHistoryManager использует меньше RAM
+* Длинна пин-кода теперь ограничена 10 символами
+* Название начальной вкладки теперь переведено на язык пользователя
+* Возобновление отправки уведомлений после перезагрузки устройства
+* New item: MathGame
+  $[-#ffff00]Fix$[||]
+* UpdateChecker rewritten
+* Update available notification fixed
+* Changed Item policy: item now generated in ItemsRoot
+* Fix shadow-link while transform ContainerItem to FilterGroupItem
+* Transform dialog now show only allowed items
+* Settings QuickNoteType dialog now show only allowed items(check required featureFlags)
+* Fix selections item foreground
+* Selected items now in previewMode
+* new fragment: ItemTextEditor
+* Changelog now is Fragment
+* added ActivitySettings to MainActivity
+* added UINotification to MainActivity
+* Fragments About, Settings, Import, Changelog and ItemTextEditor now use android toolbar
+* Logger now use formatting & UI Logs viewer added background preference
+* Toolbar->Debug perfectly
+* SetupActivity now contains theme selector
+* DeleteItemsFragment now use RecyclerView
+* ItemsRootEditorFragment: path now correctly
+* QuickNote long press to send button now open settings.quickNoteType dialog
+* Update ViewPager2 on tab click
+* TimeUtil getDebugDate() now use Locale.UK & EE instead of EEEE
+* RandomUtil now uses OptionalField
+* NetworkUtil support DEBUG_CONTENTS
+* Fix translates
 
 
 
