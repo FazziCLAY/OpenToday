@@ -16,6 +16,7 @@ public class Logger {
     private static final StringBuilder LOGS = new StringBuilder();
     private static final String[] SHOW_STACKTRACE_IF_CONTAINS = {
             "[Tab] Attempt to getRoot in unattached Tab.",
+            "call get() without context"
     };
 
     public static <T> T dur(String tag, String message, Supplier<T> supplier) {
