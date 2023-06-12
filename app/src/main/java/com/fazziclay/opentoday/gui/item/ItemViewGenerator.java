@@ -13,7 +13,6 @@ import android.os.Handler;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.util.Linkify;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +51,7 @@ import com.fazziclay.opentoday.databinding.ItemTextBinding;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.util.ColorUtil;
 import com.fazziclay.opentoday.util.DebugUtil;
+import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.annotation.ForItem;
 import com.fazziclay.opentoday.util.callback.Status;
@@ -121,7 +121,7 @@ public class ItemViewGenerator {
 
         } else {
             RuntimeException exception = new RuntimeException("Unexpected item type '" + type.getName() + "'! check ItemViewGenerator for fix this.");
-            Log.e(TAG, "Unexpected item type to generate view. (wait 3000ms in DebugUtil.sleep())", exception);
+            Logger.e(TAG, "Unexpected item type to generate view. (wait 3000ms in DebugUtil.sleep())", exception);
             DebugUtil.sleep(3000);
             throw exception;
         }
@@ -178,13 +178,13 @@ public class ItemViewGenerator {
                 int color;
                 if (item.isResultRight(currentNumber)) {
                     color = Color.GREEN;
+                    item.postResult(currentNumber);
                     binding.questText.setText(item.getQuestText());
                     binding.questText.setTextSize(item.getQuestTextSize());
                     binding.questText.setGravity(item.getQuestTextGravity());
                 } else {
                     color = Color.RED;
                 }
-                item.postResult(currentNumber);
 
                 clear();
                 binding.userEnterNumber.setBackgroundColor(color);

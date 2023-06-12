@@ -122,7 +122,6 @@ public class MathGameItem extends TextItem {
 
     public void postResult(int currentNumber) {
         if (isResultRight(currentNumber)) generateQuest();
-        visibleChanged();
     }
 
     private static class BaseQuest {
