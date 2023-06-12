@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -27,7 +28,6 @@ import com.fazziclay.opentoday.app.items.item.Transform;
 import com.fazziclay.opentoday.app.items.selection.Selection;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType;
-import com.fazziclay.opentoday.gui.dialog.DialogTextItemEditText;
 import com.fazziclay.opentoday.gui.fragment.ItemEditorFragment;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.util.Logger;
@@ -53,9 +53,11 @@ public class ItemsStorageDrawer {
     private final boolean previewMode;
     private ItemViewWrapper itemViewWrapper = null;
     private final ItemInterface onItemEditor;
+    @Nullable private final ItemInterface onItemTextEditor;
 
     // Public
-    public ItemsStorageDrawer(@NonNull Activity activity, ItemViewGeneratorBehavior itemViewGeneratorBehavior, SelectionManager selectionManager, ItemsStorage itemsStorage, ItemInterface itemOnClick, @NonNull ItemInterface onItemEditor, boolean previewMode) {
+    public ItemsStorageDrawer(@NonNull Activity activity, ItemViewGeneratorBehavior itemViewGeneratorBehavior, SelectionManager selectionManager, ItemsStorage itemsStorage, ItemInterface itemOnClick, @NonNull ItemInterface onItemEditor, @Nullable ItemInterface onItemTextEditor, boolean previewMode) {
+        this.onItemTextEditor = onItemTextEditor;
         this.originalThread = Thread.currentThread();
         if (this.originalThread != Looper.getMainLooper().getThread()) {
             throw new RuntimeException("Creating an ItemsStorageDrawer object is allowed only in the main thread");
@@ -244,14 +246,8 @@ public class ItemsStorageDrawer {
     private void actionItem(Item item, SettingsManager.ItemAction action) {
         switch (action) {
             case OPEN_EDITOR -> onItemEditor.run(item);
-            case SELECT_ON -> {
-                selectionManager.selectItem(item);
-                item.visibleChanged();
-            }
-            case SELECT_OFF -> {
-                selectionManager.deselectItem(item);
-                item.visibleChanged();
-            }
+            case SELECT_ON -> selectionManager.selectItem(item);
+            case SELECT_OFF -> selectionManager.deselectItem(item);
             case MINIMIZE_REVERT -> {
                 item.setMinimize(!item.isMinimize());
                 item.visibleChanged();
@@ -273,7 +269,6 @@ public class ItemsStorageDrawer {
                 } else {
                     selectionManager.selectItem(item);
                 }
-                item.visibleChanged();
             }
             case DELETE_REQUEST -> new AlertDialog.Builder(activity)
                     .setTitle(R.string.fragment_itemEditor_delete_title)
@@ -338,10 +333,7 @@ public class ItemsStorageDrawer {
                     break;
 
                 case R.id.textItem_editText:
-                    if (item instanceof TextItem textItem) {
-                        DialogTextItemEditText d = new DialogTextItemEditText(activity, textItem);
-                        d.show();
-                    }
+                    onItemTextEditor.run(item);
                     break;
 
                 case R.id.transform:
@@ -383,6 +375,7 @@ public class ItemsStorageDrawer {
         private boolean previewMode = false;
         private ItemInterface onItemClick = null;
         private ItemInterface onItemOpenEditor = null;
+        private ItemInterface onItemTextEditor = null;
 
         public CreateBuilder(Activity activity, ItemViewGeneratorBehavior viewGeneratorBehavior, SelectionManager selectionManager, ItemsStorage itemsStorage) {
             this.activity = activity;
@@ -406,14 +399,18 @@ public class ItemsStorageDrawer {
             return this;
         }
 
-
         public CreateBuilder setOnItemOpenEditor(ItemInterface i) {
             this.onItemOpenEditor = i;
             return this;
         }
 
+        public CreateBuilder setOnItemTextEditor(ItemInterface onItemTextEditor) {
+            this.onItemTextEditor = onItemTextEditor;
+            return this;
+        }
+
         public ItemsStorageDrawer build() {
-            return new ItemsStorageDrawer(activity, viewGeneratorBehavior, selectionManager, itemsStorage, onItemClick, onItemOpenEditor, previewMode);
+            return new ItemsStorageDrawer(activity, viewGeneratorBehavior, selectionManager, itemsStorage, onItemClick, onItemOpenEditor, onItemTextEditor, previewMode);
         }
     }
 

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- TODO: Make translatable -->
+    <item
+        android:id="@+id/previewFormatting"
+        android:checkable="true"
+        android:title="Preview formatting" />
+
+    <item
+        android:id="@+id/helpFormatting"
+        android:title="Formatting help" />
+</menu>

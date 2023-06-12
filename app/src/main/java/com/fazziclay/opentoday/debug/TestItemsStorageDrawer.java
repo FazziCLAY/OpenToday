@@ -95,6 +95,7 @@ public class TestItemsStorageDrawer extends Activity {
                 tabsManager.getTabById(new UUID(0, 0)),
                 onClick,
                 item -> Toast.makeText(TestItemsStorageDrawer.this, "unsupported", Toast.LENGTH_SHORT).show(),
+                null,
                 previewMode);
 
 

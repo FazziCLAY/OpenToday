@@ -353,4 +353,6 @@
     <string name="transform_not_allowed">Transformation is impossible</string>
     <string name="transform_selectTypeDialog_message" />
     <string name="transform_selectTypeDialog_title">Select result type</string>
+    <string name="fragment_itemEditor_module_longtext_openTextEditor">Open text editor</string>
+    <string name="fragment_itemEditor_module_text_openTextEditor">Open text editor</string>
 </resources>

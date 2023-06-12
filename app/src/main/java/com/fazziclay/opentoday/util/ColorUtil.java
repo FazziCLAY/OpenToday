@@ -32,6 +32,41 @@ public class ColorUtil {
         String hex = "00".concat(Integer.toHexString(value));
         return hex.substring(hex.length()-2);
     }
+    
+    public static String sysReset(String sys, char c) {
+        String[] args = sys.split(";");
+        StringBuilder result = new StringBuilder();
+        StringBuilder passed = new StringBuilder();
+        for (String arg : args) {
+            if (arg.isEmpty() || passed.toString().contains(String.valueOf(arg.charAt(0)))) continue;
+            if (!arg.startsWith(String.valueOf(c))) {
+                result.append(arg).append(";");
+                passed.append(arg.charAt(0));
+            }
+        }
+        if (result.toString().isEmpty()) return "";
+        return result.substring(0, result.lastIndexOf(";"));
+    }
+
+    public static String sysSet(String sys, char c, String val) {
+        String[] args = sys.split(";");
+        StringBuilder result = new StringBuilder();
+        StringBuilder passed = new StringBuilder();
+        boolean replaced = false;
+        for (String arg : args) {
+            if (arg.isEmpty() || passed.toString().contains(String.valueOf(arg.charAt(0)))) continue;
+            if (!arg.startsWith(String.valueOf(c))) {
+                result.append(arg).append(";");
+            } else {
+                result.append(c).append(val).append(";");
+                replaced = true;
+            }
+            passed.append(arg.charAt(0));
+        }
+        if (!replaced) result.append(c).append(val).append(";");
+        if (result.toString().isEmpty()) return "";
+        return result.substring(0, result.lastIndexOf(";"));
+    }
 
     /**
      * @see #colorize(String, int, int, int, boolean)

@@ -1,20 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     style="@style/Theme.OpenToday.ItemEditModule">
 
     <TextView
         android:id="@+id/titleOfText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/openTextEditor"
         android:minHeight="23sp"
         android:text="@string/fragment_itemEditor_module_text_text_title"/>
+
+    <ImageButton
+        android:id="@+id/openTextEditor"
+        android:layout_width="48sp"
+        android:layout_height="40sp"
+        android:src="@android:drawable/ic_menu_edit"
+        android:layout_alignParentEnd="true"
+        android:backgroundTint="#44000000"
+        android:contentDescription="@string/fragment_itemEditor_module_text_openTextEditor" />
 
     <EditText
         android:id="@+id/text"
         android:hint="@string/fragment_itemEditor_module_text_text_hint"
+        android:layout_below="@id/openTextEditor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:importantForAutofill="no"
@@ -24,6 +34,7 @@
         android:id="@+id/paragraphColorize"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/text"
         android:minHeight="0sp"
         android:text="@string/fragment_itemEditor_text_paragraphColorize" />
 
@@ -32,16 +43,20 @@
         android:id="@+id/clickableUrls"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/paragraphColorize"
         android:minHeight="0sp"
         android:text="@string/item_text_clickableUrls" />
 
     <TextView
+        android:id="@+id/textColor_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/clickableUrls"
         android:text="@string/fragment_itemEditor_text_textColor" />
 
     <RelativeLayout
         android:id="@+id/textColor_edit"
+        android:layout_below="@id/textColor_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -61,4 +76,4 @@
             android:layout_alignParentEnd="true"
             android:minHeight="0sp"/>
     </RelativeLayout>
-</LinearLayout>
+</RelativeLayout>

@@ -59,9 +59,9 @@ import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.dialog.DialogItemNotificationsEditor;
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
+import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.util.EnumUtil;
 import com.fazziclay.opentoday.util.Logger;
-import com.fazziclay.opentoday.util.MinBaseAdapter;
 import com.fazziclay.opentoday.util.MinTextWatcher;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
@@ -88,6 +88,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     private static final String KEY_ADD_ITEM_POSITION = "create:addItemPosition";
     public static final int VALUE_ADD_ITEM_POSITION_TOP = 0;
     public static final int VALUE_ADD_ITEM_POSITION_BOTTOM = -1;
+    private static final boolean DEBUG_SHOW_EDIT_START = App.debug(true);
 
     public static ItemEditorFragment create(UUID itemStorageId, Class<? extends Item> itemType, int addItemPosition) {
         ItemEditorFragment result = new ItemEditorFragment();
@@ -126,6 +127,9 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     }
 
 
+
+
+    private FragmentItemEditorBinding binding;
     private App app;
     private TabsManager tabsManager;
     private SettingsManager settingsManager;
@@ -136,13 +140,25 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     private int addItemPosition = VALUE_ADD_ITEM_POSITION_BOTTOM;
 
     private int mode;
-    
+
     // Edit
     // Create
     private ItemsStorage itemsStorage; // for create
 
     // Internal
     private final List<BaseEditUiModule> editModules = new ArrayList<>();
+
+    private NavigationHost navigationHost;
+
+    private boolean disableTextUpdated;
+    private boolean disableViewMinHeightUpdated;
+    private boolean disableLongTextUpdated;
+
+    private void disableStateRestoreOnEdits() {
+        disableLongTextUpdated = true;
+        disableTextUpdated = true;
+        disableViewMinHeightUpdated = true;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -152,6 +168,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             throw new NullPointerException("Arguments is null");
         }
 
+        binding = FragmentItemEditorBinding.inflate(getLayoutInflater());
         app = App.get(requireContext());
         tabsManager = app.getTabsManager();
         settingsManager = app.getSettingsManager();
@@ -181,19 +198,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             throw new RuntimeException("Item is null!");
         }
 
-        UI.getUIRoot(this).pushActivitySettings(a -> a.setNotificationsVisible(false));
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        UI.getUIRoot(this).popActivitySettings();
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final FragmentItemEditorBinding binding = FragmentItemEditorBinding.inflate(inflater);
+        navigationHost = UI.findFragmentInParents(this, MainRootFragment.class);
 
         if (item instanceof Item) {
             binding.modules.addView(addEditModule(new ItemEditModule()));
@@ -220,6 +225,18 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.modules.addView(addEditModule(new FilterGroupItemEditModule()));
         }
 
+        UI.getUIRoot(this).pushActivitySettings(a -> a.setNotificationsVisible(false));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        UI.getUIRoot(this).popActivitySettings();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         viewClick(binding.applyButton, this::applyRequest);
         viewClick(binding.cancelButton, this::cancelRequest);
         viewClick(binding.deleteButton, this::deleteRequest);
@@ -233,6 +250,9 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     public void onResume() {
         super.onResume();
         Logger.i("ItemEditorFragment", "onResume");
+        for (BaseEditUiModule editModule : editModules) {
+            editModule.onResume();
+        }
     }
 
     public UUID getArgTabId() {
@@ -258,7 +278,13 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     }
 
     private View addEditModule(BaseEditUiModule editUiModule) {
-        editUiModule.setOnStartEditListener(() -> unsavedChanges = true);
+        editUiModule.setOnStartEditListener(() -> {
+            if (DEBUG_SHOW_EDIT_START) {
+                Toast.makeText(app, "edit start", Toast.LENGTH_SHORT).show();
+                new Exception().printStackTrace();
+            }
+            unsavedChanges = true;
+        });
         editUiModule.setup(this.item, requireActivity(), null);
         editModules.add(editUiModule);
 
@@ -352,6 +378,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         public abstract void commit(Item item) throws Exception;
         public abstract void setOnStartEditListener(Runnable o);
         public void notifyCreateMode() {}
+        public void onResume() {}
     }
 
     public class ItemEditModule extends BaseEditUiModule {
@@ -411,6 +438,10 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.viewMinHeight.addTextChangedListener(new MinTextWatcher() {
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (disableViewMinHeightUpdated) {
+                        disableViewMinHeightUpdated = false;
+                        return;
+                    }
                     onEditStart.run();
                 }
             });
@@ -475,6 +506,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         private Runnable onEditStart;
 
         private int temp_textColor;
+        private MinTextWatcher textWatcher;
 
         @Override
         public View getView() {
@@ -513,9 +545,13 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.paragraphColorize.setOnClickListener(v -> onEditStart.run());
 
             // On edit start
-            binding.text.addTextChangedListener(new MinTextWatcher() {
+            binding.text.addTextChangedListener(textWatcher = new MinTextWatcher() {
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (disableTextUpdated) {
+                        disableTextUpdated = false;
+                        return;
+                    }
                     onEditStart.run();
                 }
             });
@@ -526,6 +562,16 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.clickableUrls.setChecked(textItem.isClickableUrls());
             binding.clickableUrls.setOnClickListener(v -> onEditStart.run());
             //
+
+            viewClick(binding.openTextEditor, () -> {
+                disableStateRestoreOnEdits();
+                navigationHost.navigate(ItemTextEditorFragment.create(item.getId(), ItemTextEditorFragment.EDITABLE_TYPE_TEXT), true);
+            });
+        }
+
+        @Override
+        public void onResume() {
+            MinTextWatcher.runAtDisabled(binding.text, textWatcher, () -> binding.text.setText(item.getText()));
         }
 
         private void updateTextColorIndicator(Activity activity) {
@@ -562,6 +608,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         private Runnable onEditStart;
 
         private int temp_textColor;
+        private MinTextWatcher textWatcher;
 
         @Override
         public View getView() {
@@ -599,7 +646,16 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.clickableUrls.setChecked(longTextItem.isLongTextClickableUrls());
 
             // On edit start
-            MinBaseAdapter.after(binding.text, onEditStart);
+            binding.text.addTextChangedListener(textWatcher = new MinTextWatcher(){
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (disableLongTextUpdated) {
+                        disableLongTextUpdated = false;
+                        return;
+                    }
+                    onEditStart.run();
+                }
+            });
             binding.defaultTextColor.setOnClickListener(v -> {
                 updateTextColorIndicator(activity);
                 onEditStart.run();
@@ -611,6 +667,15 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.size.setMin(1);
             binding.size.setProgress(longTextItem.getLongTextSize());
             //
+            viewClick(binding.openTextEditor, () -> {
+                disableStateRestoreOnEdits();
+                navigationHost.navigate(ItemTextEditorFragment.create(item.getId(), ItemTextEditorFragment.EDITABLE_TYPE_LONG_TEXT), true);
+            });
+        }
+
+        @Override
+        public void onResume() {
+            MinTextWatcher.runAtDisabled(binding.text, textWatcher, () -> binding.text.setText(((LongTextItem)item).getLongText()));
         }
 
         private void updateTextColorIndicator(Activity activity) {

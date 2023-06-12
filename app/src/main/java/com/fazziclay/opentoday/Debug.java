@@ -16,6 +16,7 @@ public class Debug {
     public static final int DEF = -1;
 
     public static long latestTick = DEF;
+    public static Object itemtexteditor = DEF;
     private static long latestPersonalTick = DEF;
     public static int latestTickDuration = DEF;
     public static int latestPersonalTickDuration = DEF;
@@ -31,12 +32,14 @@ public class Debug {
                         $[@bold;-#ffff00][Tick]$[||] %s ago %sms; Personal: %s ago %sms
                         [Save] %s ago; req=%s
                         [App] init=%sms
-                        [GUI] %sms; Toolbar-ctx=$[@italic;-#0055ff]%s$[||]""",
+                        [GUI] %sms; Toolbar-ctx=$[@italic;-#0055ff]%s$[||]
+                        [ItemTextEditor] %s""",
 
                 ago(latestTick), latestTickDuration, ago(latestPersonalTick), latestPersonalTickDuration,
                 ago(latestSave), latestSaveRequestsCount,
                 appStartupTime,
-                mainActivityStartupTime, itemsStorageToolbarContext);
+                mainActivityStartupTime, itemsStorageToolbarContext,
+                itemtexteditor);
     }
 
     public static void free() {
