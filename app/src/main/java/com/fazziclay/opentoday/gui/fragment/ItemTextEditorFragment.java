@@ -119,6 +119,7 @@ public class ItemTextEditorFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         UI.getUIRoot(this).popActivitySettings();
+        Debug.itemtexteditor = null;
     }
 
     private void openFormattingHelp() {
