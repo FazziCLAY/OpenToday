@@ -16,7 +16,7 @@ public class Debug {
     public static final int DEF = -1;
 
     public static long latestTick = DEF;
-    public static Object itemtexteditor = DEF;
+    public static Object itemtexteditor = null;
     private static long latestPersonalTick = DEF;
     public static int latestTickDuration = DEF;
     public static int latestPersonalTickDuration = DEF;
@@ -24,7 +24,7 @@ public class Debug {
     public static int latestSaveRequestsCount = DEF;
     public static long appStartupTime = DEF;
     public static long mainActivityStartupTime = DEF;
-    public static Object itemsStorageToolbarContext = DEF;
+    public static Object itemsStorageToolbarContext = null;
 
     @NonNull
     public static String getDebugInfoText() {
@@ -43,7 +43,9 @@ public class Debug {
     }
 
     public static void free() {
-        itemsStorageToolbarContext = "(Debug.free() called)";
+        final String D = "(Debug.free() called)";
+        if (itemsStorageToolbarContext != null) itemsStorageToolbarContext = D;
+        if (itemtexteditor != null) itemtexteditor = D;
     }
 
     public static long ago(long l) {
