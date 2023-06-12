@@ -408,9 +408,11 @@ public class App extends Application {
     }
 
     private TabsManager preCheckTabsManager() {
+        CrashReportContext.BACK.push("App.preCheckTabsManager");
         final File externalFiles = getExternalFilesDir("");
         TabsManager tabsManager = new TabsManager(new File(externalFiles, "item_data.json"), new File(externalFiles, "item_data.gz"), getTranslation());
         tabsManager.setDebugPrintSaveStatusAlways(isFeatureFlag(FeatureFlag.ALWAYS_SHOW_SAVE_STATUS));
+        CrashReportContext.BACK.pop();
         return tabsManager;
     }
 
