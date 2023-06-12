@@ -30,7 +30,7 @@ import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.ColorHistoryManager;
 import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.SettingsManager;
-import com.fazziclay.opentoday.app.items.tab.TabsManager;
+import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
@@ -131,7 +131,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
     private FragmentItemEditorBinding binding;
     private App app;
-    private TabsManager tabsManager;
+    private ItemsRoot itemsRoot;
     private SettingsManager settingsManager;
     private ColorHistoryManager colorHistoryManager;
     private SelectionManager selectionManager;
@@ -170,7 +170,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
         binding = FragmentItemEditorBinding.inflate(getLayoutInflater());
         app = App.get(requireContext());
-        tabsManager = app.getTabsManager();
+        itemsRoot = app.getItemsRoot();
         settingsManager = app.getSettingsManager();
         colorHistoryManager = app.getColorHistoryManager();
         selectionManager = app.getSelectionManager();
@@ -178,14 +178,14 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         
         if (mode == MODE_EDIT) {
             if (getArguments().containsKey(KEY_EDIT_TAB_ID)) {
-                Tab tab = tabsManager.getTabById(getArgTabId());
+                Tab tab = itemsRoot.getTabById(getArgTabId());
                 item = tab.getItemById(getArgItemId());
             } else {
-                item = tabsManager.getItemById(getArgItemId());
+                item = itemsRoot.getItemById(getArgItemId());
             }
 
         } else if (mode == MODE_CREATE) {
-            itemsStorage = tabsManager.getItemsStorageById(getArgItemStorageId());
+            itemsStorage = itemsRoot.getItemsStorageById(getArgItemStorageId());
             addItemPosition = getArgAddItemPosition();
             ItemsRegistry.ItemInfo itemInfo = ItemsRegistry.REGISTRY.get(getArgItemType());
             item = itemInfo.create();
