@@ -40,6 +40,7 @@ import com.fazziclay.opentoday.util.InlineUtil.viewClick
 import com.fazziclay.opentoday.util.InlineUtil.viewVisible
 import com.fazziclay.opentoday.util.Logger
 import com.fazziclay.opentoday.util.NetworkUtil
+import com.fazziclay.opentoday.util.StreamUtil
 import com.fazziclay.opentoday.util.callback.CallbackImportance
 import com.fazziclay.opentoday.util.callback.Status
 import java.text.SimpleDateFormat
@@ -153,6 +154,16 @@ class MainActivity : AppCompatActivity(), UIRoot {
             Logger.w(TAG, "Example warning message")
             Logger.e(TAG, "Example error message", Exception("Example exception for logger"))
             Logger.i(TAG, "------------------")
+        }
+
+        if (App.DEBUG || App.SHADOW_RELEASE) {
+            try {
+                val todo = StreamUtil.read(assets.open("IMPORTANT_TODO"))
+                if (todo.isNotEmpty()) {
+                    binding.importantTodo.visibility = View.VISIBLE
+                    binding.importantTodo.text = todo
+                }
+            } catch (ignored: Exception) {}
         }
     }
 
