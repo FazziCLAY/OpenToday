@@ -11,6 +11,12 @@ public class MinTextWatcher implements TextWatcher {
         textView.addTextChangedListener(textWatcher);
     }
 
+    public static void afterAll(Runnable runnable, TextView... text) {
+        for (TextView textView : text) {
+            after(textView, runnable);
+        }
+    }
+
     public static void after(TextView text, Runnable runnable) {
         text.addTextChangedListener(new MinTextWatcher(){
             @Override
