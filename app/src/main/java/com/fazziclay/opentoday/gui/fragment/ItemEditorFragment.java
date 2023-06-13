@@ -28,6 +28,7 @@ import androidx.fragment.app.Fragment;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.ColorHistoryManager;
+import com.fazziclay.opentoday.app.CrashReportContext;
 import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemsRoot;
@@ -54,6 +55,7 @@ import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleFiltergroupBi
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleItemBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleLongtextBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleTextBinding;
+import com.fazziclay.opentoday.gui.ActivitySettings;
 import com.fazziclay.opentoday.gui.ColorPicker;
 import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.gui.UI;
@@ -163,6 +165,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CrashReportContext.FRONT.push("ItemEditorFragment.onCreate");
 
         if (getArguments() == null) {
             throw new NullPointerException("Arguments is null");
@@ -225,13 +228,18 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.modules.addView(addEditModule(new FilterGroupItemEditModule()));
         }
 
-        UI.getUIRoot(this).pushActivitySettings(a -> a.setNotificationsVisible(false));
+        UI.getUIRoot(this).pushActivitySettings(a -> {
+            a.setNotificationsVisible(false);
+            a.setClockVisible(false);
+            a.setToolbarSettings(ActivitySettings.ToolbarSettings.createBack(EnumsRegistry.INSTANCE.nameResId(ItemsRegistry.REGISTRY.get(item.getClass()).getItemType()), this::cancelRequest));
+        });
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         UI.getUIRoot(this).popActivitySettings();
+        CrashReportContext.FRONT.pop();
     }
 
     @Nullable
@@ -241,7 +249,6 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         viewClick(binding.cancelButton, this::cancelRequest);
         viewClick(binding.deleteButton, this::deleteRequest);
         viewVisible(binding.deleteButton, item.isAttached(), View.GONE);
-        binding.itemTypeName.setText(EnumsRegistry.INSTANCE.nameResId(ItemsRegistry.REGISTRY.get(item.getClass()).getItemType()));
 
         return binding.getRoot();
     }

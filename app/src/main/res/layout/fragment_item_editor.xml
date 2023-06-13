@@ -10,25 +10,12 @@
         android:layout_above="@id/apply_button"
         android:layout_height="match_parent">
 
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/modules"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
 
-            <TextView
-                android:id="@+id/itemTypeName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="Filter Group"
-                android:textSize="17sp"
-                android:gravity="center" />
-
-            <LinearLayout
-                android:id="@+id/modules"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/itemTypeName"
-                android:orientation="vertical" />
-        </RelativeLayout>
     </ScrollView>
 
     <Button
