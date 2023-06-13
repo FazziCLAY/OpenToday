@@ -25,7 +25,6 @@ import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Readonly;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
-import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.gui.EnumsRegistry;

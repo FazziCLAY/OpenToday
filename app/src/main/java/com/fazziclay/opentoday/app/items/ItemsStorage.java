@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.Item;
-import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.Tickable;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;

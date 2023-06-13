@@ -1,38 +1,9 @@
 package com.fazziclay.opentoday.debug;
 
 import android.app.Activity;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.fazziclay.opentoday.app.Translation;
-import com.fazziclay.opentoday.app.TranslationImpl;
-import com.fazziclay.opentoday.app.items.ItemPath;
-import com.fazziclay.opentoday.app.items.ItemsRoot;
-import com.fazziclay.opentoday.app.items.ItemsStorage;
-import com.fazziclay.opentoday.app.items.item.CheckboxItem;
-import com.fazziclay.opentoday.app.items.item.CycleListItem;
-import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
-import com.fazziclay.opentoday.app.items.item.GroupItem;
-import com.fazziclay.opentoday.app.items.item.Item;
-import com.fazziclay.opentoday.app.items.item.MathGameItem;
-import com.fazziclay.opentoday.app.items.item.SimpleItemsStorage;
-import com.fazziclay.opentoday.app.items.item.TextItem;
-import com.fazziclay.opentoday.app.items.tab.Tab;
-import com.fazziclay.opentoday.app.items.tick.TickSession;
-import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
-import com.fazziclay.opentoday.gui.item.ItemViewGenerator;
-import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
-
-import java.util.GregorianCalendar;
-import java.util.UUID;
 
 public class TestItemViewGenerator extends Activity {
     @Override

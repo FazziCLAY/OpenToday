@@ -3,12 +3,12 @@ package com.fazziclay.opentoday.app.items.tick;
 import android.content.Context;
 
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
-import com.fazziclay.opentoday.app.items.item.ItemUtil;
 import com.fazziclay.opentoday.app.items.SaveInitiator;
 import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.app.items.item.Item;
+import com.fazziclay.opentoday.app.items.item.ItemUtil;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.util.Logger;
 
 import java.util.ArrayList;
