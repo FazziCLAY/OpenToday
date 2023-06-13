@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/text"
         android:minHeight="0sp"
-        android:text="@string/item_text_clickableUrls" />
+        android:text="@string/item_longtext_clickableUrls" />
 
     <TextView
         android:id="@+id/textColor_title"
