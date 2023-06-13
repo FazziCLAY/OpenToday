@@ -11,13 +11,13 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.App
+import com.fazziclay.opentoday.app.items.ItemsRoot
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem
 import com.fazziclay.opentoday.app.items.item.Item
 import com.fazziclay.opentoday.app.items.item.filter.DateItemFilter
 import com.fazziclay.opentoday.app.items.item.filter.ItemFilter
 import com.fazziclay.opentoday.app.items.item.filter.ItemStatItemFilter
 import com.fazziclay.opentoday.app.items.item.filter.LogicContainerItemFilter
-import com.fazziclay.opentoday.app.items.tab.TabsManager
 import com.fazziclay.opentoday.databinding.FragmentFilterGroupItemFilterEditorBinding
 import com.fazziclay.opentoday.gui.ActivitySettings
 import com.fazziclay.opentoday.gui.UI
@@ -88,7 +88,7 @@ class FilterGroupItemFilterEditorFragment : Fragment() {
 
     private lateinit var binding: FragmentFilterGroupItemFilterEditorBinding
     private lateinit var app: App
-    private lateinit var tabsManager: TabsManager
+    private lateinit var itemsRoot: ItemsRoot
     private lateinit var filterGroup: FilterGroupItem
     private lateinit var item: Item
     private lateinit var rootFilter: ItemFilter
@@ -97,11 +97,11 @@ class FilterGroupItemFilterEditorFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         app = App.get(requireContext())
-        tabsManager = app.tabsManager
+        itemsRoot = app.itemsRoot
 
         if (arguments != null) {
             val filterGroupId = UUID.fromString(requireArguments().getString(KEY_FILTER_GROUP))
-            filterGroup = (tabsManager.getItemById(filterGroupId) as FilterGroupItem?)!!
+            filterGroup = (itemsRoot.getItemById(filterGroupId) as FilterGroupItem?)!!
             val itemId = UUID.fromString(requireArguments().getString(KEY_ITEM))
             item = filterGroup.getItemById(itemId)!!
 
