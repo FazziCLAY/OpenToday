@@ -5,6 +5,7 @@ import android.graphics.Color;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
@@ -172,6 +173,7 @@ public abstract class Item implements Unique, Tickable {
 
     public void tick(TickSession tickSession) {
         if (!tickSession.isAllowed(this)) return;
+        Debug.tickedItems++;
         if (tickSession.isTickTargetAllowed(TickTarget.ITEM_NOTIFICATIONS)) ItemNotificationUtil.tick(tickSession, notifications, this);
         if (tickSession.isTickTargetAllowed(TickTarget.ITEM_CALLBACKS)) itemCallbacks.run((callbackStorage, callback) -> callback.tick(Item.this));
     }

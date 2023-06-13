@@ -2,6 +2,7 @@ package com.fazziclay.opentoday.app.items.item;
 
 import androidx.annotation.NonNull;
 
+import com.fazziclay.opentoday.app.CrashReportContext;
 import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
@@ -96,7 +97,11 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
         int i = items.size() - 1;
         while (i >= 0) {
             Item item = items.get(i);
-            if (tickSession.isAllowed(item)) item.tick(tickSession);
+            if (tickSession.isAllowed(item)) {
+                CrashReportContext.BACK.push("SimpleItemStorage.tick.itemTick_"+item.getId());
+                item.tick(tickSession);
+                CrashReportContext.BACK.pop();
+            }
             i--;
         }
     }

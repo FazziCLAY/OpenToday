@@ -1,5 +1,7 @@
 package com.fazziclay.opentoday;
 
+import android.os.Build;
+
 import androidx.annotation.NonNull;
 
 import com.fazziclay.opentoday.app.App;
@@ -16,6 +18,7 @@ public class Debug {
     public static final int DEF = -1;
 
     public static long latestTick = DEF;
+    public static long tickedItems = DEF;
     public static Object itemTextEditor = null;
     private static long latestPersonalTick = DEF;
     public static int latestTickDuration = DEF;
@@ -28,14 +31,24 @@ public class Debug {
 
     @NonNull
     public static String getDebugInfoText() {
+        String  androidReleaseOrCodename;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            androidReleaseOrCodename = Build.VERSION.RELEASE_OR_CODENAME;
+        } else {
+            androidReleaseOrCodename = "sdk<R(30)";
+        }
         return String.format("""
-                        $[@bold;-#ffff00][Tick]$[||] %s ago %sms; Personal: %s ago %sms
+                        OpenToday %s; Branch: %s
+                        [Android] ((int)sdk)=%s relOrCod=%s
+                        $[@bold;-#ffff00][Tick]$[||] %s ago %sms all=%s; Personal: %s ago %sms
                         [Save] %s ago; req=%s
                         [App] init=%sms
                         [GUI] %sms; Toolbar-ctx=$[@italic;-#0055ff]%s$[||]
                         [ItemTextEditor] %s""",
 
-                ago(latestTick), latestTickDuration, ago(latestPersonalTick), latestPersonalTickDuration,
+                App.VERSION_NAME, App.VERSION_BRANCH,
+                Build.VERSION.SDK_INT, androidReleaseOrCodename,
+                ago(latestTick), latestTickDuration, tickedItems, ago(latestPersonalTick), latestPersonalTickDuration,
                 ago(latestSave), latestSaveRequestsCount,
                 appStartupTime,
                 mainActivityStartupTime, itemsStorageToolbarContext,

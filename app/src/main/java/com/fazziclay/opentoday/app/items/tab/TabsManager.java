@@ -338,11 +338,14 @@ public class TabsManager implements ItemsRoot, Tickable {
         CrashReportContext.BACK.push("TabsManager tick");
         checkDestroy();
 
+        Debug.tickedItems = 0;
         Debug.ticked();
         Debug.latestTickDuration = Logger.countOnlyDur(() -> {
             for (Tab tab : getAllTabs()) {
                 if (tab == null || tab.isDisableTick()) continue;
+                CrashReportContext.BACK.push("TickTab_"+tab.getId());
                 tab.tick(tickSession);
+                CrashReportContext.BACK.pop();
             }
         });
         CrashReportContext.BACK.pop();
