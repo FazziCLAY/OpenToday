@@ -58,7 +58,7 @@ public class MathGameItem extends TextItem {
     @RequireSave @SaveKey(key = "primitiveAllowedOperations") private final List<String> primitiveAllowedOperations = new ArrayList<>();
 
 
-    private BaseQuest quest = new BaseQuest();
+    private BaseQuest quest;
 
     @NonNull
     public static MathGameItem createEmpty() {
@@ -71,17 +71,22 @@ public class MathGameItem extends TextItem {
 
     public MathGameItem(MathGameItem copy) {
         super(copy);
+        this.quest = new BaseQuest();
         if (copy != null) {
-            this.quest = new PrimitiveQuest();
             this.primitiveNumber1Min = copy.primitiveNumber1Min;
             this.primitiveNumber1Max = copy.primitiveNumber1Max;
             this.primitiveNumber2Min = copy.primitiveNumber2Min;
             this.primitiveNumber2Max = copy.primitiveNumber2Max;
+            this.primitiveAllowedOperations.addAll(copy.primitiveAllowedOperations);
+        } else {
+            this.primitiveAllowedOperations.add("+");
         }
     }
 
     public MathGameItem(TextItem append) {
         super(append);
+        this.quest = new BaseQuest();
+        this.primitiveAllowedOperations.add("+");
     }
 
     @Override
