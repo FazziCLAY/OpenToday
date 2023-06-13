@@ -577,6 +577,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.clickableUrls.setOnClickListener(v -> onEditStart.run());
             //
 
+            viewVisible(binding.openTextEditor, mode == MODE_EDIT, View.INVISIBLE);
             viewClick(binding.openTextEditor, () -> {
                 disableStateRestoreOnEdits();
                 navigationHost.navigate(ItemTextEditorFragment.create(item.getId(), ItemTextEditorFragment.EDITABLE_TYPE_TEXT), true);
@@ -681,6 +682,8 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.size.setMin(1);
             binding.size.setProgress(longTextItem.getLongTextSize());
             //
+
+            viewVisible(binding.openTextEditor, mode == MODE_EDIT, View.INVISIBLE);
             viewClick(binding.openTextEditor, () -> {
                 disableStateRestoreOnEdits();
                 navigationHost.navigate(ItemTextEditorFragment.create(item.getId(), ItemTextEditorFragment.EDITABLE_TYPE_LONG_TEXT), true);
