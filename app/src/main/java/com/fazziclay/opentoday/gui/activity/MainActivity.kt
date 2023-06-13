@@ -156,10 +156,11 @@ class MainActivity : AppCompatActivity(), UIRoot {
             Logger.i(TAG, "------------------")
         }
 
+        val HIDE_IMPORTANT_TODOS = true
         if (App.DEBUG || App.SHADOW_RELEASE) {
             try {
                 val todo = StreamUtil.read(assets.open("IMPORTANT_TODO"))
-                if (todo.isNotEmpty()) {
+                if (todo.isNotEmpty() && !HIDE_IMPORTANT_TODOS) {
                     binding.importantTodo.visibility = View.VISIBLE
                     binding.importantTodo.text = todo
                 }
