@@ -380,7 +380,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     }
 
 
-    public static class UserException extends Exception {
+    public static class UserException extends RuntimeException {
         public UserException(String m) {
             super(m);
         }
@@ -1034,8 +1034,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             try {
                 this.item.setPrimitiveNumber2Max(Integer.parseInt(binding.n2max.getText().toString()));
             } catch (Exception ignored) {}
-            this.item.generateQuest();
-            this.item.visibleChanged();
+            if (mode == MODE_EDIT) this.item.generateQuest();
         }
 
         @Override
