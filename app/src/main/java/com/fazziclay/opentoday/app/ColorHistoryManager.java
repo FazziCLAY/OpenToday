@@ -51,10 +51,10 @@ public class ColorHistoryManager {
                 return;
             }
         }
-        int i = 1;
-        while (i < history.length) {
+        int i = history.length-1;
+        while (i >= 1) {
             history[i] = history[i-1];
-            i++;
+            i--;
         }
         history[0] = color;
         if (size < maxSize) size++;
