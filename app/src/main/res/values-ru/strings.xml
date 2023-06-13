@@ -118,11 +118,13 @@
     <string name="fragment_itemEditor_module_item_minimize">Уменьшить</string>
     <string name="fragment_itemEditor_module_item_notifications">Уведомления</string>
     <string name="fragment_itemEditor_module_item_selected">Выделен</string>
+    <string name="fragment_itemEditor_module_longtext_openTextEditor">Открыть редактор текста</string>
     <string name="fragment_itemEditor_module_longtext_textColor_dialog_apply">Применить</string>
     <string name="fragment_itemEditor_module_longtext_textColor_dialog_cancel">Отмена</string>
     <string name="fragment_itemEditor_module_longtext_textColor_dialog_title">Цвет длинного текста</string>
     <string name="fragment_itemEditor_module_longtext_text_hint">Введите большой текст</string>
     <string name="fragment_itemEditor_module_longtext_text_title">Большой текст</string>
+    <string name="fragment_itemEditor_module_text_openTextEditor">Открыть редактор текста</string>
     <string name="fragment_itemEditor_module_text_textColor_dialog_apply">Применить</string>
     <string name="fragment_itemEditor_module_text_textColor_dialog_cancel">Отмена</string>
     <string name="fragment_itemEditor_module_text_textColor_dialog_title">Цвет текста</string>
@@ -130,6 +132,20 @@
     <string name="fragment_itemEditor_module_text_text_title">Текст</string>
     <string name="fragment_itemEditor_text_paragraphColorize">Поддержка форматирования</string>
     <string name="fragment_itemEditor_text_textColor">Цвет текста</string>
+    <string name="fragment_itemTextEditor_apply">Применить</string>
+    <string name="fragment_itemTextEditor_backgroundColor_apply">Применить</string>
+    <string name="fragment_itemTextEditor_backgroundColor_cancel">Отмена</string>
+    <string name="fragment_itemTextEditor_backgroundColor_reset">Сброс</string>
+    <string name="fragment_itemTextEditor_backgroundColor_title">Цвет фона текста</string>
+    <string name="fragment_itemTextEditor_editText_hint">Введите текст</string>
+    <string name="fragment_itemTextEditor_foregroundColor_apply">Применить</string>
+    <string name="fragment_itemTextEditor_foregroundColor_cancel">Отмена</string>
+    <string name="fragment_itemTextEditor_foregroundColor_reset">Сброс</string>
+    <string name="fragment_itemTextEditor_foregroundColor_title">Цвет текста</string>
+    <string name="fragment_itemTextEditor_toolbar_menu_helpFormatting">Помощь форматирования</string>
+    <string name="fragment_itemTextEditor_toolbar_menu_previewFormatting">Предпросмотр</string>
+    <string name="fragment_itemTextEditor_toolbar_title_longTextItem">Редактор длинного текста</string>
+    <string name="fragment_itemTextEditor_toolbar_title_textItem">Редактор текста</string>
     <string name="importWrapper_errorCode_NOT_IMPORT_TEXT">Это не импорт-текст приложения OpenToday.</string>
     <string name="importWrapper_errorCode_VERSION_NOT_COMPATIBLE">Версия данного импорт-текста не совместима с текущей версией приложения</string>
     <string name="importWrapper_permission_ADD_ITEMS_TO_CURRENT">Добавлять айтемы в текущей открытый контейнер</string>
@@ -142,6 +158,7 @@
     <string name="itemAction_MINIMIZE_ON">Уменьшить: ВКЛ</string>
     <string name="itemAction_MINIMIZE_REVERT">Уменьшить: Инвертировать</string>
     <string name="itemAction_OPEN_EDITOR">Редактировать</string>
+    <string name="itemAction_OPEN_TEXT_EDITOR">Редактор текста</string>
     <string name="itemAction_SELECT_OFF">Выделение: ВЫКЛ</string>
     <string name="itemAction_SELECT_ON">Выделение: ВКЛ</string>
     <string name="itemAction_SELECT_REVERT">Выделение: Инвертировать</string>
@@ -346,7 +363,4 @@
     <string name="transform_not_allowed">Трансформация невозможна</string>
     <string name="transform_selectTypeDialog_message" />
     <string name="transform_selectTypeDialog_title">Выберите тип результата</string>
-    <string name="fragment_itemEditor_module_longtext_openTextEditor">Открыть редактор текста</string>
-    <string name="fragment_itemEditor_module_text_openTextEditor">Открыть редактор текста</string>
-    <string name="itemAction_OPEN_TEXT_EDITOR">Редактор текста</string>
 </resources>

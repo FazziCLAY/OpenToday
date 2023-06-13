@@ -124,11 +124,13 @@
     <string name="fragment_itemEditor_module_item_minimize">Minimize</string>
     <string name="fragment_itemEditor_module_item_notifications">Notifications</string>
     <string name="fragment_itemEditor_module_item_selected">Selected</string>
+    <string name="fragment_itemEditor_module_longtext_openTextEditor">Open text editor</string>
     <string name="fragment_itemEditor_module_longtext_textColor_dialog_apply">Apply</string>
     <string name="fragment_itemEditor_module_longtext_textColor_dialog_cancel">Cancel</string>
     <string name="fragment_itemEditor_module_longtext_textColor_dialog_title">Long-text color</string>
     <string name="fragment_itemEditor_module_longtext_text_hint">Enter long text</string>
     <string name="fragment_itemEditor_module_longtext_text_title">Long text</string>
+    <string name="fragment_itemEditor_module_text_openTextEditor">Open text editor</string>
     <string name="fragment_itemEditor_module_text_textColor_dialog_apply">Apply</string>
     <string name="fragment_itemEditor_module_text_textColor_dialog_cancel">Cancel</string>
     <string name="fragment_itemEditor_module_text_textColor_dialog_title">Text color</string>
@@ -136,6 +138,20 @@
     <string name="fragment_itemEditor_module_text_text_title">Text</string>
     <string name="fragment_itemEditor_text_paragraphColorize">Formatting support</string>
     <string name="fragment_itemEditor_text_textColor">Text color</string>
+    <string name="fragment_itemTextEditor_apply">apply</string>
+    <string name="fragment_itemTextEditor_backgroundColor_apply">Apply</string>
+    <string name="fragment_itemTextEditor_backgroundColor_cancel">Cancel</string>
+    <string name="fragment_itemTextEditor_backgroundColor_reset">Reset</string>
+    <string name="fragment_itemTextEditor_backgroundColor_title">Background color</string>
+    <string name="fragment_itemTextEditor_editText_hint">Enter here</string>
+    <string name="fragment_itemTextEditor_foregroundColor_apply">Apply</string>
+    <string name="fragment_itemTextEditor_foregroundColor_cancel">Cancel</string>
+    <string name="fragment_itemTextEditor_foregroundColor_reset">Reset</string>
+    <string name="fragment_itemTextEditor_foregroundColor_title">Text color</string>
+    <string name="fragment_itemTextEditor_toolbar_menu_helpFormatting">Formatting help</string>
+    <string name="fragment_itemTextEditor_toolbar_menu_previewFormatting">Preview formatting</string>
+    <string name="fragment_itemTextEditor_toolbar_title_longTextItem">Edit long text</string>
+    <string name="fragment_itemTextEditor_toolbar_title_textItem">Edit text</string>
     <string name="importWrapper_errorCode_NOT_IMPORT_TEXT">This is not a OpenToday import-text.</string>
     <string name="importWrapper_errorCode_VERSION_NOT_COMPATIBLE">This import-text version not compatible with current version</string>
     <string name="importWrapper_permission_ADD_ITEMS_TO_CURRENT">Add items to current open container</string>
@@ -148,6 +164,7 @@
     <string name="itemAction_MINIMIZE_ON">Minimize: ON</string>
     <string name="itemAction_MINIMIZE_REVERT">Minimize: revert</string>
     <string name="itemAction_OPEN_EDITOR">Edit</string>
+    <string name="itemAction_OPEN_TEXT_EDITOR">Edit text</string>
     <string name="itemAction_SELECT_OFF">Selection: OFF</string>
     <string name="itemAction_SELECT_ON">Selection: ON</string>
     <string name="itemAction_SELECT_REVERT">Selection: revert</string>
@@ -353,7 +370,4 @@
     <string name="transform_not_allowed">Transformation is impossible</string>
     <string name="transform_selectTypeDialog_message" />
     <string name="transform_selectTypeDialog_title">Select result type</string>
-    <string name="fragment_itemEditor_module_longtext_openTextEditor">Open text editor</string>
-    <string name="fragment_itemEditor_module_text_openTextEditor">Open text editor</string>
-    <string name="itemAction_OPEN_TEXT_EDITOR">Edit text</string>
 </resources>
