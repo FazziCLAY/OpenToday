@@ -26,4 +26,10 @@ public enum ItemType {
         if (type == this) return true;
         return this.parents.contains(type);
     }
+
+    public static ItemType byClass(Class<? extends Item> c) {
+        ItemsRegistry.ItemInfo itemInfo = ItemsRegistry.REGISTRY.get(c);
+        if (itemInfo == null) return null;
+        return itemInfo.getItemType();
+    }
 }
