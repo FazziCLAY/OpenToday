@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- TODO: Make translatable -->
     <item
         android:id="@+id/previewFormatting"
         android:checkable="true"
-        android:title="Preview formatting" />
+        android:title="@string/fragment_itemTextEditor_toolbar_menu_previewFormatting" />
 
     <item
         android:id="@+id/helpFormatting"
-        android:title="Formatting help" />
+        android:title="@string/fragment_itemTextEditor_toolbar_menu_helpFormatting" />
 </menu>

@@ -86,9 +86,8 @@ public class ItemTextEditorFragment extends Fragment {
         UI.getUIRoot(this).pushActivitySettings(a -> {
             a.setNotificationsVisible(false);
             a.setClockVisible(false);
-            // TODO: 09.06.2023 make translatable
             a.setToolbarSettings(
-                    ActivitySettings.ToolbarSettings.createBack(isLongText ? "Edit long text" : "Edit text", () -> UI.rootBack(this))
+                    ActivitySettings.ToolbarSettings.createBack(isLongText ? R.string.fragment_itemTextEditor_toolbar_title_longTextItem : R.string.fragment_itemTextEditor_toolbar_title_textItem, () -> UI.rootBack(this))
                             .setMenu(R.menu.menu_item_text_editor, menu -> {
                                 MenuItem preview = previewMenuItem = menu.findItem(R.id.previewFormatting);
                                 preview.setChecked(showPreview);
@@ -170,16 +169,15 @@ public class ItemTextEditorFragment extends Fragment {
         viewClick(binding.addSystem, () -> putText(binding.editText.getSelectionStart(), "$[]"));
         viewClick(binding.deleteSystem, this::clearCurrentSystem);
 
-        // TODO: 12.06.2023 make translatable
         viewClick(binding.foregroundColor, () -> new ColorPicker(requireContext(), getSystemColorValue("-"))
                 .setting(true, true, true)
-                .setNeutralDialogButton("Reset", () -> resetSystem("-"))
-                .showDialog("Text color", "No", "Yes", (color) -> setSystemValue("-", ColorUtil.colorToHex(color))));
+                .setNeutralDialogButton(getString(R.string.fragment_itemTextEditor_foregroundColor_reset), () -> resetSystem("-"))
+                .showDialog(R.string.fragment_itemTextEditor_foregroundColor_title, R.string.fragment_itemTextEditor_foregroundColor_cancel, R.string.fragment_itemTextEditor_foregroundColor_apply, (color) -> setSystemValue("-", ColorUtil.colorToHex(color))));
 
         viewClick(binding.backgroundSystem, () -> new ColorPicker(requireContext(), getSystemColorValue("="))
                 .setting(true, true, true)
-                .setNeutralDialogButton("Reset", () -> resetSystem("="))
-                .showDialog("Background", "No", "Yes", (color) -> setSystemValue("=", ColorUtil.colorToHex(color))));
+                .setNeutralDialogButton(getString(R.string.fragment_itemTextEditor_backgroundColor_reset), () -> resetSystem("="))
+                .showDialog(R.string.fragment_itemTextEditor_backgroundColor_title, R.string.fragment_itemTextEditor_backgroundColor_cancel, R.string.fragment_itemTextEditor_backgroundColor_apply, (color) -> setSystemValue("=", ColorUtil.colorToHex(color))));
     }
 
     private void updateCurrentSystem(int start) {

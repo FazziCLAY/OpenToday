@@ -37,10 +37,9 @@
         android:src="@android:drawable/ic_dialog_dialer" />
 
 
-    <!-- Todo: make translatable -->
     <Button
         android:id="@+id/apply"
-        android:text="apply"
+        android:text="@string/fragment_itemTextEditor_apply"
         android:layout_marginStart="9sp"
         android:layout_width="100sp"
         android:layout_alignParentEnd="true"
@@ -52,11 +51,10 @@
         android:layout_width="match_parent"
         android:layout_height="110sp" />
 
-    <!-- Todo: make translatable -->
     <com.fazziclay.opentoday.util.SelectionEditText
         android:id="@+id/editText"
         android:layout_below="@id/formattingPreview"
-        android:hint="Enter here"
+        android:hint="@string/fragment_itemTextEditor_editText_hint"
         android:gravity="top|start"
         android:layout_width="match_parent"
         android:layout_gravity="bottom"
