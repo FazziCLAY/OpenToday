@@ -70,7 +70,7 @@ public class Transform {
         }
 
         if (to == ItemType.MATH_GAME) {
-            if (to.isInherit(ItemType.TEXT)) {
+            if (from.isInherit(ItemType.TEXT)) {
                 return Result.allow(() -> new MathGameItem((TextItem) item));
             }
         }

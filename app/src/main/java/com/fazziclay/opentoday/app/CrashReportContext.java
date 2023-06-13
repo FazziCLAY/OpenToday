@@ -7,6 +7,11 @@ import java.util.Stack;
 public class CrashReportContext {
     public static final Front FRONT = new Front();
     public static final Back BACK = new Back();
+
+    static {
+        FRONT.push("front push in static CrashReportContext");
+        BACK.push("back push in static CrashReportContext");
+    }
     private static String mainActivityStatus = "NON-CREATED";
     private static String mainRootFragment = "NON-CREATED";
 
