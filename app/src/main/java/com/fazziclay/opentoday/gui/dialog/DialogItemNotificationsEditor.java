@@ -82,8 +82,6 @@ public class DialogItemNotificationsEditor {
                     DialogItemNotificationBinding l = DialogItemNotificationBinding.inflate(activity.getLayoutInflater());
 
                     DayItemNotification d = (DayItemNotification) itemNotification;
-                    l.vibrate.setChecked(d.isVibrate());
-                    l.vibrate.setOnClickListener(_ignore -> d.setVibrate(l.vibrate.isChecked()));
 
                     l.notificationId.setText(String.valueOf(d.getNotificationId()));
                     MinBaseAdapter.after(l.notificationId, () -> {
