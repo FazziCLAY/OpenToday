@@ -152,6 +152,12 @@ public class TickThread extends Thread {
         defaultTickSession.recycleSpecifiedTickTarget();
     }
 
+
+    public void instantlyTick() {
+        tabsManager.tick(createTickSession(defaultTickSession.getContext()));
+        log("Tick instantlyTick");
+    }
+
     public void requestTick() {
         if (!enabled) throw new RuntimeException("TickThread disabled!");
         if (!requested) {

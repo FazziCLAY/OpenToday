@@ -2,6 +2,7 @@ package com.fazziclay.opentoday.app.items.item;
 
 import androidx.annotation.NonNull;
 
+import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
@@ -71,5 +72,9 @@ public class CheckboxItem extends TextItem {
     @Setter public void setChecked(boolean s) {
         this.checked = s;
         updateStat();
+
+        // TODO: 13.06.2023 fix this crunch.
+        // instantly tick in setChecked for moment-filtergroup-reload
+        App.get().getTickThread().instantlyTick();
     }
 }
