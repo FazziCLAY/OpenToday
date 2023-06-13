@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.fazziclay.opentoday.app.Translation;
 import com.fazziclay.opentoday.app.data.Cherry;
+import com.fazziclay.opentoday.app.data.CherryOrchard;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.TickTarget;
 import com.fazziclay.opentoday.util.RandomUtil;
@@ -13,6 +14,7 @@ import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MathGameItem extends TextItem {
@@ -27,7 +29,8 @@ public class MathGameItem extends TextItem {
                     .put("primitiveNumber1Min", mathGameItem.primitiveNumber1Min)
                     .put("primitiveNumber1Max", mathGameItem.primitiveNumber1Max)
                     .put("primitiveNumber2Min", mathGameItem.primitiveNumber2Min)
-                    .put("primitiveNumber2Max", mathGameItem.primitiveNumber2Max);
+                    .put("primitiveNumber2Max", mathGameItem.primitiveNumber2Max)
+                    .put("primitiveAllowedOperations", CherryOrchard.of(mathGameItem.primitiveAllowedOperations.toArray(new String[0])));
         }
 
         private static final MathGameItem defaultValues = createEmpty();
@@ -41,6 +44,8 @@ public class MathGameItem extends TextItem {
             mathGameItem.primitiveNumber1Max = cherry.optInt("primitiveNumber1Max", defaultValues.primitiveNumber1Max);
             mathGameItem.primitiveNumber2Min = cherry.optInt("primitiveNumber2Min", defaultValues.primitiveNumber2Min);
             mathGameItem.primitiveNumber2Max = cherry.optInt("primitiveNumber2Max", defaultValues.primitiveNumber2Max);
+            mathGameItem.primitiveAllowedOperations.clear();
+            mathGameItem.primitiveAllowedOperations.addAll(Arrays.asList(CherryOrchard.parseStringArray(cherry.getOrchard("primitiveAllowedOperations"), new String[]{"+"})));
 
             return mathGameItem;
         }
@@ -50,8 +55,6 @@ public class MathGameItem extends TextItem {
     @RequireSave @SaveKey(key = "primitiveNumber1Max") private int primitiveNumber1Max = 100;
     @RequireSave @SaveKey(key = "primitiveNumber2Min") private int primitiveNumber2Min = 2;
     @RequireSave @SaveKey(key = "primitiveNumber2Max") private int primitiveNumber2Max = 20;
-
-    // TODO: 06.06.2023 save & load
     @RequireSave @SaveKey(key = "primitiveAllowedOperations") private final List<String> primitiveAllowedOperations = new ArrayList<>();
 
 
@@ -95,6 +98,21 @@ public class MathGameItem extends TextItem {
         }
     }
 
+    public boolean isOperationEnabled(Operation o) {
+        String s = o.s;
+        return primitiveAllowedOperations.contains(s);
+    }
+
+    public void setOperationEnabled(Operation o, boolean b) {
+        String s = o.s;
+        if (b && !primitiveAllowedOperations.contains(s)) {
+            primitiveAllowedOperations.add(s);
+
+        } else if (!b) {
+            primitiveAllowedOperations.remove(s);
+        }
+    }
+
     public float getQuestTextSize() {
         return quest.getTextSize();
     }
@@ -122,6 +140,38 @@ public class MathGameItem extends TextItem {
 
     public void postResult(int currentNumber) {
         if (isResultRight(currentNumber)) generateQuest();
+    }
+
+    public int getPrimitiveNumber1Min() {
+        return primitiveNumber1Min;
+    }
+
+    public void setPrimitiveNumber1Min(int primitiveNumber1Min) {
+        this.primitiveNumber1Min = primitiveNumber1Min;
+    }
+
+    public int getPrimitiveNumber1Max() {
+        return primitiveNumber1Max;
+    }
+
+    public void setPrimitiveNumber1Max(int primitiveNumber1Max) {
+        this.primitiveNumber1Max = primitiveNumber1Max;
+    }
+
+    public int getPrimitiveNumber2Min() {
+        return primitiveNumber2Min;
+    }
+
+    public void setPrimitiveNumber2Min(int primitiveNumber2Min) {
+        this.primitiveNumber2Min = primitiveNumber2Min;
+    }
+
+    public int getPrimitiveNumber2Max() {
+        return primitiveNumber2Max;
+    }
+
+    public void setPrimitiveNumber2Max(int primitiveNumber2Max) {
+        this.primitiveNumber2Max = primitiveNumber2Max;
     }
 
     private static class BaseQuest {
@@ -155,8 +205,8 @@ public class MathGameItem extends TextItem {
 
         public PrimitiveQuest() {
             this.operation = Operation.random(Operation.parse(primitiveAllowedOperations));
-            val1 = RandomUtil.nextInt(100);
-            val2 = RandomUtil.nextInt(100);
+            val1 = RandomUtil.bounds(primitiveNumber1Min, primitiveNumber1Max);
+            val2 = RandomUtil.bounds(primitiveNumber2Min, primitiveNumber2Max);
             result = operation.apply(val1, val2);
             text = MathGameItem.this.getRoot().getTranslation().get(Translation.KEY_MATHGAME_PRIMITIVE_OPERATION, val1, operation, val2);
         }
@@ -187,7 +237,7 @@ public class MathGameItem extends TextItem {
         }
     }
 
-    enum Operation {
+    public enum Operation {
         PLUS("+"),
         SUBTRACT("-"),
         MULTIPLY("*"),
@@ -200,6 +250,7 @@ public class MathGameItem extends TextItem {
         }
 
         public int apply(int i1, int i2) {
+            if (i2 == 0 && this == DIVIDE) return 0;
             return switch (this) {
                 case PLUS -> i1 + i2;
                 case SUBTRACT -> i1 - i2;

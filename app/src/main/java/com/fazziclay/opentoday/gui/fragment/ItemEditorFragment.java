@@ -41,6 +41,7 @@ import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.item.LongTextItem;
+import com.fazziclay.opentoday.app.items.item.MathGameItem;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.notification.DayItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
@@ -54,6 +55,7 @@ import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleDayrepeatable
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleFiltergroupBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleItemBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleLongtextBinding;
+import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleMathgameBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleTextBinding;
 import com.fazziclay.opentoday.gui.ActivitySettings;
 import com.fazziclay.opentoday.gui.ColorPicker;
@@ -155,11 +157,13 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     private boolean disableTextUpdated;
     private boolean disableViewMinHeightUpdated;
     private boolean disableLongTextUpdated;
+    private boolean disableMathGameBoundsEdits;
 
     private void disableStateRestoreOnEdits() {
         disableLongTextUpdated = true;
         disableTextUpdated = true;
         disableViewMinHeightUpdated = true;
+        disableMathGameBoundsEdits = true;
     }
 
     @Override
@@ -177,7 +181,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         settingsManager = app.getSettingsManager();
         colorHistoryManager = app.getColorHistoryManager();
         selectionManager = app.getSelectionManager();
-        mode = getArguments().getInt("mode", MODE_UNKNOWN);
+        mode = getArguments().getInt(KEY_MODE, MODE_UNKNOWN);
         
         if (mode == MODE_EDIT) {
             if (getArguments().containsKey(KEY_EDIT_TAB_ID)) {
@@ -226,6 +230,9 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         }
         if (item instanceof FilterGroupItem) {
             binding.modules.addView(addEditModule(new FilterGroupItemEditModule()));
+        }
+        if (item instanceof MathGameItem) {
+            binding.modules.addView(addEditModule(new MathGameItemEditModule()));
         }
 
         UI.getUIRoot(this).pushActivitySettings(a -> {
@@ -938,6 +945,94 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             final FilterGroupItem filterGroupItem = (FilterGroupItem) item;
 
             filterGroupItem.setTickBehavior(simpleSpinnerAdapter.getItem(binding.tickBehavior.getSelectedItemPosition()));
+        }
+
+        @Override
+        public void setOnStartEditListener(Runnable o) {
+            this.onEditStart = o;
+        }
+    }
+
+    private class MathGameItemEditModule extends BaseEditUiModule {
+        private FragmentItemEditorModuleMathgameBinding binding;
+        private MathGameItem item;
+        private Runnable onEditStart = null;
+
+        @Override
+        public View getView() {
+            return binding.getRoot();
+        }
+
+        @Override
+        public void setup(Item item, Activity activity, View view) {
+            final MathGameItem mathGameItem = (MathGameItem) item;
+            this.item = mathGameItem;
+            binding = FragmentItemEditorModuleMathgameBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
+            viewClick(binding.primitiveAdd, this::editStart);
+            viewClick(binding.primitiveSubtract, this::editStart);
+            viewClick(binding.primitiveMultiply, this::editStart);
+            viewClick(binding.primitiveDivide, this::editStart);
+
+            binding.primitiveAdd.setChecked(mathGameItem.isOperationEnabled(MathGameItem.Operation.PLUS));
+            binding.primitiveSubtract.setChecked(mathGameItem.isOperationEnabled(MathGameItem.Operation.SUBTRACT));
+            binding.primitiveMultiply.setChecked(mathGameItem.isOperationEnabled(MathGameItem.Operation.MULTIPLY));
+            binding.primitiveDivide.setChecked(mathGameItem.isOperationEnabled(MathGameItem.Operation.DIVIDE));
+
+            binding.n1min.setText(String.valueOf(this.item.getPrimitiveNumber1Min()));
+            binding.n1max.setText(String.valueOf(this.item.getPrimitiveNumber1Max()));
+            binding.n2min.setText(String.valueOf(this.item.getPrimitiveNumber2Min()));
+            binding.n2max.setText(String.valueOf(this.item.getPrimitiveNumber2Max()));
+
+            MinTextWatcher.afterAll(this::boundsChanged, binding.n1min, binding.n1max, binding.n2min, binding.n2max);
+        }
+
+        // 4 EditText call this function at the same time when onStateRestored
+        int boundsDisableCounter = 0;
+        private void boundsChanged() {
+            if (disableMathGameBoundsEdits) {
+                boundsDisableCounter++;
+                if (boundsDisableCounter >= 4)disableMathGameBoundsEdits = false;
+                return;
+            }
+            boundsDisableCounter = 0;
+            editStart();
+        }
+
+        private void operationChange(MathGameItem.Operation o, boolean b) {
+            item.setOperationEnabled(o, b);
+            editStart();
+        }
+
+        private void editStart() {
+            if (!binding.primitiveDivide.isChecked() && !binding.primitiveSubtract.isChecked() && !binding.primitiveMultiply.isChecked() && !binding.primitiveAdd.isChecked()) {
+                binding.primitiveAdd.setChecked(true);
+            }
+            if (onEditStart != null) {
+                onEditStart.run();
+            }
+        }
+
+        @Override
+        public void commit(Item item) {
+            this.item = (MathGameItem) item;
+            operationChange(MathGameItem.Operation.PLUS, binding.primitiveAdd.isChecked());
+            operationChange(MathGameItem.Operation.SUBTRACT, binding.primitiveSubtract.isChecked());
+            operationChange(MathGameItem.Operation.MULTIPLY, binding.primitiveMultiply.isChecked());
+            operationChange(MathGameItem.Operation.DIVIDE, binding.primitiveDivide.isChecked());
+            try {
+                this.item.setPrimitiveNumber1Min(Integer.parseInt(binding.n1min.getText().toString()));
+            } catch (Exception ignored) {}
+            try {
+                this.item.setPrimitiveNumber1Max(Integer.parseInt(binding.n1max.getText().toString()));
+            } catch (Exception ignored) {}
+            try {
+                this.item.setPrimitiveNumber2Min(Integer.parseInt(binding.n2min.getText().toString()));
+            } catch (Exception ignored) {}
+            try {
+                this.item.setPrimitiveNumber2Max(Integer.parseInt(binding.n2max.getText().toString()));
+            } catch (Exception ignored) {}
+            this.item.generateQuest();
+            this.item.visibleChanged();
         }
 
         @Override

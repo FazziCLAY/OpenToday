@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/Theme.OpenToday.ItemEditModule">
+
+    <TextView
+        android:id="@+id/titleOfText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="23sp"
+        android:text="@string/item_mathGame"/>
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/primitiveAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="60sp"
+        android:layout_below="@id/titleOfText"
+        android:text="+"
+        android:textSize="25sp"
+        tools:ignore="HardcodedText" />
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/primitiveSubtract"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="60sp"
+        android:layout_below="@id/titleOfText"
+        android:layout_toEndOf="@id/primitiveAdd"
+        android:text="-"
+        android:textSize="30sp"
+        tools:ignore="HardcodedText" />
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/primitiveMultiply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="60sp"
+        android:layout_below="@id/titleOfText"
+        android:layout_toEndOf="@id/primitiveSubtract"
+        android:text="*"
+        android:textSize="25sp"
+        tools:ignore="HardcodedText" />
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/primitiveDivide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="60sp"
+        android:layout_below="@id/titleOfText"
+        android:layout_toEndOf="@id/primitiveMultiply"
+        android:text="/"
+        android:textSize="25sp"
+        tools:ignore="HardcodedText" />
+
+    <LinearLayout
+        android:layout_below="@id/primitiveDivide"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minWidth="60sp"
+        android:layout_margin="4sp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="17sp"
+                android:text="Number 1" />
+
+            <EditText
+                android:id="@+id/n1min"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Min"
+                android:maxLength="10"
+                android:inputType="numberSigned"
+                android:importantForAutofill="no" />
+
+            <EditText
+                android:id="@+id/n1max"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Max"
+                android:maxLength="10"
+                android:inputType="numberSigned"
+                android:importantForAutofill="no" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="17sp"
+                android:text="Number 2" />
+
+            <EditText
+                android:id="@+id/n2min"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Min"
+                android:maxLength="10"
+                android:inputType="numberSigned"
+                android:importantForAutofill="no" />
+
+            <EditText
+                android:id="@+id/n2max"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Max"
+                android:maxLength="10"
+                android:inputType="numberSigned"
+                android:importantForAutofill="no" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>
