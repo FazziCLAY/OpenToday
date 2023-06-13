@@ -1,45 +1,56 @@
 $[@bold;-#00FF00;S25]# Changelog v??? 1.1.4 (2023.06.??)$[||]
-* Changelog now use formatting: $[-#ffff00;=#0000ff;@bold]Hello!$[||]
+$[-#777777]# News$[||]
+$[-#40eb34]* New item: MathGame
+$[-#32bf28]    This is a random math exercise generator with a keyboard for entering the answer$[||]
+
 * New formatting system: size. \$[S20] - size=20
-* Import: теперь импорт с более высокой версии невозможен
-* Лишние FeatureFlags удалены
-* Новые коментарии в CrashReport
-* CrashReport уведомление исправлено
+* New fragment: ItemTextEditor. Replaced the text editing dialog.
+
+* Changelog now use formatting: $[-#ffff00;=#ff00ff;@bold]Hello!$[||]
+* Changelog now is Fragment instead of Activity
+
 * CrashReportActivity added "Send to developer" button if send anonymous statistic disabled
-* ColorHistoryManager использует меньше RAM
-* Длинна пин-кода теперь ограничена 10 символами
-* Название начальной вкладки теперь переведено на язык пользователя
-* Возобновление отправки уведомлений после перезагрузки устройства
-* New item: MathGame
-  $[-#ffff00]Fix$[||]
-* UpdateChecker rewritten
-* Update available notification fixed
-* Changed Item policy: item now generated in ItemsRoot
-* Fix shadow-link while transform ContainerItem to FilterGroupItem
+
+$[-#777777]# Fixes$[||]
+* ColorHistoryManager uses less RAM
+* Improved Update Checker
+* The name of the initial tab is now translated into the user's language
+$[@bold]* Resuming sending notifications after restarting the device$[||]
+* Import: now importing from a higher version is not possible
+* Crash-notification fixed
+* Fix translates
+* Fix shadow-link while transform any ContainerItem to FilterGroupItem
+* The length of the PIN code is now limited to 10 characters
+
+$[-#777777]# Other$[||]
 * Transform dialog now show only allowed items
+* SetupActivity now contains theme selector
+* QuickNote long press to send button now open settings.quickNoteType dialog
+* When the CheckBox is clicked, tick is called instantly (for FilterGroup updates)
+
+$[-#777777]# Technical$[||]
+* DATA_VERSION now is 10 (MathGameItem, DataFixer nothing to fix)
+* added ActivitySettings to MainActivity
+* Fragments About, Settings, Import, Changelog and ItemTextEditor now use android toolbar
+* Unnecessary FeatureFlags removed
+* New comments в CrashReport
+* Changed Item policy: item-ID now generated in ItemsRoot
 * Settings QuickNoteType dialog now show only allowed items(check required featureFlags)
 * Fix selections item foreground
 * Selected items now in previewMode
-* new fragment: ItemTextEditor
-* Changelog now is Fragment
-* added ActivitySettings to MainActivity
 * added UINotification to MainActivity
-* Fragments About, Settings, Import, Changelog and ItemTextEditor now use android toolbar
 * Logger now use formatting & UI Logs viewer added background preference
 * Toolbar->Debug perfectly
-* SetupActivity now contains theme selector
 * DeleteItemsFragment now use RecyclerView
 * ItemsRootEditorFragment: path now correctly
-* QuickNote long press to send button now open settings.quickNoteType dialog
 * Update ViewPager2 on tab click
 * TimeUtil getDebugDate() now use Locale.UK & EE instead of EEEE
 * RandomUtil now uses OptionalField
 * NetworkUtil support DEBUG_CONTENTS
-* Fix translates
 
 
 
-# Changelog v124 1.1.3 (2023.06.01)
+$[@bold;-#00FF00;S25]# Changelog v124 1.1.3 (2023.06.01)$[||]
 Ticks:
 * Improve performance
 * Change DebugTickCounterItem
