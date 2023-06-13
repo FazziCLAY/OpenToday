@@ -89,7 +89,7 @@
     <string name="fragment_import_dialog_main_message">Этот импорт содержит разрешения:\n%s\n\nИнформация:\n%s</string>
     <string name="fragment_import_dialog_main_title">Импорт</string>
     <string name="fragment_import_title">Импортировать…</string>
-    <string name="fragment_itemEditor__delete">Удалить</string>
+    <string name="fragment_itemEditor_delete">Удалить</string>
     <string name="fragment_itemEditor_apply">Сохранить</string>
     <string name="fragment_itemEditor_cancel">Отмена</string>
     <string name="fragment_itemEditor_cancel_unsaved_continue">Вернуться</string>

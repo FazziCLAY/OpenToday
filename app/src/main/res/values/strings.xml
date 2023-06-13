@@ -95,7 +95,7 @@
     <string name="fragment_import_dialog_main_message">This import have permissions:\n%s\n\nInfo:\n%s</string>
     <string name="fragment_import_dialog_main_title">Import</string>
     <string name="fragment_import_title">Import</string>
-    <string name="fragment_itemEditor__delete">Delete</string>
+    <string name="fragment_itemEditor_delete">Delete</string>
     <string name="fragment_itemEditor_apply">Save</string>
     <string name="fragment_itemEditor_cancel">Cancel</string>
     <string name="fragment_itemEditor_cancel_unsaved_continue">Keep editing</string>
