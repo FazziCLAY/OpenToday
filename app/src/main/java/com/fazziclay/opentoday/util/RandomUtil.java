@@ -30,4 +30,13 @@ public class RandomUtil {
     public static boolean nextBoolean() {
         return getRandom().nextBoolean();
     }
+
+    public static int bounds(int min, int max) {
+        if (min > max) {
+            int tempMin = min;
+            min = max;
+            max = tempMin;
+        }
+        return getRandom().nextInt(max + 1 - min) + min;
+    }
 }
