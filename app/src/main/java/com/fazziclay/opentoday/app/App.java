@@ -69,7 +69,7 @@ public class App extends Application {
     public static final String SHARED_KEY_LAST_TAB = "app_tabInclude_lastTabId";
 
     // DEBUG
-    public static final boolean SHADOW_RELEASE = false;
+    public static final boolean SHADOW_RELEASE = true; // TODO: 13.06.2023 DISABLE!!!
     public static final boolean DEBUG = !SHADOW_RELEASE && CustomBuildConfig.DEBUG;
     public static final boolean LOG = debug(true);
     public static final boolean LOGS_SAVE = debug(true);
