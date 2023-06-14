@@ -34,7 +34,6 @@ public class DateItemFilter extends ItemFilter implements Cloneable {
         public ItemFilter importFilter(@NonNull Cherry cherry, ItemFilter d) {
             DateItemFilter i = new DateItemFilter();
 
-            // TODO: 2023.05.12  memory leak in getCherry while new objects creating...
             i.description = cherry.optString(KEY_DESCRIPTION, i.description);
             i.year = IntegerValue.importCherry(cherry.getCherry("year"));
             i.month = IntegerValue.importCherry(cherry.getCherry("month"));

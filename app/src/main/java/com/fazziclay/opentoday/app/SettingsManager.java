@@ -201,7 +201,7 @@ public class SettingsManager {
     }
 
     public boolean isColorizeItemsEditorBackgroundByItemBackground() {
-        return false; // TODO: 5/22/23 owo
+        return false; // TODO: 5/22/23 add customizable
     }
 
     public boolean isScrollToAddedItem() {
