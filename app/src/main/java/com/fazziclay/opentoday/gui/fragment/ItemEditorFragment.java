@@ -754,10 +754,9 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         }
     }
 
-    public static class DayRepeatableCheckboxItemEditModule extends BaseEditUiModule {
+    public class DayRepeatableCheckboxItemEditModule extends BaseEditUiModule {
         private FragmentItemEditorModuleDayrepeatablecheckboxBinding binding;
         private Runnable onEditStart;
-        private boolean create = false;
 
         @Override
         public View getView() {
@@ -773,7 +772,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.startValue.setOnClickListener(v -> onEditStart.run());
 
             String date = "-";
-            if (!create) {
+            if (mode == MODE_EDIT) {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd EEEE", Locale.getDefault());
                 GregorianCalendar g = new GregorianCalendar();
                 g.set(Calendar.DAY_OF_YEAR, dayRepeatableCheckboxItem.getLatestDayOfYear());
@@ -791,12 +790,6 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         @Override
         public void setOnStartEditListener(Runnable o) {
             onEditStart = o;
-        }
-
-        @Override
-        public void notifyCreateMode() {
-            super.notifyCreateMode();
-            create = true;
         }
     }
 
