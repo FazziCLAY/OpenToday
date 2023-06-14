@@ -83,7 +83,11 @@ public class TickThread extends Thread {
                     }
 
                     if (defaultTickSession.isSaveNeeded()) {
-                        tabsManager.queueSave(!personals.isEmpty() ? SaveInitiator.TICK_PERSONAL : SaveInitiator.TICK);
+                        if (defaultTickSession.isImportantSaveNeeded()) {
+                            tabsManager.queueSave(SaveInitiator.USER);
+                        } else {
+                            tabsManager.queueSave(!personals.isEmpty() ? SaveInitiator.TICK_PERSONAL : SaveInitiator.TICK);
+                        }
                     }
                 } catch (Exception e) {
                     Logger.e(TAG, "EXCEPTION IN TICK!!!!!!!", e);

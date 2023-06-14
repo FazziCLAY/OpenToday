@@ -84,6 +84,7 @@ public class DayItemNotification implements ItemNotification {
                     sendNotify(tickSession.getContext(), item);
                     latestDayOfYear = dayOfYear;
                     tickSession.saveNeeded();
+                    tickSession.importantSaveNeeded();
                     return true;
                 }
             }

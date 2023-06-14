@@ -32,6 +32,7 @@ public class TickSession {
     private int dayTime;
     private boolean isPersonalTick;
     private boolean saveNeeded = false;
+    private boolean importantSaveNeeded = false;
     private final Stack<List<TickTarget>> specifiedTickTarget = new Stack<>();
     private final List<UUID> whitelist = new ArrayList<>();
     private boolean isWhitelist = false;
@@ -96,6 +97,10 @@ public class TickSession {
         return saveNeeded;
     }
 
+    public boolean isImportantSaveNeeded() {
+        return importantSaveNeeded;
+    }
+
     public void setAlarmDayOfTimeInSeconds(int time, Item item) {
         final long shift = getDayTime() >= time ? (24*60*60*1000L) : 0; // IN MILLIS!!
         final AlarmManager alarmManager = getContext().getSystemService(AlarmManager.class);
@@ -134,6 +139,7 @@ public class TickSession {
 
     public void recycleSaveNeeded() {
         this.saveNeeded = false;
+        this.importantSaveNeeded = false;
     }
 
     public void recycleWhitelist(boolean isWhitelist, List<UUID> whitelist) {
@@ -161,5 +167,9 @@ public class TickSession {
 
     public Object _isWhitelist() {
         return isWhitelist;
+    }
+
+    public void importantSaveNeeded() {
+        this.importantSaveNeeded = true;
     }
 }
