@@ -216,7 +216,7 @@
     <string name="item_longTextItem_description">The long text is a child item from the Text. It has additional text with the possibility of resizing.</string>
     <string name="item_longtext_clickableUrls">Clickable URLs</string>
     <string name="item_mathGame">Math game</string>
-    <string name="item_mathGame_description">А math game to warm up the brain</string>
+    <string name="item_mathGame_description">А math game to warm up the brain.</string>
     <string name="item_mathGame_quest_primitive_text">How much is\n%s %s %s?</string>
     <string name="item_text">Text</string>
     <string name="item_text_clickableUrls">Clickable URLs</string>

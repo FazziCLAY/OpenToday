@@ -210,7 +210,7 @@
     <string name="item_longTextItem_description">Длинный текст является дочерним айтемом от Текста. Имеет дополнительный текст с возможностью изменения размера.</string>
     <string name="item_longtext_clickableUrls">Выделять ссылки</string>
     <string name="item_mathGame">Математическая игра</string>
-    <string name="item_mathGame_description">Математическая игра поможет размять мозг простыми задачками</string>
+    <string name="item_mathGame_description">Математическая игра поможет размять мозг простыми задачками.</string>
     <string name="item_mathGame_quest_primitive_text">Сколько будет %s %s %s</string>
     <string name="item_text">Текст</string>
     <string name="item_text_clickableUrls">Выделять ссылки</string>
