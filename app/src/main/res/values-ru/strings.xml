@@ -89,13 +89,13 @@
     <string name="fragment_import_dialog_main_message">Этот импорт содержит разрешения:\n%s\n\nИнформация:\n%s</string>
     <string name="fragment_import_dialog_main_title">Импорт</string>
     <string name="fragment_import_title">Импортировать…</string>
-    <string name="fragment_itemEditor_delete">Удалить</string>
     <string name="fragment_itemEditor_apply">Сохранить</string>
     <string name="fragment_itemEditor_cancel">Отмена</string>
     <string name="fragment_itemEditor_cancel_unsaved_continue">Вернуться</string>
     <string name="fragment_itemEditor_cancel_unsaved_discard">Отменить изменения!</string>
     <string name="fragment_itemEditor_cancel_unsaved_title">Несохранённые изменения</string>
     <string name="fragment_itemEditor_checkbox_isChecked">Выполнено</string>
+    <string name="fragment_itemEditor_delete">Удалить</string>
     <string name="fragment_itemEditor_delete_apply">Удалить!</string>
     <string name="fragment_itemEditor_delete_cancel">Отмена</string>
     <string name="fragment_itemEditor_delete_title">Удалить?</string>
@@ -137,6 +137,9 @@
     <string name="fragment_itemTextEditor_backgroundColor_cancel">Отмена</string>
     <string name="fragment_itemTextEditor_backgroundColor_reset">Сброс</string>
     <string name="fragment_itemTextEditor_backgroundColor_title">Цвет фона текста</string>
+    <string name="fragment_itemTextEditor_cancel_unsaved_continue">Остаться</string>
+    <string name="fragment_itemTextEditor_cancel_unsaved_discard">ВЫЙТИ</string>
+    <string name="fragment_itemTextEditor_cancel_unsaved_title">Несохранённые изменения</string>
     <string name="fragment_itemTextEditor_editText_hint">Введите текст</string>
     <string name="fragment_itemTextEditor_foregroundColor_apply">Применить</string>
     <string name="fragment_itemTextEditor_foregroundColor_cancel">Отмена</string>

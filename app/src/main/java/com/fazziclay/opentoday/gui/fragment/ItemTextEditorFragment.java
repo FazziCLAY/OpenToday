@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.fazziclay.opentoday.Debug;
@@ -26,13 +27,14 @@ import com.fazziclay.opentoday.databinding.FragmentItemTextEditorBinding;
 import com.fazziclay.opentoday.gui.ActivitySettings;
 import com.fazziclay.opentoday.gui.ColorPicker;
 import com.fazziclay.opentoday.gui.UI;
+import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
 import com.fazziclay.opentoday.util.ColorUtil;
 import com.fazziclay.opentoday.util.MinTextWatcher;
 import com.fazziclay.opentoday.util.ResUtil;
 
 import java.util.UUID;
 
-public class ItemTextEditorFragment extends Fragment {
+public class ItemTextEditorFragment extends Fragment implements BackStackMember {
     public static final int EDITABLE_TYPE_TEXT = 0;
     public static final int EDITABLE_TYPE_LONG_TEXT = 1;
     public static final int EDITABLE_TYPE_AUTO = 2;
@@ -87,7 +89,7 @@ public class ItemTextEditorFragment extends Fragment {
             a.setNotificationsVisible(false);
             a.setClockVisible(false);
             a.setToolbarSettings(
-                    ActivitySettings.ToolbarSettings.createBack(isLongText ? R.string.fragment_itemTextEditor_toolbar_title_longTextItem : R.string.fragment_itemTextEditor_toolbar_title_textItem, () -> UI.rootBack(this))
+                    ActivitySettings.ToolbarSettings.createBack(isLongText ? R.string.fragment_itemTextEditor_toolbar_title_longTextItem : R.string.fragment_itemTextEditor_toolbar_title_textItem, this::cancelRequest)
                             .setMenu(R.menu.menu_item_text_editor, menu -> {
                                 MenuItem preview = previewMenuItem = menu.findItem(R.id.previewFormatting);
                                 preview.setChecked(showPreview);
@@ -121,8 +123,38 @@ public class ItemTextEditorFragment extends Fragment {
         Debug.itemTextEditor = null;
     }
 
+    // return true if block
+    @Override
+    public boolean popBackStack() {
+        if (isUnsavedChanges()) {
+            cancelRequest();
+            return true;
+        }
+
+        return false;
+    }
+
+    private void cancelRequest() {
+        if (isUnsavedChanges()) {
+            new AlertDialog.Builder(requireContext())
+                    .setTitle(R.string.fragment_itemTextEditor_cancel_unsaved_title)
+                    .setNegativeButton(R.string.fragment_itemTextEditor_cancel_unsaved_continue, null)
+                    .setPositiveButton(R.string.fragment_itemTextEditor_cancel_unsaved_discard, ((dialog1, which) -> {
+                        binding.editText.setText(getEditableText());
+                        UI.rootBack(this);
+                    }))
+                    .show();
+        } else {
+            UI.rootBack(this);
+        }
+    }
+
     private void openFormattingHelp() {
         // TODO: 09.06.2023 create
+    }
+
+    private boolean isUnsavedChanges() {
+        return !getEditableText().equals(binding.editText.getText().toString());
     }
 
     private String getEditableText() {
