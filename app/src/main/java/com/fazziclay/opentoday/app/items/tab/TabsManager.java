@@ -22,6 +22,7 @@ import com.fazziclay.opentoday.app.items.item.ItemUtil;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.Tickable;
 import com.fazziclay.opentoday.util.Logger;
+import com.fazziclay.opentoday.util.SafeFileUtil;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
@@ -33,12 +34,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -53,6 +52,7 @@ public class TabsManager implements ItemsRoot, Tickable {
     private boolean destroyed;
     @NotNull private final File dataOriginalFile;
     @NotNull private final File dataCompressFile;
+    @NotNull private final File dataCompressBakFile;
     private boolean debugPrintSaveStatusAlways = false;
     private SaveThread saveThread = null;
     @NotNull @RequireSave
@@ -61,7 +61,8 @@ public class TabsManager implements ItemsRoot, Tickable {
     @NotNull private final CallbackStorage<OnTabsChanged> onTabsChangedCallbacks = new CallbackStorage<>();
     @NotNull private final Translation translation;
 
-    public TabsManager(@NotNull final File dataOriginalFile, @NotNull final File dataCompressFile, @NotNull final Translation translation) {
+    public TabsManager(@NotNull final File dataOriginalFile, @NotNull final File dataCompressFile, @NotNull final File dataCompressBakFile, @NotNull final Translation translation) {
+        this.dataCompressBakFile = dataCompressBakFile;
         this.destroyed = false;
         this.dataOriginalFile = dataOriginalFile;
         this.dataCompressFile = dataCompressFile;
@@ -365,49 +366,7 @@ public class TabsManager implements ItemsRoot, Tickable {
             tabs.addAll(generateDebugDataSet());
 
         } else {
-            boolean isOriginal = FileUtil.isExist(dataOriginalFile);
-            boolean isCompress = FileUtil.isExist(dataCompressFile);
-            if (isCompress || isOriginal) {
-                try {
-                    JSONObject jsonRoot = null;
-                    try {
-                        FileInputStream fis = new FileInputStream(dataCompressFile);
-                        GZIPInputStream gz = new GZIPInputStream(fis);
-                        Reader reader = new InputStreamReader(gz);
-
-                        final StringBuilder result = new StringBuilder();
-
-                        final char[] buff = new char[1024];
-                        int i;
-                        while ((i = reader.read(buff)) > 0) {
-                            result.append(new String(buff, 0, i));
-                        }
-
-                        reader.close();
-                        jsonRoot  = new JSONObject(result.toString());
-
-                    } catch (Exception ignored) {}
-
-                    if (jsonRoot == null) {
-                        jsonRoot  = new JSONObject(FileUtil.getText(dataOriginalFile, "{}"));
-                    }
-
-                    JSONArray jsonTabs;
-                    if (jsonRoot.has("tabs")) {
-                        jsonTabs = jsonRoot.getJSONArray("tabs");
-                    } else {
-                        jsonTabs = new JSONArray();
-                    }
-                    List<Tab> tabs = TabCodecUtil.importTabList(CherryOrchard.of(jsonTabs));
-                    for (Tab tab : tabs) {
-                        tab.setController(tabController);
-                        tab.validateId();
-                        this.tabs.add(tab);
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException("TabsManager load() error! Data maybe break.", e);
-                }
-            }
+            load0();
         }
         if (tabs.isEmpty()) {
             createLocalTab(getTranslation().get(Translation.KEY_TABS_DEFAULT_MAIN_NAME));
@@ -441,6 +400,86 @@ public class TabsManager implements ItemsRoot, Tickable {
         }
     }
 
+    @Nullable
+    private JSONObject loadJsonObjectFromCompress() {
+        try {
+            if (SafeFileUtil.isExist(dataCompressFile)) {
+                Reader reader = new InputStreamReader(new GZIPInputStream(SafeFileUtil.getFileInputSteam(dataCompressFile)));
+
+                final StringBuilder result = new StringBuilder();
+                final char[] buff = new char[1024];
+                int i;
+                while ((i = reader.read(buff)) > 0) {
+                    result.append(new String(buff, 0, i));
+                }
+                reader.close();
+                return new JSONObject(result.toString());
+            } else {
+                Logger.w(TAG, "Load from compress file impossible: file not exist. Trying load from .bak file...");
+            }
+        } catch (Exception e) {
+            Logger.w(TAG, "Load from compress file failed. Trying load .bak file...");
+            App.exception(null, e);
+        }
+
+        try {
+            if (SafeFileUtil.isExist(dataCompressBakFile)) {
+                Reader reader = new InputStreamReader(new GZIPInputStream(SafeFileUtil.getFileInputSteam(dataCompressBakFile)));
+
+                final StringBuilder result = new StringBuilder();
+                final char[] buff = new char[1024];
+                int i;
+                while ((i = reader.read(buff)) > 0) {
+                    result.append(new String(buff, 0, i));
+                }
+                reader.close();
+                return new JSONObject(result.toString());
+            } else {
+                Logger.w(TAG, "Load from .bak file impossible: file not exist.");
+            }
+        } catch (Exception e) {
+            Logger.w(TAG, "Load from .bak file failed.");
+            App.exception(null, e);
+        }
+        return null;
+    }
+
+    private void load0() {
+        boolean isOriginal = FileUtil.isExist(dataOriginalFile);
+        boolean isCompress = SafeFileUtil.isExistOrBack(dataCompressFile, dataCompressBakFile);
+        if (isCompress || isOriginal) {
+            try {
+                JSONObject jsonRoot = null;
+                try {
+                    jsonRoot = loadJsonObjectFromCompress();
+
+                } catch (Exception e) {
+                    Logger.e(TAG, "Exception while load compress data", e);
+                }
+
+                if (jsonRoot == null) {
+                    Logger.w(TAG, "Loading from original file...");
+                    jsonRoot = new JSONObject(FileUtil.getText(dataOriginalFile, "{}"));
+                }
+
+                JSONArray jsonTabs;
+                if (jsonRoot.has("tabs")) {
+                    jsonTabs = jsonRoot.getJSONArray("tabs");
+                } else {
+                    jsonTabs = new JSONArray();
+                }
+                List<Tab> tabs = TabCodecUtil.importTabList(CherryOrchard.of(jsonTabs));
+                for (Tab tab : tabs) {
+                    tab.setController(tabController);
+                    tab.validateId();
+                    this.tabs.add(tab);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("TabsManager load() error! Data maybe break.", e);
+            }
+        }
+    }
+
     public boolean saveAllDirect() {
         if (DEBUG_ITEMS_SET) return false;
         try {
@@ -452,8 +491,8 @@ public class TabsManager implements ItemsRoot, Tickable {
                 String originalData = jRoot.toString();
 
                 FileUtil.setText(dataOriginalFile, originalData);
-
-                GZIPOutputStream gz = new GZIPOutputStream(Files.newOutputStream(dataCompressFile.toPath()));
+                SafeFileUtil.makeBackup(dataCompressFile, dataCompressBakFile);
+                GZIPOutputStream gz = new GZIPOutputStream(SafeFileUtil.getFileOutputSteam(dataCompressFile));
                 Writer writer = new OutputStreamWriter(gz);
                 writer.write(originalData);
                 writer.flush();
