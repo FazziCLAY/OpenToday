@@ -242,12 +242,14 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
         viewClick(binding.foregroundColor, () -> new ColorPicker(requireContext(), getSystemColorValue("-"))
                 .setting(true, true, true)
                 .setColorHistoryManager(colorHistoryManager)
+                .setColorHistoryMax(20)
                 .setNeutralDialogButton(getString(R.string.fragment_itemTextEditor_foregroundColor_reset), () -> resetSystem("-"))
                 .showDialog(R.string.fragment_itemTextEditor_foregroundColor_title, R.string.fragment_itemTextEditor_foregroundColor_cancel, R.string.fragment_itemTextEditor_foregroundColor_apply, (color) -> setSystemValue("-", ColorUtil.colorToHex(color))));
 
         viewClick(binding.backgroundSystem, () -> new ColorPicker(requireContext(), getSystemColorValue("="))
                 .setting(true, true, true)
                 .setColorHistoryManager(colorHistoryManager)
+                .setColorHistoryMax(20)
                 .setNeutralDialogButton(getString(R.string.fragment_itemTextEditor_backgroundColor_reset), () -> resetSystem("="))
                 .showDialog(R.string.fragment_itemTextEditor_backgroundColor_title, R.string.fragment_itemTextEditor_backgroundColor_cancel, R.string.fragment_itemTextEditor_backgroundColor_apply, (color) -> setSystemValue("=", ColorUtil.colorToHex(color))));
     }
