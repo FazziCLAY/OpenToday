@@ -569,6 +569,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
                         return;
                     }
                     onEditStart.run();
+                    viewVisible(binding.openTextEditor, false, View.INVISIBLE);
                 }
             });
             binding.defaultTextColor.setOnClickListener(v -> {
@@ -671,6 +672,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
                         return;
                     }
                     onEditStart.run();
+                    viewVisible(binding.openTextEditor, false, View.INVISIBLE);
                 }
             });
             binding.defaultTextColor.setOnClickListener(v -> {
