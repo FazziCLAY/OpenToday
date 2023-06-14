@@ -119,11 +119,13 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
     @Override
     public void addItem(Item item) {
         itemsStorage.addItem(item);
+        visibleChanged();
     }
 
     @Override
     public void addItem(Item item, int position) {
         itemsStorage.addItem(item, position);
+        visibleChanged();
     }
 
     @Override
