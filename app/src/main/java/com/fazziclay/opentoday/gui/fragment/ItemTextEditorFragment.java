@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.ColorHistoryManager;
 import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.item.LongTextItem;
 import com.fazziclay.opentoday.app.items.item.TextItem;
@@ -45,9 +46,7 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
     private static final String KEY_EDITABLE_TYPE = "ItemTextEditorFragment_editableType";
     private static final String KEY_OVERRIDE_PREVIEW_BACKGROUND = "ItemTextEditorFragment_overridePreviewBackground";
     private static final String TAG = "ItemTextEditorFragment";
-    private int systemStart;
-    private int systemEnd;
-    private String system;
+
 
     public static ItemTextEditorFragment create(UUID id) {
         return create(id, EDITABLE_TYPE_AUTO, null);
@@ -66,17 +65,27 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
         return f;
     }
 
+
     private FragmentItemTextEditorBinding binding;
     private MenuItem previewMenuItem = null;
     private TextItem item;
     private boolean isLongText;
     private boolean showPreview;
     private String overridePreviewBackground;
+    private ColorHistoryManager colorHistoryManager;
+
+    // CURRENT SYSTEM (BEGIN)
+    private int systemStart;
+    private int systemEnd;
+    private String system;
+    // CURRENT SYSTEM (END)
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ItemsRoot itemsRoot = App.get(requireContext()).getItemsRoot();
+        App app = App.get(requireContext());
+        colorHistoryManager = app.getColorHistoryManager();
+        ItemsRoot itemsRoot = app.getItemsRoot();
 
         binding = FragmentItemTextEditorBinding.inflate(getLayoutInflater());
         if (getArguments().containsKey(KEY_OVERRIDE_PREVIEW_BACKGROUND)) {
@@ -232,11 +241,13 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
 
         viewClick(binding.foregroundColor, () -> new ColorPicker(requireContext(), getSystemColorValue("-"))
                 .setting(true, true, true)
+                .setColorHistoryManager(colorHistoryManager)
                 .setNeutralDialogButton(getString(R.string.fragment_itemTextEditor_foregroundColor_reset), () -> resetSystem("-"))
                 .showDialog(R.string.fragment_itemTextEditor_foregroundColor_title, R.string.fragment_itemTextEditor_foregroundColor_cancel, R.string.fragment_itemTextEditor_foregroundColor_apply, (color) -> setSystemValue("-", ColorUtil.colorToHex(color))));
 
         viewClick(binding.backgroundSystem, () -> new ColorPicker(requireContext(), getSystemColorValue("="))
                 .setting(true, true, true)
+                .setColorHistoryManager(colorHistoryManager)
                 .setNeutralDialogButton(getString(R.string.fragment_itemTextEditor_backgroundColor_reset), () -> resetSystem("="))
                 .showDialog(R.string.fragment_itemTextEditor_backgroundColor_title, R.string.fragment_itemTextEditor_backgroundColor_cancel, R.string.fragment_itemTextEditor_backgroundColor_apply, (color) -> setSystemValue("=", ColorUtil.colorToHex(color))));
     }
