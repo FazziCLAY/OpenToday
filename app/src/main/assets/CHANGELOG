@@ -23,7 +23,7 @@ $[@bold]* Resuming sending notifications after restarting the device$[||]
 * Fix translates
 * Fix shadow-link while transform any ContainerItem to FilterGroupItem
 * The length of the PIN code is now limited to 10 characters
-* Formatting now show $ if he is not in the system (\$[])
+* Formatting now show $ if it is not in the system (\$[])
 * Fixed potential crashes in itemEditor
 * Fix double-notify bug when first notify sent in app background
 
