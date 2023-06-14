@@ -64,6 +64,7 @@ import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.dialog.DialogItemNotificationsEditor;
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
+import com.fazziclay.opentoday.util.ColorUtil;
 import com.fazziclay.opentoday.util.EnumUtil;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.MinTextWatcher;
@@ -310,6 +311,15 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         return view;
     }
 
+    private <T extends BaseEditUiModule> T getEditModule(Class<T> m) {
+        for (BaseEditUiModule editModule : editModules) {
+            if (editModule.getClass() == m) {
+                return (T) editModule;
+            }
+        }
+        return null;
+    }
+
     private void applyRequest() {
         for (BaseEditUiModule editModule : editModules) {
             try {
@@ -512,6 +522,10 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             }
         }
 
+        public int getTempBackgroundColor() {
+            return temp_backgroundColor;
+        }
+
         @Override
         public void setOnStartEditListener(Runnable o) {
             onEditStart = o;
@@ -584,7 +598,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             viewVisible(binding.openTextEditor, mode == MODE_EDIT, View.INVISIBLE);
             viewClick(binding.openTextEditor, () -> {
                 disableStateRestoreOnEdits();
-                navigationHost.navigate(ItemTextEditorFragment.create(item.getId(), ItemTextEditorFragment.EDITABLE_TYPE_TEXT), true);
+                navigationHost.navigate(ItemTextEditorFragment.create(item.getId(), ItemTextEditorFragment.EDITABLE_TYPE_TEXT, ColorUtil.colorToHex(getEditModule(ItemEditModule.class).getTempBackgroundColor())), true);
             });
         }
 
@@ -691,7 +705,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             viewVisible(binding.openTextEditor, mode == MODE_EDIT, View.INVISIBLE);
             viewClick(binding.openTextEditor, () -> {
                 disableStateRestoreOnEdits();
-                navigationHost.navigate(ItemTextEditorFragment.create(item.getId(), ItemTextEditorFragment.EDITABLE_TYPE_LONG_TEXT), true);
+                navigationHost.navigate(ItemTextEditorFragment.create(item.getId(), ItemTextEditorFragment.EDITABLE_TYPE_LONG_TEXT, ColorUtil.colorToHex(getEditModule(ItemEditModule.class).getTempBackgroundColor())), true);
             });
         }
 
