@@ -45,7 +45,7 @@ public class DataFixer {
                 isVersionFileOutdated = applicationVersion != App.VERSION_CODE;
             } catch (JSONException e) {
                 Logger.e(TAG, "state: parse from 'version' file", e);
-                return FixResult.NO_FIX;
+                return FixResult.NO_FIX.versionFileExist(false);
             }
         } else {
             // === DETECT 1 DATA VERSION
@@ -55,7 +55,7 @@ public class DataFixer {
                 Logger.d(TAG, "detected first(1) dataVersion (entry_data.json)");
             } else {
                 Logger.d(TAG, "detected not initialized app (first run?)");
-                return FixResult.NO_FIX;
+                return FixResult.NO_FIX.versionFileExist(false);
             }
             // === DETECT 1 DATA VERSION
         }
