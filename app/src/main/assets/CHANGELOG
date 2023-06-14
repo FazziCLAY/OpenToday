@@ -11,6 +11,8 @@ $[-#32bf28]    This is a random math exercise generator with a keyboard for ente
 
 * CrashReportActivity added "Send to developer" button if send anonymous statistic disabled
 
+* Settings resorted & enchanted
+
 $[-#777777]# Fixes$[||]
 * ColorHistoryManager uses less RAM
 * Improved Update Checker
