@@ -3,6 +3,7 @@ package com.fazziclay.opentoday.app.items.tick;
 import android.content.Context;
 
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.ImportantDebugCallback;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.SaveInitiator;
 import com.fazziclay.opentoday.app.items.Unique;
@@ -19,6 +20,7 @@ import java.util.UUID;
 
 public class TickThread extends Thread {
     private static final String TAG = "TickThread";
+    private static boolean exceptionOnce = true;
     private static final boolean LOG = App.debug(true);
     private static final boolean LOG_ONLY_PERSONAL = true;
 
@@ -38,7 +40,14 @@ public class TickThread extends Thread {
         setName("TickThread");
         this.tabsManager = tabsManager;
         this.defaultTickSession = createTickSession(context);
-        setUncaughtExceptionHandler((thread, throwable) -> Logger.e(TAG, "Exception in thread!", throwable));
+        setUncaughtExceptionHandler((thread, throwable) -> {
+            Logger.e(TAG, "Exception in thread!", throwable);
+            ImportantDebugCallback.pushStatic("TickThread exception: " + throwable);
+            if (exceptionOnce) {
+                App.exception(null, new RuntimeException(throwable));
+                exceptionOnce = false;
+            }
+        });
     }
 
     private void log(String s) {
@@ -58,22 +67,30 @@ public class TickThread extends Thread {
         while (!isInterrupted() && enabled) {
             long tickStart = System.currentTimeMillis();
             if (requested) {
-                log("Processing requests: " + requests + "; personalOnly: "+personalOnly);
+                try {
+                    log("Processing requests: " + requests + "; personalOnly: " + personalOnly);
 
-                if (personalOnly) {
-                    recycle(true);
-                    tickPersonal();
-                } else {
-                    recycle(false);
-                    tickAll();
-                    if (!personals.isEmpty()) {
-                        defaultTickSession.recyclePersonal(true);
+                    if (personalOnly) {
+                        recycle(true);
                         tickPersonal();
+                    } else {
+                        recycle(false);
+                        tickAll();
+                        if (!personals.isEmpty()) {
+                            defaultTickSession.recyclePersonal(true);
+                            tickPersonal();
+                        }
                     }
-                }
 
-                if (defaultTickSession.isSaveNeeded()) {
-                    tabsManager.queueSave(!personals.isEmpty() ? SaveInitiator.TICK_PERSONAL : SaveInitiator.TICK);
+                    if (defaultTickSession.isSaveNeeded()) {
+                        tabsManager.queueSave(!personals.isEmpty() ? SaveInitiator.TICK_PERSONAL : SaveInitiator.TICK);
+                    }
+                } catch (Exception e) {
+                    Logger.e(TAG, "EXCEPTION IN TICK!!!!!!!", e);
+                    if (exceptionOnce) {
+                        App.exception(null, e);
+                        exceptionOnce = false;
+                    }
                 }
 
                 // reset requests

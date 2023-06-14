@@ -17,6 +17,7 @@ import java.util.Stack;
 import java.util.UUID;
 
 public class TickSession {
+    private static boolean exceptionOnce = true;
     private static final String TAG = "TickSession";
     private static final boolean LOG_ISALLOWED = App.debug(false);
 
@@ -105,7 +106,14 @@ public class TickSession {
             flags = PendingIntent.FLAG_UPDATE_CURRENT;
         }
         long triggerAtMs = getNoTimeCalendar().getTimeInMillis() + shift + (time * 1000L) + 599;
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMs, PendingIntent.getBroadcast(getContext(), item.getId().hashCode() + time, ItemsTickReceiver.createIntent(context, item.getId(), true).putExtra("debugMessage", "DayItemNotification is work :)\nItem:\n * id-hashCode: " + item.getId().hashCode() + "\n * Item: " + item + " time: " + time), flags));
+        try {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMs, PendingIntent.getBroadcast(getContext(), item.getId().hashCode() + time, ItemsTickReceiver.createIntent(context, item.getId(), true).putExtra("debugMessage", "DayItemNotification is work :)\nItem:\n * id-hashCode: " + item.getId().hashCode() + "\n * Item: " + item + " time: " + time), flags));
+        } catch (Exception e) {
+            if (exceptionOnce) {
+                App.exception(null, e);
+                exceptionOnce = false;
+            }
+        }
     }
 
     public void recyclePersonal(boolean b) {
