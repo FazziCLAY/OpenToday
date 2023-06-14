@@ -201,6 +201,7 @@ public class MathGameItem extends TextItem {
         }
     }
 
+    // TODO: 14.06.2023 move ui login to ItemViewGenerator.
     private class PrimitiveQuest extends BaseQuest {
         private final Operation operation;
         private final int val1;
