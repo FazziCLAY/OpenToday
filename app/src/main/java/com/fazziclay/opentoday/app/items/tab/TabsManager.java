@@ -47,7 +47,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class TabsManager implements ItemsRoot, Tickable {
-    private static final boolean DEBUG_ITEMS_SET = App.debug(false);
+    private static final boolean DEBUG_ITEMS_SET = false;
     private static final String TAG = "TabsManager";
 
     private boolean destroyed;
