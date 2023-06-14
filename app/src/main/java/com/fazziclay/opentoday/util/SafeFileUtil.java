@@ -32,6 +32,7 @@ public class SafeFileUtil {
      */
     public static void makeBackup(@NotNull File origin, @NotNull File backup) throws IOException {
         if (!FileUtil.isExist(origin)) return;
+        if (FileUtil.isExist(backup)) FileUtil.delete(backup);
         Files.copy(getFileInputSteam(origin), backup.toPath());
     }
 
