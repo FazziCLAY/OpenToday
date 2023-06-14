@@ -412,6 +412,8 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
             // equip
             binding.selected.setChecked(selectionManager.isSelected(item));
+            viewVisible(binding.selected, mode == MODE_EDIT, View.GONE);
+
             binding.viewMinHeight.setText(String.valueOf(item.getViewMinHeight()));
             binding.defaultBackgroundColor.setChecked(!item.isViewCustomBackgroundColor());
             temp_backgroundColor = item.getViewBackgroundColor();
@@ -429,12 +431,13 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
                                 onEditStart.run();
                             }));
             binding.minimize.setChecked(item.isMinimize());
-            //viewVisible(binding.copyItemId, app.isFeatureFlag(FeatureFlag.ITEM_EDITOR_SHOW_COPY_ID_BUTTON), View.GONE);
+            viewVisible(binding.copyItemId, mode == MODE_EDIT, View.GONE);
             viewClick(binding.copyItemId, () -> {
                 ClipboardManager clipboardManager = activity.getSystemService(ClipboardManager.class);
                 clipboardManager.setPrimaryClip(ClipData.newPlainText("Item id", item.getId() == null ? "null" : item.getId().toString()));
             });
 
+            viewVisible(binding.exportItem, mode == MODE_EDIT, View.GONE);
             viewClick(binding.exportItem, () -> {
                 ImportWrapper w = ImportWrapper.createImport(ImportWrapper.Permission.ADD_ITEMS_TO_CURRENT)
                         .addItem(item)
@@ -468,8 +471,6 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
             viewClick(binding.editNotifications, () -> new DialogItemNotificationsEditor(activity, item, () -> updateNotificationPreview(item, activity)).show());
             updateNotificationPreview(item, activity);
-
-            viewVisible(binding.selected, mode == MODE_EDIT, View.GONE);
         }
 
         private void updateNotificationPreview(Item item, Activity activity) {
