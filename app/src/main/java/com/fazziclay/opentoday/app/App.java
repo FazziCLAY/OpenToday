@@ -327,6 +327,8 @@ public class App extends Application {
             Log.e(CRASH_TAG, "Crash saved to: " + crashReportFile.getAbsolutePath());
             Log.e(CRASH_TAG, crashReport.convertToText(), crashReport.getThrowable());
             Log.e(CRASH_TAG, "=== Crash " + crashReport.getID() + " === (End)");
+
+            Logger.e("=CRASH=", crashReport.convertToText(), crashReport.getThrowable());
         } catch (Exception ignored) {}
 
         // === If fatal: notify user ===
