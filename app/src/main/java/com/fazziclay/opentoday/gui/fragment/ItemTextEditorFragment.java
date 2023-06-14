@@ -43,21 +43,23 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
 
     private static final String KEY_ID = "ItemTextEditorFragment_itemId";
     private static final String KEY_EDITABLE_TYPE = "ItemTextEditorFragment_editableType";
+    private static final String KEY_OVERRIDE_PREVIEW_BACKGROUND = "ItemTextEditorFragment_overridePreviewBackground";
     private static final String TAG = "ItemTextEditorFragment";
     private int systemStart;
     private int systemEnd;
     private String system;
 
     public static ItemTextEditorFragment create(UUID id) {
-        return create(id, EDITABLE_TYPE_AUTO);
+        return create(id, EDITABLE_TYPE_AUTO, null);
     }
 
-    public static ItemTextEditorFragment create(UUID id, int editableType) {
+    public static ItemTextEditorFragment create(UUID id, int editableType, @Nullable String overridePreviewBackground) {
         ItemTextEditorFragment f = new ItemTextEditorFragment();
 
         Bundle args = new Bundle();
         args.putString(KEY_ID, id.toString());
         args.putInt(KEY_EDITABLE_TYPE, editableType);
+        if (overridePreviewBackground != null) args.putString(KEY_OVERRIDE_PREVIEW_BACKGROUND, overridePreviewBackground);
 
         f.setArguments(args);
 
@@ -69,6 +71,7 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
     private TextItem item;
     private boolean isLongText;
     private boolean showPreview;
+    private String overridePreviewBackground;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,6 +79,10 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
         ItemsRoot itemsRoot = App.get(requireContext()).getItemsRoot();
 
         binding = FragmentItemTextEditorBinding.inflate(getLayoutInflater());
+        if (getArguments().containsKey(KEY_OVERRIDE_PREVIEW_BACKGROUND)) {
+            overridePreviewBackground = getArguments().getString(KEY_OVERRIDE_PREVIEW_BACKGROUND);
+        }
+
         UUID id = UUID.fromString(getArguments().getString(KEY_ID));
         int editableType = getArguments().getInt(KEY_EDITABLE_TYPE);
         item = (TextItem) itemsRoot.getItemById(id);
@@ -214,7 +221,11 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
             updatePreview();
         });
         setShowPreview(item.isParagraphColorize() && getEditableText().contains("$"));
-        if (item.isViewCustomBackgroundColor()) binding.formattingPreview.setBackgroundColor(item.getViewBackgroundColor());
+        if (overridePreviewBackground != null) {
+            binding.formattingPreview.setBackgroundColor(Color.parseColor(overridePreviewBackground));
+        } else if (item.isViewCustomBackgroundColor()) {
+            binding.formattingPreview.setBackgroundColor(item.getViewBackgroundColor());
+        }
 
         viewClick(binding.addSystem, () -> putText(binding.editText.getSelectionStart(), "$[]"));
         viewClick(binding.deleteSystem, this::clearCurrentSystem);
