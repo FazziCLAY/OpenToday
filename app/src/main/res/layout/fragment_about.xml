@@ -13,6 +13,7 @@
 
         <TextView
             android:id="@+id/about_text"
+            android:layout_marginTop="5sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:drawableTopCompat="@mipmap/ic_launcher" />

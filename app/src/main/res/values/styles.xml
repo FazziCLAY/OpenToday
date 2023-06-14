@@ -102,7 +102,9 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
     <style name="OpenToday.Base.About.Root">
-        <item name="android:padding">5sp</item>
+        <item name="android:paddingStart">5sp</item>
+        <item name="android:paddingEnd">5sp</item>
+        <item name="android:paddingBottom">5sp</item>
     </style>
     <style name="OpenToday.Base.About.Title" />
     <style name="OpenToday.Base.About.RowTitle" />
