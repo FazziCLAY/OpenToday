@@ -16,6 +16,7 @@ public class ColorPicker {
     private final Context context;
     private int startColor;
     private ColorHistoryManager colorHistoryManager;
+    private int colorHistoryMax = 5;
     private boolean showHex;
     private boolean showPreview;
     private boolean showAlpha;
@@ -57,7 +58,7 @@ public class ColorPicker {
 
         if (colorHistoryManager != null) {
             ChipGroup history = new ChipGroup(context);
-            int[] colors = colorHistoryManager.getHistory(5);
+            int[] colors = colorHistoryManager.getHistory(colorHistoryMax);
             for (int color : colors) {
                 Chip chip = new Chip(context);
                 chip.setChipBackgroundColor(ColorStateList.valueOf(color));
@@ -94,6 +95,11 @@ public class ColorPicker {
 
     public ColorPicker setColorHistoryManager(ColorHistoryManager colorHistoryManager) {
         this.colorHistoryManager = colorHistoryManager;
+        return this;
+    }
+
+    public ColorPicker setColorHistoryMax(int colorHistoryMax) {
+        this.colorHistoryMax = colorHistoryMax;
         return this;
     }
 
