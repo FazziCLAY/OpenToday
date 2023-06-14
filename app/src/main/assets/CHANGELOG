@@ -25,6 +25,7 @@ $[@bold]* Resuming sending notifications after restarting the device$[||]
 * The length of the PIN code is now limited to 10 characters
 * Formatting now show $ if he is not in the system (\$[])
 * Fixed potential crashes in itemEditor
+* Fix double-notify bug when first notify sent in app background
 
 $[-#777777]# Other$[||]
 * Transform dialog now show only allowed items
