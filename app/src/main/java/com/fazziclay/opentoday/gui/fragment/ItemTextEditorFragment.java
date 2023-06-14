@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -150,7 +152,23 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
     }
 
     private void openFormattingHelp() {
-        // TODO: 09.06.2023 create
+        TextView text = new TextView(requireContext());
+        text.setPadding(3, 2, 3, 2);
+        ScrollView scrollView = new ScrollView(requireContext());
+        scrollView.addView(text);
+
+        text.setText(ColorUtil.colorize(
+                getString(R.string.fragment_itemTextEditor_formattingHelp_helpText),
+                ResUtil.getStyleColor(requireContext(), R.style.Theme_OpenToday, com.google.android.material.R.attr.colorOnBackground).getColor(0, Color.RED),
+                Color.TRANSPARENT,
+                Typeface.NORMAL,
+                false));
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.fragment_itemTextEditor_formattingHelp_title)
+                .setView(scrollView)
+                .setPositiveButton(R.string.abc_ok, null)
+                .show();
     }
 
     private boolean isUnsavedChanges() {
