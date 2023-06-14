@@ -22,12 +22,15 @@ $[@bold]* Resuming sending notifications after restarting the device$[||]
 * Fix shadow-link while transform any ContainerItem to FilterGroupItem
 * The length of the PIN code is now limited to 10 characters
 * Formatting now show $ if he is not in the system (\$[])
+* Fixed potential crashes in itemEditor
 
 $[-#777777]# Other$[||]
 * Transform dialog now show only allowed items
 * SetupActivity now contains theme selector
 * QuickNote long press to send button now open settings.quickNoteType dialog
 * When the CheckBox is clicked, tick is called instantly (for FilterGroup updates)
+* Not working vibration deleted from ItemNotification's
+* Added CrashReportContext for CrashReport
 
 $[-#777777]# Technical$[||]
 * DATA_VERSION now is 10 (MathGameItem, DataFixer nothing to fix)
@@ -48,6 +51,12 @@ $[-#777777]# Technical$[||]
 * TimeUtil getDebugDate() now use Locale.UK & EE instead of EEEE
 * RandomUtil now uses OptionalField
 * NetworkUtil support DEBUG_CONTENTS
+* Translate files now sorted alphabetically by keys
+* Added UINotification's system for MainActivity
+* TickThread restart if it dead (added Validator for OptionalFiled)
+* Use OptionalField in RandomUtil, TimeUtil
+and more fixes and changes...
+
 
 
 
