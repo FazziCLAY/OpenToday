@@ -468,6 +468,8 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
             viewClick(binding.editNotifications, () -> new DialogItemNotificationsEditor(activity, item, () -> updateNotificationPreview(item, activity)).show());
             updateNotificationPreview(item, activity);
+
+            viewVisible(binding.selected, mode == MODE_EDIT, View.GONE);
         }
 
         private void updateNotificationPreview(Item item, Activity activity) {
