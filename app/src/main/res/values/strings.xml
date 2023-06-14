@@ -350,7 +350,7 @@
     <string name="toolbar_more_selection_export_setMessage_export">Export</string>
     <string name="toolbar_more_selection_export_setMessage_nomsg">No message</string>
     <string name="toolbar_more_selection_export_setMessage_title">Export with message</string>
-    <string name="toolbar_more_selection_export_success">Successfully</string>
+    <string name="toolbar_more_selection_export_success">Successfully: Coped to clipboard</string>
     <string name="toolbar_more_selection_info">Selected: %s</string>
     <string name="toolbar_more_selection_moveSelectedHere">Move selected here</string>
     <string name="toolbar_more_tabs_addNewTab">Add new tab</string>
