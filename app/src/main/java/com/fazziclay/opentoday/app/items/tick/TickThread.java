@@ -133,6 +133,10 @@ public class TickThread extends Thread {
             log("Tick personal(paths): "+ personals);
             for (UUID personal : personals) {
                 Item item = tabsManager.getItemById(personal);
+                if (item == null) {
+                    log("Item by id '"+personal+"' not found. Maybe personalTick called for deleted item: 'continue' in for-each;");
+                    continue;
+                }
                 List<UUID> pathWhitelisted = new ArrayList<>();
                 pathWhitelisted.add(item.getId());
                 for (ItemsStorage itemsStorage : ItemUtil.getPathToItem(item)) {
