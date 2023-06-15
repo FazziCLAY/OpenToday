@@ -1,5 +1,6 @@
 package com.fazziclay.opentoday.gui.fragment
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -49,6 +50,14 @@ class AboutFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentAboutBinding.inflate(inflater)
+
+        if (binding.aboutText.background != null || !binding.aboutText.text.equals("OpenToday") || binding.aboutText.length() != 9 || !binding.aboutText.text.startsWith("Open") || !binding.aboutText.text.endsWith("Today")) {
+            @SuppressLint("SetTextI18n")
+            binding.aboutText.text = "OpenToday... Meow!"
+            binding.aboutText.setTextColor(Color.GREEN)
+            binding.aboutText.setBackgroundColor(Color.BLACK)
+        }
+
         binding.textVersion.text = App.VERSION_NAME
         binding.textReleaseTime.text = getReleaseTime()
         binding.textBranch.text = App.VERSION_BRANCH
