@@ -1,5 +1,6 @@
 package com.fazziclay.opentoday.gui.fragment
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -50,6 +51,8 @@ class AboutFragment : Fragment() {
         binding = FragmentAboutBinding.inflate(inflater)
         binding.textVersion.text = App.VERSION_NAME
         binding.textReleaseTime.text = getReleaseTime()
+        binding.textBranch.text = App.VERSION_BRANCH
+        if (!App.VERSION_BRANCH.equals("RELEASE", ignoreCase = true)) binding.textBranch.setTextColor(Color.RED)
         binding.textPackage.text = App.APPLICATION_ID
         viewClick(binding.aboutText, this::manuallyCrashInteract)
         viewClick(binding.sourceCode, Runnable { NetworkUtil.openBrowser(requireActivity(), LINK_OPENSOURCE) })

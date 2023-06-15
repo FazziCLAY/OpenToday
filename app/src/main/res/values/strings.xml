@@ -14,6 +14,7 @@
     <string name="aboutapp_click_issues">Bugs/Issues</string>
     <string name="aboutapp_click_licenses">OpenSource licences</string>
     <string name="aboutapp_click_sourceCode">Source Code</string>
+    <string name="aboutapp_text_branch">Branch:</string>
     <string name="aboutapp_text_developer">Developer:</string>
     <string name="aboutapp_text_license">License:</string>
     <string name="aboutapp_text_package">Package:</string>

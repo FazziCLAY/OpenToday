@@ -66,6 +66,25 @@
                 style="@style/Theme.OpenToday.About.RowValue" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:text="@string/aboutapp_text_branch"
+                style="@style/Theme.OpenToday.About.RowTitle" />
+
+            <Space
+                android:layout_width="5sp"
+                android:layout_height="0sp" />
+
+            <TextView
+                android:id="@+id/text_branch"
+                tools:text="RELEASE"
+                style="@style/Theme.OpenToday.About.RowValue" />
+        </LinearLayout>
+
         <Space
             android:layout_width="wrap_content"
             android:layout_height="15sp" />

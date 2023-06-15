@@ -11,6 +11,7 @@
     <string name="aboutapp_click_issues">Баги/идеи</string>
     <string name="aboutapp_click_licenses">OpenSource лицензии</string>
     <string name="aboutapp_click_sourceCode">Исходный код</string>
+    <string name="aboutapp_text_branch">Ветка:</string>
     <string name="aboutapp_text_developer">Разработчик:</string>
     <string name="aboutapp_text_license">Лицензия:</string>
     <string name="aboutapp_text_package">Пакет:</string>
