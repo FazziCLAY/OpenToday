@@ -525,7 +525,7 @@ public class TabsManager implements ItemsRoot, Tickable {
         public long latestRequestTime = 0;
 
         public SaveThread() {
-            super.setName("ItemManager-SaveThread");
+            super.setName("TabsManager-SaveThread");
         }
 
         @Override

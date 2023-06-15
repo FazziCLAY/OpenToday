@@ -364,7 +364,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         }
     }
 
-    // On itemManager tabs changed
+    // On tabs changed
     private class LocalOnTabChanged extends OnTabsChanged {
         @Override
         public Status onTabsChanged(@NonNull final Tab[] tabs) {
@@ -402,7 +402,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         @Override
         public Fragment createFragment(int position) {
             Tab tab = tabsManager.getAllTabs()[position];
-            Logger.d(TAG, LocalViewPagerAdapter.class.getSimpleName(), "createFragment", "position=", position, "(tab by <position> in itemManager)=", tab);
+            Logger.d(TAG, LocalViewPagerAdapter.class.getSimpleName(), "createFragment", "position=", position, "(tab by <position> in tabsManager)=", tab);
             return ItemsEditorRootFragment.create(tab.getId());
         }
 

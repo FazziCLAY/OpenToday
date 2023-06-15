@@ -329,7 +329,7 @@ class SettingsFragment : Fragment() {
                 .setTitle(R.string.settings_export_dialog_title)
                 .setNegativeButton(R.string.abc_cancel, null)
                 .setPositiveButton(R.string.settings_export_dialog_export) { _: DialogInterface?, _: Int ->
-                    val itemManager = App.get(context).tabsManager
+                    val tabsManger = App.get(context).tabsManager
                     val perms: MutableList<ImportWrapper.Permission> = ArrayList()
                     val isAllItems = binding.exportAllItems.isChecked
                     val isSettings = binding.exportSettings.isChecked
@@ -342,7 +342,7 @@ class SettingsFragment : Fragment() {
                     if (isDialogMessage) perms.add(ImportWrapper.Permission.PRE_IMPORT_SHOW_DIALOG)
                     val i = ImportWrapper.createImport(*perms.toTypedArray())
                     if (isDialogMessage) i.setDialogMessage(dialogMessage)
-                    if (isAllItems) i.addTabAll(*itemManager.allTabs)
+                    if (isAllItems) i.addTabAll(*tabsManger.allTabs)
                     if (isSettings) {
                         try {
                             i.setSettings(settingsManager!!.exportJSONSettings())
