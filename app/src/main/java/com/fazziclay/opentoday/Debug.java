@@ -31,7 +31,7 @@ public class Debug {
 
     @NonNull
     public static String getDebugInfoText() {
-        String  androidReleaseOrCodename;
+        String androidReleaseOrCodename;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
             androidReleaseOrCodename = Build.VERSION.RELEASE_OR_CODENAME;
         } else {
