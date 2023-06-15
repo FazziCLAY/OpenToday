@@ -6,7 +6,7 @@ Android application for the organization of life, pro notes and reminder.
 [![license](https://img.shields.io/github/license/fazziclay/opentoday?color=%2300bb00&style=plastic)](https://github.com/FazziCLAY/OpenToday/blob/main/LICENSE)
 
 
-[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/fazziclay/opentoday?style=plastic) ](https://github.com/FazziCLAY/OpenToday/releases)
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/fazziclay/opentoday?style=plastic)](https://github.com/FazziCLAY/OpenToday/releases)
 [![IzzyOnDroid](https://img.shields.io/endpoint?style=plastic&color=%2300bb00&url=https://apt.izzysoft.de/fdroid/api/v1/shield/com.fazziclay.opentoday)](https://apt.izzysoft.de/fdroid/index/apk/com.fazziclay.opentoday)
 
 # Using
@@ -75,6 +75,7 @@ Item (implements Unique) - (minimal height, background color)
   | FilterGroup (implements ContainerItem, ItemsStorage) - (items)
   | CycleList (implements ContainerItem, ItemsStorage) - (items)
   | Counter - (current value, step)
+  | MathGame - (primitive operations (+-*/))
   | Checkbox - (is checked)
      |
      | DayRepeatableCheckbox - (start value for 'is checked' in Checkbox, latest regenerate date)
@@ -82,16 +83,16 @@ Item (implements Unique) - (minimal height, background color)
 
 ## Todo/Ideas:
 * [ ] Settings: ItemsStorage to add quick notes from the notification exactly there
-* [ ] Toolbar->Selection -> SelectALL & DeselectALL
+* [ ] Toolbar->Selection -> SelectALL & ~~DeselectALL~~
 * [ ] Settings -> minimize paddings (left, right, bottom, top)
 * [ ] Replace checkboxItem to text item & add 'modules' to item and add Module 'checkbox' (what?)
 
 Make a pull request -> you will be added to contributors.json and also I will create the contributors screen in the application
 
 ## Save
-Data saved in **item_data.json** and **item_data.gz**
+Data saved in **item_data.json**, and **item_data.gz** (bak file is stored in /data/data/item_data.gz.bak)
 
-Saving in other *Thread* (ItemManager.SaveThread)
+Saving in other *Thread* (TabsManager.SaveThread)
 
 Data loaded from **.gz**, if the error is from **.json**
 
@@ -116,7 +117,7 @@ Structure
 * Version 3: <data> is a json converted to base64 but previously passed through GZip compression (added "dataVersion" for fixes in new versions by DataFixer)
 
 
-## Tree of code (not full)
+## Tree of code (not full) (maybe outdated)
 ```css
 com.fazziclay.opentoday
 |
@@ -138,6 +139,7 @@ com.fazziclay.opentoday
   | | | CycleList
   | | | DebugTickCounterItem - item contain (int: counter) and add +1 every tick
   | | | ItemController - controller on item (set when attach to itemsStorage)
+  | | | ItemsUtils - utils for item managment
   | |
   | | callback - (callbacks)
   | | |
@@ -146,34 +148,34 @@ com.fazziclay.opentoday
   | | |
   | |
   | | tab - (tabs)
-  | | |
+  | | | TabsManager - manager of items
   | |
-  | | ItemManager - manager of items
-  | | ItemsUtils - utils for item managment
+  | | selection - ...
+  | | | SelectionManager
+  | | | Selection - selection of item (contain item and item itemsStorage)
+  | | 
+  | | 
   | | CurrentItemStorage - item storage for one item (CycleListItem...)
   | | ItemsStorage - items storage interface
   | | SimpleItemsStorage - simple implementation of ItemsStorage
-  | | Selection - selection of item (contain item and item itemsStorage)
   | | ImportWrapper - for import/export
   | 
   | datafixer
   | | DataFixer - it is launched at the very beginning of the app to correct the data of the old version (if the application has been updated)
   |             used 'version' file in '.../Android/data/<...>/files/'
-  | settings
-  | | SettingsManager - manager of application settings (use in ui...SettingsFragment)
+  | SettingsManager - manager of application settings (use in ui...SettingsFragment)
   |             used 'settings.json' file
-  | updatechecker
-  | | UpdateChecker - checking for app updates
+  | UpdateChecker - checking for app updates
                 use api in 'https://fazziclay.github.io/api/project_3/...'
                 cached result if update not-available for '...cache/latest_update_check' (file contain unix MILLISeconds)
-| ui - ui logic
+| gui - ui logic
   | activity
   | |
   | | MainActivity - (see UI tree in README.md)
   |
   | UI - ui utils
   |
-  |
+| util - there are many different utilities...
 | (the rest is for convenience and it doesn't matter)
 ```
 
@@ -188,8 +190,10 @@ com.fazziclay.opentoday
 | | | | ItemsEditorRootFragment - Root for ItemsStorage tree
 | | | | |
 | | | | | ItemsEditorFragment - Contain ItemsStorage drawer
+| | | | | | ItemTextEditorFragment - comfortable editor for text & text formatting
 | | |
 | | | AboutFragment - about this app
+| | | | ChangelogFragment - CHANGELOG file viewer
 | | | SettingsFragment - settings of app (see app.settings.SettingsManager)
 | | | ImportFragment - import from text
 | | | DeleteItemsFragment - delete items (calls delete() for all provided items)
