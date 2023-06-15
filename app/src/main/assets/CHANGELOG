@@ -26,6 +26,7 @@ $[@bold]* Resuming sending notifications after restarting the device$[||]
 * Formatting now show $ if it is not in the system (\$[])
 * Fixed potential crashes in itemEditor
 * Fix double-notify bug when first notify sent in app background
+* Fixes internal errors when item with notifications deleted
 
 $[-#777777]# Other$[||]
 * Transform dialog now show only allowed items
