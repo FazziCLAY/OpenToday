@@ -188,7 +188,7 @@ public class CrashReport {
         text = text.replace("%_DEVICE_MANUFACTURER_%", getText(Build.MANUFACTURER));
         text = text.replace("%_DEVICE_DISPLAY_%", getText(Build.DISPLAY));
         text = text.replace("%_DEVICE_BOOTLOADER_%", getText(() -> Build.BOOTLOADER));
-        text = text.replace("%_L_LOGS_%", getText(() -> startAllLines("| ", Logger.getLOGS().toString())));
+        text = text.replace("%_L_LOGS_%", getText(() -> startAllLines("| ", App.get().getLogs().toString())));
         text = text.replace("%_SHADOW_RELEASE_%", getText(() -> !App.SHADOW_RELEASE ? "false" : "WARNING! SHADOW RELEASE IS TRUE (ENABLED)"));
 
         return text;

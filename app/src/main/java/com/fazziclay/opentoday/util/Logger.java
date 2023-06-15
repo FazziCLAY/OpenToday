@@ -13,7 +13,6 @@ import java.util.function.Supplier;
 
 public class Logger {
     private static final String ANDROID_LOG_TAG = "OpenTodayLogger";
-    private static final StringBuilder LOGS = new StringBuilder();
     private static final String[] SHOW_STACKTRACE_IF_CONTAINS = {
             "[Tab] Attempt to getRoot in unattached Tab.",
             "call get() without context"
@@ -53,9 +52,12 @@ public class Logger {
 
     private static void log(Level level, final String s, boolean noChecks) {
         final String time = TimeUtil.getDebugDate(System.currentTimeMillis());
-        LOGS.append(level.getUiprefix()).append("[").append("$[S10]").append(time).append("$[Sreset]").append("] ").append(s).append(level.getUisuffix()).append("\n");
+        final App app = App.get();
+        if (app == null) return;
 
-        logToFile("[" + time + "] " + s + "\n");
+        app.getLogs().append(level.getUiprefix()).append("[").append("$[S10]").append(time).append("$[Sreset]").append("] ").append(s).append(level.getUisuffix()).append("\n");
+
+        logToFile(app, "[" + time + "] " + s + "\n");
         if (noChecks) return;
 
         for (String ifContain : SHOW_STACKTRACE_IF_CONTAINS) {
@@ -67,11 +69,10 @@ public class Logger {
         }
     }
 
-    private static void logToFile(String s) {
+    private static void logToFile(App app, String s) {
         if (!App.LOGS_SAVE) return;
-
-        final App app = App.get();
         if (app == null) return;
+
         final File file = app.getLogsFile();
         if (file == null) return;
         if (file.length() < 1024*1024) {
@@ -124,8 +125,8 @@ public class Logger {
         }
     }
 
-    public static StringBuilder getLOGS() {
-        return LOGS;
+    public static StringBuilder getLogs() {
+        return App.get().getLogs();
     }
 
     private enum Level {

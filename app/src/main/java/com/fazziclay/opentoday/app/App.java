@@ -106,6 +106,7 @@ public class App extends Application {
     private long startTime;
     private JSONObject versionData;
     private File logsFile;
+    private final StringBuilder logs = new StringBuilder();
     private final OptionalField<UUID> instanceId = new OptionalField<>(this::parseInstanceId);
     private final OptionalField<License[]> openSourceLicenses = new OptionalField<>(this::createOpenSourceLicensesArray);
     private final OptionalField<DataFixer> dataFixer = new OptionalField<>(() -> new DataFixer(this));
@@ -491,5 +492,9 @@ public class App extends Application {
     }
     public ItemsRoot getItemsRoot() {
         return getTabsManager();
+    }
+
+    public StringBuilder getLogs() {
+        return logs;
     }
 }
