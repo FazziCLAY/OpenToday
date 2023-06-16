@@ -45,7 +45,7 @@
             <TextView
                 android:id="@+id/text_releaseTime"
                 tools:text="0.0.0 (build 0)"
-                android:layout_below="@id/title_version"
+                android:layout_below="@id/text_version"
                 android:layout_toEndOf="@id/title_version"
                 android:textSize="14sp"
                 style="@style/Theme.OpenToday.About.RowValue" />
