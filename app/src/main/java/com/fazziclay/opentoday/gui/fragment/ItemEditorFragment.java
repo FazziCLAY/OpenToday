@@ -155,6 +155,8 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
     private NavigationHost navigationHost;
 
+    private boolean updateTextItemOnResume = false;
+    private boolean updateLongTextItemOnResume = false;
     private boolean disableTextUpdated;
     private boolean disableViewMinHeightUpdated;
     private boolean disableLongTextUpdated;
@@ -599,12 +601,16 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             viewClick(binding.openTextEditor, () -> {
                 disableStateRestoreOnEdits();
                 navigationHost.navigate(ItemTextEditorFragment.create(item.getId(), ItemTextEditorFragment.EDITABLE_TYPE_TEXT, ColorUtil.colorToHex(getEditModule(ItemEditModule.class).getTempBackgroundColor())), true);
+                updateTextItemOnResume = true;
             });
         }
 
         @Override
         public void onResume() {
-            MinTextWatcher.runAtDisabled(binding.text, textWatcher, () -> binding.text.setText(item.getText()));
+            if (updateTextItemOnResume) {
+                MinTextWatcher.runAtDisabled(binding.text, textWatcher, () -> binding.text.setText(item.getText()));
+                updateTextItemOnResume = false;
+            }
         }
 
         private void updateTextColorIndicator(Activity activity) {
@@ -706,12 +712,16 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             viewClick(binding.openTextEditor, () -> {
                 disableStateRestoreOnEdits();
                 navigationHost.navigate(ItemTextEditorFragment.create(item.getId(), ItemTextEditorFragment.EDITABLE_TYPE_LONG_TEXT, ColorUtil.colorToHex(getEditModule(ItemEditModule.class).getTempBackgroundColor())), true);
+                updateLongTextItemOnResume = true;
             });
         }
 
         @Override
         public void onResume() {
-            MinTextWatcher.runAtDisabled(binding.text, textWatcher, () -> binding.text.setText(((LongTextItem)item).getLongText()));
+            if (updateLongTextItemOnResume) {
+                MinTextWatcher.runAtDisabled(binding.text, textWatcher, () -> binding.text.setText(((LongTextItem)item).getLongText()));
+                updateLongTextItemOnResume = false;
+            }
         }
 
         private void updateTextColorIndicator(Activity activity) {
