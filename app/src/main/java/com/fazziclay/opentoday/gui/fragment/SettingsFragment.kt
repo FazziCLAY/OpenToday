@@ -6,6 +6,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.DialogInterface
 import android.os.Bundle
+import android.text.InputFilter
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
@@ -290,6 +291,7 @@ class SettingsFragment : Fragment() {
                         val t = EditText(requireContext())
                         t.inputType = InputType.TYPE_CLASS_NUMBER
                         t.setHint(R.string.settings_pincode_enable_hint)
+                        t.filters = arrayOf(InputFilter.LengthFilter(PinCodeManager.MAX_LENGTH))
                         AlertDialog.Builder(requireContext())
                                 .setTitle(R.string.settings_pincode_enable_title)
                                 .setMessage(R.string.settings_pincode_enable_message)
