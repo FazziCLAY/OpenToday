@@ -14,6 +14,7 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.InputFilter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -439,6 +440,7 @@ public class AppToolbar {
         viewClick(localBinding.addTab, () -> {
             EditText tabNameEditText = new EditText(activity);
             tabNameEditText.setHint(R.string.toolbar_more_tabs_addNew_name_hint);
+            tabNameEditText.setFilters(new InputFilter.LengthFilter[]{new InputFilter.LengthFilter(TabsManager.TAB_NAME_MAX_LENGTH)});
             new AlertDialog.Builder(activity)
                     .setTitle(R.string.toolbar_more_tabs_addNew_dialog_title)
                     .setView(tabNameEditText)
@@ -462,6 +464,8 @@ public class AppToolbar {
         EditText tabNameEditText = new EditText(activity);
         tabNameEditText.setHint(R.string.toolbar_more_tabs_edit_name_hint);
         tabNameEditText.setText(tab.getName());
+        tabNameEditText.setFilters(new InputFilter.LengthFilter[]{new InputFilter.LengthFilter(TabsManager.TAB_NAME_MAX_LENGTH)});
+
 
         CheckBox disableTick = new CheckBox(activity);
         disableTick.setText(R.string.toolbar_more_tabs_edit_disableTick);

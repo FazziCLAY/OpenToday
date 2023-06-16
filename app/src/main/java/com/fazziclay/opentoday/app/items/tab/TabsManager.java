@@ -47,6 +47,8 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class TabsManager implements ItemsRoot, Tickable {
+    public static final int TAB_NAME_MAX_LENGTH = 35;
+
     private static final boolean DEBUG_ITEMS_SET = false;
     private static final String TAG = "TabsManager";
 
@@ -217,6 +219,9 @@ public class TabsManager implements ItemsRoot, Tickable {
 
         if (name.isEmpty()) {
             throw new RuntimeException("Tab can't be create with empty name!");
+        }
+        if (name.length() > TAB_NAME_MAX_LENGTH) {
+            throw new RuntimeException("Maximum length exceeded: " + TAB_NAME_MAX_LENGTH);
         }
         LocalItemsTab tab = new LocalItemsTab(name);
         addTab(tab);
