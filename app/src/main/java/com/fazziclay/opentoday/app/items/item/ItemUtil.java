@@ -79,11 +79,13 @@ public class ItemUtil {
     * */
     @Nullable
     public static Item getItemByIdRecursive(Item[] rootArray, UUID id) {
+        if (id == null) return null;
         return getItemById(getAllItemsInTree(rootArray), id);
     }
 
     @Nullable
     public static Item getItemById(@NonNull Item[] allItems, @NonNull UUID id) {
+        if (id == null) return null;
         UUID find = null;
         Item findItem = null;
 

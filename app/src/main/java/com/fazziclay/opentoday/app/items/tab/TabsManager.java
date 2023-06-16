@@ -41,6 +41,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -82,13 +83,14 @@ public class TabsManager implements ItemsRoot, Tickable {
 
     @Override
     @Nullable
-    public Tab getTabById(@NotNull UUID uuid) {
+    public Tab getTabById(UUID uuid) {
         checkDestroy();
+        if (uuid == null) return null;
 
         UUID find = null;
         Tab findTab = null;
         for (Tab tab : getAllTabs()) {
-            if (uuid.equals(tab.getId())) {
+            if (Objects.equals(uuid, tab.getId())) {
                 if (find != null) {
                     ImportantDebugCallback.pushStatic(TAG + " getTabById id duplicate: findTab="+findTab+" find="+find + "tab="+tab);
                 }
