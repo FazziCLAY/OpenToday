@@ -470,6 +470,15 @@ public class AppToolbar {
         CheckBox disableTick = new CheckBox(activity);
         disableTick.setText(R.string.toolbar_more_tabs_edit_disableTick);
         disableTick.setChecked(tab.isDisableTick());
+        viewClick(disableTick, () -> {
+            if (disableTick.isChecked()) {
+                new AlertDialog.Builder(activity)
+                        .setTitle(R.string.toolbar_more_tabs_edit_disableTick_warning_title)
+                        .setMessage(R.string.toolbar_more_tabs_edit_disableTick_warning_message)
+                        .setPositiveButton(R.string.abc_ok, null)
+                        .show();
+            }
+        });
 
         dialogView.addView(tabNameEditText);
         dialogView.addView(disableTick);

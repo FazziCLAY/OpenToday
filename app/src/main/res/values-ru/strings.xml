@@ -359,6 +359,8 @@
     <string name="toolbar_more_tabs_delete_notAllowOneTabMode">Нельзя удалить вкладку, поскольку она единственная</string>
     <string name="toolbar_more_tabs_edit_dialog_title">Редактирование \'%s\'</string>
     <string name="toolbar_more_tabs_edit_disableTick">Отключить тик</string>
+    <string name="toolbar_more_tabs_edit_disableTick_warning_message">При отключенном тике уведомления айтемов в этой вкладке перестанут приходить.\nFilter Group также могут перестать работать, как и некоторые другие вещи.</string>
+    <string name="toolbar_more_tabs_edit_disableTick_warning_title">Внимание</string>
     <string name="toolbar_more_tabs_edit_name_hint">Введите новое имя…</string>
     <string name="toolbar_more_tabs_tab_add">Создать</string>
     <string name="toolbar_more_tabs_tab_apply">Применить</string>

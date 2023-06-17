@@ -366,6 +366,8 @@
     <string name="toolbar_more_tabs_delete_notAllowOneTabMode">You cannot delete a tab because it is the only one.</string>
     <string name="toolbar_more_tabs_edit_dialog_title">Edit tab \'%s\'</string>
     <string name="toolbar_more_tabs_edit_disableTick">Disable tick</string>
+    <string name="toolbar_more_tabs_edit_disableTick_warning_message">If the tick is disabled, notifications of items in this tab will stop coming.\nFilter Group may also stop working, as well as some other things.</string>
+    <string name="toolbar_more_tabs_edit_disableTick_warning_title">Warning</string>
     <string name="toolbar_more_tabs_edit_name_hint">Enter new tab name…</string>
     <string name="toolbar_more_tabs_tab_add">Add</string>
     <string name="toolbar_more_tabs_tab_apply">Apply</string>
