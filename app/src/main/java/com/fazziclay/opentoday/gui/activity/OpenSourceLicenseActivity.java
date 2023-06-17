@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.HorizontalScrollView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -13,11 +12,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fazziclay.opentoday.R;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import com.fazziclay.opentoday.util.Logger;
+import com.fazziclay.opentoday.util.StreamUtil;
 
 public class OpenSourceLicenseActivity extends AppCompatActivity {
     public static Intent createLaunchIntent(Context context, String assetPath, String title) {
@@ -62,27 +58,13 @@ public class OpenSourceLicenseActivity extends AppCompatActivity {
 
         AssetManager assetManager = getAssets();
         try {
-            String result = read(assetManager.open(assetPath));
+            String result = StreamUtil.read(assetManager.open(assetPath));
             textView.setText(result);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             Toast.makeText(this, getString(R.string.openSourceLicense_cantStart_exception, e.toString()), Toast.LENGTH_SHORT).show();
-            Log.e("LicenceActivity", "Exception", e);
+            Logger.e("LicenceActivity", "Exception", e);
             finish();
         }
-    }
-
-    // IDEA: move to JavaNeoUtil as `readString(InputStream is)`
-    public static String read(InputStream inputStream) throws IOException {
-        Reader reader = new InputStreamReader(inputStream);
-        final StringBuilder result = new StringBuilder();
-
-        final char[] buff = new char[1024];
-        int i;
-        while ((i = reader.read(buff)) > 0) {
-            result.append(new String(buff, 0, i));
-        }
-        reader.close();
-        return result.toString();
     }
 }

@@ -7,11 +7,16 @@ import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.util.time.TimeUtil;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.function.Supplier;
 
 public class Logger {
     private static final String ANDROID_LOG_TAG = "OpenTodayLogger";
-    private static final StringBuilder LOGS = new StringBuilder();
+    private static final String[] SHOW_STACKTRACE_IF_CONTAINS = {
+            "[Tab] Attempt to getRoot in unattached Tab.",
+            "call get() without context"
+    };
 
     public static <T> T dur(String tag, String message, Supplier<T> supplier) {
         if (!App.LOG) return supplier.get();
@@ -41,18 +46,33 @@ public class Logger {
         i(tag, String.format("%sms: %s", duration, message));
     }
 
-    private static void log(final String s) {
-        final String time = TimeUtil.getDebugDate(System.currentTimeMillis());
-        LOGS.append("[").append(time).append("] ").append(s).append("\n");
-
-        logToFile("[" + time + "] " + s + "\n");
+    private static void log(Level level, final String s) {
+        log(level, s, false);
     }
 
-    private static void logToFile(String s) {
-        if (!App.LOGS_SAVE) return;
-
+    private static void log(Level level, final String s, boolean noChecks) {
+        final String time = TimeUtil.getDebugDate(System.currentTimeMillis());
         final App app = App.get();
         if (app == null) return;
+
+        app.getLogs().append(level.getUiprefix()).append("[").append("$[S10]").append(time).append("$[Sreset]").append("] ").append(s).append(level.getUisuffix()).append("\n");
+
+        logToFile(app, "[" + time + "] " + s + "\n");
+        if (noChecks) return;
+
+        for (String ifContain : SHOW_STACKTRACE_IF_CONTAINS) {
+            if (s.contains(ifContain)) {
+                Exception exception = new Exception(s);
+                log(level, stackTrace(exception), true);
+                exception.printStackTrace();
+            }
+        }
+    }
+
+    private static void logToFile(App app, String s) {
+        if (!App.LOGS_SAVE) return;
+        if (app == null) return;
+
         final File file = app.getLogsFile();
         if (file == null) return;
         if (file.length() < 1024*1024) {
@@ -62,41 +82,73 @@ public class Logger {
         }
     }
 
+    private static String stackTrace(Throwable throwable) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        throwable.printStackTrace(pw);
+        pw.flush();
+        return sw.toString().substring(0, sw.toString().lastIndexOf("\n"));
+    }
+
     public static void e(String tag, String m, Throwable e) {
         if (!App.LOG) return;
         Log.e(ANDROID_LOG_TAG, String.format("[%s] %s", tag, m), e);
-        log("OTL/ERROR [" + tag + "] " + m + " E: " + e);
+        log(Level.ERROR, "OTL/ERROR [" + tag + "] " + m + " E: " + e);
+        log(Level.ERROR, "OTL/ERROR [" + tag + "] " + stackTrace(e));
     }
 
 
     public static void w(String tag, String m) {
         if (!App.LOG) return;
         Log.w(ANDROID_LOG_TAG, String.format("[%s] %s", tag, m));
-        log("OTL/WARN [" + tag + "] " + m);
+        log(Level.WARNING, "OTL/WARN [" + tag + "] " + m);
     }
 
     public static void i(String tag, String m) {
         if (!App.LOG) return;
         Log.i(ANDROID_LOG_TAG, String.format("[%s] %s", tag, m));
-        log("OTL/INFO [" + tag + "] " + m);
+        log(Level.INFO, "OTL/INFO [" + tag + "] " + m);
     }
 
     public static void d(String tag, Object... m) {
         if (!App.LOG) return;
         if (m.length == 1) {
             Log.d(ANDROID_LOG_TAG, String.format("[%s] %s", tag, m[0]));
-            log("OTL/DEBUG [" + tag + "] " + m[0]);
+            log(Level.DEBUG, "OTL/DEBUG [" + tag + "] " + m[0]);
         } else {
             StringBuilder s = new StringBuilder();
             for (Object o : m) {
                 s.append(o).append(" ");
             }
             Log.d(ANDROID_LOG_TAG, String.format("[%s] %s", tag, s.substring(0, s.length()-1)));
-            log("OTL/DEBUG [" + tag + "] " + s.substring(0, s.length()-1));
+            log(Level.DEBUG, "OTL/DEBUG [" + tag + "] " + s.substring(0, s.length()-1));
         }
     }
 
-    public static StringBuilder getLOGS() {
-        return LOGS;
+    public static StringBuilder getLogs() {
+        return App.get().getLogs();
+    }
+
+    private enum Level {
+        ERROR("$[-#ff1111]", "$[||]"),
+        WARNING("$[-#FFFF00]", "$[||]"),
+        INFO("$[-#ffffff;=#77000000]", "$[||]"),
+        DEBUG("$[-#d9d9d9]", "$[||]");
+
+        private final String uiprefix;
+        private final String uisuffix;
+
+        Level(String uiprefix, String uisuffix) {
+            this.uiprefix = uiprefix;
+            this.uisuffix = uisuffix;
+        }
+
+        public String getUiprefix() {
+            return uiprefix;
+        }
+
+        public String getUisuffix() {
+            return uisuffix;
+        }
     }
 }

@@ -4,20 +4,23 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.data.Cherry;
+import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
-import com.fazziclay.opentoday.app.items.SimpleItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemCodecUtil;
 import com.fazziclay.opentoday.app.items.item.ItemController;
+import com.fazziclay.opentoday.app.items.item.ItemUtil;
+import com.fazziclay.opentoday.app.items.item.SimpleItemsStorage;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
+import com.fazziclay.opentoday.app.items.tick.Tickable;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class LocalItemsTab extends Tab {
+public class LocalItemsTab extends Tab implements Tickable {
     public static final LocalItemsTabCodec CODEC = new LocalItemsTabCodec();
     protected static class LocalItemsTabCodec extends TabCodec {
         @NonNull
@@ -50,7 +53,7 @@ public class LocalItemsTab extends Tab {
 
     public LocalItemsTab(String name) {
         super(name);
-        itemsStorage = new SimpleItemsStorage() {
+        itemsStorage = new SimpleItemsStorage(new LocalItemsTabController()) {
             @Override
             public void save() {
                 LocalItemsTab.this.save();
@@ -115,8 +118,8 @@ public class LocalItemsTab extends Tab {
 
     @NonNull
     @Override
-    public CallbackStorage<OnItemsStorageUpdate> getOnUpdateCallbacks() {
-        return itemsStorage.getOnUpdateCallbacks();
+    public CallbackStorage<OnItemsStorageUpdate> getOnItemsStorageCallbacks() {
+        return itemsStorage.getOnItemsStorageCallbacks();
     }
 
     @Override
@@ -127,7 +130,7 @@ public class LocalItemsTab extends Tab {
     @NotNull
     @Override
     public String toString() {
-        return "LocalItemsTab@["+getId()+"]{"+getName()+"}";
+        return "LocalItemsTab@[ID:"+getId()+" NAME:'"+getName()+"'}";
     }
 
     private class LocalItemsTabController extends ItemController {
@@ -143,12 +146,22 @@ public class LocalItemsTab extends Tab {
 
         @Override
         public void updateUi(Item item) {
-            LocalItemsTab.this.getOnUpdateCallbacks().run(((callbackStorage, callback) -> callback.onUpdated(item, getItemPosition(item))));
+            LocalItemsTab.this.getOnItemsStorageCallbacks().run(((callbackStorage, callback) -> callback.onUpdated(item, getItemPosition(item))));
         }
 
         @Override
         public ItemsStorage getParentItemsStorage(Item item) {
             return LocalItemsTab.this;
+        }
+
+        @Override
+        public UUID generateId(Item item) {
+            return ItemUtil.controllerGenerateItemId(getRoot(), item);
+        }
+
+        @Override
+        public ItemsRoot getRoot() {
+            return LocalItemsTab.this.getRoot();
         }
     }
 }

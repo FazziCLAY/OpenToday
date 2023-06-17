@@ -9,6 +9,7 @@
     <color name="white">#FFFFFFFF</color>
 
     <!-- Main Activity -->
+    <attr format="color" type="color" name="androidToolbar_background" />
     <attr format="color" type="color" name="main_currentDate_color" />
     <attr format="color" type="color" name="disableBatteryOptimization_backgroundColor" />
     <attr format="color" type="color" name="disableBatteryOptimization_textColor" />

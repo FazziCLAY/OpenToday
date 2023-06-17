@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/item_checkboxDayRepeatable" />
+        android:text="@string/item_dayRepeatableCheckbox" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#ff00ff"
-            android:text="@string/dayRepeatable_startValue" />
+            android:text="@string/item_dayRepeatableCheckbox_startValue" />
 
         <ToggleButton
             android:id="@+id/startValue"

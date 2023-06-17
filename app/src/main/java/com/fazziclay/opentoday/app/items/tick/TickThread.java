@@ -3,12 +3,13 @@ package com.fazziclay.opentoday.app.items.tick;
 import android.content.Context;
 
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.items.ItemManager;
+import com.fazziclay.opentoday.app.ImportantDebugCallback;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
-import com.fazziclay.opentoday.app.items.ItemsUtils;
 import com.fazziclay.opentoday.app.items.SaveInitiator;
 import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.app.items.item.Item;
+import com.fazziclay.opentoday.app.items.item.ItemUtil;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.util.Logger;
 
 import java.util.ArrayList;
@@ -19,11 +20,12 @@ import java.util.UUID;
 
 public class TickThread extends Thread {
     private static final String TAG = "TickThread";
+    private static boolean exceptionOnce = true;
     private static final boolean LOG = App.debug(true);
     private static final boolean LOG_ONLY_PERSONAL = true;
 
     private boolean enabled = true;
-    private final ItemManager itemManager;
+    private final TabsManager tabsManager;
     private final TickSession defaultTickSession;
     private final List<UUID> personals = new ArrayList<>();
     private boolean currentlyExecutingTickPersonal;
@@ -34,11 +36,18 @@ public class TickThread extends Thread {
     private long firstRequestTime = 0;
     private long lastRequestTime = 0;
 
-    public TickThread(Context context, ItemManager itemManager) {
+    public TickThread(Context context, TabsManager tabsManager) {
         setName("TickThread");
-        this.itemManager = itemManager;
+        this.tabsManager = tabsManager;
         this.defaultTickSession = createTickSession(context);
-        setUncaughtExceptionHandler((thread, throwable) -> Logger.e(TAG, "Exception in thread!", throwable));
+        setUncaughtExceptionHandler((thread, throwable) -> {
+            Logger.e(TAG, "Exception in thread!", throwable);
+            ImportantDebugCallback.pushStatic("TickThread exception: " + throwable);
+            if (exceptionOnce) {
+                App.exception(null, new RuntimeException(throwable));
+                exceptionOnce = false;
+            }
+        });
     }
 
     private void log(String s) {
@@ -58,22 +67,34 @@ public class TickThread extends Thread {
         while (!isInterrupted() && enabled) {
             long tickStart = System.currentTimeMillis();
             if (requested) {
-                log("Processing requests: " + requests + "; personalOnly: "+personalOnly);
+                try {
+                    log("Processing requests: " + requests + "; personalOnly: " + personalOnly);
 
-                if (personalOnly) {
-                    recycle(true);
-                    tickPersonal();
-                } else {
-                    recycle(false);
-                    tickAll();
-                    if (!personals.isEmpty()) {
-                        defaultTickSession.recyclePersonal(true);
+                    if (personalOnly) {
+                        recycle(true);
                         tickPersonal();
+                    } else {
+                        recycle(false);
+                        tickAll();
+                        if (!personals.isEmpty()) {
+                            defaultTickSession.recyclePersonal(true);
+                            tickPersonal();
+                        }
                     }
-                }
 
-                if (defaultTickSession.isSaveNeeded()) {
-                    itemManager.queueSave(!personals.isEmpty() ? SaveInitiator.TICK_PERSONAL : SaveInitiator.TICK);
+                    if (defaultTickSession.isSaveNeeded()) {
+                        if (defaultTickSession.isImportantSaveNeeded()) {
+                            tabsManager.queueSave(SaveInitiator.USER);
+                        } else {
+                            tabsManager.queueSave(!personals.isEmpty() ? SaveInitiator.TICK_PERSONAL : SaveInitiator.TICK);
+                        }
+                    }
+                } catch (Exception e) {
+                    Logger.e(TAG, "EXCEPTION IN TICK!!!!!!!", e);
+                    if (exceptionOnce) {
+                        App.exception(null, e);
+                        exceptionOnce = false;
+                    }
                 }
 
                 // reset requests
@@ -98,10 +119,11 @@ public class TickThread extends Thread {
         }
         log("Thread done.");
         interrupt();
+        enabled = false;
     }
 
     private void tickAll() {
-        itemManager.tick(defaultTickSession);
+        tabsManager.tick(defaultTickSession);
         log("Tick all");
     }
 
@@ -110,21 +132,25 @@ public class TickThread extends Thread {
         if (personalUsePaths) {
             log("Tick personal(paths): "+ personals);
             for (UUID personal : personals) {
-                Item item = itemManager.getItemById(personal);
+                Item item = tabsManager.getItemById(personal);
+                if (item == null) {
+                    log("Item by id '"+personal+"' not found. Maybe personalTick called for deleted item: 'continue' in for-each;");
+                    continue;
+                }
                 List<UUID> pathWhitelisted = new ArrayList<>();
                 pathWhitelisted.add(item.getId());
-                for (ItemsStorage itemsStorage : ItemsUtils.getPathToItem(item)) {
+                for (ItemsStorage itemsStorage : ItemUtil.getPathToItem(item)) {
                     if (itemsStorage instanceof Unique unique) {
                         pathWhitelisted.add(unique.getId());
                     }
                 }
                 log("Tick personal(paths): resultWhitelist for item="+item+": "+ pathWhitelisted);
                 defaultTickSession.recycleWhitelist(true, pathWhitelisted);
-                itemManager.tick(defaultTickSession);
+                tabsManager.tick(defaultTickSession);
             }
         } else {
             log("Tick personal(no-paths): "+ personals);
-            itemManager.tick(defaultTickSession, personals);
+            tabsManager.tick(defaultTickSession, personals);
         }
         currentlyExecutingTickPersonal = false;
     }
@@ -151,6 +177,12 @@ public class TickThread extends Thread {
         defaultTickSession.recycleSpecifiedTickTarget();
     }
 
+
+    public void instantlyTick() {
+        tabsManager.tick(createTickSession(defaultTickSession.getContext()));
+        log("Tick instantlyTick");
+    }
+
     public void requestTick() {
         if (!enabled) throw new RuntimeException("TickThread disabled!");
         if (!requested) {
@@ -163,7 +195,7 @@ public class TickThread extends Thread {
         log("Requested no-personal");
     }
 
-    public void requestTick(List<UUID> uuids, boolean usePaths) {
+    public void requestPersonalTick(List<UUID> uuids, boolean usePaths) {
         if (!enabled) throw new RuntimeException("TickThread disabled!");
 
         if (!requested) {
@@ -193,6 +225,10 @@ public class TickThread extends Thread {
 
     public void requestTerminate() {
         this.enabled = false;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 
     public GregorianCalendar getGregorianCalendar() {

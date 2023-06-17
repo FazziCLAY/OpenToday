@@ -30,20 +30,15 @@ public class Status {
     }
 
     public static class Builder {
-        private boolean isDeleteCallback;
+        private boolean isRemoveCallback;
         private boolean isChangeImportance;
         private CallbackImportance newImportance;
 
-        public Builder setDeleteCallback(boolean deleteCallback) {
-            this.isDeleteCallback = deleteCallback;
+        public Builder setRemoveCallback(boolean b) {
+            this.isRemoveCallback = b;
             return this;
         }
 
-        /**
-         * На что после выполнения изменить Importance этого Callback'а
-         * Если null то не изменять
-         * Если не вызывать то не вызывать
-         * **/
         public Builder setNewImportance(CallbackImportance importance) {
             this.isChangeImportance = importance != null;
             this.newImportance = importance;
@@ -51,7 +46,7 @@ public class Status {
         }
 
         public Status build() {
-            return new Status(isDeleteCallback, isChangeImportance, newImportance);
+            return new Status(isRemoveCallback, isChangeImportance, newImportance);
         }
     }
 }

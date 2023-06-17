@@ -8,6 +8,7 @@ import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.App
+import com.fazziclay.opentoday.app.CrashReportContext
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost
 import com.fazziclay.opentoday.util.InlineUtil.nullStat
@@ -35,6 +36,7 @@ class MainRootFragment : Fragment(), NavigationHost {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        CrashReportContext.setMainRootFragment("onCreate")
         Logger.d(TAG, "onCreate saved=${nullStat(savedInstanceState)}")
     }
 
@@ -50,6 +52,7 @@ class MainRootFragment : Fragment(), NavigationHost {
         Logger.d(TAG, "onViewCreated saved=${nullStat(savedInstanceState)}")
         if (savedInstanceState == null) {
             val first = firstFragmentInterface.create()
+            CrashReportContext.setMainRootFragment("first fragment: $first")
             Logger.d(TAG, "onViewCreated", "fragment replaced to ${first.javaClass.canonicalName}")
             childFragmentManager.beginTransaction()
                     .replace(CONTAINER_ID, first)
@@ -63,9 +66,11 @@ class MainRootFragment : Fragment(), NavigationHost {
         if (currentFragment is BackStackMember) {
             Logger.d(TAG, "popBackStack", "current fragment is BackStackMember!")
             if (currentFragment.popBackStack()) {
+                CrashReportContext.setMainRootFragment("popBackStack from BackStackMember child: true")
                 return true
             }
         }
+        CrashReportContext.setMainRootFragment("popBackStack")
         Logger.d(TAG, "popBackStack", "pop internal")
         if (childFragmentManager.backStackEntryCount > 0) {
             childFragmentManager.popBackStack()
@@ -75,6 +80,7 @@ class MainRootFragment : Fragment(), NavigationHost {
     }
 
     override fun navigate(fragment: Fragment, addToBackStack: Boolean) {
+        CrashReportContext.setMainRootFragment("navigate addToBack=$addToBackStack fragment=$fragment")
         Logger.d(TAG, "navigate to=$fragment addToBack=$addToBackStack")
         val transaction = childFragmentManager.beginTransaction()
                 .replace(CONTAINER_ID, fragment)

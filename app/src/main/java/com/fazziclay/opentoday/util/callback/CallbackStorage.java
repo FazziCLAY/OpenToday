@@ -32,18 +32,18 @@ public class CallbackStorage <T extends Callback> {
 
             Status status = runner.run(this, internal.callback);
             if (status != null) {
-                if (status.isDeleteCallback()) deleteCallback(internal);
+                if (status.isDeleteCallback()) removeCallback(internal);
                 if (status.isChangeImportance()) internal.importance = status.getNewImportance();
             }
             i++;
         }
     }
 
-    public void deleteCallback(CallbackInternal callbackInternal) {
+    public void removeCallback(CallbackInternal callbackInternal) {
         callbacks.remove(callbackInternal);
     }
 
-    public void deleteCallback(T callback) {
+    public void removeCallback(T callback) {
         int i = 0;
         while (i < callbacks.size()) {
             CallbackInternal internal = callbacks.get(i);

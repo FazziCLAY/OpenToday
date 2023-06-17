@@ -59,6 +59,19 @@ public class CherryTest {
 
     }
 
+    @Test
+    public void stringsOrchard() {
+        CherryOrchard.of(new String[0]);
+        CherryOrchard.of(new String[]{"arg1"});
+        CherryOrchard.of(new String[]{"arg1", "arg2"});
+        CherryOrchard o = CherryOrchard.of(new String[]{"arg1", "arg2", "arg3"});
+        o.forEachString((index, value) -> {
+            if (index == 0) Assert.assertEquals(value, "arg1");
+            if (index == 1) Assert.assertEquals(value, "arg2");
+            if (index == 2) Assert.assertEquals(value, "arg3");
+        });
+    }
+
     private String print(Object s) {
         System.out.println(s);
         return s + "";

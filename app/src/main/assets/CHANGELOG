@@ -1,4 +1,71 @@
-# Changelog v124 1.1.3 (2023.06.01)
+$[@bold;-#00FF00;S25]# Changelog v130 1.1.4 (2023.06.17)$[||]
+$[-#777777]# News$[||]
+$[-#40eb34]* New item: MathGame
+$[-#32bf28]    This is a random math exercise generator with a keyboard for entering the answer$[||]
+
+* New formatting system: size. \$[S20] - size=20
+* New fragment: ItemTextEditor. Replaced the text editing dialog.
+
+* Changelog now use formatting: $[-#ffff00;=#ff00ff;@bold]Hello!$[||]
+* Changelog now is Fragment instead of Activity
+
+* CrashReportActivity added "Send to developer" button if send anonymous statistic disabled
+
+* Settings resorted & enchanted
+
+$[-#777777]# Fixes$[||]
+* ColorHistoryManager uses less RAM
+* Improved Update Checker
+* The name of the initial tab is now translated into the user's language
+$[@bold]* Resuming sending notifications after restarting the device$[||]
+* Import: now importing from a higher version is not possible
+* Crash-notification fixed
+* Fix translates
+* Fix shadow-link while transform any ContainerItem to FilterGroupItem
+* The length of the PIN code is now limited to 10 characters
+* The tab name length is now limited to 35 characters
+* Formatting now show $ if it is not in the system (\$[])
+* Fixed potential crashes in itemEditor
+* Fix double-notify bug when first notify sent in app background
+* Fixes internal errors when item with notifications deleted
+
+$[-#777777]# Other$[||]
+* Transform dialog now show only allowed items
+* SetupActivity now contains theme selector
+* QuickNote long press to send button now open settings.quickNoteType dialog
+* When the CheckBox is clicked, tick is called instantly (for FilterGroup updates)
+* Not working vibration deleted from ItemNotification's
+* Added CrashReportContext for CrashReport
+
+$[-#777777]# Technical$[||]
+* DATA_VERSION now is 10 (MathGameItem, DataFixer nothing to fix)
+* added ActivitySettings to MainActivity
+* Fragments About, Settings, Import, Changelog and ItemTextEditor now use android toolbar
+* Unnecessary FeatureFlags removed
+* New comments в CrashReport
+* Changed Item policy: item-ID now generated in ItemsRoot
+* Settings QuickNoteType dialog now show only allowed items(check required featureFlags)
+* Fix selections item foreground
+* Selected items now in previewMode
+* added UINotification to MainActivity
+* Logger now use formatting & UI Logs viewer added background preference
+* Toolbar->Debug perfectly
+* DeleteItemsFragment now use RecyclerView
+* ItemsRootEditorFragment: path now correctly
+* Update ViewPager2 on tab click
+* TimeUtil getDebugDate() now use Locale.UK & EE instead of EEEE
+* RandomUtil now uses OptionalField
+* NetworkUtil support DEBUG_CONTENTS
+* Translate files now sorted alphabetically by keys
+* Added UINotification's system for MainActivity
+* TickThread restart if it dead (added Validator for OptionalFiled)
+* Use OptionalField in RandomUtil, TimeUtil
+and more fixes and changes...
+
+
+
+
+$[@bold;-#00FF00;S25]# Changelog v124 1.1.3 (2023.06.01)$[||]
 Ticks:
 * Improve performance
 * Change DebugTickCounterItem
@@ -17,8 +84,8 @@ Other:
 * Fix debug layouts & more debug tools
 
 # Changelog v114 1.1
-* Added formatting support for TextItem. The ColorUtil.colorize(...) function is used. Example: Hello $[-#ffffff;=#000000;@bolditalic]Worl$[||]d
-    - new system added: $[||] - reset all
+* Added formatting support for TextItem. The ColorUtil.colorize(...) function is used. Example: Hello \$[-#ffffff;=#000000;@bolditalic]Worl\$[||]d
+    - new system added: \$[||] - reset all
 
 * Add 'What's new' button to AboutFragment
 * Add Release Time to AboutFragment

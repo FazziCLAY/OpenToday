@@ -30,5 +30,5 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:src="@android:drawable/ic_menu_rotate"
-        android:contentDescription="@string/item_checkboxDayRepeatable" />
+        android:contentDescription="@string/item_dayRepeatableCheckbox" />
 </RelativeLayout>

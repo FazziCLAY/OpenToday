@@ -13,7 +13,11 @@
         <item name="android:statusBarColor">#000000</item>
         <!-- Customize your theme here. -->
 
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
         <!-- Main Activity -->
+        <item name="androidToolbar_background">#BC7EFF</item>
         <item name="main_currentDate_color">#008465</item>
         <item name="disableBatteryOptimization_backgroundColor">#FF5F6A</item>
         <item name="disableBatteryOptimization_textColor">#000000</item>
@@ -70,7 +74,7 @@
     </style>
 
     <!-- Section: File -->
-    <item name="toolbar_section_backgroundColor" type="color">#2D000000</item>
+    <item name="toolbar_section_backgroundColor" type="color">#D8B5B5B5</item>
     <style name="Theme.OpenToday.Toolbar.Section.Root.File" parent="OpenToday.Base.Toolbar.Section.Root.File">
         <item name="android:background">@color/toolbar_section_backgroundColor</item>
     </style>

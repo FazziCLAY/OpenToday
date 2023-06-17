@@ -4,8 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.data.Cherry;
+import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Unique;
+import com.fazziclay.opentoday.app.items.item.Item;
+import com.fazziclay.opentoday.app.items.item.ItemUtil;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
@@ -13,6 +16,8 @@ import com.fazziclay.opentoday.util.annotation.SaveKey;
 import java.util.UUID;
 
 public abstract class Tab implements ItemsStorage, Unique {
+    private static final String TAG = "Tab";
+
     protected static class TabCodec extends AbstractTabCodec {
         private static final String KEY_ID = "id";
         private static final String KEY_NAME = "name";
@@ -52,18 +57,41 @@ public abstract class Tab implements ItemsStorage, Unique {
         this.controller = controller;
     }
 
+    public ItemsRoot getRoot() {
+        if (isAttached()) {
+            return controller.getRoot();
+        }
+        Logger.w(TAG, "Attempt to getRoot in unattached Tab.");
+        return null;
+    }
+
     public void validateId() {
         if (id == null && controller != null) id = controller.generateId();
     }
 
     public void attach(TabController controller) {
         this.controller = controller;
-        this.id = controller.generateId();
+        regenerateId();
+    }
+
+    protected void regenerateId() {
+        if (controller != null) {
+            this.id = controller.generateId();
+        } else {
+            Logger.w(TAG, "Attempt to regenerateId in unattached Tab.");
+        }
+        for (Item item : getAllItems()) {
+            ItemUtil.regenerateIdForItem(item);
+        }
     }
 
     public void detach() {
         this.controller = null;
         this.id = null;
+    }
+
+    public boolean isAttached() {
+        return controller != null;
     }
 
     protected Tab() {
@@ -87,7 +115,11 @@ public abstract class Tab implements ItemsStorage, Unique {
 
     @Override
     public void save() {
-        if (controller != null) controller.save(this);
+        if (controller != null) {
+            controller.save(this);
+        } else {
+            Logger.w(TAG, "Attempt to save in unattached Tab.");
+        }
     }
 
     public boolean isDisableTick() {

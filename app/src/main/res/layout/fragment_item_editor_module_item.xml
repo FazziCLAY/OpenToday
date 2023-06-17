@@ -10,7 +10,7 @@
         android:id="@+id/notifications_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/dialog_item_module_item_notifications" />
+        android:text="@string/fragment_itemEditor_module_item_notifications" />
 
     <TextView
         android:id="@+id/notifications_preview"
@@ -34,7 +34,7 @@
                 android:id="@+id/edit_notifications"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/dialog_item_module_item_editNotifications"
+                android:text="@string/fragment_itemEditor_module_item_editNotifications"
                 tools:ignore="ButtonStyle" />
 
             <Button
@@ -43,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="0sp"
-                android:text="@string/dialog_item_module_item_copyItemId"
+                android:text="@string/fragment_itemEditor_module_item_copyItemId"
                 style="?android:attr/buttonBarButtonStyle" />
 
             <Button
@@ -52,7 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="0sp"
-                android:text="@string/dialog_item_module_item_export"
+                android:text="@string/fragment_itemEditor_module_item_export"
                 style="?android:attr/buttonBarButtonStyle" />
         </LinearLayout>
     </HorizontalScrollView>
@@ -62,7 +62,7 @@
         android:layout_below="@id/buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/dialog_item_module_item_backgroundColor_hint" />
+        android:text="@string/fragment_itemEditor_module_item_backgroundColor_hint" />
 
     <RelativeLayout
         android:id="@+id/viewBackgroundColor_edit"
@@ -93,7 +93,7 @@
         android:layout_width="match_parent"
         android:layout_below="@id/viewBackgroundColor_edit"
         android:layout_height="wrap_content"
-        android:text="@string/dialog_item_module_item_minHeight_hint" />
+        android:text="@string/fragment_itemEditor_module_item_minHeight_hint" />
 
     <EditText
         android:id="@+id/viewMinHeight"
@@ -114,7 +114,7 @@
         android:minHeight="0sp"
         android:layout_alignBaseline="@id/viewMinHeight"
         android:layout_alignParentEnd="true"
-        android:text="@string/dialog_item_module_item_minimize" />
+        android:text="@string/fragment_itemEditor_module_item_minimize" />
 
     <CheckBox
         android:id="@+id/selected"

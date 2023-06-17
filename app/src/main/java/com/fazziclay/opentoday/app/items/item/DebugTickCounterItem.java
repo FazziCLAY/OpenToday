@@ -3,7 +3,6 @@ package com.fazziclay.opentoday.app.items.item;
 import androidx.annotation.NonNull;
 
 import com.fazziclay.opentoday.app.data.Cherry;
-import com.fazziclay.opentoday.app.items.ItemsUtils;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.TickTarget;
 import com.fazziclay.opentoday.util.annotation.Getter;
@@ -43,8 +42,7 @@ public class DebugTickCounterItem extends TextItem {
         return new DebugTickCounterItem("", 0);
     }
 
-    @SaveKey(key = "counter") @RequireSave
-    private int counter;
+    @SaveKey(key = "counter") @RequireSave private int counter;
     private String debugStat = "";
 
     protected DebugTickCounterItem() {
@@ -89,12 +87,12 @@ public class DebugTickCounterItem extends TextItem {
         debugStat = String.format("""
         === Debug tick counter ===
         ID: %s
-        $[-#ffff00]Counter: $[-#00aaff] %s$[||]
+        $[-#ffff00;S16]Counter: $[-#00aaff] %s$[||]
         $[-#f0f0f0]Allowed targets: %s$[||]
         $[-#00ffff]Whitelist(%s): %s$[||]
-        $[-$fff00f]PathToMe: %s
+        $[-$fff00f]PathToMe: %s$[||]
         """, getId(), counter, targets, tickSession._isWhitelist(), tickSession._getWhitelist(),
-                Arrays.toString(ItemsUtils.getPathToItem(this)));
+                Arrays.toString(ItemUtil.getPathToItem(this)));
         visibleChanged();
 
         super.tick(tickSession);

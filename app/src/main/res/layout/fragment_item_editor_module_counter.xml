@@ -7,12 +7,12 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:text="@string/counter_value"
+        android:text="@string/fragment_itemEditor_module_counter_value"
         android:layout_height="wrap_content" />
 
     <EditText
         android:id="@+id/counterValue"
-        android:hint="@string/counter_value"
+        android:hint="@string/fragment_itemEditor_module_counter_value"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
@@ -21,7 +21,7 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:text="@string/counter_step"
+        android:text="@string/fragment_itemEditor_module_counter_step"
         android:layout_height="wrap_content" />
 
     <EditText
@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
-        android:hint="@string/counter_step"
+        android:hint="@string/fragment_itemEditor_module_counter_step"
         android:importantForAutofill="no" />
 
 </LinearLayout>

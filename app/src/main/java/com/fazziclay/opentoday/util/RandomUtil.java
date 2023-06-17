@@ -1,15 +1,18 @@
 package com.fazziclay.opentoday.util;
 
+import com.fazziclay.opentoday.app.OptionalField;
+
 import java.util.Random;
 
 public class RandomUtil {
-    private static Random RANDOM = null;
+    private static final OptionalField<Random> RANDOM = new OptionalField<>(Random::new);
+
+    public static void free() {
+        RANDOM.free();
+    }
 
     public static Random getRandom() {
-        if (RANDOM == null) {
-            RANDOM = new Random();
-        }
-        return RANDOM;
+        return RANDOM.get();
     }
 
     public static int nextInt() {
@@ -26,5 +29,14 @@ public class RandomUtil {
 
     public static boolean nextBoolean() {
         return getRandom().nextBoolean();
+    }
+
+    public static int bounds(int min, int max) {
+        if (min > max) {
+            int tempMin = min;
+            min = max;
+            max = tempMin;
+        }
+        return getRandom().nextInt(max + 1 - min) + min;
     }
 }

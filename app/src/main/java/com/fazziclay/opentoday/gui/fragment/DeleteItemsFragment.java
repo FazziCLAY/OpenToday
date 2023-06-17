@@ -1,5 +1,6 @@
 package com.fazziclay.opentoday.gui.fragment;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,24 +10,30 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.SettingsManager;
-import com.fazziclay.opentoday.app.items.ItemManager;
+import com.fazziclay.opentoday.app.items.ItemsRoot;
+import com.fazziclay.opentoday.app.items.item.CycleListItem;
+import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
+import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
-import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.databinding.FragmentDeleteItemsBinding;
+import com.fazziclay.opentoday.gui.ActivitySettings;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.item.ItemViewGenerator;
+import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
 import com.fazziclay.opentoday.gui.item.ItemViewHolder;
-import com.fazziclay.opentoday.util.MinBaseAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class DeleteItemsFragment extends Fragment {
+    private static final String KEY_ITEMS_TO_DELETE = "itemsToDelete";
+
     public static DeleteItemsFragment create(Item[] items) {
         List<UUID> u = new ArrayList<>();
         for (Item item : items) {
@@ -45,7 +52,7 @@ public class DeleteItemsFragment extends Fragment {
         DeleteItemsFragment result = new DeleteItemsFragment();
         Bundle a = new Bundle();
 
-        a.putStringArray("itemsToDelete", itemsToDelete);
+        a.putStringArray(KEY_ITEMS_TO_DELETE, itemsToDelete);
 
         result.setArguments(a);
         return result;
@@ -53,9 +60,7 @@ public class DeleteItemsFragment extends Fragment {
 
 
     private FragmentDeleteItemsBinding binding;
-    private ItemManager itemManager;
-    private SettingsManager settingsManager;
-    private SelectionManager selectionManager;
+    private ItemsRoot itemsRoot;
     private ItemViewGenerator itemViewGenerator;
     private Item[] itemsToDelete;
 
@@ -63,23 +68,31 @@ public class DeleteItemsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         App app = App.get(requireContext());
-        itemManager = app.getItemManager();
-        settingsManager = app.getSettingsManager();
-        selectionManager = app.getSelectionManager();
+        itemsRoot = app.getItemsRoot();
 
         // parse
-        String[] r = getArguments().getStringArray("itemsToDelete");
+        String[] r = getArguments().getStringArray(KEY_ITEMS_TO_DELETE);
         List<Item> u = new ArrayList<>();
         for (String s : r) {
-            u.add(itemManager.getItemById(UUID.fromString(s)));
+            u.add(itemsRoot.getItemById(UUID.fromString(s)));
         }
         itemsToDelete = u.toArray(new Item[0]);
-        //
+        // parse END
 
-        itemViewGenerator = ItemViewGenerator.builder(requireActivity(), itemManager, settingsManager, selectionManager)
-                .setPreviewMode()
+        itemViewGenerator = ItemViewGenerator.builder(requireActivity(), new DeleteViewGeneratorBehavior())
+                .setPreviewMode(true)
                 .build();
 
+        UI.getUIRoot(this).pushActivitySettings(a -> {
+            a.setNotificationsVisible(false);
+            a.setToolbarSettings(ActivitySettings.ToolbarSettings.createBack(requireActivity().getString(R.string.fragment_deleteItems_delete_title, String.valueOf(itemsToDelete.length)), () -> UI.rootBack(DeleteItemsFragment.this)));
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        UI.getUIRoot(this).popActivitySettings();
     }
 
     @Nullable
@@ -87,27 +100,32 @@ public class DeleteItemsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentDeleteItemsBinding.inflate(inflater);
 
-        binding.list.setAdapter(new MinBaseAdapter() {
+        binding.list.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.list.setAdapter(new RecyclerView.Adapter<ItemViewHolder>() {
+            @NonNull
             @Override
-            public int getCount() {
-                return itemsToDelete.length;
+            public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                return new ItemViewHolder(parent.getContext());
             }
 
             @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
+            public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
                 Item item = itemsToDelete[position];
-                ItemViewHolder itemViewHolder = new ItemViewHolder(requireContext());
-                itemViewHolder.layout.addView(itemViewGenerator.generate(item, parent));
-                return itemViewHolder.itemView;
+                holder.layout.removeAllViews();
+                holder.layout.addView(itemViewGenerator.generate(item, binding.list));
+            }
+
+            @Override
+            public int getItemCount() {
+                return itemsToDelete.length;
             }
         });
 
         binding.deleteButton.setOnClickListener(v -> new AlertDialog.Builder(requireContext())
-                .setTitle(requireActivity().getString(R.string.dialog_previewDeleteItems_delete_title, String.valueOf(itemsToDelete.length)))
-                .setNegativeButton(R.string.dialog_previewDeleteItems_delete_cancel, null)
-                .setPositiveButton(R.string.dialog_previewDeleteItems_delete_apply, ((dialog1, which) -> {
+                .setTitle(requireActivity().getString(R.string.fragment_deleteItems_delete_title, String.valueOf(itemsToDelete.length)))
+                .setNegativeButton(R.string.fragment_deleteItems_delete_cancel, null)
+                .setPositiveButton(R.string.fragment_deleteItems_delete_apply, ((_dialog1, _which) -> {
                     for (Item item : itemsToDelete) {
-                        selectionManager.deselectItem(item);
                         item.delete();
                     }
                     UI.rootBack(this);
@@ -120,4 +138,33 @@ public class DeleteItemsFragment extends Fragment {
 
 
     public DeleteItemsFragment() {}
+
+    private static class DeleteViewGeneratorBehavior implements ItemViewGeneratorBehavior {
+
+        @Override
+        public boolean isConfirmFastChanges() {
+            return false;
+        }
+
+        @Override
+        public void setConfirmFastChanges(boolean b) {
+        }
+
+        @Override
+        public Drawable getForeground(Item item) {
+            return null;
+        }
+
+        @Override
+        public void onGroupEdit(GroupItem groupItem) {
+        }
+
+        @Override
+        public void onCycleListEdit(CycleListItem cycleListItem) {
+        }
+
+        @Override
+        public void onFilterGroupEdit(FilterGroupItem filterGroupItem) {
+        }
+    }
 }

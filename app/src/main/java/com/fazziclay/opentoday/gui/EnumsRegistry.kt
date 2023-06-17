@@ -19,6 +19,7 @@ object EnumsRegistry {
         EnumInfo(SettingsManager.FirstTab.FIRST,                    R.string.settings_firstTab_first),
         EnumInfo(SettingsManager.FirstTab.TAB_ON_CLOSING,           R.string.settings_firstTab_onClosed),
         EnumInfo(SettingsManager.ItemAction.OPEN_EDITOR,            R.string.itemAction_OPEN_EDITOR),
+        EnumInfo(SettingsManager.ItemAction.OPEN_TEXT_EDITOR,       R.string.itemAction_OPEN_TEXT_EDITOR),
         EnumInfo(SettingsManager.ItemAction.SELECT_REVERT,          R.string.itemAction_SELECT_REVERT),
         EnumInfo(SettingsManager.ItemAction.SELECT_ON,              R.string.itemAction_SELECT_ON),
         EnumInfo(SettingsManager.ItemAction.SELECT_OFF,             R.string.itemAction_SELECT_OFF),
@@ -36,21 +37,22 @@ object EnumsRegistry {
         EnumInfo(ItemType.TEXT,                          R.string.item_text).setItemDescription(R.string.item_text_description),
         EnumInfo(ItemType.LONG_TEXT,                     R.string.item_longTextItem).setItemDescription(R.string.item_longTextItem_description),
         EnumInfo(ItemType.CHECKBOX,                      R.string.item_checkbox).setItemDescription(R.string.item_checkbox_description),
-        EnumInfo(ItemType.CHECKBOX_DAY_REPEATABLE,       R.string.item_checkboxDayRepeatable).setItemDescription(R.string.item_checkboxDayRepeatable_description),
+        EnumInfo(ItemType.CHECKBOX_DAY_REPEATABLE,       R.string.item_dayRepeatableCheckbox).setItemDescription(R.string.item_dayRepeatableCheckbox_description),
         EnumInfo(ItemType.COUNTER,                       R.string.item_counter).setItemDescription(R.string.item_counter_description),
         EnumInfo(ItemType.CYCLE_LIST,                    R.string.item_cycleList).setItemDescription(R.string.item_cycleList_description),
         EnumInfo(ItemType.GROUP,                         R.string.item_group).setItemDescription(R.string.item_group_description),
         EnumInfo(ItemType.FILTER_GROUP,                  R.string.item_filterGroup).setItemDescription(R.string.item_filterGroup_description),
+        EnumInfo(ItemType.MATH_GAME,                     R.string.item_mathGame).setItemDescription(R.string.item_mathGame_description),
 
-        EnumInfo(FilterGroupItem.TickBehavior.ALL,           R.string.filter_group_item_filter_tickBehavoir_ALL),
-        EnumInfo(FilterGroupItem.TickBehavior.NOTHING,       R.string.filter_group_item_filter_tickBehavoir_NOTHING),
-        EnumInfo(FilterGroupItem.TickBehavior.ACTIVE,        R.string.filter_group_item_filter_tickBehavoir_ACTIVE),
-        EnumInfo(FilterGroupItem.TickBehavior.NOT_ACTIVE,    R.string.filter_group_item_filter_tickBehavoir_NOT_ACTIVE),
+        EnumInfo(FilterGroupItem.TickBehavior.ALL,           R.string.item_filterGroup_tickBehavior_ALL),
+        EnumInfo(FilterGroupItem.TickBehavior.NOTHING,       R.string.item_filterGroup_tickBehavior_NOTHING),
+        EnumInfo(FilterGroupItem.TickBehavior.ACTIVE,        R.string.item_filterGroup_tickBehavior_ACTIVE),
+        EnumInfo(FilterGroupItem.TickBehavior.NOT_ACTIVE,    R.string.item_filterGroup_tickBehavior_NOT_ACTIVE),
 
-        EnumInfo(CycleListItem.TickBehavior.ALL,            R.string.cycleListItem_tickBehavior_all),
-        EnumInfo(CycleListItem.TickBehavior.NOTHING,        R.string.cycleListItem_tickBehavior_nothing),
-        EnumInfo(CycleListItem.TickBehavior.CURRENT,        R.string.cycleListItem_tickBehavior_current),
-        EnumInfo(CycleListItem.TickBehavior.NOT_CURRENT,    R.string.cycleListItem_tickBehavior_notCurrent),
+        EnumInfo(CycleListItem.TickBehavior.ALL,            R.string.item_cycleList_tickBehavior_all),
+        EnumInfo(CycleListItem.TickBehavior.NOTHING,        R.string.item_cycleList_tickBehavior_nothing),
+        EnumInfo(CycleListItem.TickBehavior.CURRENT,        R.string.item_cycleList_tickBehavior_current),
+        EnumInfo(CycleListItem.TickBehavior.NOT_CURRENT,    R.string.item_cycleList_tickBehavior_notCurrent),
 
         EnumInfo(SettingsManager.ItemAddPosition.TOP,       R.string.settings_itemAddPosition_TOP),
         EnumInfo(SettingsManager.ItemAddPosition.BOTTOM,    R.string.settings_itemAddPosition_BOTTOM),
@@ -96,7 +98,7 @@ object EnumsRegistry {
     fun name(e: Enum<*>, context: Context): String = context.getString(nameResId(e))
 
     class EnumInfo(var e: Enum<*>, var nameResId: Int) {
-        var itemDescriptionResId: Int = R.string.unknown
+        var itemDescriptionResId: Int = R.string.abc_unknown
 
         fun setItemDescription(i: Int): EnumInfo {
             itemDescriptionResId = i

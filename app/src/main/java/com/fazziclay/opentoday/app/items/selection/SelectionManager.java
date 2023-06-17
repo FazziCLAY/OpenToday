@@ -1,10 +1,10 @@
 package com.fazziclay.opentoday.app.items.selection;
 
+import com.fazziclay.opentoday.app.CrashReportContext;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.SelectionCallback;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
-import com.fazziclay.opentoday.util.callback.Status;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +13,7 @@ public class SelectionManager {
     // Selection
     private final List<Selection> selections = new ArrayList<>();
     private final CallbackStorage<SelectionCallback> onSelectionUpdated = new CallbackStorage<>();
-    private final SelectionController selectionController = new SelectionController() {
-        @Override
-        public void detached(Selection selection) {
-            deselectItem(selection);
-        }
-    };
+    private final SelectionController selectionController = this::deselectItem;
 
     public SelectionManager() {
 
@@ -38,20 +33,25 @@ public class SelectionManager {
     }
 
     public void selectItem(Item item) {
+        CrashReportContext.BACK.push("SelectionManager.selectItem");
+        if (!item.isAttached()) {
+            throw new IllegalArgumentException("Item to select is not attached!");
+        }
         if (isSelected(item)) return;
 
-        ItemsStorage parentItemsStorage = item.getParentItemsStorage();
-        Selection selection = new Selection(selectionController, parentItemsStorage, item);
+        Selection selection = new Selection(selectionController, item);
         selection.selected();
         this.selections.add(selection);
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
-            callback.onSelectionChanged(this.selections);
-            callback.selected(selection);
-            return Status.NONE;
+            callback.onSelectionChanged(getSelections());
+            return callback.selected(selection);
         });
+        item.visibleChanged();
+        CrashReportContext.BACK.pop();
     }
 
     public void deselectItem(Item item) {
+        CrashReportContext.BACK.push("SelectionManager.deselectItem");
         if (!isSelected(item)) return;
         Selection toDelete = null;
         for (Selection selection : this.selections) {
@@ -62,36 +62,33 @@ public class SelectionManager {
 
         final Selection finalToDelete = toDelete;
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
-            callback.onSelectionChanged(this.selections);
-            callback.unselected(finalToDelete);
-            return new Status.Builder().build();
+            callback.onSelectionChanged(getSelections());
+            return callback.unselected(finalToDelete);
         });
+        item.visibleChanged();
+        CrashReportContext.BACK.pop();
     }
 
     public void deselectItem(Selection se) {
+        CrashReportContext.BACK.push("SelectionManager.deselectItem");
         if (!isSelected(se.getItem())) return;
-        Selection toDelete = null;
-        for (Selection selection : this.selections) {
-            if (selection == se) toDelete = selection;
-        }
-        selections.remove(toDelete);
-        toDelete.deselect();
-
+        selections.remove(se);
+        se.deselect();
 
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
-            callback.onSelectionChanged(this.selections);
-            callback.unselected(se);
-            return Status.NONE;
+            callback.onSelectionChanged(getSelections());
+            return callback.unselected(se);
         });
+        se.getItem().visibleChanged();
+        CrashReportContext.BACK.pop();
     }
 
     public void deselectAll() {
         selections.clear();
 
         this.onSelectionUpdated.run((callbackStorage, callback) -> {
-            callback.onSelectionChanged(this.selections);
-            callback.unselectedAll();
-            return Status.NONE;
+            callback.onSelectionChanged(getSelections());
+            return callback.unselectedAll();
         });
     }
 
@@ -100,5 +97,25 @@ public class SelectionManager {
             if (selection.getItem() == item) return true;
         }
         return false;
+    }
+
+    public void copyAllSelectedTo(ItemsStorage itemsStorage) {
+        for (Selection selection : getSelections()) {
+            selection.copyTo(itemsStorage);
+        }
+    }
+
+    public Item[] getItems() {
+        List<Item> items = new ArrayList<>();
+        for (Selection selection : getSelections()) {
+            items.add(selection.getItem());
+        }
+        return items.toArray(new Item[0]);
+    }
+
+    public void moveAllSelectedTo(ItemsStorage itemsStorage) {
+        for (Selection selection : getSelections()) {
+            selection.moveTo(itemsStorage);
+        }
     }
 }

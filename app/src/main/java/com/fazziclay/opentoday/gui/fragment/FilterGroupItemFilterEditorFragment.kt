@@ -11,7 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.App
-import com.fazziclay.opentoday.app.items.ItemManager
+import com.fazziclay.opentoday.app.items.ItemsRoot
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem
 import com.fazziclay.opentoday.app.items.item.Item
 import com.fazziclay.opentoday.app.items.item.filter.DateItemFilter
@@ -19,12 +19,14 @@ import com.fazziclay.opentoday.app.items.item.filter.ItemFilter
 import com.fazziclay.opentoday.app.items.item.filter.ItemStatItemFilter
 import com.fazziclay.opentoday.app.items.item.filter.LogicContainerItemFilter
 import com.fazziclay.opentoday.databinding.FragmentFilterGroupItemFilterEditorBinding
+import com.fazziclay.opentoday.gui.ActivitySettings
+import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.gui.interfaces.Destroy
 import com.fazziclay.opentoday.gui.part.DateItemFilterPartEditor
 import com.fazziclay.opentoday.gui.part.ItemStatFilterPartEditor
 import com.fazziclay.opentoday.gui.part.LogicContainerItemFilterPartEditor
 import kotlinx.coroutines.Runnable
-import java.util.*
+import java.util.UUID
 
 class FilterGroupItemFilterEditorFragment : Fragment() {
     companion object {
@@ -62,11 +64,11 @@ class FilterGroupItemFilterEditorFragment : Fragment() {
                 is ItemStatItemFilter -> {
                     val part = ItemStatFilterPartEditor(context, LayoutInflater.from(context), itemFilter, item, saveSignal)
                     destroy = part
-                    view = part.rootView;
+                    view = part.rootView
                 }
                 else -> {
                     val part = TextView(context)
-                    part.text = context.getString(R.string.filter_group_item_filter_editor_error_unknownFilter, itemFilter?.javaClass?.canonicalName)
+                    part.text = context.getString(R.string.fragment_filterGroup_itemFilter_editor_error_unknownFilter, itemFilter?.javaClass?.canonicalName)
                     view = part
                     destroy = object : Destroy {
                         override fun destroy() {
@@ -84,9 +86,9 @@ class FilterGroupItemFilterEditorFragment : Fragment() {
         }
     }
 
-    private lateinit var binding: FragmentFilterGroupItemFilterEditorBinding;
+    private lateinit var binding: FragmentFilterGroupItemFilterEditorBinding
     private lateinit var app: App
-    private lateinit var itemManager: ItemManager
+    private lateinit var itemsRoot: ItemsRoot
     private lateinit var filterGroup: FilterGroupItem
     private lateinit var item: Item
     private lateinit var rootFilter: ItemFilter
@@ -95,15 +97,19 @@ class FilterGroupItemFilterEditorFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         app = App.get(requireContext())
-        itemManager = app.itemManager
+        itemsRoot = app.itemsRoot
 
         if (arguments != null) {
             val filterGroupId = UUID.fromString(requireArguments().getString(KEY_FILTER_GROUP))
-            filterGroup = (itemManager.getItemById(filterGroupId) as FilterGroupItem?)!!
+            filterGroup = (itemsRoot.getItemById(filterGroupId) as FilterGroupItem?)!!
             val itemId = UUID.fromString(requireArguments().getString(KEY_ITEM))
             item = filterGroup.getItemById(itemId)!!
 
             rootFilter = filterGroup.getItemFilter(item)!!
+        }
+
+        UI.getUIRoot(this).pushActivitySettings { a: ActivitySettings ->
+            a.isNotificationsVisible = false
         }
     }
 
@@ -116,6 +122,7 @@ class FilterGroupItemFilterEditorFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         part?.destroy()
+        UI.getUIRoot(this).popActivitySettings()
     }
 
     private fun setupView() {

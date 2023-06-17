@@ -3,9 +3,8 @@ package com.fazziclay.opentoday.app.items.item;
 import androidx.annotation.NonNull;
 
 import com.fazziclay.opentoday.app.data.Cherry;
+import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
-import com.fazziclay.opentoday.app.items.ItemsUtils;
-import com.fazziclay.opentoday.app.items.SimpleItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
@@ -60,13 +59,13 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
     // Append
     public GroupItem(TextItem textItem, ContainerItem containerItem) {
         super(textItem);
-        if (containerItem != null) this.itemsStorage.importData(ItemsUtils.copy(containerItem.getAllItems()));
+        if (containerItem != null) this.itemsStorage.copyData(containerItem.getAllItems());
     }
 
     // Copy
     public GroupItem(GroupItem copy) {
         super(copy);
-        this.itemsStorage.importData(ItemsUtils.copy(copy.getAllItems()));
+        if (copy != null) this.itemsStorage.copyData(copy.getAllItems());
     }
 
     @Override
@@ -78,12 +77,11 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
     }
 
     @Override
-    public Item regenerateId() {
+    protected void regenerateId() {
         super.regenerateId();
         for (Item item : getAllItems()) {
             item.regenerateId();
         }
-        return this;
     }
 
     @Override
@@ -93,8 +91,8 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
 
     @NonNull
     @Override
-    public CallbackStorage<OnItemsStorageUpdate> getOnUpdateCallbacks() {
-        return itemsStorage.getOnUpdateCallbacks();
+    public CallbackStorage<OnItemsStorageUpdate> getOnItemsStorageCallbacks() {
+        return itemsStorage.getOnItemsStorageCallbacks();
     }
 
     @Override
@@ -121,11 +119,13 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
     @Override
     public void addItem(Item item) {
         itemsStorage.addItem(item);
+        visibleChanged();
     }
 
     @Override
     public void addItem(Item item, int position) {
         itemsStorage.addItem(item, position);
+        visibleChanged();
     }
 
     @Override
@@ -160,6 +160,7 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
         @Override
         public void delete(Item item) {
             GroupItem.this.deleteItem(item);
+            visibleChanged();
         }
 
         @Override
@@ -169,12 +170,23 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
 
         @Override
         public void updateUi(Item item) {
-            GroupItem.this.getOnUpdateCallbacks().run(((callbackStorage, callback) -> callback.onUpdated(item, getItemPosition(item))));
+            GroupItem.this.getOnItemsStorageCallbacks().run(((callbackStorage, callback) -> callback.onUpdated(item, getItemPosition(item))));
+            visibleChanged();
         }
 
         @Override
         public ItemsStorage getParentItemsStorage(Item item) {
             return GroupItem.this;
+        }
+
+        @Override
+        public UUID generateId(Item item) {
+            return ItemUtil.controllerGenerateItemId(getRoot(), item);
+        }
+
+        @Override
+        public ItemsRoot getRoot() {
+            return GroupItem.this.getRoot();
         }
     }
 }

@@ -57,7 +57,9 @@ public class TextItem extends Item {
     @SaveKey(key = "clickableUrls") @RequireSave private boolean clickableUrls = false;
     @SaveKey(key = "paragraphColorize") private boolean paragraphColorize = true;
 
-    protected TextItem() {}
+    protected TextItem() {
+        super();
+    }
 
     public TextItem(String text) {
         this(null, text);
@@ -72,11 +74,13 @@ public class TextItem extends Item {
     // Copy
     public TextItem(TextItem copy) {
         super(copy);
-        this.text = copy.text;
-        this.textColor = copy.textColor;
-        this.customTextColor = copy.customTextColor;
-        this.clickableUrls = copy.clickableUrls;
-        this.paragraphColorize = copy.paragraphColorize;
+        if (copy != null) {
+            this.text = copy.text;
+            this.textColor = copy.textColor;
+            this.customTextColor = copy.customTextColor;
+            this.clickableUrls = copy.clickableUrls;
+            this.paragraphColorize = copy.paragraphColorize;
+        }
     }
 
     @Override @Getter @NonNull public String getText() { return text; }

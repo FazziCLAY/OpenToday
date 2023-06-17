@@ -14,7 +14,11 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.item.TextItem;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.gui.fragment.ItemsTabIncludeFragment;
+import com.fazziclay.opentoday.util.RandomUtil;
+
+import java.util.UUID;
 
 public class QuickNoteReceiver extends BroadcastReceiver {
     public static final String REMOTE_INPUT_KEY = "opentoday_quick_note_remote_input";
@@ -28,7 +32,7 @@ public class QuickNoteReceiver extends BroadcastReceiver {
         } else {
             flags = 0;
         }
-        NotificationCompat.Action action = new NotificationCompat.Action.Builder(R.drawable.ic_launcher_foreground, context.getString(R.string.quickNote), PendingIntent.getBroadcast(context, 0, new Intent(context, QuickNoteReceiver.class), flags))
+        NotificationCompat.Action action = new NotificationCompat.Action.Builder(R.drawable.ic_launcher_foreground, context.getString(R.string.quickNote), PendingIntent.getBroadcast(context, RandomUtil.nextInt(), new Intent(context, QuickNoteReceiver.class), flags))
                 .addRemoteInput(new RemoteInput.Builder(QuickNoteReceiver.REMOTE_INPUT_KEY).setLabel(context.getString(R.string.quickNote)).build())
                 .build();
 
@@ -51,7 +55,7 @@ public class QuickNoteReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, final Intent intent) {
         final App app = App.get(context);
         final SettingsManager settingsManager = app.getSettingsManager();
-        final ItemManager itemManager = app.getItemManager();
+        final TabsManager tabsManager = app.getTabsManager();
         final boolean rawTextMode;
         final String rawText;
 
@@ -71,9 +75,13 @@ public class QuickNoteReceiver extends BroadcastReceiver {
         if (rawText != null) {
             final TextItem item = new TextItem(context.getString(R.string.quickNote_notificationPattern, rawText));
             if (settingsManager.isParseTimeFromQuickNote()) item.getNotifications().addAll(ItemsTabIncludeFragment.QUICK_NOTE_NOTIFICATIONS_PARSE.run(rawText));
-            ItemsStorage itemsStorage = itemManager.getItemStorageById(settingsManager.getQuickNoteNotificationItemsStorageId());
-            if (itemsStorage == null) {
-                itemsStorage = itemManager.getMainTab();
+            UUID itemsStorageIdForQuickNote = settingsManager.getQuickNoteNotificationItemsStorageId();
+            ItemsStorage itemsStorage;
+            if (itemsStorageIdForQuickNote == null) {
+                itemsStorage = tabsManager.getFirstTab();
+            } else {
+                itemsStorage = tabsManager.getItemsStorageById(itemsStorageIdForQuickNote);
+                if (itemsStorage == null) itemsStorage = tabsManager.getFirstTab();
             }
             switch (settingsManager.getItemAddPosition()) {
                 case TOP -> itemsStorage.addItem(item, 0);

@@ -5,7 +5,7 @@ import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.item.Item;
-import com.fazziclay.opentoday.app.items.stat.ItemStat;
+import com.fazziclay.opentoday.app.items.item.ItemStat;
 
 public class ItemStatItemFilter extends ItemFilter implements Cloneable {
     public static final FilterCodec CODEC = new FilterCodec() {

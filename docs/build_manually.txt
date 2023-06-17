@@ -1,3 +1,18 @@
+
+==========================
+
+
+
+      O U T D A T E D
+
+
+==========================
+
+
+
+
+
+
 Build:     ./gradlew build
 Install:   adb install ./app/build/outputs/apk/debug/app-debug.apk
 Launch:    adb shell am start -n "ru.fazziclay.opentoday.dev/ru.fazziclay.opentoday.ui.activity.MainActivity" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER

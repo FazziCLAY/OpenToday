@@ -6,6 +6,8 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.DialogInterface
 import android.os.Bundle
+import android.text.InputFilter
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,16 +23,19 @@ import androidx.fragment.app.Fragment
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.App
 import com.fazziclay.opentoday.app.ColorHistoryManager
+import com.fazziclay.opentoday.app.CrashReportContext
 import com.fazziclay.opentoday.app.ImportWrapper
 import com.fazziclay.opentoday.app.PinCodeManager
-import com.fazziclay.opentoday.app.PinCodeManager.ContainNonDigitChars
+import com.fazziclay.opentoday.app.PinCodeManager.PinCodeNotValidateException
+import com.fazziclay.opentoday.app.PinCodeManager.ValidationException
 import com.fazziclay.opentoday.app.SettingsManager
 import com.fazziclay.opentoday.app.SettingsManager.FirstTab
 import com.fazziclay.opentoday.app.items.QuickNoteReceiver
-import com.fazziclay.opentoday.app.items.item.Item
+import com.fazziclay.opentoday.app.items.item.ItemType
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry
 import com.fazziclay.opentoday.databinding.ExportBinding
 import com.fazziclay.opentoday.databinding.FragmentSettingsBinding
+import com.fazziclay.opentoday.gui.ActivitySettings
 import com.fazziclay.opentoday.gui.EnumsRegistry
 import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType
@@ -67,11 +72,23 @@ class SettingsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        CrashReportContext.FRONT.push("SettingsFragment")
         Logger.d(TAG, "onCreate")
         app = App.get(requireContext())
         settingsManager = app.settingsManager
         colorHistoryManager = app.colorHistoryManager
         pinCodeManager = app.pinCodeManager
+        UI.getUIRoot(this).pushActivitySettings { a ->
+            a.isNotificationsVisible = false
+            a.isClockVisible = false
+            a.toolbarSettings = ActivitySettings.ToolbarSettings.createBack(R.string.settings_title) { UI.rootBack(this@SettingsFragment) }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        CrashReportContext.FRONT.pop()
+        UI.getUIRoot(this).popActivitySettings()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -161,7 +178,6 @@ class SettingsFragment : Fragment() {
         binding.colorHistoryLocked.isChecked = colorHistoryManager.isLocked
         viewClick(binding.colorHistoryLocked, Runnable {
             colorHistoryManager.isLocked = binding.colorHistoryLocked.isChecked
-            colorHistoryManager.save()
         })
 
         // Export
@@ -182,7 +198,7 @@ class SettingsFragment : Fragment() {
         })
         binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(EnumsRegistry.nameResId(settingsManager.defaultQuickNoteType.itemType)))
         viewClick(binding.defaultQuickNoteType, Runnable {
-            DialogSelectItemType(context) { type: Class<out Item?> ->
+            DialogSelectItemType(context) { type: ItemType ->
                 settingsManager.defaultQuickNoteType = ItemsRegistry.REGISTRY.get(type)
                 binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(EnumsRegistry.nameResId(settingsManager.defaultQuickNoteType.itemType)))
                 settingsManager.save()
@@ -273,22 +289,32 @@ class SettingsFragment : Fragment() {
                         Toast.makeText(app, R.string.settings_pincode_disable_success, Toast.LENGTH_SHORT).show()
                     } else {
                         val t = EditText(requireContext())
+                        t.inputType = InputType.TYPE_CLASS_NUMBER
                         t.setHint(R.string.settings_pincode_enable_hint)
+                        t.filters = arrayOf(InputFilter.LengthFilter(PinCodeManager.MAX_LENGTH))
                         AlertDialog.Builder(requireContext())
                                 .setTitle(R.string.settings_pincode_enable_title)
                                 .setMessage(R.string.settings_pincode_enable_message)
                                 .setView(t)
-                                .setPositiveButton(R.string.settings_pincode_enable_apply) { _: DialogInterface?, _: Int ->
+                                .setPositiveButton(R.string.settings_pincode_enable_apply) EnterNewPinCodeDialog@ { _: DialogInterface?, _: Int ->
                                     try {
                                         pinCodeManager.enablePinCode(t.text.toString())
                                         pinCodeCallback.run()
                                         Toast.makeText(app, R.string.settings_pincode_enable_success, Toast.LENGTH_SHORT).show()
                                     } catch (e: Exception) {
-                                        if (e is ContainNonDigitChars) {
-                                            Toast.makeText(app, R.string.settings_pincode_enable_nonDigitsError, Toast.LENGTH_SHORT).show()
-                                        } else {
-                                            Toast.makeText(app, R.string.settings_pincode_enable_unknownError, Toast.LENGTH_SHORT).show()
+                                        if (e is PinCodeNotValidateException) {
+                                            if (e.validationException == ValidationException.CONTAINS_NON_DIGITS_CHARS) {
+                                                Toast.makeText(app, R.string.settings_pincode_enable_nonDigitsError, Toast.LENGTH_SHORT).show()
+                                                return@EnterNewPinCodeDialog
+                                            } else if (e.validationException == ValidationException.EMPTY) {
+                                                Toast.makeText(app, R.string.settings_pincode_enable_emptyError, Toast.LENGTH_SHORT).show()
+                                                return@EnterNewPinCodeDialog
+                                            } else if (e.validationException == ValidationException.TOO_LONG) {
+                                                Toast.makeText(app, R.string.settings_pincode_enable_tooLongError, Toast.LENGTH_SHORT).show()
+                                                return@EnterNewPinCodeDialog
+                                            }
                                         }
+                                        Toast.makeText(app, R.string.settings_pincode_enable_unknownError, Toast.LENGTH_SHORT).show()
                                     }
                                 }
                                 .setNegativeButton(R.string.settings_pincode_enable_cancel, null)
@@ -305,7 +331,7 @@ class SettingsFragment : Fragment() {
                 .setTitle(R.string.settings_export_dialog_title)
                 .setNegativeButton(R.string.abc_cancel, null)
                 .setPositiveButton(R.string.settings_export_dialog_export) { _: DialogInterface?, _: Int ->
-                    val itemManager = App.get(context).itemManager
+                    val tabsManger = App.get(context).tabsManager
                     val perms: MutableList<ImportWrapper.Permission> = ArrayList()
                     val isAllItems = binding.exportAllItems.isChecked
                     val isSettings = binding.exportSettings.isChecked
@@ -318,7 +344,7 @@ class SettingsFragment : Fragment() {
                     if (isDialogMessage) perms.add(ImportWrapper.Permission.PRE_IMPORT_SHOW_DIALOG)
                     val i = ImportWrapper.createImport(*perms.toTypedArray())
                     if (isDialogMessage) i.setDialogMessage(dialogMessage)
-                    if (isAllItems) i.addTabAll(*itemManager.tabs.toTypedArray())
+                    if (isAllItems) i.addTabAll(*tabsManger.allTabs)
                     if (isSettings) {
                         try {
                             i.setSettings(settingsManager!!.exportJSONSettings())

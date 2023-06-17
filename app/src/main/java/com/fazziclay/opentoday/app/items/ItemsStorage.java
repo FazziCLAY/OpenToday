@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
+import com.fazziclay.opentoday.app.items.tick.Tickable;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 
 import java.util.List;
@@ -24,9 +25,9 @@ import java.util.UUID;
  * @see ItemsStorage#tick(TickSession)
  * @see ItemsStorage#save()
  * @see ItemsStorage#size()
- * @see ItemsStorage#getOnUpdateCallbacks()
+ * @see ItemsStorage#getOnItemsStorageCallbacks()
  */
-public interface ItemsStorage {
+public interface ItemsStorage extends Tickable {
     /**
      * Add item to this ItemStorage
      * @param item item to add
@@ -97,8 +98,7 @@ public interface ItemsStorage {
     void tick(TickSession tickSession);
 
     /**
-     * Save data (Call to up (to up, to up, to up)) -> call save to ItemManager => Save all
-     * @see ItemManager#queueSave()
+     * Save data
      */
     void save();
 
@@ -114,7 +114,7 @@ public interface ItemsStorage {
      * @see OnItemsStorageUpdate
      * @see CallbackStorage
      */
-    @NonNull CallbackStorage<OnItemsStorageUpdate> getOnUpdateCallbacks();
+    @NonNull CallbackStorage<OnItemsStorageUpdate> getOnItemsStorageCallbacks();
 
     boolean isEmpty();
 }

@@ -3,6 +3,7 @@ package com.fazziclay.opentoday.gui.fragment;
 import static com.fazziclay.opentoday.util.InlineUtil.nullStat;
 
 import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,12 +14,12 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.SettingsManager;
-import com.fazziclay.opentoday.app.items.ItemManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Readonly;
 import com.fazziclay.opentoday.app.items.callback.ItemCallback;
@@ -29,20 +30,20 @@ import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.Tab;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.databinding.ItemsStorageEmptyBinding;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.activity.MainActivity;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
-import com.fazziclay.opentoday.gui.interfaces.StorageEditsActions;
+import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
 import com.fazziclay.opentoday.gui.item.ItemsStorageDrawer;
+import com.fazziclay.opentoday.gui.item.ItemsStorageDrawerBehavior;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 public class ItemsEditorFragment extends Fragment {
@@ -57,7 +58,7 @@ public class ItemsEditorFragment extends Fragment {
     private MainActivity activity;
     private NavigationHost navigationHost;
     private NavigationHost rootNavigationHost;
-    private ItemManager itemManager;
+    private TabsManager tabsManager;
     private SettingsManager settingsManager;
     private SelectionManager selectionManager;
     private ItemsStorage itemsStorage;
@@ -72,7 +73,6 @@ public class ItemsEditorFragment extends Fragment {
 
     private Tab tab;
     private Item item;
-    private final List<Runnable> onCreateListeners = new ArrayList<>();
     private OnItemsStorageUpdate onItemStorageChangeCallback;
     private ItemCallback itemCallback;
 
@@ -102,7 +102,7 @@ public class ItemsEditorFragment extends Fragment {
         navigationHost = (NavigationHost) getParentFragment();
         rootNavigationHost = UI.findFragmentInParents(this, MainRootFragment.class);
         App app = App.get(requireContext());
-        itemManager = app.getItemManager();
+        tabsManager = app.getTabsManager();
         settingsManager = app.getSettingsManager();
         selectionManager = app.getSelectionManager();
 
@@ -112,7 +112,7 @@ public class ItemsEditorFragment extends Fragment {
         Bundle args = getArguments();
         previewMode = args.getBoolean(EXTRA_PREVIEW_MODE);
         tabId = UUID.fromString(args.getString(EXTRA_TAB_ID));
-        tab = itemManager.getTab(tabId);
+        tab = tabsManager.getTabById(tabId);
 
         isRoot = !args.containsKey(EXTRA_ITEM_ID);
         if (isRoot) {
@@ -129,31 +129,68 @@ public class ItemsEditorFragment extends Fragment {
             }
         }
 
-        if (previewMode) {
-            this.itemsStorageDrawer = ItemsStorageDrawer.builder(activity, itemManager, settingsManager, selectionManager, itemsStorage)
-                    .setPreviewMode()
-                    .build();
-        } else {
-            this.itemsStorageDrawer = ItemsStorageDrawer.builder(activity, itemManager, settingsManager, selectionManager, itemsStorage)
-                    .setOnItemOpenEditor((item) -> rootNavigationHost.navigate(ItemEditorFragment.edit(item.getId()), true))
-                    .setStorageEditsActions(new StorageEditsActions() {
-                        @Override
-                        public void onGroupEdit(@NonNull GroupItem groupItem) {
-                            navigationHost.navigate(createItem(tabId, groupItem.getId(), (groupItem instanceof Readonly)), true);
-                        }
+        ItemViewGeneratorBehavior itemViewGeneratorBehavior = new ItemViewGeneratorBehavior() {
 
-                        @Override
-                        public void onCycleListEdit(@NonNull CycleListItem cycleListItem) {
-                            navigationHost.navigate(createItem(tabId, cycleListItem.getId(), (cycleListItem instanceof Readonly)), true);
-                        }
+            @Override
+            public boolean isConfirmFastChanges() {
+                return settingsManager.isConfirmFastChanges();
+            }
 
-                        @Override
-                        public void onFilterGroupEdit(@NonNull FilterGroupItem filterGroupItem) {
-                            navigationHost.navigate(createItem(tabId, filterGroupItem.getId(), (filterGroupItem instanceof Readonly)), true);
-                        }
-                    })
-                    .build();
-        }
+            @Override
+            public void setConfirmFastChanges(boolean b) {
+                settingsManager.setConfirmFastChanges(b);
+                settingsManager.save();
+            }
+
+            @Override
+            public Drawable getForeground(Item item) {
+                Drawable selection = UI.itemSelectionForeground(activity, item, selectionManager);
+                if (selection != null) return selection;
+                if (settingsManager.isMinimizeGrayColor() && item.isMinimize()) {
+                    return AppCompatResources.getDrawable(requireContext(), R.drawable.minimize_gray_foreground);
+                }
+                return null;
+            }
+
+            @Override
+            public void onGroupEdit(GroupItem groupItem) {
+                navigationHost.navigate(createItem(tabId, groupItem.getId(), (groupItem instanceof Readonly)), true);
+            }
+
+            @Override
+            public void onCycleListEdit(CycleListItem cycleListItem) {
+                navigationHost.navigate(createItem(tabId, cycleListItem.getId(), (cycleListItem instanceof Readonly)), true);
+            }
+
+            @Override
+            public void onFilterGroupEdit(FilterGroupItem filterGroupItem) {
+                navigationHost.navigate(createItem(tabId, filterGroupItem.getId(), (filterGroupItem instanceof Readonly)), true);
+            }
+        };
+
+        ItemsStorageDrawerBehavior itemsStorageDrawerBehavior = new ItemsStorageDrawerBehavior() {
+            @Override
+            public SettingsManager.ItemAction getItemOnClickAction() {
+                return settingsManager.getItemOnClickAction();
+            }
+
+            @Override
+            public boolean isScrollToAddedItem() {
+                return settingsManager.isScrollToAddedItem();
+            }
+
+            @Override
+            public SettingsManager.ItemAction getItemOnLeftAction() {
+                return settingsManager.getItemOnLeftAction();
+            }
+        };
+
+
+        this.itemsStorageDrawer = ItemsStorageDrawer.builder(activity, itemsStorageDrawerBehavior, itemViewGeneratorBehavior, selectionManager, itemsStorage)
+                .setPreviewMode(previewMode)
+                .setOnItemOpenEditor((item) -> rootNavigationHost.navigate(ItemEditorFragment.edit(item.getId()), true))
+                .setOnItemTextEditor((item) -> rootNavigationHost.navigate(ItemTextEditorFragment.create(item.getId()), true))
+                .build();
 
         if (item instanceof FilterGroupItem) {
             applyFilterGroupViewPatch((FilterGroupItem) item);
@@ -183,8 +220,7 @@ public class ItemsEditorFragment extends Fragment {
                 return Status.NONE;
             }
         };
-        itemsStorage.getOnUpdateCallbacks().addCallback(CallbackImportance.MIN, onItemStorageChangeCallback);
-        runOnCreateListeners();
+        itemsStorage.getOnItemsStorageCallbacks().addCallback(CallbackImportance.MIN, onItemStorageChangeCallback);
     }
 
     private void updateNotFoundState(boolean ignoreCache, boolean none) {
@@ -206,16 +242,26 @@ public class ItemsEditorFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Logger.d(TAG, "onCreateView", nullStat(savedInstanceState));
-        if (settingsManager.isColorizeItemsEditorBackgroundByItemBackground() && item != null) layout.setBackgroundColor(item.getViewBackgroundColor());
+        if (settingsManager.isColorizeItemsEditorBackgroundByItemBackground() && item != null)
+            layout.setBackgroundColor(item.getViewBackgroundColor());
         return layout;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        ItemsEditorRootFragment root = UI.findFragmentInParents(this, ItemsEditorRootFragment.class);
+        if (root != null) {
+            root.childAttached(this, item);
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         if (this.itemsStorageDrawer != null) this.itemsStorageDrawer.destroy();
-        if (this.itemsStorage != null) itemsStorage.getOnUpdateCallbacks().deleteCallback(onItemStorageChangeCallback);
-        if (this.item != null) item.getItemCallbacks().deleteCallback(itemCallback);
+        if (this.itemsStorage != null) itemsStorage.getOnItemsStorageCallbacks().removeCallback(onItemStorageChangeCallback);
+        if (this.item != null) item.getItemCallbacks().removeCallback(itemCallback);
     }
 
     public ItemsStorage getItemStorage() {
@@ -228,10 +274,6 @@ public class ItemsEditorFragment extends Fragment {
 
     public UUID getItemId() {
         return itemId;
-    }
-
-    public void addOnCreateListener(Runnable o) {
-        onCreateListeners.add(o); // TODO: 3/11/23 remove unused onCreateListener
     }
 
     @Nullable
@@ -283,12 +325,5 @@ public class ItemsEditorFragment extends Fragment {
 
     private void editFilterGroupItemFilter(FilterGroupItem filterGroupItem, Item item) {
         rootNavigationHost.navigate(FilterGroupItemFilterEditorFragment.create(filterGroupItem.getId(), item.getId()), true);
-    }
-
-    @Deprecated
-    private void runOnCreateListeners() {
-        for (Runnable e : onCreateListeners) {
-            e.run();
-        }
     }
 }

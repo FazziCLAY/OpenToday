@@ -1,10 +1,13 @@
 package com.fazziclay.opentoday.gui
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -16,11 +19,14 @@ import androidx.fragment.app.Fragment
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.App
 import com.fazziclay.opentoday.app.FeatureFlag
+import com.fazziclay.opentoday.app.items.item.Item
+import com.fazziclay.opentoday.app.items.selection.SelectionManager
 import com.fazziclay.opentoday.app.items.tick.ItemsTickReceiver
 import com.fazziclay.opentoday.gui.callbacks.UIDebugCallback
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost
 import com.fazziclay.opentoday.util.InlineUtil
+import com.fazziclay.opentoday.util.ResUtil
 import com.fazziclay.opentoday.util.callback.CallbackStorage
 import com.fazziclay.opentoday.util.callback.Status
 import java.util.UUID
@@ -43,6 +49,23 @@ object UI {
     }
 
     @JvmStatic
+    fun getUIRoot(fragment: Fragment): UIRoot {
+        val activity = fragment.requireActivity()
+        if (activity is UIRoot) {
+            return activity
+        }
+        throw RuntimeException("This fragment activity not is UIRoot. Ops...")
+    }
+
+    @JvmStatic
+    fun getUIRoot(activity: Activity): UIRoot {
+        if (activity is UIRoot) {
+            return activity
+        }
+        throw RuntimeException("This activity not is UIRoot. Ops...")
+    }
+
+    @JvmStatic
     fun rootBack(fragment: Fragment) {
         val host = findFragmentInParents(fragment, MainRootFragment::class.java) ?: throw RuntimeException("Fragment is not contains MainRootFragment in parents!")
         host.popBackStack()
@@ -50,7 +73,7 @@ object UI {
 
     @JvmStatic
     fun getDebugCallbacks(): CallbackStorage<UIDebugCallback> {
-        return debugCallbacks;
+        return debugCallbacks
     }
 
     @JvmStatic
@@ -61,6 +84,22 @@ object UI {
     @JvmStatic
     fun setTheme(i: Int) {
         AppCompatDelegate.setDefaultNightMode(i)
+    }
+
+    @JvmStatic
+    fun itemSelectionForeground(
+        context: Context,
+        item: Item,
+        selectionManager: SelectionManager
+    ): Drawable? {
+        return if (selectionManager.isSelected(item)) ColorDrawable(
+            ResUtil.getAttrColor(
+                context,
+                R.attr.item_selectionForegroundColor
+            )
+        ) else {
+            return null
+        }
     }
 
     object Debug {
@@ -93,14 +132,18 @@ object UI {
 
         @JvmStatic
         fun showCrashWithMessageDialog(context: Context?, exceptionMessagePattern: String?) {
-            Toast.makeText(context, R.string.manuallyCrash_crash, Toast.LENGTH_SHORT).show()
             val message = EditText(context)
             message.setHint(R.string.manuallyCrash_dialog_inputHint)
             val dialog: Dialog = AlertDialog.Builder(context)
                     .setTitle(R.string.manuallyCrash_dialog_title)
                     .setView(message)
                     .setMessage(R.string.manuallyCrash_dialog_message)
-                    .setPositiveButton(R.string.manuallyCrash_dialog_apply) { _: DialogInterface?, _: Int -> throw RuntimeException(String.format(exceptionMessagePattern!!, message.text.toString())) }
+                    .setPositiveButton(R.string.manuallyCrash_dialog_apply) { _: DialogInterface?, _: Int ->
+                        run {
+                            Toast.makeText(context, R.string.manuallyCrash_crash, Toast.LENGTH_SHORT).show()
+                            throw RuntimeException(String.format(exceptionMessagePattern!!, message.text.toString()))
+                        }
+                    }
                     .setNegativeButton(R.string.manuallyCrash_dialog_cancel, null)
                     .create()
             dialog.setCanceledOnTouchOutside(false)
@@ -132,6 +175,10 @@ object UI {
                             return@RunCallbackInterface Status.NONE
                         })
                     }
+                    debugCallbacks.run(CallbackStorage.RunCallbackInterface { _, callback ->
+                        callback.featureFlagsChanged(featureFlag, `is`)
+                        return@RunCallbackInterface Status.NONE
+                    })
                 })
                 val textView = TextView(context)
                 textView.text = featureFlag.description
@@ -144,7 +191,7 @@ object UI {
             scrollView.addView(view)
             val dialog: Dialog = AlertDialog.Builder(context)
                     .setView(scrollView)
-                    .setTitle("DEBUG: FeatureFlags")
+                    .setTitle("Debug feature flags")
                     .setNegativeButton(R.string.abc_cancel, null)
                     .create()
             dialog.setCanceledOnTouchOutside(false)

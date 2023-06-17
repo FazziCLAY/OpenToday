@@ -84,7 +84,7 @@ public class ItemStatFilterPartEditor implements Destroy {
             public int getCurrentValue() {
                 return item == null ? 0 : item.getStat().getActiveItems();
             }
-        }, binding.activeItems, R.string.dialog_editItemFilter_activeItems);
+        }, binding.activeItems, R.string.itemFilter_dateAndTime_activeItems);
 
         setupRow(new SetupInterface() {
             @Override
@@ -101,7 +101,7 @@ public class ItemStatFilterPartEditor implements Destroy {
             public int getCurrentValue() {
                 return item == null ? 0 : item.getStat().isChecked() ? 1 : 0;
             }
-        }, binding.isChecked, R.string.dialog_editItemFilter_isChecked);
+        }, binding.isChecked, R.string.itemFilter_dateAndTime_isChecked);
 
         runnableList.add(new Runnable() {
             @Override
@@ -155,7 +155,7 @@ public class ItemStatFilterPartEditor implements Destroy {
         });
 
         SimpleSpinnerAdapter<String> simpleSpinnerAdapter = new SimpleSpinnerAdapter<String>(context)
-                .add(context.getString(R.string.dialog_editItemFilter_disable), "disable")
+                .add(context.getString(R.string.itemFilter_dateAndTime_disable), "disable")
                 .add("==", "==")
                 .add(">", ">")
                 .add(">=", ">=")

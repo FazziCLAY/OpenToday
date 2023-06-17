@@ -6,7 +6,6 @@ import androidx.annotation.Nullable;
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Readonly;
-import com.fazziclay.opentoday.app.items.SimpleItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
@@ -14,14 +13,16 @@ import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemType;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
+import com.fazziclay.opentoday.app.items.item.SimpleItemsStorage;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
+import com.fazziclay.opentoday.app.items.tick.Tickable;
 import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 
 import java.util.UUID;
 
-public class Debug202305RandomTab extends Tab implements Readonly {
+public class Debug202305RandomTab extends Tab implements Tickable, Readonly {
     public static final TabCodec CODEC = new TabCodec() {
         @NonNull
         @Override
@@ -38,7 +39,7 @@ public class Debug202305RandomTab extends Tab implements Readonly {
         }
     };
 
-    private final SimpleItemsStorage itemsStorage = new SimpleItemsStorage() {
+    private final SimpleItemsStorage itemsStorage = new SimpleItemsStorage(getRoot()) {
         @Override
         public void save() {
             // do nothing in Debug tab
@@ -139,8 +140,8 @@ public class Debug202305RandomTab extends Tab implements Readonly {
 
     @NonNull
     @Override
-    public CallbackStorage<OnItemsStorageUpdate> getOnUpdateCallbacks() {
-        return itemsStorage.getOnUpdateCallbacks();
+    public CallbackStorage<OnItemsStorageUpdate> getOnItemsStorageCallbacks() {
+        return itemsStorage.getOnItemsStorageCallbacks();
     }
 
     @Override

@@ -136,7 +136,7 @@ public class SettingsManager {
             try {
                 this.quickNoteNotificationItemsStorageId = UUID.fromString(j.optString("quickNoteNotificationItemsStorageId"));
             } catch (Exception ignored) {}
-            this.isTelemetry = j.optBoolean("isTelemetry", true); // TODO: 30.05.2023 (oht branch) use isTelemetry for fallback
+            this.isTelemetry = j.optBoolean("isTelemetry", isTelemetry);
             try {
                 this.defaultQuickNoteType = ItemsRegistry.REGISTRY.get(j.getString("defaultQuickNoteType"));
             } catch (Exception ignored) {}
@@ -201,7 +201,7 @@ public class SettingsManager {
     }
 
     public boolean isColorizeItemsEditorBackgroundByItemBackground() {
-        return false; // TODO: 5/22/23 owo
+        return false; // TODO: 5/22/23 add customizable
     }
 
     public boolean isScrollToAddedItem() {
@@ -211,6 +211,7 @@ public class SettingsManager {
 
     public enum ItemAction {
         OPEN_EDITOR,
+        OPEN_TEXT_EDITOR,
         SELECT_REVERT,
         SELECT_ON,
         SELECT_OFF,

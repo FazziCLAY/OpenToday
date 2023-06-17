@@ -16,9 +16,16 @@ public class ColorPicker {
     private final Context context;
     private int startColor;
     private ColorHistoryManager colorHistoryManager;
+    private int colorHistoryMax = 5;
     private boolean showHex;
     private boolean showPreview;
     private boolean showAlpha;
+    private Runnable neutralDialogButtonRunnable = null;
+    private String neutralDialogButtonText = null;
+
+    public ColorPicker(Context context) {
+        this.context = context;
+    }
 
     public ColorPicker(Context context, int startColor) {
         this.context = context;
@@ -32,49 +39,53 @@ public class ColorPicker {
         return this;
     }
 
-    public void showDialog(int title, int negative, int positive, EditInterface editInterface) {
-        showDialog(context.getString(title), context.getString(negative), context.getString(positive), editInterface);
+    public void showDialog(int title, int negative, int positive, ColorPickerInterface colorPickerInterface) {
+        showDialog(context.getString(title), context.getString(negative), context.getString(positive), colorPickerInterface);
     }
 
-    public void showDialog(String title, String negative, String positive, EditInterface editInterface) {
-        ColorPickerView cp = new ColorPickerView(context);
-        cp.showHex(showHex);
-        cp.showPreview(showPreview);
-        cp.showAlpha(showAlpha);
-        cp.setCurrentColor(startColor);
-        cp.setOriginalColor(startColor);
+    public void showDialog(String title, String negative, String positive, ColorPickerInterface colorPickerInterface) {
+        ColorPickerView pickerView = new ColorPickerView(context);
+        pickerView.showHex(showHex);
+        pickerView.showPreview(showPreview);
+        pickerView.showAlpha(showAlpha);
+        pickerView.setCurrentColor(startColor);
+        pickerView.setOriginalColor(startColor);
 
-        HorizontalScrollView historyHorizontal = new HorizontalScrollView(context);
 
         LinearLayout dialogLayout = new LinearLayout(context);
         dialogLayout.setOrientation(LinearLayout.VERTICAL);
-        dialogLayout.addView(cp);
-        dialogLayout.addView(historyHorizontal);
+        dialogLayout.addView(pickerView);
 
         if (colorHistoryManager != null) {
             ChipGroup history = new ChipGroup(context);
-            int[] colors = colorHistoryManager.getHistory(5);
+            int[] colors = colorHistoryManager.getHistory(colorHistoryMax);
             for (int color : colors) {
                 Chip chip = new Chip(context);
                 chip.setChipBackgroundColor(ColorStateList.valueOf(color));
-                chip.setOnClickListener(v -> cp.setCurrentColor(color));
+                chip.setOnClickListener(v -> pickerView.setCurrentColor(color));
                 chip.setText(String.format("#%08x", color));
                 history.addView(chip);
             }
+            HorizontalScrollView historyHorizontal = new HorizontalScrollView(context);
             historyHorizontal.addView(history);
+            dialogLayout.addView(historyHorizontal);
         }
 
-
-        new AlertDialog.Builder(context)
+        AlertDialog.Builder builder = new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setView(dialogLayout)
                 .setNegativeButton(negative, null)
                 .setPositiveButton(positive, ((_dialog1, _which) -> {
-                    int color = cp.getColor();
+                    int color = pickerView.getColor();
                     if (colorHistoryManager != null)colorHistoryManager.addColor(color);
-                    editInterface.selected(color);
-                }))
-                .show();
+                    colorPickerInterface.selected(color);
+                }));
+
+        if (neutralDialogButtonRunnable != null && neutralDialogButtonText != null) {
+            builder.setNeutralButton(neutralDialogButtonText, (_ignore, _ignore0) -> neutralDialogButtonRunnable.run());
+        }
+
+        builder.show();
     }
 
     public ColorPicker setStartColor(int color) {
@@ -87,7 +98,18 @@ public class ColorPicker {
         return this;
     }
 
-    public interface EditInterface {
+    public ColorPicker setColorHistoryMax(int colorHistoryMax) {
+        this.colorHistoryMax = colorHistoryMax;
+        return this;
+    }
+
+    public ColorPicker setNeutralDialogButton(String text, Runnable runnable) {
+        this.neutralDialogButtonText = text;
+        this.neutralDialogButtonRunnable = runnable;
+        return this;
+    }
+
+    public interface ColorPickerInterface {
         void selected(int color);
     }
 }

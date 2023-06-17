@@ -15,8 +15,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class DayRepeatableCheckboxItem extends CheckboxItem {
+    private static final boolean DEBUG_RANDOM_STATE_CHANGES = false; // NO NOT TOUCH! RANDOM STATES ARE SAVED TO FILE!!!! DEFAULT & NORMAL VALUE = FALSE!
     // START - Save
-    private static final boolean DEBUG_RANDOM_STATE_CHANGES = false; // NO NOT TOUCH! RANDOM STATES ARE SAVED TO FILE!!!! ALWAYS IS FALSE!
     public final static DayRepeatableCheckboxItemCodec CODEC = new DayRepeatableCheckboxItemCodec();
     public static class DayRepeatableCheckboxItemCodec extends CheckboxItemCodec {
         @NonNull

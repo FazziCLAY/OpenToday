@@ -1,5 +1,7 @@
 package com.fazziclay.opentoday.app.items.item;
 
+import java.util.function.Supplier;
+
 public class Transform {
     /**
      * <h1>Transforms</h1>
@@ -24,55 +26,55 @@ public class Transform {
      * @param to to
      * @return {@link Result}
      */
-    public static Result transform(Item item, Class<? extends Item> to) {
-        Class<? extends Item> from = item.getClass();
+    public static Result transform(Item item, ItemType to) {
+        ItemType from = ItemUtil.getItemType(item);
 
-        if (to == CounterItem.class) {
-            if (from == TextItem.class) {
+        if (to == ItemType.COUNTER) {
+            if (from == ItemType.TEXT) {
                 TextItem textItem = (TextItem) item;
-                return Result.allow(new CounterItem(textItem));
+                return Result.allow(() -> new CounterItem(textItem));
             }
         }
 
-        if (to == DayRepeatableCheckboxItem.class) {
-            if (from == CheckboxItem.class) {
-                CheckboxItem checkboxItem = (CheckboxItem) item;
-                return Result.allow(new DayRepeatableCheckboxItem(checkboxItem, false, 0));
+        if (to == ItemType.CHECKBOX_DAY_REPEATABLE) {
+            if (from == ItemType.CHECKBOX) {
+                return Result.allow(() -> new DayRepeatableCheckboxItem((CheckboxItem) item, false, 0));
 
-            } else if (from == TextItem.class) {
-                TextItem textItem = (TextItem) item;
-                return Result.allow(new DayRepeatableCheckboxItem(new CheckboxItem(textItem, false), false, 0));
+            } else if (from == ItemType.TEXT) {
+                return Result.allow(() -> new DayRepeatableCheckboxItem(new CheckboxItem((TextItem) item, false), false, 0));
             }
         }
 
-        if (to == CheckboxItem.class) {
-            if (from == TextItem.class) {
-                TextItem textItem = (TextItem) item;
-                return Result.allow(new CheckboxItem(textItem, false));
+        if (to == ItemType.CHECKBOX) {
+            if (from == ItemType.TEXT) {
+                return Result.allow(() -> new CheckboxItem((TextItem) item, false));
             }
         }
 
-        if (to == LongTextItem.class) {
-            if (from == TextItem.class) {
-                TextItem textItem = (TextItem) item;
-                return Result.allow(new LongTextItem(textItem, ""));
+        if (to == ItemType.LONG_TEXT) {
+            if (from == ItemType.TEXT) {
+                return Result.allow(() -> new LongTextItem((TextItem) item, item.getText()));
             }
         }
 
-        if (to == GroupItem.class) {
-            GroupItem groupItem = new GroupItem((TextItem) item, getContainer(item));
-            return Result.allow(groupItem);
+        if (to == ItemType.GROUP) {
+            return Result.allow(() -> new GroupItem((TextItem) item, getContainer(item)));
         }
 
-        if (to == CycleListItem.class) {
-            CycleListItem cycleListItem = new CycleListItem((TextItem) item, getContainer(item));
-            return Result.allow(cycleListItem);
+        if (to == ItemType.CYCLE_LIST) {
+            return Result.allow(() -> new CycleListItem((TextItem) item, getContainer(item)));
         }
 
-        if (to == FilterGroupItem.class) {
-            FilterGroupItem filterGroupItem = new FilterGroupItem((TextItem) item, getContainer(item));
-            return Result.allow(filterGroupItem);
+        if (to == ItemType.FILTER_GROUP) {
+            return Result.allow(() -> new FilterGroupItem((TextItem) item, getContainer(item)));
         }
+
+        if (to == ItemType.MATH_GAME) {
+            if (from.isInherit(ItemType.TEXT)) {
+                return Result.allow(() -> new MathGameItem((TextItem) item));
+            }
+        }
+
         return Result.NOT_ALLOW;
     }
 
@@ -87,20 +89,24 @@ public class Transform {
         return null;
     }
 
+    public static boolean isAllow(Item item, ItemType type) {
+        return transform(item, type).isAllow();
+    }
+
     /**
-     * Return of {@link #transform(Item, Class)} function
+     * Return of {@link #transform(Item, ItemType)} function
      */
     public static class Result {
         public static Result NOT_ALLOW = new Result(false, null);
 
-        public static Result allow(Item item) {
+        public static Result allow(Supplier<Item> item) {
             return new Result(true, item);
         }
 
         private final boolean allow;
-        private final Item result;
+        private final Supplier<Item> result;
 
-        public Result(boolean allow, Item result) {
+        public Result(boolean allow, Supplier<Item> result) {
             this.allow = allow;
             this.result = result;
         }
@@ -109,8 +115,8 @@ public class Transform {
             return allow;
         }
 
-        public Item getResult() {
-            return result;
+        public Item generate() {
+            return result.get();
         }
     }
 }

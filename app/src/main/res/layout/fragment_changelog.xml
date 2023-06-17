@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:padding="12sp">
+    android:paddingStart="12sp"
+    android:paddingEnd="12sp"
+    android:paddingBottom="12sp">
 
     <HorizontalScrollView
         android:layout_width="match_parent"

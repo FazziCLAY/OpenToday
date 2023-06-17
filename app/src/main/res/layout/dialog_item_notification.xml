@@ -24,7 +24,7 @@
         android:id="@+id/titleFromItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/title_from_item_text" />
+        android:text="@string/dialog_itemNotification_titleFromItemText" />
 
     <EditText
         android:id="@+id/text"
@@ -39,7 +39,7 @@
         android:id="@+id/textFromItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/text_from_item_text" />
+        android:text="@string/dialog_itemNotification_textFromItemText" />
 
     <EditText
         android:id="@+id/notifySubText"
@@ -52,12 +52,6 @@
     <Button
         android:id="@+id/time"
         android:text="@string/dialog_itemNotification_time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <CheckBox
-        android:id="@+id/vibrate"
-        android:text="@string/dialog_itemNotification_vibrate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

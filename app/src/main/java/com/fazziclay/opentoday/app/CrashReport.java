@@ -4,7 +4,6 @@ import android.os.Build;
 
 import com.fazziclay.javaneoutil.NonNull;
 import com.fazziclay.opentoday.Debug;
-import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.time.TimeUtil;
 
 import java.io.PrintWriter;
@@ -81,7 +80,7 @@ public class CrashReport {
                  * DEBUG_MAIN_ACTIVITY_START_SLEEP: %_APPLICATION_DEBUG_MAIN_ACTIVITY_START_SLEEP_%
                  * DEBUG_APP_START_SLEEP: %_APPLICATION_DEBUG_APP_START_SLEEP_%
                  * DEBUG_MAIN_ACTIVITY: %_APPLICATION_DEBUG_MAIN_ACTIVITY_%
-                 * DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY: %_APPLICATION_DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY_%
+                 * DEBUG_TEST_EXCEPTION_ON_LAUNCH: %_DEBUG_TEST_EXCEPTION_ON_LAUNCH_%
                  * featureFlags: %_FEATURE_FLAGS_%
 
                 Device:
@@ -99,6 +98,9 @@ public class CrashReport {
                  * App.debug(true): %_DEBUG_RESULT_OF_TRUE_APP_DEBUG_FUNCTION_%
                 %_DEBUG_GET_TEXT_%
                 
+                CrashReportContext:
+                %_CRASH_REPORT_CONTEXT_%
+                
                 Logger:
                 %_L_LOGS_%
 
@@ -106,6 +108,7 @@ public class CrashReport {
                 %_ALL_STACK_TRACES_%
                 --- OpenToday Crash ---
                 """;
+        text = text.replace("%_CRASH_REPORT_CONTEXT_%", getText(() -> startAllLines("| ", CrashReportContext.getAsString())));
         text = text.replace("%_DEBUG_RESULT_OF_FALSE_APP_DEBUG_FUNCTION_%", getText(() -> App.debug(false)));
         text = text.replace("%_DEBUG_RESULT_OF_TRUE_APP_DEBUG_FUNCTION_%", getText(() -> App.debug(true)));
         text = text.replace("%_APPLICATION_VERSION_RELEASE_TIME_%", getText(() -> App.VERSION_RELEASE_TIME + " (" + TimeUtil.getDebugDate(App.VERSION_RELEASE_TIME*1000) + ")"));
@@ -157,7 +160,7 @@ public class CrashReport {
         text = text.replace("%_APPLICATION_DEBUG_MAIN_ACTIVITY_START_SLEEP_%", getText(App.DEBUG_MAIN_ACTIVITY_START_SLEEP));
         text = text.replace("%_APPLICATION_DEBUG_APP_START_SLEEP_%", getText(App.DEBUG_APP_START_SLEEP));
         text = text.replace("%_APPLICATION_DEBUG_MAIN_ACTIVITY_%", getText(App.DEBUG_MAIN_ACTIVITY));
-        text = text.replace("%_APPLICATION_DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY_%", getText(App.DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY));
+        text = text.replace("%_DEBUG_TEST_EXCEPTION_ON_LAUNCH_%", getText(App.DEBUG_TEST_EXCEPTION_ON_LAUNCH));
         text = text.replace("%_TIME_FORMATTED_%", getText(() -> {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss SSS", Locale.ENGLISH);
             return dateFormat.format(new Date(this.crashTimeMillis));
@@ -184,7 +187,7 @@ public class CrashReport {
         text = text.replace("%_DEVICE_MANUFACTURER_%", getText(Build.MANUFACTURER));
         text = text.replace("%_DEVICE_DISPLAY_%", getText(Build.DISPLAY));
         text = text.replace("%_DEVICE_BOOTLOADER_%", getText(() -> Build.BOOTLOADER));
-        text = text.replace("%_L_LOGS_%", getText(() -> startAllLines("| ", Logger.getLOGS().toString())));
+        text = text.replace("%_L_LOGS_%", getText(() -> startAllLines("| ", App.get().getLogs().toString())));
         text = text.replace("%_SHADOW_RELEASE_%", getText(() -> !App.SHADOW_RELEASE ? "false" : "WARNING! SHADOW RELEASE IS TRUE (ENABLED)"));
 
         return text;
@@ -262,7 +265,19 @@ public class CrashReport {
                 "DRY in CrashReport?? :))))",
                 "DirtRenderer is love",
                 "OpenOptimizeMC is love",
-                "try also Google keep"
+                "try also Google keep",
+
+                // 2023.06.04...........
+                "ItemManager -> TabsManager",
+                "'Zakviel and Minecraft' :love:",
+
+                // 2023.06.17 (08:30 UTC) (date of release v1.1.4)
+                "I love OpenToday v1.1.4",
+                "I love OpenToday 0.9.............",
+                "MathGame added in 1.1.4",
+                "CrashReportContext added in 1.1.4",
+                "Summer love OpenToday developing.. :cry:",
+                "Stretchly, thanks!"
         };
         Random random = new Random();
         int max = comments.length;

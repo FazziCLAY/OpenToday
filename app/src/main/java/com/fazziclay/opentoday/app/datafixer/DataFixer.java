@@ -45,7 +45,7 @@ public class DataFixer {
                 isVersionFileOutdated = applicationVersion != App.VERSION_CODE;
             } catch (JSONException e) {
                 Logger.e(TAG, "state: parse from 'version' file", e);
-                return FixResult.NO_FIX;
+                return FixResult.NO_FIX.versionFileExist(false);
             }
         } else {
             // === DETECT 1 DATA VERSION
@@ -55,7 +55,7 @@ public class DataFixer {
                 Logger.d(TAG, "detected first(1) dataVersion (entry_data.json)");
             } else {
                 Logger.d(TAG, "detected not initialized app (first run?)");
-                return FixResult.NO_FIX;
+                return FixResult.NO_FIX.versionFileExist(false);
             }
             // === DETECT 1 DATA VERSION
         }
@@ -138,6 +138,13 @@ public class DataFixer {
         if (dataVersion == 8) {
             fix8versionTo9();
             dataVersion = 9;
+            isUpdated = true;
+        }
+
+        if (dataVersion == 9) {
+            // nothing to fix in to10Version
+            log("v9 -> v10", "Nothing to fix while 9to10 upgrade...");
+            dataVersion = 10;
             isUpdated = true;
         }
 
@@ -352,6 +359,12 @@ public class DataFixer {
             result = items;
             from = 9;
         }
+
+        if (from == 9) {
+            // nothing to fix
+            from = 10;
+        }
+
         return result;
     }
 
@@ -363,6 +376,11 @@ public class DataFixer {
             Scheme8Fix9.tabsListFix(context, tabs);
             result = tabs;
             from = 9;
+        }
+
+        if (from == 9) {
+            // nothing to fix
+            from = 10;
         }
         return result;
     }

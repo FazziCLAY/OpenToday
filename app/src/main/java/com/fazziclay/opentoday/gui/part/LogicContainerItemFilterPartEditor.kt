@@ -32,7 +32,7 @@ import com.fazziclay.opentoday.util.EnumUtil
 import com.fazziclay.opentoday.util.MinTextWatcher
 import com.fazziclay.opentoday.util.ResUtil
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter
-import java.util.*
+import java.util.GregorianCalendar
 
 class LogicContainerItemFilterPartEditor(private val context: Context, layoutInflater: LayoutInflater, private val parentFilterGroup: FilterGroupItem, private val logicContainerItemFilter: LogicContainerItemFilter, private val item: Item?, private val saveSignal: Runnable) : Destroy {
     companion object {

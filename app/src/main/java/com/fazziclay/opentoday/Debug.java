@@ -1,5 +1,7 @@
 package com.fazziclay.opentoday;
 
+import android.os.Build;
+
 import androidx.annotation.NonNull;
 
 import com.fazziclay.opentoday.app.App;
@@ -11,34 +13,52 @@ public class Debug {
     public static final boolean CUSTOM_ITEMSTABINCLUDE_BACKGROUND = App.debug(false);
     public static final boolean CUSTOM_MAINACTIVITY_BACKGROUND = App.debug(false);
     public static final boolean SHOW_PATH_TO_ITEM_ON_ITEMTEXT = App.debug(false);
+    public static final boolean SHOW_ID_ON_ITEMTEXT = App.debug(false);
 
     public static final int DEF = -1;
 
     public static long latestTick = DEF;
+    public static long tickedItems = DEF;
+    public static Object itemTextEditor = null;
+    private static long latestPersonalTick = DEF;
     public static int latestTickDuration = DEF;
     public static int latestPersonalTickDuration = DEF;
     public static long latestSave = DEF;
     public static int latestSaveRequestsCount = DEF;
     public static long appStartupTime = DEF;
     public static long mainActivityStartupTime = DEF;
-    public static Object itemsStorageToolbarContext = DEF;
+    public static Object itemsStorageToolbarContext = null;
 
     @NonNull
     public static String getDebugInfoText() {
+        String androidReleaseOrCodename;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            androidReleaseOrCodename = Build.VERSION.RELEASE_OR_CODENAME;
+        } else {
+            androidReleaseOrCodename = "sdk<R(30)";
+        }
         return String.format("""
-                        $[@bold;-#ffff00][Tick]$[||] %s ago %sms; Personal: %s ago %sms
+                        OpenToday %s; Branch: %s
+                        [Android] ((int)sdk)=%s relOrCod=%s
+                        $[@bold;-#ffff00][Tick]$[||] %s ago %sms all=%s; Personal: %s ago %sms
                         [Save] %s ago; req=%s
                         [App] init=%sms
-                        [GUI] %sms; Toolbar-ctx=$[@italic;-#0055ff]%s$[||]""",
+                        [GUI] %sms; Toolbar-ctx=$[@italic;-#0055ff]%s$[||]
+                        [ItemTextEditor] %s""",
 
-                ago(latestTick), latestTickDuration, "$[-#ff0000]?$[||]", latestPersonalTickDuration,
+                App.VERSION_NAME, App.VERSION_BRANCH,
+                Build.VERSION.SDK_INT, androidReleaseOrCodename,
+                ago(latestTick), latestTickDuration, tickedItems, ago(latestPersonalTick), latestPersonalTickDuration,
                 ago(latestSave), latestSaveRequestsCount,
                 appStartupTime,
-                mainActivityStartupTime, itemsStorageToolbarContext);
+                mainActivityStartupTime, itemsStorageToolbarContext,
+                itemTextEditor);
     }
 
     public static void free() {
-        itemsStorageToolbarContext = null;
+        final String D = "(Debug.free() called)";
+        if (itemsStorageToolbarContext != null) itemsStorageToolbarContext = D;
+        if (itemTextEditor != null) itemTextEditor = D;
     }
 
     public static long ago(long l) {
@@ -53,5 +73,9 @@ public class Debug {
 
     public static void ticked() {
         latestTick = System.currentTimeMillis();
+    }
+
+    public static void tickedPersonal() {
+        latestPersonalTick = System.currentTimeMillis();
     }
 }

@@ -5,16 +5,18 @@ import android.graphics.Color;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.app.data.Cherry;
+import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.app.items.callback.ItemCallback;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationCodecUtil;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationUtil;
-import com.fazziclay.opentoday.app.items.stat.ItemStat;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.TickTarget;
+import com.fazziclay.opentoday.app.items.tick.Tickable;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
@@ -28,9 +30,19 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Main app count (contain information) todo add javadoc to Item :)
+ * <h1>The main unit of the application</h1>
+ * <p>This is the basic parent of all items. It is not possible to add it/render it, etc.</p>
+ * <p>For all of the above actions, use the children of this object</p>
+ *
+ * <br><br>
+ * <h1>Codecs</h1>
+ * <p>Also this object contains the base codec, the codecs of children are also required to inherit the base codec.</p>
+ *
+ * <br><br>
+ * <h1>Non-english comments</h1>
+ * <p>Do not delete them, they do not carry important information, but this is the only thing that has remained since when Item was called Entry...</p>
  */
-public abstract class Item implements Unique {
+public abstract class Item implements Unique, Tickable {
     // START - Save
     public static class ItemCodec extends AbstractItemCodec {
         private static final String KEY_ID = "id";
@@ -112,9 +124,9 @@ public abstract class Item implements Unique {
         this(null);
     }
 
-    // For fast get text (no cast to TextItem)
+    // For fast get text (method overrides by TextItem)
     public String getText() {
-        return "{Item}";
+        return "[Item not have text. Ops...]";
     }
 
     public void delete() {
@@ -132,6 +144,13 @@ public abstract class Item implements Unique {
         itemCallbacks.run((callbackStorage, callback) -> callback.updateUi(Item.this));
     }
 
+    public ItemsRoot getRoot() {
+        if (isAttached()) {
+            return controller.getRoot();
+        }
+        return null;
+    }
+
     public boolean isAttached() {
         return controller != null;
     }
@@ -140,13 +159,13 @@ public abstract class Item implements Unique {
      * set controller and regenerate ids
      * @param itemController controller
      */
-    public void attach(ItemController itemController) {
+    protected void attach(ItemController itemController) {
         this.controller = itemController;
         regenerateId();
         itemCallbacks.run((callbackStorage, callback) -> callback.attached(Item.this));
     }
 
-    public void detach() {
+    protected void detach() {
         this.controller = null;
         this.id = null;
         itemCallbacks.run((callbackStorage, callback) -> callback.detached(Item.this));
@@ -154,13 +173,13 @@ public abstract class Item implements Unique {
 
     public void tick(TickSession tickSession) {
         if (!tickSession.isAllowed(this)) return;
+        Debug.tickedItems++;
         if (tickSession.isTickTargetAllowed(TickTarget.ITEM_NOTIFICATIONS)) ItemNotificationUtil.tick(tickSession, notifications, this);
         if (tickSession.isTickTargetAllowed(TickTarget.ITEM_CALLBACKS)) itemCallbacks.run((callbackStorage, callback) -> callback.tick(Item.this));
     }
 
-    public Item regenerateId() {
-        this.id = UUID.randomUUID();
-        return this;
+    protected void regenerateId() {
+        this.id = controller != null ? controller.generateId(this) : UUID.randomUUID();
     }
 
     protected void updateStat() {
@@ -171,21 +190,14 @@ public abstract class Item implements Unique {
         return itemCallbacks;
     }
 
-    /**
-     * Copy this item
-     * @return copy
-     */
-    public Item copy() {
-        return ItemsRegistry.REGISTRY.get(this.getClass()).copy(this);
-    }
-
     // Getters & Setters
     @Nullable @Override @Getter public UUID getId() { return id; }
 
-    public void setController(@Nullable ItemController controller) {
-        this.controller = controller;
-    }
-
+    /**
+     * <h1>Protected!!!</h1>
+     * <h2>Do not use this method. It is only needed to import the controller installation after importing from the codec</h2>
+     */
+    @Setter protected void setController(@Nullable ItemController controller) { this.controller = controller; }
     @Getter public int getViewMinHeight() { return viewMinHeight; }
     @Setter public void setViewMinHeight(int v) { this.viewMinHeight = v; }
 
@@ -214,6 +226,6 @@ public abstract class Item implements Unique {
     @NotNull
     @Override
     public String toString() {
-        return getClass().getSimpleName()+"@[ID:"+getId()+"HASH:"+hashCode() +"TEXT:"+getText()+"]";
+        return getClass().getSimpleName()+"@[ID:"+getId()+" HASH:"+hashCode() +" TEXT:'"+getText()+"']";
     }
 }

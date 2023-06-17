@@ -2,7 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/edit"
+        android:icon="@android:drawable/ic_menu_edit"
         android:title="@string/menuItem_openEditDialog" />
+
+    <item
+        android:id="@+id/textItem_editText"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="@string/item_text_editText" />
 
     <item
         android:id="@+id/selected"
@@ -24,11 +30,9 @@
 
     <item
         android:id="@+id/delete"
+        android:icon="@android:drawable/ic_menu_delete"
         android:title="@string/menuItem_delete" />
 
 
-    <group android:id="@+id/textItem">
-        <item android:checkable="true" android:id="@+id/textItem_clickableUrls" android:title="@string/uidialog_edit_textentry_clickableUrls" />
-        <item android:id="@+id/textItem_editText" android:title="@string/item_text_editText" />
-    </group>
+    <item android:checkable="true" android:id="@+id/textItem_clickableUrls" android:title="@string/item_text_clickableUrls" />
 </menu>

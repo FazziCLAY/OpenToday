@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StrikethroughSpan;
@@ -31,6 +32,49 @@ public class ColorUtil {
         String hex = "00".concat(Integer.toHexString(value));
         return hex.substring(hex.length()-2);
     }
+    
+    public static String sysReset(String sys, char c) {
+        String[] args = sys.split(";");
+        StringBuilder result = new StringBuilder();
+        StringBuilder passed = new StringBuilder();
+        for (String arg : args) {
+            if (arg.isEmpty() || passed.toString().contains(String.valueOf(arg.charAt(0)))) continue;
+            if (!arg.startsWith(String.valueOf(c))) {
+                result.append(arg).append(";");
+                passed.append(arg.charAt(0));
+            }
+        }
+        if (result.toString().isEmpty()) return "";
+        return result.substring(0, result.lastIndexOf(";"));
+    }
+
+    public static String sysSet(String sys, char c, String val) {
+        String[] args = sys.split(";");
+        StringBuilder result = new StringBuilder();
+        StringBuilder passed = new StringBuilder();
+        boolean replaced = false;
+        for (String arg : args) {
+            if (arg.isEmpty() || passed.toString().contains(String.valueOf(arg.charAt(0)))) continue;
+            if (!arg.startsWith(String.valueOf(c))) {
+                result.append(arg).append(";");
+            } else {
+                result.append(c).append(val).append(";");
+                replaced = true;
+            }
+            passed.append(arg.charAt(0));
+        }
+        if (!replaced) result.append(c).append(val).append(";");
+        if (result.toString().isEmpty()) return "";
+        return result.substring(0, result.lastIndexOf(";"));
+    }
+
+    /**
+     * @see #colorize(String, int, int, int, boolean)
+     */
+    public static SpannableString colorize(String text, int defaultFgColor, int defaultBgColor, int defaultStyle) {
+        return colorize(text, defaultFgColor, defaultBgColor, defaultStyle, false);
+    }
+
 
     /**
      * Return {@link SpannableString} from string. Formatting:
@@ -44,7 +88,7 @@ public class ColorUtil {
      * @see Spannable
      * @see SpannableString
      * **/
-    public static SpannableString colorize(String text, int defaultFgColor, int defaultBgColor, int defaultStyle) {
+    public static SpannableString colorize(String text, int defaultFgColor, int defaultBgColor, int defaultStyle, boolean showSystems) {
         if (text == null) return null;
 
         StringBuilder log = new StringBuilder();
@@ -53,6 +97,7 @@ public class ColorUtil {
         int currentBackgroundSpan = defaultBgColor;
         int currentStyleSpan = defaultStyle;
         boolean currentStrikeOut = false;
+        int currentSize = 0;
 
         List<SpanText> spanTextList = new ArrayList<>();
 
@@ -65,13 +110,14 @@ public class ColorUtil {
             boolean appendOld = true;
             boolean appendNew = true;
             String toAppend = "";
+            String toAppendSystem = "";
 
             if (chars[oi] == '\\') {
                 if (oi + 1 < chars.length && chars[oi + 1] == '$') {
                     toAppend = "$";
-                    oi += 2;
+                    oi += 1;
                 }
-            } else if (chars[oi] == '$' && (oi - 1 < 0 || chars[oi] != '\\')) {
+            } else if (chars[oi] == '$' && (oi - 1 < 0 || chars[oi] != '\\') && (oi + 1 < chars.length && chars[oi + 1] == '[')) {
                 if (oi + 1 < chars.length && chars[oi + 1] == '[') {
                     boolean closeSymbol = false;
                     int _i = oi + 2;
@@ -93,6 +139,7 @@ public class ColorUtil {
                                     currentBackgroundSpan = defaultBgColor;
                                     currentStyleSpan = defaultStyle;
                                     currentStrikeOut = false;
+                                    currentSize = 0;
                                     continue;
                                 }
                                 char systemType = system.charAt(0);
@@ -129,8 +176,17 @@ public class ColorUtil {
                                     if (systemValue.equals("reset")) style = defaultStyle;
                                     currentStyleSpan = style;
                                     currentStrikeOut = systemValue.contains("~");
+                                } else if (systemType == 'S') {
+                                    try {
+                                        currentSize = Integer.parseInt(systemValue);
+                                    } catch (Exception ignored) {
+                                        if (systemValue.equals("reset")) currentSize = 0;
+                                    }
                                 }
                             }
+                        }
+                        if (showSystems) {
+                            toAppendSystem = text.substring(oi, _i+1);
                         }
                         oi = _i;
                     }
@@ -143,15 +199,23 @@ public class ColorUtil {
 
             if (oi >= chars.length) continue;
             SpanText latestSpan = getLatestElement(spanTextList);
-            if (spanTextList.size() > 0 && latestSpan != null && latestSpan.spanEquals(currentForegroundSpan, currentBackgroundSpan, currentStyleSpan, currentStrikeOut)) {
+            if (toAppendSystem.isEmpty() && spanTextList.size() > 0 && latestSpan != null && latestSpan.spanEquals(currentForegroundSpan, currentBackgroundSpan, currentStyleSpan, currentStrikeOut, currentSize)) {
                 latestSpan.appendText(toAppend);
             } else {
                 int latestStart = ni;
                 if (latestSpan != null) {
                     latestStart = latestSpan.end;
                 }
+                if (showSystems) {
+                    SpanText sys = new SpanText(toAppendSystem, Color.LTGRAY, Color.BLACK, Typeface.NORMAL, latestStart);
+                    sys.size = 10;
+                    spanTextList.add(sys);
+                    latestStart = sys.end;
+                }
+
                 SpanText n = new SpanText(toAppend, currentForegroundSpan, currentBackgroundSpan, currentStyleSpan, latestStart);
                 n.strikeOut = currentStrikeOut;
+                n.size = currentSize;
                 spanTextList.add(n);
             }
 
@@ -178,23 +242,25 @@ public class ColorUtil {
             if (spanText.strikeOut) spannableText.setSpan(new StrikethroughSpan(), start, end, Spannable.SPAN_COMPOSING);
             spannableText.setSpan(new BackgroundColorSpan(spanText.bgColor), start, end, Spanned.SPAN_COMPOSING);
             spannableText.setSpan(new StyleSpan(spanText.style), start, end, Spanned.SPAN_COMPOSING);
+            if (spanText.size > 0) spannableText.setSpan(new AbsoluteSizeSpan(spanText.size, true), start, end, Spanned.SPAN_COMPOSING);
             i++;
         }
         return spannableText;
     }
 
     public static <T> T getLatestElement(List<T> list) {
-        return list.size() <= 0 ? null : list.get(list.size()-1);
+        return list.size() == 0 ? null : list.get(list.size()-1);
     }
 
     public static <T> T getLatestElement(T[] list) {
-        return list.length <= 0 ? null : list[list.length-1];
+        return list.length == 0 ? null : list[list.length-1];
     }
 
     /**
      * @see ColorUtil#colorize(String, int, int, int)
      * **/
     private static class SpanText {
+        public int size;
         boolean strikeOut;
         String text;
         int fgColor;
@@ -218,8 +284,8 @@ public class ColorUtil {
             end = start + text.length();
         }
 
-        public boolean spanEquals(int fgColor, int bgColor, int style, boolean strikeOut) {
-            return (this.fgColor == fgColor && this.bgColor == bgColor && this.style == style && this.strikeOut == strikeOut);
+        public boolean spanEquals(int fgColor, int bgColor, int style, boolean strikeOut, int size) {
+            return (this.fgColor == fgColor && this.bgColor == bgColor && this.style == style && this.strikeOut == strikeOut && this.size == size);
         }
 
         @NonNull

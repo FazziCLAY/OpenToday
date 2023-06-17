@@ -8,7 +8,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.fazziclay.opentoday.app.App
 import com.fazziclay.opentoday.databinding.FragmentEnterPincodeBinding
+import com.fazziclay.opentoday.databinding.NotificationTooLongPincodeBinding
 import com.fazziclay.opentoday.gui.UI
+import com.fazziclay.opentoday.gui.UINotification
+import com.fazziclay.opentoday.gui.interfaces.NavigationHost
 import com.fazziclay.opentoday.util.InlineUtil.viewClick
 
 class EnterPinCodeFragment : Fragment() {
@@ -20,6 +23,7 @@ class EnterPinCodeFragment : Fragment() {
 
     private lateinit var binding: FragmentEnterPincodeBinding
     private lateinit var app: App
+    private lateinit var navigationHost: NavigationHost
     private var isAllowed = false
     private var tryNumber = 0
     private var currentPin = ""
@@ -29,6 +33,17 @@ class EnterPinCodeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         app = App.get(requireContext())
+        navigationHost = UI.findFragmentInParents(this, MainRootFragment::class.java)!!
+        UI.getUIRoot(this).pushActivitySettings { a ->
+            a.isNotificationsVisible = false
+            a.isClockVisible = true
+            a.isDateClickCalendar = false
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        UI.getUIRoot(this).popActivitySettings()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -38,8 +53,20 @@ class EnterPinCodeFragment : Fragment() {
     }
 
     private fun allow() {
+        if (app.isPinCodeTooLong) {
+            UI.getUIRoot(this).addNotification(UINotification.create(generateTooLongDisableNotificationView(), 20000))
+            app.pinCodeManager.disablePinCode()
+        }
         isAllowed = true
-        UI.findFragmentInParents(this, MainRootFragment::class.java)!!.navigate(ItemsTabIncludeFragment.create(), false)
+        navigationHost.navigate(ItemsTabIncludeFragment.create(), false)
+    }
+
+    private fun generateTooLongDisableNotificationView(): View {
+        val binding = NotificationTooLongPincodeBinding.inflate(layoutInflater)
+        binding.root.setOnClickListener {
+            navigationHost.navigate(SettingsFragment.create(), true)
+        }
+        return binding.root
     }
 
     private fun setupKeyboardEmulator() {

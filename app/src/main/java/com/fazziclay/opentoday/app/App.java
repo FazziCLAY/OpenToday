@@ -5,7 +5,6 @@ import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
@@ -20,18 +19,22 @@ import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.datafixer.DataFixer;
 import com.fazziclay.opentoday.app.datafixer.FixResult;
-import com.fazziclay.opentoday.app.items.ItemManager;
+import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
+import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.tick.TickThread;
+import com.fazziclay.opentoday.debug.TestItemViewGenerator;
 import com.fazziclay.opentoday.gui.activity.CrashReportActivity;
-import com.fazziclay.opentoday.gui.activity.OpenSourceLicensesActivity;
 import com.fazziclay.opentoday.util.DebugUtil;
 import com.fazziclay.opentoday.util.License;
 import com.fazziclay.opentoday.util.Logger;
+import com.fazziclay.opentoday.util.RandomUtil;
+import com.fazziclay.opentoday.util.callback.CallbackStorage;
 import com.fazziclay.opentoday.util.time.TimeUtil;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,7 +50,7 @@ import ru.fazziclay.opentoday.telemetry.OpenTodayTelemetry;
 
 public class App extends Application {
     // Application
-    public static final int APPLICATION_DATA_VERSION = 9;
+    public static final int APPLICATION_DATA_VERSION = 10;
     public static final String VERSION_NAME = CustomBuildConfig.VERSION_NAME;
     public static final int VERSION_CODE = CustomBuildConfig.VERSION_CODE;
     public static final long VERSION_RELEASE_TIME = CustomBuildConfig.VERSION_RELEASE_TIME;
@@ -73,8 +76,12 @@ public class App extends Application {
     public static final boolean DEBUG_TICK_NOTIFICATION = debug(false);
     public static final int DEBUG_MAIN_ACTIVITY_START_SLEEP = debug(false) ? 6000 : 0;
     public static final int DEBUG_APP_START_SLEEP = debug(false) ? 8000 : 0;
-    public static Class<? extends Activity> DEBUG_MAIN_ACTIVITY = debug(false) ? OpenSourceLicensesActivity.class : null;
-    public static final boolean DEBUG_TEST_EXCEPTION_ONCREATE_MAINACTIVITY = false;
+    public static Class<? extends Activity> DEBUG_MAIN_ACTIVITY = debug(false) ? TestItemViewGenerator.class : null;
+    public static final boolean DEBUG_TEST_EXCEPTION_ON_LAUNCH = false;
+    public static final boolean DEBUG_IMPORTANT_NOTIFICATIONS = debug(false);
+    public static final boolean DEBUG_ALWAYS_SHOW_UI_NOTIFICATIONS = debug(false);
+    public static final boolean DEBUG_LOG_ALL_IN_MAINACTIVITY = debug(false);
+    public static final boolean DEBUG_NETWORK_UTIL_SHADOWCONTENT = debug(false);
 
     public static boolean debug(boolean b) {
         return (DEBUG && b);
@@ -99,23 +106,24 @@ public class App extends Application {
     private long startTime;
     private JSONObject versionData;
     private File logsFile;
+    private final StringBuilder logs = new StringBuilder();
     private final OptionalField<UUID> instanceId = new OptionalField<>(this::parseInstanceId);
     private final OptionalField<License[]> openSourceLicenses = new OptionalField<>(this::createOpenSourceLicensesArray);
     private final OptionalField<DataFixer> dataFixer = new OptionalField<>(() -> new DataFixer(this));
-    private final OptionalField<ItemManager> itemManager = new OptionalField<>(this::preCheckItemManager, ItemManager::destroy);
+    private final OptionalField<TabsManager> tabsManager = new OptionalField<>(this::preCheckTabsManager, TabsManager::destroy);
     private final OptionalField<SettingsManager> settingsManager = new OptionalField<>(() -> new SettingsManager(new File(getExternalFilesDir(""), "settings.json")));
     private final OptionalField<ColorHistoryManager> colorHistoryManager = new OptionalField<>(() -> new ColorHistoryManager(new File(getExternalFilesDir(""), "color_history.json"), 10));
     private final OptionalField<PinCodeManager> pinCodeManager = new OptionalField<>(() -> new PinCodeManager(this));
-    private final OptionalField<ClipboardManager> clipboardManager = new OptionalField<>(() -> getSystemService(ClipboardManager.class));
-    private final OptionalField<SelectionManager> selectionManager = new OptionalField<>(() -> getItemManager().getSelectionManager());
+    private final OptionalField<SelectionManager> selectionManager = new OptionalField<>(SelectionManager::new);
     private final OptionalField<Telemetry> telemetry = new OptionalField<>(() -> new Telemetry(this, getSettingsManager().isTelemetry()));
-    private final OptionalField<TickThread> tickThread = new OptionalField<>(this::preCheckTickThread, TickThread::requestTerminate);
+    private final OptionalField<TickThread> tickThread = new OptionalField<>(this::preCheckTickThread, TickThread::requestTerminate, this::validateTickThread);
+    private final OptionalField<Translation> translation = new OptionalField<>(() -> new TranslationImpl(this::getString));
+    private final OptionalField<CallbackStorage<ImportantDebugCallback>> importantDebugCallbacks = new OptionalField<>(CallbackStorage::new);
     private final List<FeatureFlag> featureFlags = new ArrayList<>(App.DEBUG ? Arrays.asList(
             FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
-            //FeatureFlag.SHOW_APP_STARTUP_TIME_IN_PREMAIN_ACTIVITY,
             //FeatureFlag.ALWAYS_SHOW_SAVE_STATUS,
             //FeatureFlag.DISABLE_AUTOMATIC_TICK,
-            //FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION,
+            FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION,
             FeatureFlag.TOOLBAR_DEBUG
     ) : Collections.emptyList());
     private long appStartupTime = 0;
@@ -137,6 +145,7 @@ public class App extends Application {
             instance = this;
             setupCrashReporter();
             DebugUtil.sleep(DEBUG_APP_START_SLEEP);
+            CrashReportContext.BACK.push("App onCreate");
 
             logsFile = new File(getExternalCacheDir(), "latest.log");
             final FixResult fixResult = Logger.dur("App", "[DataFixer] fixToCurrentVersion", () -> getDataFixer().fixToCurrentVersion());
@@ -160,17 +169,17 @@ public class App extends Application {
         Logger.i("App", "onLowMemory.");
         openSourceLicenses.free();
         dataFixer.free();
-        itemManager.free();
+        tabsManager.free();
         settingsManager.free();
         colorHistoryManager.free();
         pinCodeManager.free();
-        clipboardManager.free();
         selectionManager.free();
         telemetry.free();
         tickThread.free();
 
         Debug.free();
         TimeUtil.free();
+        RandomUtil.free();
     }
 
     @Override
@@ -192,13 +201,7 @@ public class App extends Application {
             pinCodeManager.free();
             Debug.free();
             TimeUtil.free();
-            clipboardManager.free();
-        }
-        if (level >= TRIM_MEMORY_COMPLETE) {
-            //settingsManager.free();
-            //itemManager.free();
-            //tickThread.free();
-            //selectionManager.free();
+            RandomUtil.free();
         }
     }
 
@@ -206,18 +209,27 @@ public class App extends Application {
         return this.getPinCodeManager().isPinCodeSet();
     }
 
+    public boolean isPinCodeTooLong() {
+        return getPinCodeManager().getPinCode().length() > PinCodeManager.MAX_LENGTH;
+    }
+
     public boolean isPinCodeAllow(String p) {
+        if (getPinCodeManager().getPinCode().length() > PinCodeManager.MAX_LENGTH) {
+            if (p.length() >= PinCodeManager.MAX_LENGTH) {
+                return this.getPinCodeManager().getPinCode().startsWith(p);
+            }
+        }
         return p.equals(this.getPinCodeManager().getPinCode());
     }
 
     public int getPinCodeLength() {
-        return this.getPinCodeManager().getPinCode().length();
+        return Math.min(getPinCodeManager().getPinCode().length(), PinCodeManager.MAX_LENGTH);
     }
 
     private void registryNotificationsChannels() {
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
-        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_QUCIKNOTE_CHANNEL, getString(R.string.notification_quickNote_title), NotificationManager.IMPORTANCE_HIGH));
-        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_ITEMS_CHANNEL, getString(R.string.notification_items_title), NotificationManager.IMPORTANCE_HIGH));
+        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_QUCIKNOTE_CHANNEL, getString(R.string.notificationChannel_quickNote_title), NotificationManager.IMPORTANCE_HIGH));
+        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_ITEMS_CHANNEL, getString(R.string.notificationChannel_items_title), NotificationManager.IMPORTANCE_HIGH));
     }
 
     /**
@@ -301,7 +313,7 @@ public class App extends Application {
         App.crash(context, CrashReport.create(exception), false);
     }
 
-    private static void crash(Context context, final CrashReport crashReport, boolean fatal) {
+    private static void crash(@Nullable Context context, @NotNull final CrashReport crashReport, boolean fatal) {
         if (context == null) context = App.get();
         crashReport.setFatal(CrashReport.FatalEnum.fromBoolean(fatal));
 
@@ -316,11 +328,13 @@ public class App extends Application {
             Log.e(CRASH_TAG, "Crash saved to: " + crashReportFile.getAbsolutePath());
             Log.e(CRASH_TAG, crashReport.convertToText(), crashReport.getThrowable());
             Log.e(CRASH_TAG, "=== Crash " + crashReport.getID() + " === (End)");
+
+            Logger.e("=CRASH=", crashReport.convertToText(), crashReport.getThrowable());
         } catch (Exception ignored) {}
 
         // === If fatal: notify user ===
-        if (fatal) {
-            sendCrashNotification(context, crashReportFile);
+        if (fatal || App.DEBUG) {
+            sendCrashNotification(context, crashReportFile, crashReport);
         }
 
         // Telemetry
@@ -332,15 +346,19 @@ public class App extends Application {
 
         // === If fatal: crash app. ===
         if (fatal && androidUncaughtHandler != null) {
-            DebugUtil.sleep(250);
+            try {
+                Thread.sleep(250);
+            } catch (Exception ignore) {}
             androidUncaughtHandler.uncaughtException(crashReport.getThread(), crashReport.getThrowable());
         }
+
+        if (!fatal) ImportantDebugCallback.pushStatic("App.crash() no fatal.\nException: " + crashReport.getThrowable() + "\n\ntext:\n"+crashReport.convertToText());
     }
 
-    private static void sendCrashNotification(final Context context, File fileToCrash) {
+    private static void sendCrashNotification(final Context context, File fileToCrash, CrashReport crashReport) {
         // === NOTIFICATION ===
         final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_CRASH_CHANNEL, context.getString(R.string.notification_crash_title), NotificationManager.IMPORTANCE_DEFAULT));
+        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_CRASH_CHANNEL, context.getString(R.string.notificationChannel_crash_title), NotificationManager.IMPORTANCE_DEFAULT));
 
         final int flag;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -358,7 +376,7 @@ public class App extends Application {
                         .setBigContentTitle(context.getString(R.string.crash_notification_big_title))
                         .setSummaryText(context.getString(R.string.crash_notification_big_summary)))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setContentIntent(PendingIntent.getActivity(context, 0, CrashReportActivity.createLaunchIntent(context, fileToCrash.getAbsolutePath()), flag))
+                .setContentIntent(PendingIntent.getActivity(context, new Random().nextInt(), CrashReportActivity.createLaunchIntent(context, fileToCrash.getAbsolutePath(), crashReport.getID(), crashReport.getThrowable().toString()), flag))
                 .setAutoCancel(true)
                 .build());
 
@@ -392,16 +410,28 @@ public class App extends Application {
         return telemetry.get();
     }
 
-    private ItemManager preCheckItemManager() {
+    private TabsManager preCheckTabsManager() {
+        CrashReportContext.BACK.push("App.preCheckTabsManager");
         final File externalFiles = getExternalFilesDir("");
-        ItemManager itemManager = new ItemManager(new File(externalFiles, "item_data.json"), new File(externalFiles, "item_data.gz"));
-        itemManager.setDebugPrintSaveStatusAlways(isFeatureFlag(FeatureFlag.ALWAYS_SHOW_SAVE_STATUS));
-        return itemManager;
+        final File internalFiles = getFilesDir();
+        TabsManager tabsManager = new TabsManager(
+                new File(externalFiles, "item_data.json"),
+                new File(externalFiles, "item_data.gz"),
+                new File(internalFiles, "item_data.gz.bak"),
+                getTranslation());
+        tabsManager.setDebugPrintSaveStatusAlways(isFeatureFlag(FeatureFlag.ALWAYS_SHOW_SAVE_STATUS));
+        CrashReportContext.BACK.pop();
+        return tabsManager;
     }
 
     @NotNull
-    public ItemManager getItemManager() {
-        return itemManager.get();
+    public TabsManager getTabsManager() {
+        return tabsManager.get();
+    }
+
+    @NotNull
+    public Translation getTranslation() {
+        return translation.get();
     }
 
     @NotNull
@@ -420,19 +450,21 @@ public class App extends Application {
     }
 
     @NotNull
-    public ClipboardManager getClipboardManager() {
-        return clipboardManager.get();
-    }
-
-    @NotNull
     public SelectionManager getSelectionManager() {
         return selectionManager.get();
     }
 
     private TickThread preCheckTickThread() {
-        TickThread tickThread = new TickThread(getApplicationContext(), getItemManager());
+        TickThread tickThread = new TickThread(getApplicationContext(), getTabsManager());
         tickThread.start();
         return tickThread;
+    }
+
+    private TickThread validateTickThread(TickThread t) {
+        if (t.isEnabled()) {
+            return t;
+        }
+        return preCheckTickThread();
     }
 
     @NotNull
@@ -453,5 +485,16 @@ public class App extends Application {
     @NotNull
     public File getLogsFile() {
         return logsFile;
+    }
+
+    public CallbackStorage<ImportantDebugCallback> getImportantDebugCallbacks() {
+        return importantDebugCallbacks.get();
+    }
+    public ItemsRoot getItemsRoot() {
+        return getTabsManager();
+    }
+
+    public StringBuilder getLogs() {
+        return logs;
     }
 }

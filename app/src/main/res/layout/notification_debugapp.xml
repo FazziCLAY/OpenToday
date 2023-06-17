@@ -11,7 +11,7 @@
         android:id="@+id/notificationText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/debug_app"
+        android:text="@string/notification_ui_debugApp"
         android:textColor="#000000"
         android:textSize="20sp" />
 </FrameLayout>

@@ -3,32 +3,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5sp">
+    android:paddingStart="5sp"
+    android:paddingLeft="5sp"
+    android:paddingEnd="5sp"
+    android:paddingRight="5sp"
+    android:paddingBottom="5sp">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_above="@id/apply_button"
         android:layout_height="match_parent">
 
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/modules"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
 
-            <TextView
-                android:id="@+id/itemTypeName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="Filter Group"
-                android:textSize="17sp"
-                android:gravity="center" />
-
-            <LinearLayout
-                android:id="@+id/modules"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/itemTypeName"
-                android:orientation="vertical" />
-        </RelativeLayout>
     </ScrollView>
 
     <Button
@@ -39,7 +30,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:layout_alignStart="@id/cancel_button"
-        android:text="@string/dialogItem_delete"
+        android:text="@string/fragment_itemEditor_delete"
         style="@style/Widget.AppCompat.Button" />
 
 
@@ -50,7 +41,7 @@
         android:drawableTop="@android:drawable/ic_menu_close_clear_cancel"
         android:layout_alignParentBottom="true"
         android:layout_toStartOf="@id/apply_button"
-        android:text="@string/dialogItem_cancel"
+        android:text="@string/fragment_itemEditor_cancel"
         style="@style/Widget.AppCompat.Button" />
 
     <Button
@@ -60,6 +51,6 @@
         android:drawableTop="@android:drawable/ic_menu_save"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:text="@string/dialogItem_apply"
+        android:text="@string/fragment_itemEditor_apply"
         style="@style/Widget.AppCompat.Button" />
 </RelativeLayout>

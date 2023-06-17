@@ -1,3 +1,18 @@
+
+==========================
+
+
+
+      O U T D A T E D
+
+
+==========================
+
+
+
+
+
+
 # 0. Check TODOs
      - check AndroidManifest.xml (todo elements???)
      - check all files in "./docs/todo" folder

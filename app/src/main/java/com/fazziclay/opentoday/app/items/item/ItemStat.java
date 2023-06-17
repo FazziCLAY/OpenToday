@@ -1,4 +1,4 @@
-package com.fazziclay.opentoday.app.items.stat;
+package com.fazziclay.opentoday.app.items.item;
 
 public class ItemStat {
     private int totalTicks = 0;

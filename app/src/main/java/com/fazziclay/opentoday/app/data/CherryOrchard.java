@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 
 import org.json.JSONArray;
 
+import java.util.List;
+
 /**
  * This is wrapper of JSONArray [
  *      "value1", "value2", 3, 4
@@ -22,6 +24,14 @@ public class CherryOrchard {
         return new CherryOrchard(jsonArray);
     }
 
+    public static CherryOrchard of(String[] list) {
+        JSONArray array = new JSONArray();
+        for (String s : list) {
+            array.put(s);
+        }
+        return CherryOrchard.of(array);
+    }
+
     private final JSONArray json;
 
     public CherryOrchard() {
@@ -37,6 +47,14 @@ public class CherryOrchard {
 
         long[] result = new long[orchard.length()];
         orchard.forEachLong((i, value) -> result[i] = value);
+        return result;
+    }
+
+    public static String[] parseStringArray(CherryOrchard orchard, String[] def) {
+        if (orchard == null) return def;
+
+        String[] result = new String[orchard.length()];
+        orchard.forEachString((i, value) -> result[i] = value);
         return result;
     }
 
@@ -86,29 +104,42 @@ public class CherryOrchard {
         return "CherryOrchard" + json.toString();
     }
 
-    public void forEachLong(LongConsumer consumer) {
+    public void forEachString(StringProvider provider) {
         // make reverse loop
         int i = 0;
         while (i < length()) {
-            consumer.consume(i, getLongAt(i));
+            provider.provide(i, getStringAt(i));
             i++;
         }
     }
 
-    public void forEachCherry(CherryConsumer consumer) {
+    public void forEachLong(LongProvider provider) {
         // make reverse loop
         int i = 0;
         while (i < length()) {
-            consumer.consume(i, getCherryAt(i));
+            provider.provide(i, getLongAt(i));
             i++;
         }
     }
 
-    public interface CherryConsumer {
-        void consume(int index, Cherry cherry);
+    public void forEachCherry(CherryProvider provider) {
+        // make reverse loop
+        int i = 0;
+        while (i < length()) {
+            provider.provide(i, getCherryAt(i));
+            i++;
+        }
     }
 
-    public interface LongConsumer {
-        void consume(int index, long value);
+    public interface CherryProvider {
+        void provide(int index, Cherry cherry);
+    }
+
+    public interface LongProvider {
+        void provide(int index, long value);
+    }
+
+    public interface StringProvider {
+        void provide(int index, String value);
     }
 }

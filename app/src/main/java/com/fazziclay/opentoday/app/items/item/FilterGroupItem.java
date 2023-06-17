@@ -1,12 +1,11 @@
 package com.fazziclay.opentoday.app.items.item;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.data.CherryOrchard;
+import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
-import com.fazziclay.opentoday.app.items.ItemsUtils;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.filter.FilterCodecUtil;
 import com.fazziclay.opentoday.app.items.item.filter.FitEquip;
@@ -14,10 +13,14 @@ import com.fazziclay.opentoday.app.items.item.filter.ItemFilter;
 import com.fazziclay.opentoday.app.items.item.filter.LogicContainerItemFilter;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.TickTarget;
-import com.fazziclay.opentoday.util.Logger;
+import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
+import com.fazziclay.opentoday.util.annotation.Setter;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -104,9 +107,9 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         super(textItem);
         if (containerItem != null) {
             for (Item item : containerItem.getAllItems()) {
-                ItemFilterWrapper newWrapper = new ItemFilterWrapper(item, new LogicContainerItemFilter());
-                newWrapper.item.attach(this.groupItemController);
+                ItemFilterWrapper newWrapper = new ItemFilterWrapper(ItemUtil.copyItem(item), new LogicContainerItemFilter());
                 this.items.add(newWrapper);
+                newWrapper.item.attach(this.groupItemController);
             }
         }
     }
@@ -114,30 +117,24 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     // Copy
     public FilterGroupItem(FilterGroupItem copy) {
         super(copy);
-        this.tickBehavior = copy.tickBehavior;
-        for (ItemFilterWrapper copyWrapper : copy.items) {
-            try {
+        if (copy != null) {
+            this.tickBehavior = copy.tickBehavior;
+            for (ItemFilterWrapper copyWrapper : copy.items) {
                 ItemFilterWrapper newWrapper = ItemFilterWrapper.importWrapper(copyWrapper.exportWrapper());
-                newWrapper.item.attach(this.groupItemController);
                 this.items.add(newWrapper);
-            } catch (Exception e) {
-                throw new RuntimeException("Copy exception", e);
+                newWrapper.item.attach(this.groupItemController);
             }
         }
     }
 
-    public void setTickBehavior(@NonNull TickBehavior tickBehavior) {
-        this.tickBehavior = tickBehavior;
-    }
-
-    @NonNull
-    public TickBehavior getTickBehavior() {
+    @Setter public void setTickBehavior(@NonNull TickBehavior o) {this.tickBehavior = o;}
+    @Getter @NonNull public TickBehavior getTickBehavior() {
         return tickBehavior;
     }
 
     @Nullable
-    public ItemFilter getItemFilter(Item item) {
-        for (ItemFilterWrapper wrapper : items) {
+    public ItemFilter getItemFilter(@NotNull Item item) {
+        for (ItemFilterWrapper wrapper : getWrappers()) {
             if (wrapper.item == item) return wrapper.filter;
         }
 
@@ -145,24 +142,32 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     }
 
     public void setItemFilter(Item item, ItemFilter itemFilter) {
-        if (itemFilter == null) throw new NullPointerException("filter can't be null");
+        if (itemFilter == null) throw new NullPointerException("ItemFilter can't be null");
 
-        for (ItemFilterWrapper wrapper : items) {
+        for (ItemFilterWrapper wrapper : getWrappers()) {
             if (wrapper.item == item) wrapper.filter = itemFilter;
         }
+        save();
+    }
+
+    private ItemFilterWrapper[] getWrappers() {
+        return items.toArray(new ItemFilterWrapper[0]);
+    }
+
+    private ItemFilterWrapper[] getActiveWrappers() {
+        return activeItems.toArray(new ItemFilterWrapper[0]);
     }
 
     public Item[] getActiveItems() {
         List<Item> ret = new ArrayList<>();
-        for (ItemFilterWrapper activeItem : activeItems) {
+        for (ItemFilterWrapper activeItem : getActiveWrappers()) {
             ret.add(activeItem.item);
         }
         return ret.toArray(new Item[0]);
     }
 
-
     public boolean isActiveItem(Item item) {
-        for (ItemFilterWrapper activeItem : activeItems) {
+        for (ItemFilterWrapper activeItem : getActiveWrappers()) {
             if (activeItem.item == item) return true;
         }
         return false;
@@ -172,19 +177,18 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     @Override
     public Item[] getAllItems() {
         List<Item> ret = new ArrayList<>();
-        for (ItemFilterWrapper wrapper : items) {
+        for (ItemFilterWrapper wrapper : getWrappers()) {
             ret.add(wrapper.item);
         }
         return ret.toArray(new Item[0]);
     }
 
     @Override
-    public Item regenerateId() {
+    protected void regenerateId() {
         super.regenerateId();
-        for (ItemFilterWrapper item : items) {
+        for (ItemFilterWrapper item : getWrappers()) {
             item.item.regenerateId();
         }
-        return this;
     }
 
     // Item storage
@@ -198,10 +202,10 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     }
 
     private void addItem(ItemFilterWrapper item, int position) {
-        ItemsUtils.checkAllowedItems(item.item);
-        ItemsUtils.checkAttached(item.item);
-        item.item.attach(groupItemController);
+        ItemUtil.throwIsBreakType(item.item);
+        ItemUtil.throwIsAttached(item.item);
         items.add(position, item);
+        item.item.attach(groupItemController);
         itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onAdded(item.item, getItemPosition(item.item)));
         if (!recalculate(TickSession.getLatestGregorianCalendar())) {
             visibleChanged();
@@ -221,16 +225,14 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
 
     @Override
     public void deleteItem(Item item) {
-        int position = getItemPosition(item);
+        ItemFilterWrapper wrapper = getWrapperForItem(item);
+        if (wrapper == null) throw new IllegalArgumentException("Provided item not attached to this FilterGroupItem.");
+
+        int position = getWrapperPosition(wrapper);
         itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onPreDeleted(item, position));
 
-        ItemFilterWrapper toDel = null;
-        for (ItemFilterWrapper wrapper : items) {
-            if (wrapper.item == item) toDel = wrapper;
-        }
-
+        items.remove(wrapper);
         item.detach();
-        items.remove(toDel);
 
         if (!recalculate(TickSession.getLatestGregorianCalendar())) {
             visibleChanged();
@@ -239,12 +241,20 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         save();
     }
 
+    @Nullable
+    private ItemFilterWrapper getWrapperForItem(Item item) {
+        for (ItemFilterWrapper wrapper : getWrappers()) {
+            if (wrapper.item == item) return wrapper;
+        }
+        return null;
+    }
+
     @NonNull
     @Override
     public Item copyItem(Item item) {
         ItemFilter filter = getItemFilter(item);
 
-        Item copy = ItemsRegistry.REGISTRY.get(item.getClass()).copy(item);
+        Item copy = ItemUtil.copyItem(item);
         ItemFilter copyFilter = filter.copy();
         addItem(new ItemFilterWrapper(copy, copyFilter), getItemPosition(item) + 1);
         return copy;
@@ -252,11 +262,10 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
 
     @Override
     public void move(int positionFrom, int positionTo) {
+        if (positionFrom >= size() || positionTo >= size()) throw new IndexOutOfBoundsException("positions index out bounds of items list!");
         ItemFilterWrapper item = items.get(positionFrom);
         items.remove(item);
         items.add(positionTo, item);
-        // TODO: 27.10.2022 EXPERIMENTAL CHANGES
-        //Collections.swap(items, positionFrom, positionTo);
         itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onMoved(item.item, positionFrom, positionTo));
 
         if (!recalculate(TickSession.getLatestGregorianCalendar())) {
@@ -267,14 +276,11 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
 
     @Override
     public int getItemPosition(Item item) {
-        int i = 0;
+        return items.indexOf(getWrapperForItem(item));
+    }
 
-        for (ItemFilterWrapper wrapper : items) {
-            if (wrapper.item == item) return i;
-            i++;
-        }
-
-        return -1; // like as List.indexOf() not found result
+    private int getWrapperPosition(ItemFilterWrapper wrapper) {
+        return items.indexOf(wrapper);
     }
 
     @Override
@@ -286,7 +292,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
 
     @NonNull
     @Override
-    public CallbackStorage<OnItemsStorageUpdate> getOnUpdateCallbacks() {
+    public CallbackStorage<OnItemsStorageUpdate> getOnItemsStorageCallbacks() {
         return itemStorageUpdateCallbacks;
     }
 
@@ -297,7 +303,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
 
     @Override
     public Item getItemById(UUID itemId) {
-        return Logger.dur(TAG, "getItemById (recursive)", () -> ItemsUtils.getItemByIdRecursive(getAllItems(), itemId));
+        return ItemUtil.getItemByIdRecursive(getAllItems(), itemId);
     }
 
     @Override
@@ -305,7 +311,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         if (!tickSession.isAllowed(this)) return;
 
         super.tick(tickSession);
-        if (tickBehavior != TickBehavior.ALL) ItemsUtils.tickOnlyImportantTargets(tickSession, getAllItems());
+        if (tickBehavior != TickBehavior.ALL) ItemUtil.tickOnlyImportantTargets(tickSession, getAllItems());
         if (tickSession.isTickTargetAllowed(TickTarget.ITEM_FILTER_GROUP_TICK)) {
             recalculate(tickSession.getGregorianCalendar());
             updateStat();
@@ -413,6 +419,16 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         @Override
         public ItemsStorage getParentItemsStorage(Item item) {
             return FilterGroupItem.this;
+        }
+
+        @Override
+        public UUID generateId(Item item) {
+            return ItemUtil.controllerGenerateItemId(getRoot(), item);
+        }
+
+        @Override
+        public ItemsRoot getRoot() {
+            return FilterGroupItem.this.getRoot();
         }
     }
 

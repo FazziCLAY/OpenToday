@@ -17,6 +17,7 @@ import java.util.Stack;
 import java.util.UUID;
 
 public class TickSession {
+    private static boolean exceptionOnce = true;
     private static final String TAG = "TickSession";
     private static final boolean LOG_ISALLOWED = App.debug(false);
 
@@ -31,6 +32,7 @@ public class TickSession {
     private int dayTime;
     private boolean isPersonalTick;
     private boolean saveNeeded = false;
+    private boolean importantSaveNeeded = false;
     private final Stack<List<TickTarget>> specifiedTickTarget = new Stack<>();
     private final List<UUID> whitelist = new ArrayList<>();
     private boolean isWhitelist = false;
@@ -95,6 +97,10 @@ public class TickSession {
         return saveNeeded;
     }
 
+    public boolean isImportantSaveNeeded() {
+        return importantSaveNeeded;
+    }
+
     public void setAlarmDayOfTimeInSeconds(int time, Item item) {
         final long shift = getDayTime() >= time ? (24*60*60*1000L) : 0; // IN MILLIS!!
         final AlarmManager alarmManager = getContext().getSystemService(AlarmManager.class);
@@ -105,7 +111,14 @@ public class TickSession {
             flags = PendingIntent.FLAG_UPDATE_CURRENT;
         }
         long triggerAtMs = getNoTimeCalendar().getTimeInMillis() + shift + (time * 1000L) + 599;
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMs, PendingIntent.getBroadcast(getContext(), item.getId().hashCode() + time, ItemsTickReceiver.createIntent(context, item.getId(), true).putExtra("debugMessage", "DayItemNotification is work :)\nItem:\n * id-hashCode: " + item.getId().hashCode() + "\n * Item: " + item + " time: " + time), flags));
+        try {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMs, PendingIntent.getBroadcast(getContext(), item.getId().hashCode() + time, ItemsTickReceiver.createIntent(context, item.getId(), true).putExtra("debugMessage", "DayItemNotification is work :)\nItem:\n * id-hashCode: " + item.getId().hashCode() + "\n * Item: " + item + " time: " + time), flags));
+        } catch (Exception e) {
+            if (exceptionOnce) {
+                App.exception(null, e);
+                exceptionOnce = false;
+            }
+        }
     }
 
     public void recyclePersonal(boolean b) {
@@ -126,6 +139,7 @@ public class TickSession {
 
     public void recycleSaveNeeded() {
         this.saveNeeded = false;
+        this.importantSaveNeeded = false;
     }
 
     public void recycleWhitelist(boolean isWhitelist, List<UUID> whitelist) {
@@ -153,5 +167,9 @@ public class TickSession {
 
     public Object _isWhitelist() {
         return isWhitelist;
+    }
+
+    public void importantSaveNeeded() {
+        this.importantSaveNeeded = true;
     }
 }

@@ -12,24 +12,23 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/title"
-            android:text="@string/aboutapp_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Theme.OpenToday.About.Title" />
-
-        <TextView
             android:id="@+id/about_text"
+            android:layout_marginTop="5sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:drawableTopCompat="@mipmap/ic_launcher" />
+            android:text="OpenToday"
+            android:gravity="center"
+            android:textSize="30sp"
+            app:drawableTopCompat="@mipmap/ic_launcher"
+            tools:ignore="HardcodedText" />
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/title_version"
                 android:text="@string/aboutapp_text_version"
                 style="@style/Theme.OpenToday.About.RowTitle" />
 
@@ -40,8 +39,17 @@
             <TextView
                 android:id="@+id/text_version"
                 tools:text="0.0.0 (build 0)"
+                android:layout_toEndOf="@id/title_version"
                 style="@style/Theme.OpenToday.About.RowValue" />
-        </LinearLayout>
+
+            <TextView
+                android:id="@+id/text_releaseTime"
+                tools:text="0.0.0 (build 0)"
+                android:layout_below="@id/text_version"
+                android:layout_toEndOf="@id/title_version"
+                android:textSize="14sp"
+                style="@style/Theme.OpenToday.About.RowValue" />
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -59,6 +67,25 @@
             <TextView
                 android:id="@+id/text_package"
                 tools:text="ru.fazziclay.opentoday.dev"
+                style="@style/Theme.OpenToday.About.RowValue" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:text="@string/aboutapp_text_branch"
+                style="@style/Theme.OpenToday.About.RowTitle" />
+
+            <Space
+                android:layout_width="5sp"
+                android:layout_height="0sp" />
+
+            <TextView
+                android:id="@+id/text_branch"
+                tools:text="RELEASE"
                 style="@style/Theme.OpenToday.About.RowValue" />
         </LinearLayout>
 
@@ -113,7 +140,7 @@
             android:backgroundTint="#720FD4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/aboutapp_text_changelog"
+            android:text="@string/aboutapp_click_changelog"
             android:layout_gravity="center_horizontal" />
 
         <Button
@@ -121,7 +148,7 @@
             app:drawableEndCompat="@android:drawable/ic_menu_set_as"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/aboutapp_text_sourceCode"
+            android:text="@string/aboutapp_click_sourceCode"
             android:layout_gravity="start" />
 
         <Button
@@ -129,21 +156,14 @@
             app:drawableEndCompat="@android:drawable/ic_menu_set_as"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/aboutapp_text_issues"
+            android:text="@string/aboutapp_click_issues"
             android:layout_gravity="start" />
 
         <Button
             android:id="@+id/licenses"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/about_licenses"
+            android:text="@string/aboutapp_click_licenses"
             android:layout_gravity="start" />
-
-        <Button
-            android:id="@+id/ok"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/aboutapp_ok"
-            android:layout_gravity="end|bottom"/>
     </LinearLayout>
 </ScrollView>
