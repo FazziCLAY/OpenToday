@@ -1,0 +1,63 @@
+# Changelog v130 1.1.4 (2023.06.17)
+# News
+* New item: MathGame
+    This is a random math exercise generator with a keyboard for entering the answer
+
+* New formatting system: size. $[S20] - size=20
+* New fragment: ItemTextEditor. Replaced the text editing dialog.
+
+* Changelog now use formatting: $[@bold]Hello!$[||]
+* Changelog now is Fragment instead of Activity
+
+* CrashReportActivity added "Send to developer" button if send anonymous statistic disabled
+
+* Settings resorted & enchanted
+
+# Fixes
+* ColorHistoryManager uses less RAM
+* Improved Update Checker
+* The name of the initial tab is now translated into the user's language
+* Resuming sending notifications after restarting the device
+* Import: now importing from a higher version is not possible
+* Crash-notification fixed
+* Fix translates
+* Fix shadow-link while transform any ContainerItem to FilterGroupItem
+* The length of the PIN code is now limited to 10 characters
+* The tab name length is now limited to 35 characters
+* Formatting now show $ if it is not in the system ($[])
+* Fixed potential crashes in itemEditor
+* Fix double-notify bug when first notify sent in app background
+* Fixes internal errors when item with notifications deleted
+
+# Other
+* Transform dialog now show only allowed items
+* SetupActivity now contains theme selector
+* QuickNote long press to send button now open settings.quickNoteType dialog
+* When the CheckBox is clicked, tick is called instantly (for FilterGroup updates)
+* Not working vibration deleted from ItemNotification's
+* Added CrashReportContext for CrashReport
+
+# Technical
+* DATA_VERSION now is 10 (MathGameItem, DataFixer nothing to fix)
+* added ActivitySettings to MainActivity
+* Fragments About, Settings, Import, Changelog and ItemTextEditor now use android toolbar
+* Unnecessary FeatureFlags removed
+* New comments в CrashReport
+* Changed Item policy: item-ID now generated in ItemsRoot
+* Settings QuickNoteType dialog now show only allowed items(check required featureFlags)
+* Fix selections item foreground
+* Selected items now in previewMode
+* added UINotification to MainActivity
+* Logger now use formatting & UI Logs viewer added background preference
+* Toolbar->Debug perfectly
+* DeleteItemsFragment now use RecyclerView
+* ItemsRootEditorFragment: path now correctly
+* Update ViewPager2 on tab click
+* TimeUtil getDebugDate() now use Locale.UK & EE instead of EEEE
+* RandomUtil now uses OptionalField
+* NetworkUtil support DEBUG_CONTENTS
+* Translate files now sorted alphabetically by keys
+* Added UINotification's system for MainActivity
+* TickThread restart if it dead (added Validator for OptionalFiled)
+* Use OptionalField in RandomUtil, TimeUtil
+and more fixes and changes...
