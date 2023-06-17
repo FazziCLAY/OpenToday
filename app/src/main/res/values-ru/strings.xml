@@ -305,7 +305,7 @@
     <string name="settings_title">Настройки</string>
     <string name="settings_trimItemNamesOnEdit">Обрезать лишнее в имени при редактровании айтема</string>
     <string name="setup_telemetry">Разрешить анонимную статистику</string>
-    <string name="setup_telemetry_details">Эта статистика очень поможет разработчику; Она содердит это:\n * IP-адресс\n * Идентификатор приложения\n * Открытие/закрытие (макс. 1 раз/день)\n * Краши и Ошибки</string>
+    <string name="setup_telemetry_details">Эта статистика очень поможет разработчику; Она содержит:\n * IP-адресс\n * Идентификатор приложения\n * Открытие/закрытие (макс. 1 раз/день)\n * Краши и Ошибки</string>
     <string name="setup_theme_title">Выберите комфортную тему</string>
     <string name="tab_defaultFirstName">Моя первая вкладка</string>
     <string name="tab_noEmptyName">Имя не может быть пустым</string>
