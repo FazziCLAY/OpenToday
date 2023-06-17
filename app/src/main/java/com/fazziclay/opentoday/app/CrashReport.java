@@ -4,7 +4,6 @@ import android.os.Build;
 
 import com.fazziclay.javaneoutil.NonNull;
 import com.fazziclay.opentoday.Debug;
-import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.time.TimeUtil;
 
 import java.io.PrintWriter;
@@ -270,7 +269,15 @@ public class CrashReport {
 
                 // 2023.06.04...........
                 "ItemManager -> TabsManager",
-                "'Zakviel and Minecraft' :love:"
+                "'Zakviel and Minecraft' :love:",
+
+                // 2023.06.17 (08:30 UTC) (date of release v1.1.4)
+                "I love OpenToday v1.1.4",
+                "I love OpenToday 0.9.............",
+                "MathGame added in 1.1.4",
+                "CrashReportContext added in 1.1.4",
+                "Summer love OpenToday developing.. :cry:",
+                "Stretchly, thanks!"
         };
         Random random = new Random();
         int max = comments.length;
