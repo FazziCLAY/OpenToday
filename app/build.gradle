@@ -7,9 +7,9 @@ plugins {
 var isDev = true
 var beta = false
 var appIdSuffix = "" // EMPTY FOR RELEASES!!!!
-var verBuild = 131
-var verName = "1.2.x.0"
-var verBranch = "fix_mathgame_editor_translatable" // use "RELEASE" for releases versions
+var verBuild = 133
+var verName = "1.2.x.1"
+var verBranch = "39-when-resuming-in-the-itemeditor-of-the-longtextitem-item-the-text-of-the-parent-element-is-replaced-by-the-previous-text-of-the-child" // use "RELEASE" for releases versions
 var verReleaseTime = 1687000271 // in seconds
 // =====
 

@@ -665,11 +665,11 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
                 clipboardManager.setPrimaryClip(ClipData.newPlainText("Item long text", ((LongTextItem) item).getLongText()));
                 Toast.makeText(activity, R.string.abc_coped, Toast.LENGTH_SHORT).show();
             });
-            binding.text.setText(longTextItem.getLongText());
-            binding.defaultTextColor.setChecked(!longTextItem.isCustomLongTextColor());
+            binding.longText.setText(longTextItem.getLongText());
+            binding.defaultLongTextColor.setChecked(!longTextItem.isCustomLongTextColor());
             temp_textColor = longTextItem.getLongTextColor();
             updateTextColorIndicator(activity);
-            binding.textColorEdit.setOnClickListener(v -> new ColorPicker(activity, temp_textColor)
+            binding.longTextColorEdit.setOnClickListener(v -> new ColorPicker(activity, temp_textColor)
                     .setting(true, true, true)
                     .setColorHistoryManager(colorHistoryManager)
                     .showDialog(R.string.fragment_itemEditor_module_longtext_textColor_dialog_title,
@@ -677,15 +677,15 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
                             R.string.fragment_itemEditor_module_longtext_textColor_dialog_apply,
                             (color) -> {
                                 temp_textColor = color;
-                                binding.defaultTextColor.setChecked(false);
+                                binding.defaultLongTextColor.setChecked(false);
                                 updateTextColorIndicator(activity);
                                 onEditStart.run();
                             }));
 
-            binding.clickableUrls.setChecked(longTextItem.isLongTextClickableUrls());
+            binding.longClickableUrls.setChecked(longTextItem.isLongTextClickableUrls());
 
             // On edit start
-            binding.text.addTextChangedListener(textWatcher = new MinTextWatcher(){
+            binding.longText.addTextChangedListener(textWatcher = new MinTextWatcher(){
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     if (disableLongTextUpdated) {
@@ -693,14 +693,14 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
                         return;
                     }
                     onEditStart.run();
-                    viewVisible(binding.openTextEditor, false, View.INVISIBLE);
+                    viewVisible(binding.openLongTextEditor, false, View.INVISIBLE);
                 }
             });
-            binding.defaultTextColor.setOnClickListener(v -> {
+            binding.defaultLongTextColor.setOnClickListener(v -> {
                 updateTextColorIndicator(activity);
                 onEditStart.run();
             });
-            binding.clickableUrls.setOnClickListener(v -> onEditStart.run());
+            binding.longClickableUrls.setOnClickListener(v -> onEditStart.run());
 
             binding.defaultSize.setChecked(!longTextItem.isCustomLongTextSize());
             binding.size.setMax(30);
@@ -708,8 +708,8 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.size.setProgress(longTextItem.getLongTextSize());
             //
 
-            viewVisible(binding.openTextEditor, mode == MODE_EDIT, View.INVISIBLE);
-            viewClick(binding.openTextEditor, () -> {
+            viewVisible(binding.openLongTextEditor, mode == MODE_EDIT, View.INVISIBLE);
+            viewClick(binding.openLongTextEditor, () -> {
                 disableStateRestoreOnEdits();
                 navigationHost.navigate(ItemTextEditorFragment.create(item.getId(), ItemTextEditorFragment.EDITABLE_TYPE_LONG_TEXT, ColorUtil.colorToHex(getEditModule(ItemEditModule.class).getTempBackgroundColor())), true);
                 updateLongTextItemOnResume = true;
@@ -719,16 +719,16 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         @Override
         public void onResume() {
             if (updateLongTextItemOnResume) {
-                MinTextWatcher.runAtDisabled(binding.text, textWatcher, () -> binding.text.setText(((LongTextItem)item).getLongText()));
+                MinTextWatcher.runAtDisabled(binding.longText, textWatcher, () -> binding.longText.setText(((LongTextItem)item).getLongText()));
                 updateLongTextItemOnResume = false;
             }
         }
 
         private void updateTextColorIndicator(Activity activity) {
-            if (binding.defaultTextColor.isChecked()) {
-                binding.textColorIndicator.setBackgroundTintList(ColorStateList.valueOf(ResUtil.getAttrColor(activity, R.attr.item_textColor)));
+            if (binding.defaultLongTextColor.isChecked()) {
+                binding.longTextColorIndicator.setBackgroundTintList(ColorStateList.valueOf(ResUtil.getAttrColor(activity, R.attr.item_textColor)));
             } else {
-                binding.textColorIndicator.setBackgroundTintList(ColorStateList.valueOf(temp_textColor));
+                binding.longTextColorIndicator.setBackgroundTintList(ColorStateList.valueOf(temp_textColor));
             }
         }
 
@@ -736,16 +736,16 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         public void commit(Item item) {
             LongTextItem longTextItem = (LongTextItem) item;
 
-            String userInput = binding.text.getText().toString();
+            String userInput = binding.longText.getText().toString();
             if (settingsManager.isTrimItemNamesOnEdit()) {
                 userInput = userInput.trim();
             }
             longTextItem.setLongText(userInput);
             longTextItem.setLongTextSize(binding.size.getProgress());
             longTextItem.setLongTextColor(temp_textColor);
-            longTextItem.setCustomLongTextColor(!binding.defaultTextColor.isChecked());
+            longTextItem.setCustomLongTextColor(!binding.defaultLongTextColor.isChecked());
             longTextItem.setCustomLongTextSize(!binding.defaultSize.isChecked());
-            longTextItem.setLongTextClickableUrls(binding.clickableUrls.isChecked());
+            longTextItem.setLongTextClickableUrls(binding.longClickableUrls.isChecked());
         }
 
         @Override

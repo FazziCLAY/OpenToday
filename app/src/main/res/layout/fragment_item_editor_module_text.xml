@@ -8,7 +8,10 @@
         android:id="@+id/titleOfText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignTop="@id/openTextEditor"
         android:layout_alignBottom="@id/openTextEditor"
+        android:layout_toStartOf="@id/openTextEditor"
+        android:gravity="bottom"
         android:minHeight="23sp"
         android:text="@string/fragment_itemEditor_module_text_text_title"/>
 
