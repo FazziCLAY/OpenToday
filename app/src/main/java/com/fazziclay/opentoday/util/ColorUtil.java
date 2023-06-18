@@ -68,6 +68,11 @@ public class ColorUtil {
         return result.substring(0, result.lastIndexOf(";"));
     }
 
+    public static String colorizeToPlain(String text) {
+        if (!text.contains("$")) return text;
+        return colorize(text, Color.RED, Color.GREEN, Typeface.NORMAL).toString();
+    }
+
     /**
      * @see #colorize(String, int, int, int, boolean)
      */
