@@ -1,0 +1,8 @@
+# Changelog v134 1.2 (2023.06.18)
+Correct release for 1.1.4
+* Fixed untranslated text in MathGameItem editor
+* Optimized the CheckBox Item checked click.
+* Fix #39: When returning to the LongTextItem editor, the text of the item was replaced by a long text
+* Convert formatting text to plain in notifications
+* New settings
+and more optimize fixes...
