@@ -76,7 +76,7 @@ public class CheckboxItem extends TextItem {
         // TODO: 13.06.2023 fix this crunch.
         // instantly tick in setChecked for moment-filtergroup-reload
         if (isAttached() && ItemUtil.isTypeContainsInParents(this, ItemType.FILTER_GROUP)) {
-            App.get().getTickThread().instantlyTick();
+            App.get().getTickThread().instantlyCheckboxTick(this);
         }
     }
 }
