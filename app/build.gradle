@@ -4,12 +4,12 @@ plugins {
 }
 
 // =====
-var isDev = false
+var isDev = true
 var beta = false
 var appIdSuffix = "" // EMPTY FOR RELEASES!!!!
-var verBuild = 130
-var verName = "1.1.4"
-var verBranch = "RELEASE" // use "RELEASE" for releases versions
+var verBuild = 131
+var verName = "1.2.x.0"
+var verBranch = "fix_mathgame_editor_translatable" // use "RELEASE" for releases versions
 var verReleaseTime = 1687000271 // in seconds
 // =====
 
