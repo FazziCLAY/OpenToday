@@ -18,16 +18,18 @@ public class Debug {
     public static final int DEF = -1;
 
     public static long latestTick = DEF;
-    public static long tickedItems = DEF;
-    public static Object itemTextEditor = null;
-    private static long latestPersonalTick = DEF;
     public static int latestTickDuration = DEF;
+    private static Object latestTickSession = null;
+    public static long tickedItems = DEF;
+    private static long latestPersonalTick = DEF;
     public static int latestPersonalTickDuration = DEF;
+    private static Object latestPersonalTickSession = null;
     public static long latestSave = DEF;
     public static int latestSaveRequestsCount = DEF;
     public static long appStartupTime = DEF;
     public static long mainActivityStartupTime = DEF;
     public static Object itemsStorageToolbarContext = null;
+    public static Object itemTextEditor = null;
 
     @NonNull
     public static String getDebugInfoText() {
@@ -41,6 +43,7 @@ public class Debug {
                         OpenToday %s; Branch: %s
                         [Android] ((int)sdk)=%s relOrCod=%s
                         $[@bold;-#ffff00][Tick]$[||] %s ago %sms all=%s; Personal: %s ago %sms
+                        $[-#ffa000]%s$[||]; personal=$[-fff000]%s$[||]
                         [Save] %s ago; req=%s
                         [App] init=%sms
                         [GUI] %sms; Toolbar-ctx=$[@italic;-#0055ff]%s$[||]
@@ -49,6 +52,7 @@ public class Debug {
                 App.VERSION_NAME, App.VERSION_BRANCH,
                 Build.VERSION.SDK_INT, androidReleaseOrCodename,
                 ago(latestTick), latestTickDuration, tickedItems, ago(latestPersonalTick), latestPersonalTickDuration,
+                latestTickSession, latestPersonalTickSession,
                 ago(latestSave), latestSaveRequestsCount,
                 appStartupTime,
                 mainActivityStartupTime, itemsStorageToolbarContext,
@@ -59,6 +63,8 @@ public class Debug {
         final String D = "(Debug.free() called)";
         if (itemsStorageToolbarContext != null) itemsStorageToolbarContext = D;
         if (itemTextEditor != null) itemTextEditor = D;
+        if (latestTickSession != null) latestTickSession = D;
+        if (latestPersonalTickSession != null) latestPersonalTickSession = D;
     }
 
     public static long ago(long l) {
@@ -71,11 +77,13 @@ public class Debug {
         latestSave = System.currentTimeMillis();
     }
 
-    public static void ticked() {
+    public static void ticked(Object tickSession) {
         latestTick = System.currentTimeMillis();
+        latestTickSession = tickSession;
     }
 
-    public static void tickedPersonal() {
+    public static void tickedPersonal(Object tickSession) {
         latestPersonalTick = System.currentTimeMillis();
+        latestPersonalTickSession = tickSession;
     }
 }

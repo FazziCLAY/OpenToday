@@ -10,6 +10,8 @@ import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.util.Logger;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -171,5 +173,15 @@ public class TickSession {
 
     public void importantSaveNeeded() {
         this.importantSaveNeeded = true;
+    }
+
+    @NotNull
+    @Override
+    public String toString() {
+        return "TickSession{" +
+                "isPersonalTick=" + isPersonalTick +
+                ", specifiedTickTarget=" + specifiedTickTarget +
+                ", whitelist=" + whitelist +
+                '}';
     }
 }

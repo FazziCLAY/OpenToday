@@ -7,6 +7,7 @@ import com.fazziclay.opentoday.app.ImportantDebugCallback;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.SaveInitiator;
 import com.fazziclay.opentoday.app.items.Unique;
+import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemUtil;
 import com.fazziclay.opentoday.app.items.tab.TabsManager;
@@ -139,7 +140,7 @@ public class TickThread extends Thread {
                 }
                 List<UUID> pathWhitelisted = new ArrayList<>();
                 pathWhitelisted.add(item.getId());
-                for (ItemsStorage itemsStorage : ItemUtil.getPathToItem(item)) {
+                for (ItemsStorage itemsStorage : ItemUtil.getPathToItemNoReverse(item)) {
                     if (itemsStorage instanceof Unique unique) {
                         pathWhitelisted.add(unique.getId());
                     }
@@ -178,8 +179,19 @@ public class TickThread extends Thread {
     }
 
 
-    public void instantlyTick() {
-        tabsManager.tick(createTickSession(defaultTickSession.getContext()));
+    public void instantlyCheckboxTick(CheckboxItem item) {
+        TickSession tickSession = createTickSession(defaultTickSession.getContext());
+
+        List<UUID> pathWhitelisted = new ArrayList<>();
+        pathWhitelisted.add(item.getId());
+        for (ItemsStorage itemsStorage : ItemUtil.getPathToItemNoReverse(item)) {
+            if (itemsStorage instanceof Unique unique) {
+                pathWhitelisted.add(unique.getId());
+            }
+        }
+
+        tickSession.recycleWhitelist(true, pathWhitelisted);
+        tabsManager.tick(tickSession);
         log("Tick instantlyTick");
     }
 
