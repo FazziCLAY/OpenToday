@@ -72,14 +72,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="17sp"
-                android:text="Number 1" />
+                android:text="@string/fragment_itemEditor_module_mathGame_number1" />
 
             <EditText
                 android:id="@+id/n1min"
                 android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Min"
+                android:hint="@string/fragment_itemEditor_module_mathGame_min"
                 android:maxLength="10"
                 android:inputType="numberSigned"
                 android:importantForAutofill="no" />
@@ -89,7 +89,7 @@
                 android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Max"
+                android:hint="@string/fragment_itemEditor_module_mathGame_max"
                 android:maxLength="10"
                 android:inputType="numberSigned"
                 android:importantForAutofill="no" />
@@ -104,14 +104,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="17sp"
-                android:text="Number 2" />
+                android:text="@string/fragment_itemEditor_module_mathGame_number2" />
 
             <EditText
                 android:id="@+id/n2min"
                 android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Min"
+                android:hint="@string/fragment_itemEditor_module_mathGame_min"
                 android:maxLength="10"
                 android:inputType="numberSigned"
                 android:importantForAutofill="no" />
@@ -121,7 +121,7 @@
                 android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Max"
+                android:hint="@string/fragment_itemEditor_module_mathGame_max"
                 android:maxLength="10"
                 android:inputType="numberSigned"
                 android:importantForAutofill="no" />

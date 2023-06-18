@@ -43,7 +43,24 @@ public class ItemUtil {
         }
     }
 
+    public static boolean isTypeContainsInParents(Item item, ItemType itemType) {
+        ItemsStorage[] pathToItem = getPathToItemNoReverse(item);
+        for (ItemsStorage itemsStorage : pathToItem) {
+            if (itemsStorage instanceof Item _item) {
+                ItemType t = ItemType.byClass(_item.getClass());
+                if (t == itemType) return true;
+            }
+        }
+        return false;
+    }
+
     public static ItemsStorage[] getPathToItem(Item item) {
+        ItemsStorage[] result = getPathToItemNoReverse(item);
+        ArraysKt.reverse(result);
+        return result;
+    }
+
+    public static ItemsStorage[] getPathToItemNoReverse(Item item) {
         if (!item.isAttached()) throw new IllegalArgumentException("getPathToItem: Item is not attached.");
         List<ItemsStorage> path = new ArrayList<>();
         ItemsStorage temp = item.getParentItemsStorage();
@@ -55,9 +72,7 @@ public class ItemUtil {
                 break;
             }
         }
-        ItemsStorage[] result = path.toArray(new ItemsStorage[0]);
-        ArraysKt.reverse(result);
-        return result;
+        return path.toArray(new ItemsStorage[0]);
     }
 
     @NotNull

@@ -132,6 +132,10 @@
     <string name="fragment_itemEditor_module_longtext_textColor_dialog_title">Long-text color</string>
     <string name="fragment_itemEditor_module_longtext_text_hint">Enter long text</string>
     <string name="fragment_itemEditor_module_longtext_text_title">Long text</string>
+    <string name="fragment_itemEditor_module_mathGame_max">Max</string>
+    <string name="fragment_itemEditor_module_mathGame_min">Min</string>
+    <string name="fragment_itemEditor_module_mathGame_number1">Num 1</string>
+    <string name="fragment_itemEditor_module_mathGame_number2">Num 2</string>
     <string name="fragment_itemEditor_module_text_openTextEditor">Open text editor</string>
     <string name="fragment_itemEditor_module_text_textColor_dialog_apply">Apply</string>
     <string name="fragment_itemEditor_module_text_textColor_dialog_cancel">Cancel</string>
