@@ -125,6 +125,10 @@
     <string name="fragment_itemEditor_module_longtext_textColor_dialog_title">Цвет длинного текста</string>
     <string name="fragment_itemEditor_module_longtext_text_hint">Введите большой текст</string>
     <string name="fragment_itemEditor_module_longtext_text_title">Большой текст</string>
+    <string name="fragment_itemEditor_module_mathGame_max">Макс.</string>
+    <string name="fragment_itemEditor_module_mathGame_min">Мин.</string>
+    <string name="fragment_itemEditor_module_mathGame_number1">Число (1)</string>
+    <string name="fragment_itemEditor_module_mathGame_number2">Число (2)</string>
     <string name="fragment_itemEditor_module_text_openTextEditor">Открыть редактор текста</string>
     <string name="fragment_itemEditor_module_text_textColor_dialog_apply">Применить</string>
     <string name="fragment_itemEditor_module_text_textColor_dialog_cancel">Отмена</string>
