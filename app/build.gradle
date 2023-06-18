@@ -4,13 +4,13 @@ plugins {
 }
 
 // =====
-var isDev = true
+var isDev = false
 var beta = false
 var appIdSuffix = "" // EMPTY FOR RELEASES!!!!
-var verBuild = 133
-var verName = "1.2.x.1"
-var verBranch = "39-when-resuming-in-the-itemeditor-of-the-longtextitem-item-the-text-of-the-parent-element-is-replaced-by-the-previous-text-of-the-child" // use "RELEASE" for releases versions
-var verReleaseTime = 1687000271 // in seconds
+var verBuild = 134
+var verName = "1.2"
+var verBranch = "RELEASE" // use "RELEASE" for releases versions
+var verReleaseTime = 1687111260 // in seconds
 // =====
 
 android {
