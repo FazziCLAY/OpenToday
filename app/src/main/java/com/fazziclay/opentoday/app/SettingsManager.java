@@ -53,6 +53,9 @@ public class SettingsManager {
     private String timePattern = "HH:mm:ss";
     private ItemAddPosition itemAddPosition = ItemAddPosition.BOTTOM;
     private boolean confirmFastChanges = true;
+    private boolean isAutoCloseToolbar = true;
+    private boolean isScrollToAddedItem = true;
+    private boolean isItemEditorBackgroundFromItem = false;
 
 
     public SettingsManager(File saveFile) {
@@ -97,6 +100,32 @@ public class SettingsManager {
 
     @Getter public boolean isConfirmFastChanges() {return confirmFastChanges;}
     @Setter public void setConfirmFastChanges(boolean confirmFastChanges) {this.confirmFastChanges = confirmFastChanges;}
+
+
+
+    public boolean isItemEditorBackgroundFromItem() {
+        return isItemEditorBackgroundFromItem;
+    }
+
+    public boolean isScrollToAddedItem() {
+        return isScrollToAddedItem;
+    }
+
+    public boolean isAutoCloseToolbar() {
+        return isAutoCloseToolbar;
+    }
+
+    public void setAutoCloseToolbar(boolean autoCloseToolbar) {
+        isAutoCloseToolbar = autoCloseToolbar;
+    }
+
+    public void setItemEditorBackgroundFromItem(boolean itemEditorBackgroundFromItem) {
+        isItemEditorBackgroundFromItem = itemEditorBackgroundFromItem;
+    }
+
+    public void setScrollToAddedItem(boolean scrollToAddedItem) {
+        isScrollToAddedItem = scrollToAddedItem;
+    }
 
     private void load() {
         if (!FileUtil.isExist(saveFile)) {
@@ -151,6 +180,9 @@ public class SettingsManager {
                 this.itemAddPosition = ItemAddPosition.valueOf(j.getString("itemAddPosition"));
             } catch (Exception ignored) {}
             this.confirmFastChanges = j.optBoolean("confirmFastChanges", this.confirmFastChanges);
+            this.isAutoCloseToolbar = j.optBoolean("isAutoCloseToolbar", this.isAutoCloseToolbar);
+            this.isScrollToAddedItem = j.optBoolean("isScrollToAddedItem", this.isScrollToAddedItem);
+            this.isItemEditorBackgroundFromItem = j.optBoolean("isItemEditorBackgroundFromItem", this.isItemEditorBackgroundFromItem);
 
         } catch (Exception e) {
             Logger.e(TAG, "load", e);
@@ -192,6 +224,9 @@ public class SettingsManager {
         j.put("timePattern", this.timePattern);
         j.put("itemAddPosition", this.itemAddPosition.name());
         j.put("confirmFastChanges", this.confirmFastChanges);
+        j.put("isAutoCloseToolbar", this.isAutoCloseToolbar);
+        j.put("isScrollToAddedItem", this.isScrollToAddedItem);
+        j.put("isItemEditorBackgroundFromItem", this.isItemEditorBackgroundFromItem);
         return j;
     }
 
@@ -199,15 +234,6 @@ public class SettingsManager {
         FileUtil.setText(saveFile, settings.toString());
         load();
     }
-
-    public boolean isColorizeItemsEditorBackgroundByItemBackground() {
-        return false; // TODO: 5/22/23 add customizable
-    }
-
-    public boolean isScrollToAddedItem() {
-        return true; // TODO: 29.05.2023 add customizable
-    }
-
 
     public enum ItemAction {
         OPEN_EDITOR,

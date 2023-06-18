@@ -271,6 +271,7 @@
     <string name="selectItemTypeDialog_create">Create</string>
     <string name="selectItemTypeDialog_message">Click to select</string>
     <string name="settings_addItemsToTop">Add items to top^</string>
+    <string name="settings_autoCloseToolbar">Auto close toolbar</string>
     <string name="settings_colorHistoryLocked">Lock color history</string>
     <string name="settings_colorHistory_title">Color history</string>
     <string name="settings_confirmFastChanges">Confirm easy-to-make changes</string>
@@ -286,6 +287,7 @@
     <string name="settings_isTelemetry">@string/setup_telemetry</string>
     <string name="settings_itemAddPosition_BOTTOM">Bottom</string>
     <string name="settings_itemAddPosition_TOP">Top</string>
+    <string name="settings_itemInternalBackgroundFromItem">Groups editor background from item</string>
     <string name="settings_minimizeGrayColor">Minimize gray color</string>
     <string name="settings_parseTimeFromQuickNote">Parse time from quick note</string>
     <string name="settings_pincode">Pin-code: %s</string>
@@ -309,6 +311,7 @@
     <string name="settings_pincode_on">ON</string>
     <string name="settings_pincode_title">Pin-code for app</string>
     <string name="settings_quickNote">Quick Note notification</string>
+    <string name="settings_scrollToAddedItem">Scroll to added item</string>
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_night">Night</string>
     <string name="settings_theme_system">System follow</string>

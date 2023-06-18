@@ -205,6 +205,10 @@ public class AppToolbar {
         typedArray.recycle();
     }
 
+    private void autoClose() {
+        if (settingsManager.isAutoCloseToolbar()) closeMoreView();
+    }
+
     /**
      * clear toolbarMoreView
      * set currentToolbarButton default color
@@ -304,6 +308,7 @@ public class AppToolbar {
         // Import from clipboard button
         viewVisible(localBinding.importDataFromClipboard, ImportWrapper.isImportText(ClipboardUtil.getSelectedText(activity)), View.GONE);
         viewClick(localBinding.importDataFromClipboard, () -> {
+            autoClose();
             try {
                 final String text = ClipboardUtil.getSelectedText(activity);
                 if (ImportWrapper.isImportText(text)) {
@@ -330,12 +335,14 @@ public class AppToolbar {
                 return;
             }
             rootNavigationHost.navigate(ImportFragment.create(id), true);
+            autoClose();
         });
 
         // Save button
         viewClick(localBinding.saveAll, () -> {
             boolean success = tabsManager.saveAllDirect();
             if (success) Toast.makeText(activity, R.string.toolbar_more_file_saveAll_success, Toast.LENGTH_LONG).show();
+            autoClose();
         });
     }
 
@@ -568,7 +575,10 @@ public class AppToolbar {
 
                 if (itemInfo.isCompatibility(app.getFeatureFlags())) {
                     holder.name.setText(EnumsRegistry.INSTANCE.nameResId(itemInfo.getItemType()));
-                    viewClick(holder.create, () -> rootNavigationHost.navigate(ItemEditorFragment.create(ItemUtil.getId(itemsStorage), itemInfo.getClassType(), getAddItemPos(settingsManager.getItemAddPosition())), true));
+                    viewClick(holder.create, () -> {
+                        rootNavigationHost.navigate(ItemEditorFragment.create(ItemUtil.getId(itemsStorage), itemInfo.getClassType(), getAddItemPos(settingsManager.getItemAddPosition())), true);
+                        autoClose();
+                    });
                     viewClick(holder.add, () -> {
                         switch (settingsManager.getItemAddPosition()) {
                             case TOP -> itemsStorage.addItem(ItemsRegistry.REGISTRY.get(itemInfo.getClassType()).create(), 0);
@@ -611,12 +621,19 @@ public class AppToolbar {
         ToolbarMoreOpentodayBinding localBinding = ToolbarMoreOpentodayBinding.inflate(activity.getLayoutInflater());
         registerMoreView(localBinding.getRoot());
 
-        viewClick(localBinding.about, () -> rootNavigationHost.navigate(AboutFragment.create(), true));
-        viewClick(localBinding.settings, () -> rootNavigationHost.navigate(SettingsFragment.create(), true));
+        viewClick(localBinding.about, () -> {
+            rootNavigationHost.navigate(AboutFragment.create(), true);
+            autoClose();
+        });
+        viewClick(localBinding.settings, () -> {
+            rootNavigationHost.navigate(SettingsFragment.create(), true);
+            autoClose();
+        });
         viewClick(localBinding.calendar, () -> {
             DatePickerDialog dialog = new DatePickerDialog(activity);
             dialog.getDatePicker().setFirstDayOfWeek(settingsManager.getFirstDayOfWeek());
             dialog.show();
+            autoClose();
         });
     }
 

@@ -221,6 +221,24 @@ class SettingsFragment : Fragment() {
             settingsManager.isConfirmFastChanges = binding.confirmFastChanges.isChecked
             settingsManager.save()
         })
+
+        binding.autoCloseToolbar.isChecked = settingsManager.isAutoCloseToolbar
+        viewClick(binding.autoCloseToolbar, Runnable {
+            settingsManager.isAutoCloseToolbar = binding.autoCloseToolbar.isChecked
+            settingsManager.save()
+        })
+
+        binding.scrollToAddedItem.isChecked = settingsManager.isScrollToAddedItem
+        viewClick(binding.scrollToAddedItem, Runnable {
+            settingsManager.isScrollToAddedItem = binding.scrollToAddedItem.isChecked
+            settingsManager.save()
+        })
+
+        binding.itemInternalBackgroundFromItem.isChecked = settingsManager.isItemEditorBackgroundFromItem
+        viewClick(binding.itemInternalBackgroundFromItem, Runnable {
+            settingsManager.isItemEditorBackgroundFromItem = binding.itemInternalBackgroundFromItem.isChecked
+            settingsManager.save()
+        })
     }
 
     private fun setupFirstTabSpinner() {

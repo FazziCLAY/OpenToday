@@ -98,18 +98,39 @@
             android:text="@string/settings_addItemsToTop" />
 
         <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/confirmFastChanges"
+            android:id="@+id/scrollToAddedItem"
             android:layout_below="@id/addItemsToTop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/settings_scrollToAddedItem" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/confirmFastChanges"
+            android:layout_below="@id/scrollToAddedItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/settings_confirmFastChanges" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/autoCloseToolbar"
+            android:layout_below="@id/confirmFastChanges"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_autoCloseToolbar" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/itemInternalBackgroundFromItem"
+            android:layout_below="@id/autoCloseToolbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_itemInternalBackgroundFromItem" />
 
 
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/colorHistoryLocked"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/confirmFastChanges"
+            android:layout_below="@id/itemInternalBackgroundFromItem"
             android:text="@string/settings_colorHistoryLocked" />
 
         <com.google.android.material.checkbox.MaterialCheckBox

@@ -264,6 +264,7 @@
     <string name="selectItemTypeDialog_create">Создать</string>
     <string name="selectItemTypeDialog_message">Нажмите что бы выбрать</string>
     <string name="settings_addItemsToTop">Добавлять айтемы вверх</string>
+    <string name="settings_autoCloseToolbar">Авто-закрытие Тулбара</string>
     <string name="settings_colorHistoryLocked">Заблокировать историю цветов</string>
     <string name="settings_colorHistory_title">История цвета</string>
     <string name="settings_confirmFastChanges">Подтверждать лёгкие изменения</string>
@@ -279,6 +280,7 @@
     <string name="settings_isTelemetry">@string/setup_telemetry</string>
     <string name="settings_itemAddPosition_BOTTOM">Вниз</string>
     <string name="settings_itemAddPosition_TOP">Вверх</string>
+    <string name="settings_itemInternalBackgroundFromItem">Фон редактора групп как и фон айтема</string>
     <string name="settings_minimizeGrayColor">Засеривать уменьшенные айтемы</string>
     <string name="settings_parseTimeFromQuickNote">Парсить время из быстрых заметок</string>
     <string name="settings_pincode">Пин-код %s</string>
@@ -302,6 +304,7 @@
     <string name="settings_pincode_on">включен</string>
     <string name="settings_pincode_title">Пин-код приложения</string>
     <string name="settings_quickNote">Уведомление быстрой заметки</string>
+    <string name="settings_scrollToAddedItem">Перемещаться к созданному айтему</string>
     <string name="settings_theme_light">Светлая</string>
     <string name="settings_theme_night">Тёмная</string>
     <string name="settings_theme_system">Как в системе</string>
