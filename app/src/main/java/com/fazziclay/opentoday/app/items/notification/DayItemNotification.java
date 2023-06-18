@@ -12,6 +12,7 @@ import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.TickTarget;
+import com.fazziclay.opentoday.util.ColorUtil;
 
 import java.util.Calendar;
 
@@ -103,8 +104,8 @@ public class DayItemNotification implements ItemNotification {
     }
 
     public void sendNotify(Context context, Item item) {
-        final String nTitle = notifyTitleFromItemText ? item.getText() : notifyTitle;
-        final String nText = notifyTextFromItemText ? item.getText() : notifyText;
+        final String nTitle = notifyTitleFromItemText ? (item.isParagraphColorize() ? ColorUtil.colorizeToPlain(item.getText()) : item.getText()) : notifyTitle;
+        final String nText = notifyTextFromItemText ? (item.isParagraphColorize() ? ColorUtil.colorizeToPlain(item.getText()) : item.getText()) : notifyText;
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, App.NOTIFICATION_ITEMS_CHANNEL)
                 .setSmallIcon(R.mipmap.ic_launcher)

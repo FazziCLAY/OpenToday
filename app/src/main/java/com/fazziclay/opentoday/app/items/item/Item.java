@@ -129,6 +129,9 @@ public abstract class Item implements Unique, Tickable {
         return "[Item not have text. Ops...]";
     }
 
+    // For fast (method overrides by TextItem)
+    @Getter public boolean isParagraphColorize() {return false;}
+
     public void delete() {
         if (isAttached()) controller.delete(this);
         itemCallbacks.run((callbackStorage, callback) -> callback.delete(Item.this));
