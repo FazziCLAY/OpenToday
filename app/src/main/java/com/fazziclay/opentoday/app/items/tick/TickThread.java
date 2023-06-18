@@ -139,7 +139,7 @@ public class TickThread extends Thread {
                 }
                 List<UUID> pathWhitelisted = new ArrayList<>();
                 pathWhitelisted.add(item.getId());
-                for (ItemsStorage itemsStorage : ItemUtil.getPathToItem(item)) {
+                for (ItemsStorage itemsStorage : ItemUtil.getPathToItemNoReverse(item)) {
                     if (itemsStorage instanceof Unique unique) {
                         pathWhitelisted.add(unique.getId());
                     }
