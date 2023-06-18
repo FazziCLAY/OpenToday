@@ -329,7 +329,7 @@ public class TabsManager implements ItemsRoot, Tickable {
         CrashReportContext.BACK.push("TabsManager tick personal");
         checkDestroy();
 
-        Debug.tickedPersonal();
+        Debug.tickedPersonal(tickSession);
         Debug.latestPersonalTickDuration = Logger.countOnlyDur(() -> {
             for (UUID uuid : uuids) {
                 Object find = getById(uuid);
@@ -347,7 +347,7 @@ public class TabsManager implements ItemsRoot, Tickable {
         checkDestroy();
 
         Debug.tickedItems = 0;
-        Debug.ticked();
+        Debug.ticked(tickSession);
         Debug.latestTickDuration = Logger.countOnlyDur(() -> {
             for (Tab tab : getAllTabs()) {
                 if (tab == null || tab.isDisableTick()) continue;
