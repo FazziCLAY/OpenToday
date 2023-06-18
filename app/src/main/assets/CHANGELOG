@@ -1,3 +1,11 @@
+$[@bold;-#00FF00;S25]# Changelog v134 1.2 (2023.06.18)$[||]
+Correct release for 1.1.4
+* Fixed untranslated text in MathGameItem editor
+* Optimized the CheckBox Item checked click.
+* Fix #39: When returning to the LongTextItem editor, the text of the item was replaced by a long text
+and more optimize fixes...
+
+
 $[@bold;-#00FF00;S25]# Changelog v130 1.1.4 (2023.06.17)$[||]
 $[-#777777]# News$[||]
 $[-#40eb34]* New item: MathGame
