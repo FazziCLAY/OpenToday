@@ -52,7 +52,7 @@ Check more documentation in "/docs" directory
 ## Contribute
 I will be glad if you make a Pull Request with a new feature or bug fix.
 
-See "docs/CONTRIBUTING.md"
+See "/docs/CONTRIBUTING.md"
 
 ## Kotlin or Java?
 I know Java well, and I'm just learning Kotlin.
