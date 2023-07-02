@@ -12,41 +12,44 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemUtil;
 import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.util.Logger;
+import com.fazziclay.opentoday.util.time.TimeUtil;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
 
 public class TickThread extends Thread {
     private static final String TAG = "TickThread";
-    private static boolean exceptionOnce = true;
+    private static boolean exceptionOnceDebugFlag = true; // for once call App.exception(...)
     private static final boolean LOG = App.debug(true);
     private static final boolean LOG_ONLY_PERSONAL = true;
 
     private boolean enabled = true;
+    private final Context context;
     private final TabsManager tabsManager;
     private final TickSession defaultTickSession;
-    private final List<UUID> personals = new ArrayList<>();
     private boolean currentlyExecutingTickPersonal;
     private int requests = 0;
     private boolean requested = false;
-    private boolean personalOnly = true;
-    private boolean personalUsePaths = false;
+    private boolean requestedAll = false;
+    private boolean requestedPersonal = false;
+    private final List<UUID> personalsNoPaths = new ArrayList<>();
+    private final List<UUID> personalsPaths = new ArrayList<>();
     private long firstRequestTime = 0;
     private long lastRequestTime = 0;
 
     public TickThread(Context context, TabsManager tabsManager) {
         setName("TickThread");
+        this.context = context;
         this.tabsManager = tabsManager;
         this.defaultTickSession = createTickSession(context);
         setUncaughtExceptionHandler((thread, throwable) -> {
             Logger.e(TAG, "Exception in thread!", throwable);
             ImportantDebugCallback.pushStatic("TickThread exception: " + throwable);
-            if (exceptionOnce) {
+            if (exceptionOnceDebugFlag) {
                 App.exception(null, new RuntimeException(throwable));
-                exceptionOnce = false;
+                exceptionOnceDebugFlag = false;
             }
         });
     }
@@ -65,47 +68,47 @@ public class TickThread extends Thread {
 
     @Override
     public void run() {
+        enabled = true;
         while (!isInterrupted() && enabled) {
             long tickStart = System.currentTimeMillis();
             if (requested) {
                 try {
-                    log("Processing requests: " + requests + "; personalOnly: " + personalOnly);
+                    log("Processing requests: " + requests + "; all: "+requestedAll+"; personal: " + requestedPersonal);
 
-                    if (personalOnly) {
-                        recycle(true);
-                        tickPersonal();
-                    } else {
+                    if (requestedAll) {
                         recycle(false);
                         tickAll();
-                        if (!personals.isEmpty()) {
-                            defaultTickSession.recyclePersonal(true);
-                            tickPersonal();
-                        }
+                    }
+
+                    if (requestedPersonal) {
+                        recycle(true);
+                        tickPersonal();
                     }
 
                     if (defaultTickSession.isSaveNeeded()) {
                         if (defaultTickSession.isImportantSaveNeeded()) {
                             tabsManager.queueSave(SaveInitiator.USER);
                         } else {
-                            tabsManager.queueSave(!personals.isEmpty() ? SaveInitiator.TICK_PERSONAL : SaveInitiator.TICK);
+                            tabsManager.queueSave(requestedPersonal ? SaveInitiator.TICK_PERSONAL : SaveInitiator.TICK);
                         }
                     }
                 } catch (Exception e) {
                     Logger.e(TAG, "EXCEPTION IN TICK!!!!!!!", e);
-                    if (exceptionOnce) {
+                    if (exceptionOnceDebugFlag) {
                         App.exception(null, e);
-                        exceptionOnce = false;
+                        exceptionOnceDebugFlag = false;
                     }
                 }
 
                 // reset requests
-                personals.clear();
+                personalsNoPaths.clear();
+                personalsPaths.clear();
                 requested = false;
+                requestedPersonal = false;
+                requestedAll = false;
                 firstRequestTime = 0;
                 lastRequestTime = 0;
                 requests = 0;
-                personalOnly = true;
-                personalUsePaths = false;
             }
             long tickEnd = System.currentTimeMillis();
 
@@ -130,12 +133,19 @@ public class TickThread extends Thread {
 
     private void tickPersonal() {
         currentlyExecutingTickPersonal = true;
-        if (personalUsePaths) {
-            log("Tick personal(paths): "+ personals);
-            for (UUID personal : personals) {
+        List<UUID> personalsNoPaths = new ArrayList<>(this.personalsNoPaths);
+        if (!personalsNoPaths.isEmpty()) {
+            log("Tick personal(no-paths): "+ personalsNoPaths);
+            tabsManager.tick(defaultTickSession, personalsNoPaths);
+        }
+
+        List<UUID> personalsPaths = new ArrayList<>(this.personalsPaths);
+        if (!personalsPaths.isEmpty()) {
+            log("Tick personal(paths): " + personalsPaths);
+            for (UUID personal : personalsPaths) {
                 Item item = tabsManager.getItemById(personal);
                 if (item == null) {
-                    log("Item by id '"+personal+"' not found. Maybe personalTick called for deleted item: 'continue' in for-each;");
+                    log("Item by id '" + personal + "' not found. Maybe personalTick called for deleted item: 'continue' in for-each;");
                     continue;
                 }
                 List<UUID> pathWhitelisted = new ArrayList<>();
@@ -145,28 +155,21 @@ public class TickThread extends Thread {
                         pathWhitelisted.add(unique.getId());
                     }
                 }
-                log("Tick personal(paths): resultWhitelist for item="+item+": "+ pathWhitelisted);
+                log("Tick personal(paths): resultWhitelist for item=" + item + ": " + pathWhitelisted);
                 defaultTickSession.recycleWhitelist(true, pathWhitelisted);
                 tabsManager.tick(defaultTickSession);
             }
-        } else {
-            log("Tick personal(no-paths): "+ personals);
-            tabsManager.tick(defaultTickSession, personals);
         }
+
+
         currentlyExecutingTickPersonal = false;
     }
 
     private void recycle(boolean personal) {
         log("recycle. personal="+personal);
         GregorianCalendar gregorianCalendar = new GregorianCalendar();
-
-        // START - day seconds
-        GregorianCalendar noTimeCalendar = new GregorianCalendar(
-                gregorianCalendar.get(Calendar.YEAR),
-                gregorianCalendar.get(Calendar.MONTH),
-                gregorianCalendar.get(Calendar.DAY_OF_MONTH));
+        GregorianCalendar noTimeCalendar = TimeUtil.noTimeCalendar(gregorianCalendar);
         int daySeconds = (int) ((gregorianCalendar.getTimeInMillis() - noTimeCalendar.getTimeInMillis()) / 1000);
-        // END - day seconds
 
 
         defaultTickSession.recycleGregorianCalendar(gregorianCalendar);
@@ -180,7 +183,7 @@ public class TickThread extends Thread {
 
 
     public void instantlyCheckboxTick(CheckboxItem item) {
-        TickSession tickSession = createTickSession(defaultTickSession.getContext());
+        TickSession tickSession = createTickSession(context);
 
         List<UUID> pathWhitelisted = new ArrayList<>();
         pathWhitelisted.add(item.getId());
@@ -191,46 +194,49 @@ public class TickThread extends Thread {
         }
 
         tickSession.recycleWhitelist(true, pathWhitelisted);
+        tickSession.recyclePersonal(true);
         tabsManager.tick(tickSession);
         log("Tick instantlyTick");
     }
 
     public void requestTick() {
-        if (!enabled) throw new RuntimeException("TickThread disabled!");
-        if (!requested) {
-            firstRequestTime = System.currentTimeMillis();
-        }
-        personalOnly = false;
-        lastRequestTime = System.currentTimeMillis();
-        requested = true;
-        requests++;
+        checkEnabled();
+        requestUniversal();
+        requestedAll = true;
         log("Requested no-personal");
     }
 
     public void requestPersonalTick(List<UUID> uuids, boolean usePaths) {
-        if (!enabled) throw new RuntimeException("TickThread disabled!");
-
-        if (!requested) {
-            firstRequestTime = System.currentTimeMillis();
+        checkEnabled();
+        requestUniversal();
+        requestedPersonal = true;
+        if (usePaths) {
+            personalsPaths.addAll(uuids);
+        } else {
+            personalsNoPaths.addAll(uuids);
         }
-        personals.addAll(uuids);
-        lastRequestTime = System.currentTimeMillis();
-        requested = true;
+        log("Requested personal(paths="+usePaths+"): " + uuids);
+    }
+
+    private void requestUniversal() {
+        final long currMs = System.currentTimeMillis();
+        if (!requested) {
+            firstRequestTime = currMs;
+        }
+        lastRequestTime = currMs;
         requests++;
-        personalUsePaths = usePaths;
-        log("Requested personal: " + uuids);
+        requested = true;
+    }
+
+    private void checkEnabled() {
+        if (!enabled) throw new RuntimeException("TickThread is disabled!");
     }
 
     private TickSession createTickSession(Context context) {
         GregorianCalendar gregorianCalendar = new GregorianCalendar();
-
-        // START - day seconds
-        GregorianCalendar noTimeCalendar = new GregorianCalendar(
-                gregorianCalendar.get(Calendar.YEAR),
-                gregorianCalendar.get(Calendar.MONTH),
-                gregorianCalendar.get(Calendar.DAY_OF_MONTH));
+        GregorianCalendar noTimeCalendar = TimeUtil.noTimeCalendar(gregorianCalendar);
         int daySeconds = (int) ((gregorianCalendar.getTimeInMillis() - noTimeCalendar.getTimeInMillis()) / 1000);
-        // END - day seconds
+
 
         return new TickSession(context, gregorianCalendar, noTimeCalendar, daySeconds, false);
     }
