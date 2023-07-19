@@ -133,14 +133,14 @@ public class TickThread extends Thread {
 
     private void tickPersonal() {
         currentlyExecutingTickPersonal = true;
-        List<UUID> personalsNoPaths = new ArrayList<>(this.personalsNoPaths);
-        if (!personalsNoPaths.isEmpty()) {
+        if (!this.personalsNoPaths.isEmpty()) {
+            List<UUID> personalsNoPaths = new ArrayList<>(this.personalsNoPaths);
             log("Tick personal(no-paths): "+ personalsNoPaths);
             tabsManager.tick(defaultTickSession, personalsNoPaths);
         }
 
-        List<UUID> personalsPaths = new ArrayList<>(this.personalsPaths);
-        if (!personalsPaths.isEmpty()) {
+        if (!this.personalsPaths.isEmpty()) {
+            List<UUID> personalsPaths = new ArrayList<>(this.personalsPaths);
             log("Tick personal(paths): " + personalsPaths);
             for (UUID personal : personalsPaths) {
                 Item item = tabsManager.getItemById(personal);
