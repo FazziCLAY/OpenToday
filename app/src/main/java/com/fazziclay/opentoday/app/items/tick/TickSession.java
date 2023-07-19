@@ -25,7 +25,12 @@ public class TickSession {
 
     // Life-hacks :)
     public static GregorianCalendar getLatestGregorianCalendar() {
-        return App.get().getTickThread().getGregorianCalendar();
+        GregorianCalendar gregorianCalendar1 = App.get().getTickThread().getGregorianCalendar();
+        if (gregorianCalendar1 ==  null) {
+            Logger.w(TAG, "getLatestGregorianCalendar: null calendar!!!! C:98d78820");
+            return new GregorianCalendar();
+        }
+        return gregorianCalendar1;
     }
 
     private final Context context;

@@ -102,4 +102,11 @@ public class TimeUtil {
     public static void free() {
         SIMPLE_DATE_FORMAT.free();
     }
+
+    public static GregorianCalendar noTimeCalendar(GregorianCalendar gregorianCalendar) {
+        return new GregorianCalendar(
+                gregorianCalendar.get(Calendar.YEAR),
+                gregorianCalendar.get(Calendar.MONTH),
+                gregorianCalendar.get(Calendar.DAY_OF_MONTH));
+    }
 }
