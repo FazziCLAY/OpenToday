@@ -14,6 +14,9 @@ import com.fazziclay.opentoday.app.items.callback.ItemCallback;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationCodecUtil;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationUtil;
+import com.fazziclay.opentoday.app.items.tag.ItemTag;
+import com.fazziclay.opentoday.app.items.tag.TagsCodecUtil;
+import com.fazziclay.opentoday.app.items.tag.TagsUtil;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.TickTarget;
 import com.fazziclay.opentoday.app.items.tick.Tickable;
@@ -51,6 +54,8 @@ public abstract class Item implements Unique, Tickable {
         private static final String KEY_VIEW_CUSTOM_BACKGROUND_COLOR = "viewCustomBackgroundColor";
         private static final String KEY_NOTIFICATIONS = "notifications";
         private static final String KEY_MINIMIZE = "minimize";
+        private static final String KEY_TAGS = "tags";
+
         @NonNull
         @Override
         public Cherry exportItem(@NonNull Item item) {
@@ -60,7 +65,8 @@ public abstract class Item implements Unique, Tickable {
                     .put(KEY_VIEW_BACKGROUND_COLOR, item.viewBackgroundColor)
                     .put(KEY_VIEW_CUSTOM_BACKGROUND_COLOR, item.viewCustomBackgroundColor)
                     .put(KEY_MINIMIZE, item.minimize)
-                    .put(KEY_NOTIFICATIONS, ItemNotificationCodecUtil.exportNotificationList(item.notifications));
+                    .put(KEY_NOTIFICATIONS, ItemNotificationCodecUtil.exportNotificationList(item.notifications))
+                    .put(KEY_TAGS, TagsCodecUtil.exportTagsList(item.tags));
         }
 
         private final Item defaultValues = new Item(){};
@@ -74,6 +80,7 @@ public abstract class Item implements Unique, Tickable {
             item.viewCustomBackgroundColor = cherry.optBoolean(KEY_VIEW_CUSTOM_BACKGROUND_COLOR, defaultValues.viewCustomBackgroundColor);
             item.minimize = cherry.optBoolean(KEY_MINIMIZE, defaultValues.minimize);
             item.notifications = ItemNotificationCodecUtil.importNotificationList(cherry.optOrchard(KEY_NOTIFICATIONS));
+            item.tags = TagsCodecUtil.importTagsList(cherry.optOrchard(KEY_TAGS));
             return item;
         }
 
@@ -103,6 +110,7 @@ public abstract class Item implements Unique, Tickable {
     @SaveKey(key = "viewCustomBackgroundColor") @RequireSave private boolean viewCustomBackgroundColor = false; // юзаем ли фоновый цвет
     @SaveKey(key = "minimize") @RequireSave private boolean minimize = false;
     @NonNull @SaveKey(key = "notifications") @RequireSave private List<ItemNotification> notifications = new ArrayList<>();
+    @NonNull @SaveKey(key = "tags") @RequireSave private List<ItemTag> tags = new ArrayList<>();
 
     // Copy constructor
     public Item(@Nullable Item copy) {
@@ -117,6 +125,7 @@ public abstract class Item implements Unique, Tickable {
             this.viewCustomBackgroundColor = copy.viewCustomBackgroundColor;
             this.minimize = copy.minimize;
             this.notifications = ItemNotificationUtil.copy(copy.notifications);
+            this.tags = TagsUtil.copy(copy.tags);
         }
     }
 
@@ -224,6 +233,20 @@ public abstract class Item implements Unique, Tickable {
             return controller.getParentItemsStorage(this);
         }
         return null;
+    }
+
+    @NonNull
+    public ItemTag[] getTags() {
+        return tags.toArray(new ItemTag[0]);
+    }
+
+    public void removeTag(ItemTag t) {
+        tags.remove(t);
+    }
+
+    public void addTag(ItemTag t) {
+        t.bind();
+        tags.add(t);
     }
 
     @NotNull

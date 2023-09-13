@@ -8,6 +8,7 @@ import java.util.List;
 public class ItemNotificationCodecUtil {
     private static final String KEY_TYPE = "type";
 
+    // must return mutable list (arraylist!)
     public static List<ItemNotification> importNotificationList(CherryOrchard orchard) {
         final List<ItemNotification> result = new ArrayList<>();
 
