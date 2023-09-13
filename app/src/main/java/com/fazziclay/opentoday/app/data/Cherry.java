@@ -1,6 +1,7 @@
 package com.fazziclay.opentoday.app.data;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -202,6 +203,7 @@ public class Cherry {
         return "Cherry"+json.toString();
     }
 
+    @Nullable
     public String getString(String key) {
         if (!has(key)) return null;
         try {
