@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -47,6 +48,7 @@ import com.fazziclay.opentoday.app.items.notification.DayItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.Tab;
+import com.fazziclay.opentoday.app.items.tag.ItemTag;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleCheckboxBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleCounterBinding;
@@ -72,6 +74,7 @@ import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 import com.fazziclay.opentoday.util.time.ConvertMode;
 import com.fazziclay.opentoday.util.time.TimeUtil;
+import com.google.android.material.chip.Chip;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -80,6 +83,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class ItemEditorFragment extends Fragment implements BackStackMember {
     private static final int MODE_UNKNOWN = 0x00;
@@ -426,6 +431,18 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.selected.setChecked(selectionManager.isSelected(item));
             viewVisible(binding.selected, mode == MODE_EDIT, View.GONE);
 
+
+
+            // chip tags START
+            binding.addTag.setOnClickListener(view1 -> showEditTagDialog(new ItemTag("", ""), (itemTag) -> {
+                item.addTag(itemTag);
+                updateTags();
+            }));
+            updateTags();
+            // chip tags END
+
+
+
             binding.viewMinHeight.setText(String.valueOf(item.getViewMinHeight()));
             binding.defaultBackgroundColor.setChecked(!item.isViewCustomBackgroundColor());
             temp_backgroundColor = item.getViewBackgroundColor();
@@ -485,6 +502,19 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             updateNotificationPreview(item, activity);
         }
 
+        private void updateTags() {
+            binding.itemTagsGroup.removeAllViews();
+            for (final ItemTag tag : item.getTags()) {
+                var view = new Chip(getActivity());
+                view.setText(tag.getName() + ": " + tag.getValue());
+                viewClick(view, () -> showEditTagDialog(tag, (editedTag) -> {
+                    view.setText(tag.getName() + ": " + tag.getValue());
+                }));
+                binding.itemTagsGroup.addView(view);
+            }
+            binding.itemTagsGroup.addView(binding.addTag);
+        }
+
         private void updateNotificationPreview(Item item, Activity activity) {
             StringBuilder text = new StringBuilder();
             for (ItemNotification notification : item.getNotifications()) {
@@ -531,6 +561,32 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         @Override
         public void setOnStartEditListener(Runnable o) {
             onEditStart = o;
+        }
+
+        private void showEditTagDialog(ItemTag tag, Consumer<ItemTag> afterEdit) {
+            var view = new LinearLayout(getContext());
+            view.setOrientation(LinearLayout.VERTICAL);
+
+            var title = new EditText(getContext());
+            title.setText(tag.getName());
+            view.addView(title);
+
+
+            var text = new EditText(getContext());
+            text.setText(tag.getValue());
+            view.addView(text);
+
+
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("Item tag")
+                    .setView(view)
+                    .setNegativeButton(R.string.abc_cancel, null)
+                    .setPositiveButton("Apply", (_fdfd, _tbnhgfhj) -> {
+                        tag.setName(title.getText().toString());
+                        tag.setValue(text.getText().toString());
+                        afterEdit.accept(tag);
+                    })
+                    .show();
         }
     }
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -125,17 +126,25 @@
         android:layout_alignParentEnd="true"
         android:text="@string/fragment_itemEditor_module_item_selected" />
 
-    <com.google.android.material.chip.ChipGroup
+    <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/selected">
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/addTag"
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/itemTagsGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="+"
-            android:backgroundTint="@color/purple_200" />
+            app:chipSpacing="1sp">
 
-    </com.google.android.material.chip.ChipGroup>
+            <com.google.android.material.chip.Chip
+                android:id="@+id/addTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+"
+                android:backgroundTint="@color/purple_200" />
+
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
 </RelativeLayout>
