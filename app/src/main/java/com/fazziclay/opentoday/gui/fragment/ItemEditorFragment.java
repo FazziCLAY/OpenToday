@@ -62,6 +62,7 @@ import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleTextBinding;
 import com.fazziclay.opentoday.gui.ActivitySettings;
 import com.fazziclay.opentoday.gui.ColorPicker;
 import com.fazziclay.opentoday.gui.EnumsRegistry;
+import com.fazziclay.opentoday.gui.ItemTagGui;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.dialog.DialogItemNotificationsEditor;
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
@@ -84,7 +85,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class ItemEditorFragment extends Fragment implements BackStackMember {
     private static final int MODE_UNKNOWN = 0x00;
@@ -506,10 +506,8 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.itemTagsGroup.removeAllViews();
             for (final ItemTag tag : item.getTags()) {
                 var view = new Chip(getActivity());
-                view.setText(tag.getName() + ": " + tag.getValue());
-                viewClick(view, () -> showEditTagDialog(tag, (editedTag) -> {
-                    view.setText(tag.getName() + ": " + tag.getValue());
-                }));
+                view.setText(ItemTagGui.textInChip(tag));
+                viewClick(view, () -> showEditTagDialog(tag, (editedTag) -> view.setText(ItemTagGui.textInChip(editedTag))));
                 binding.itemTagsGroup.addView(view);
             }
             binding.itemTagsGroup.addView(binding.addTag);
@@ -568,25 +566,46 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             view.setOrientation(LinearLayout.VERTICAL);
 
             var title = new EditText(getContext());
+            title.setHint("Enter tag name...");
             title.setText(tag.getName());
             view.addView(title);
 
 
             var text = new EditText(getContext());
+            text.setHint("Value: (Maybe undefined)");
             text.setText(tag.getValue());
             view.addView(text);
 
 
-            new AlertDialog.Builder(getActivity())
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                     .setTitle("Item tag")
                     .setView(view)
-                    .setNegativeButton(R.string.abc_cancel, null)
-                    .setPositiveButton("Apply", (_fdfd, _tbnhgfhj) -> {
-                        tag.setName(title.getText().toString());
-                        tag.setValue(text.getText().toString());
-                        afterEdit.accept(tag);
-                    })
-                    .show();
+                    .setNegativeButton(R.string.abc_cancel, null);
+
+
+            var ref = new Object() {
+                AlertDialog alertDialog = null;
+            };
+            builder.setPositiveButton("Apply", (_fdfd, _tbnhgfhj) -> {
+                String titleText = title.getText().toString().trim();
+                if (titleText.isEmpty()) {
+                    Toast.makeText(getContext(), "Title not empty!", Toast.LENGTH_SHORT).show();
+                    UI.postDelayed(ref.alertDialog::show, 200);
+                    return;
+                }
+                tag.setName(titleText);
+                String value = text.getText().toString().trim();
+                if (value.isEmpty()) {
+                    value = null;
+                }
+                tag.setValue(value);
+                afterEdit.accept(tag);
+            });
+
+
+            ref.alertDialog = builder.create();
+            ref.alertDialog.show();
+
         }
     }
 

@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.os.Handler
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -100,6 +101,11 @@ object UI {
         ) else {
             return null
         }
+    }
+
+    @JvmStatic
+    fun postDelayed(runnable: Runnable, long: Long): Unit {
+        Handler().postDelayed(runnable, long)
     }
 
     object Debug {
