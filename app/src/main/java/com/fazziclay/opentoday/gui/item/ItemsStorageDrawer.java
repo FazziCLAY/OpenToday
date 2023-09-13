@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fazziclay.opentoday.R;
+import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.CrashReportContext;
 import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
@@ -28,12 +29,16 @@ import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.item.Transform;
 import com.fazziclay.opentoday.app.items.selection.Selection;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
+import com.fazziclay.opentoday.app.items.tag.ItemTag;
+import com.fazziclay.opentoday.databinding.ItemMoreBinding;
+import com.fazziclay.opentoday.gui.ItemTagGui;
 import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType;
 import com.fazziclay.opentoday.gui.fragment.ItemEditorFragment;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
+import com.google.android.material.chip.Chip;
 
 public class ItemsStorageDrawer {
     private static final String TAG = "ItemStorageDrawer";
@@ -183,7 +188,22 @@ public class ItemsStorageDrawer {
     
     private View generateViewForItem(Item item) {
         boolean previewMode = this.previewMode || selectionManager.isSelected(item);
-        return itemViewGenerator.generate(item, view, previewMode);
+        View generate = itemViewGenerator.generate(item, view, previewMode);
+
+        boolean SHOW_MORE = App.debug(true); // TODO: 13.09.2023 owo
+        if (SHOW_MORE) {
+            ItemMoreBinding b = ItemMoreBinding.inflate(activity.getLayoutInflater(), view, false);
+            b.containerForItem.addView(generate);
+
+            for (ItemTag tag : item.getTags()) {
+                Chip chip = new Chip(activity);
+                chip.setText(ItemTagGui.textInChip(tag));
+                b.chipGroupTags.addView(chip);
+            }
+            return b.getRoot();
+        }
+
+        return generate;
     }
 
     private class DrawerAdapter extends RecyclerView.Adapter<ItemViewHolder> {
