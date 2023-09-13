@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -26,6 +27,7 @@ import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
+import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
@@ -304,13 +306,35 @@ public class ItemViewGenerator {
 
         // FilterGroup
         if (!item.isMinimize()) {
-            for (Item activeItem : item.getActiveItems()) {
-                final ItemViewHolder holder = new ItemViewHolder(activity);
-                holder.layout.addView(generate(activeItem, binding.content));
+            var v = new ItemsStorageDrawer(activity, null, behavior, App.get().getSelectionManager(), item, itemOnClick, null, null, previewMode);
+            v.create();
+            v.setItemViewWrapper(new ItemsStorageDrawer.ItemViewWrapper() {
+                @Override
+                public View wrap(Item _item, View view) {
+                    for (Item activeItem : item.getActiveItems()) {
+                        if (_item == activeItem) {
+                            return view;
+                        }
+                    }
+                    return new FrameLayout(activity);
+                }
+            });
+            binding.content.addView(v.getView());
 
-                binding.content.addView(holder.layout);
-            }
+            binding.getRoot().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+                @Override
+                public void onViewAttachedToWindow(@NonNull View view) {
+                    v.bind();
+                }
+
+                @Override
+                public void onViewDetachedFromWindow(@NonNull View view) {
+                    v.unbind();
+                }
+            });
         }
+
+
 
         binding.externalEditor.setEnabled(!previewMode);
         binding.externalEditor.setOnClickListener(_ignore -> behavior.onFilterGroupEdit(item));

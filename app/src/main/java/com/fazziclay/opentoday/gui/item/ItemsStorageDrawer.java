@@ -55,6 +55,7 @@ public class ItemsStorageDrawer {
     private ItemViewWrapper itemViewWrapper = null;
     private final ItemInterface onItemEditor;
     @Nullable private final ItemInterface onItemTextEditor;
+    private boolean bind = false;
 
     // Public
     public ItemsStorageDrawer(@NonNull Activity activity, ItemsStorageDrawerBehavior itemsStorageDrawerBehavior, ItemViewGeneratorBehavior itemViewGeneratorBehavior, SelectionManager selectionManager, ItemsStorage itemsStorage, ItemInterface itemOnClick, @NonNull ItemInterface onItemEditor, @Nullable ItemInterface onItemTextEditor, boolean previewMode) {
@@ -92,8 +93,7 @@ public class ItemsStorageDrawer {
         this.created = true;
         this.adapter = new DrawerAdapter();
         this.view.setAdapter(adapter);
-        this.itemsStorage.getOnItemsStorageCallbacks().addCallback(CallbackImportance.DEFAULT, onItemsStorageUpdate);
-        this.selectionManager.getOnSelectionUpdated().addCallback(CallbackImportance.DEFAULT, selectionCallback);
+        bind();
         this.itemViewGenerator.create();
 
         if (!previewMode) new ItemTouchHelper(new DrawerTouchCallback()).attachToRecyclerView(view);
@@ -107,11 +107,38 @@ public class ItemsStorageDrawer {
             throw new RuntimeException("ItemsStorageDrawer already destroyed!");
         }
         destroyed = true;
-        this.itemsStorage.getOnItemsStorageCallbacks().removeCallback(onItemsStorageUpdate);
-        this.selectionManager.getOnSelectionUpdated().removeCallback(selectionCallback);
+        unbind();
         this.view.setAdapter(null);
         this.itemViewGenerator.destroy();
         this.adapter = null;
+    }
+
+    // temp (maybe forever) unbind (remove callbacks)
+    public void unbind() {
+        if (!created) {
+            throw new RuntimeException("ItemsStorageDrawer no created!");
+        }
+
+        if (bind) {
+            this.itemsStorage.getOnItemsStorageCallbacks().removeCallback(onItemsStorageUpdate);
+            this.selectionManager.getOnSelectionUpdated().removeCallback(selectionCallback);
+            bind = false;
+        }
+    }
+
+    public void bind() {
+        if (!created) {
+            throw new RuntimeException("ItemsStorageDrawer no created!");
+        }
+        if (destroyed) {
+            throw new RuntimeException("ItemsStorageDrawer already destroyed!");
+        }
+
+        if (!bind) {
+            this.itemsStorage.getOnItemsStorageCallbacks().addCallback(CallbackImportance.DEFAULT, onItemsStorageUpdate);
+            this.selectionManager.getOnSelectionUpdated().addCallback(CallbackImportance.DEFAULT, selectionCallback);
+            bind = true;
+        }
     }
 
     private void onItemClick(Item item) {

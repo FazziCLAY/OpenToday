@@ -269,7 +269,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onMoved(item.item, positionFrom, positionTo));
 
         if (!recalculate(TickSession.getLatestGregorianCalendar())) {
-            visibleChanged();
+            //visibleChanged();
         }
         save();
     }
@@ -374,7 +374,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         if (isUpdated) {
             activeItems.clear();
             activeItems.addAll(temps);
-            visibleChanged();
+            //visibleChanged();
         }
         return isUpdated;
     }
@@ -413,7 +413,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         @Override
         public void updateUi(Item item) {
             itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onUpdated(item, getItemPosition(item)));
-            FilterGroupItem.this.visibleChanged();
+            //FilterGroupItem.this.visibleChanged();
         }
 
         @Override
