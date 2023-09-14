@@ -1,6 +1,7 @@
 package com.fazziclay.opentoday.gui.item
 
 import android.content.Context
+import android.view.View
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 
@@ -19,5 +20,17 @@ class ItemViewHolder(context: Context) : RecyclerView.ViewHolder(FrameLayout(con
     init {
         layout.setPadding(PADDING_LEFT, PADDING_TOP, PADDING_RIGHT, PADDING_BOTTOM)
         layout.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
+    }
+
+    fun bind(view: View?) {
+        layout.removeAllViews()
+        if (view == null) {
+            layout.visibility = View.GONE
+            layout.setPadding(0, 0, 0, 0)
+        } else {
+            layout.visibility = View.VISIBLE
+            layout.setPadding(PADDING_LEFT, PADDING_TOP, PADDING_RIGHT, PADDING_BOTTOM)
+            layout.addView(view)
+        }
     }
 }

@@ -18,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -28,6 +27,7 @@ import androidx.annotation.Nullable;
 import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
@@ -306,9 +306,30 @@ public class ItemViewGenerator {
 
         // FilterGroup
         if (!item.isMinimize()) {
-            var v = new ItemsStorageDrawer(activity, null, behavior, App.get().getSelectionManager(), item, itemOnClick, null, null, previewMode);
+            var v = ItemsStorageDrawer.builder(activity, new ItemsStorageDrawerBehavior() {
+                private final SettingsManager settingsManager = App.get(activity).getSettingsManager();
+
+                @Override
+                public SettingsManager.ItemAction getItemOnClickAction() {
+                    return settingsManager.getItemOnClickAction();
+                }
+
+                @Override
+                public boolean isScrollToAddedItem() {
+                    return settingsManager.isScrollToAddedItem();
+                }
+
+                @Override
+                public SettingsManager.ItemAction getItemOnLeftAction() {
+                    return settingsManager.getItemOnLeftAction();
+                }
+            }, behavior, App.get().getSelectionManager(), item)
+                    .setDragsEnable(false)
+                    .setOnItemClick(itemOnClick)
+                    .build();
             v.create();
             v.setItemViewWrapper(new ItemsStorageDrawer.ItemViewWrapper() {
+                @Nullable
                 @Override
                 public View wrap(Item _item, View view) {
                     for (Item activeItem : item.getActiveItems()) {
@@ -316,7 +337,7 @@ public class ItemViewGenerator {
                             return view;
                         }
                     }
-                    return new FrameLayout(activity);
+                    return null;
                 }
             });
             binding.content.addView(v.getView());
@@ -351,12 +372,40 @@ public class ItemViewGenerator {
 
         // Group
         if (!item.isMinimize()) {
-            for (Item currentItem : item.getAllItems()) {
-                final ItemViewHolder holder = new ItemViewHolder(activity);
-                holder.layout.addView(generate(currentItem, binding.content));
+            var v = ItemsStorageDrawer.builder(activity, new ItemsStorageDrawerBehavior() {
+                        private final SettingsManager settingsManager = App.get(activity).getSettingsManager();
 
-                binding.content.addView(holder.layout);
-            }
+                        @Override
+                        public SettingsManager.ItemAction getItemOnClickAction() {
+                            return settingsManager.getItemOnClickAction();
+                        }
+
+                        @Override
+                        public boolean isScrollToAddedItem() {
+                            return settingsManager.isScrollToAddedItem();
+                        }
+
+                        @Override
+                        public SettingsManager.ItemAction getItemOnLeftAction() {
+                            return settingsManager.getItemOnLeftAction();
+                        }
+                    }, behavior, App.get().getSelectionManager(), item)
+                    .setOnItemClick(itemOnClick)
+                    .build();
+            v.create();
+            binding.content.addView(v.getView());
+
+            binding.getRoot().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+                @Override
+                public void onViewAttachedToWindow(@NonNull View view) {
+                    v.bind();
+                }
+
+                @Override
+                public void onViewDetachedFromWindow(@NonNull View view) {
+                    v.unbind();
+                }
+            });
         }
         binding.externalEditor.setEnabled(!previewMode);
         binding.externalEditor.setOnClickListener(_ignore -> behavior.onGroupEdit(item));

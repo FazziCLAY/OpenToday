@@ -32,9 +32,13 @@ import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType;
 import com.fazziclay.opentoday.gui.fragment.ItemEditorFragment;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.util.Logger;
+import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
 
+/**
+ * Drawer of ItemsStorage
+ */
 public class ItemsStorageDrawer {
     private static final String TAG = "ItemStorageDrawer";
     private final Activity activity;
@@ -56,9 +60,20 @@ public class ItemsStorageDrawer {
     private final ItemInterface onItemEditor;
     @Nullable private final ItemInterface onItemTextEditor;
     private boolean bind = false;
+    private boolean isDragsEnable;
 
     // Public
-    public ItemsStorageDrawer(@NonNull Activity activity, ItemsStorageDrawerBehavior itemsStorageDrawerBehavior, ItemViewGeneratorBehavior itemViewGeneratorBehavior, SelectionManager selectionManager, ItemsStorage itemsStorage, ItemInterface itemOnClick, @NonNull ItemInterface onItemEditor, @Nullable ItemInterface onItemTextEditor, boolean previewMode) {
+    protected ItemsStorageDrawer(@NonNull Activity activity,
+                                 ItemsStorageDrawerBehavior itemsStorageDrawerBehavior,
+                                 ItemViewGeneratorBehavior itemViewGeneratorBehavior,
+                                 SelectionManager selectionManager,
+                                 ItemsStorage itemsStorage,
+                                 @Nullable ItemInterface itemOnClick,
+                                 @NonNull ItemInterface onItemEditor,
+                                 @Nullable ItemInterface onItemTextEditor,
+                                 boolean previewMode,
+                                 boolean isDragsEnable) {
+        this.isDragsEnable = isDragsEnable;
         this.originalThread = Thread.currentThread();
         if (this.originalThread != Looper.getMainLooper().getThread()) {
             throw new RuntimeException("Creating an ItemsStorageDrawer object is allowed only in the main thread");
@@ -96,7 +111,9 @@ public class ItemsStorageDrawer {
         bind();
         this.itemViewGenerator.create();
 
-        if (!previewMode) new ItemTouchHelper(new DrawerTouchCallback()).attachToRecyclerView(view);
+        if (!previewMode) {
+            new ItemTouchHelper(new DrawerTouchCallback(isDragsEnable, true)).attachToRecyclerView(view);
+        }
     }
 
     public void destroy() {
@@ -207,10 +224,18 @@ public class ItemsStorageDrawer {
     private void runAdapter(AdapterInterface i) {
         if (adapter != null) i.run(adapter);
     }
-    
+
+    @Nullable
     private View generateViewForItem(Item item) {
         boolean previewMode = this.previewMode || selectionManager.isSelected(item);
-        return itemViewGenerator.generate(item, view, previewMode);
+        View toReturn = itemViewGenerator.generate(item, view, previewMode);
+
+        boolean TEST = false;
+        if (TEST) {
+            return RandomUtil.nextBoolean() ? null : toReturn;
+        }
+
+        return toReturn;
     }
 
     private class DrawerAdapter extends RecyclerView.Adapter<ItemViewHolder> {
@@ -222,11 +247,11 @@ public class ItemsStorageDrawer {
 
         @Override
         public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-            Item item = itemsStorage.getAllItems()[position];
-            View view = generateViewForItem(item);
+            final Item item = itemsStorage.getAllItems()[position];
+            @Nullable View view = generateViewForItem(item);
+            view = (itemViewWrapper != null) ? itemViewWrapper.wrap(item, view) : view;
 
-            holder.layout.removeAllViews();
-            holder.layout.addView((itemViewWrapper != null) ? itemViewWrapper.wrap(item, view) : view);
+            holder.bind(view);
         }
 
         @Override
@@ -236,15 +261,23 @@ public class ItemsStorageDrawer {
     }
 
     private class DrawerTouchCallback extends ItemTouchHelper.SimpleCallback {
-        private static final int DRAG_DIRS = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
         private static final int SWIPE_DIRS = ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT | ItemTouchHelper.START | ItemTouchHelper.END;
+        private static final int DRAG_DIRS = ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT | ItemTouchHelper.START | ItemTouchHelper.END;
 
-        public DrawerTouchCallback() {
-            super(DRAG_DIRS, SWIPE_DIRS);
+        private final boolean isDragsEnable;
+        private final boolean isSwipesEnable;
+
+
+        public DrawerTouchCallback(boolean isDragsEnable, boolean isSwipesEnable) {
+            super(isDragsEnable ? DRAG_DIRS : 0, isSwipesEnable ? SWIPE_DIRS : 0);
+            this.isDragsEnable = isDragsEnable;
+            this.isSwipesEnable = isSwipesEnable;
         }
 
         @Override
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            if (!isDragsEnable) return false;
+
             int positionFrom = viewHolder.getAdapterPosition();
             int positionTo = target.getAdapterPosition();
 
@@ -256,6 +289,8 @@ public class ItemsStorageDrawer {
 
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            if (!isSwipesEnable) return;
+
             final int position = viewHolder.getAdapterPosition();
             final Item item = ItemsStorageDrawer.this.itemsStorage.getAllItems()[position];
             runAdapter(adapter1 -> adapter1.notifyItemChanged(position));
@@ -394,6 +429,7 @@ public class ItemsStorageDrawer {
 
     @FunctionalInterface
     public interface ItemViewWrapper {
+        @Nullable
         View wrap(Item item, View view);
     }
 
@@ -407,6 +443,7 @@ public class ItemsStorageDrawer {
         private ItemInterface onItemClick = null;
         private ItemInterface onItemOpenEditor = null;
         private ItemInterface onItemTextEditor = null;
+        private boolean isDragsEnable = true;
 
         public CreateBuilder(Activity activity, ItemsStorageDrawerBehavior behavior, ItemViewGeneratorBehavior viewGeneratorBehavior, SelectionManager selectionManager, ItemsStorage itemsStorage) {
             this.activity = activity;
@@ -442,7 +479,12 @@ public class ItemsStorageDrawer {
         }
 
         public ItemsStorageDrawer build() {
-            return new ItemsStorageDrawer(activity, behavior, viewGeneratorBehavior, selectionManager, itemsStorage, onItemClick, onItemOpenEditor, onItemTextEditor, previewMode);
+            return new ItemsStorageDrawer(activity, behavior, viewGeneratorBehavior, selectionManager, itemsStorage, onItemClick, onItemOpenEditor, onItemTextEditor, previewMode, isDragsEnable);
+        }
+
+        public CreateBuilder setDragsEnable(boolean b) {
+            this.isDragsEnable = b;
+            return this;
         }
     }
 

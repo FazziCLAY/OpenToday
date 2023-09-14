@@ -190,6 +190,7 @@ public class ItemsEditorFragment extends Fragment {
                 .setPreviewMode(previewMode)
                 .setOnItemOpenEditor((item) -> rootNavigationHost.navigate(ItemEditorFragment.edit(item.getId()), true))
                 .setOnItemTextEditor((item) -> rootNavigationHost.navigate(ItemTextEditorFragment.create(item.getId()), true))
+                .setDragsEnable(!(item instanceof FilterGroupItem))
                 .build();
 
         if (item instanceof FilterGroupItem) {
