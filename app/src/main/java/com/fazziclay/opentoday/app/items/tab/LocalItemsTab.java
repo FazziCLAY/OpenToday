@@ -127,6 +127,11 @@ public class LocalItemsTab extends Tab implements Tickable {
         return itemsStorage.isEmpty();
     }
 
+    @Override
+    public Item getItemAt(int position) {
+        return itemsStorage.getItemAt(position);
+    }
+
     @NotNull
     @Override
     public String toString() {

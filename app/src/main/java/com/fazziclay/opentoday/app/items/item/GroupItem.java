@@ -101,6 +101,11 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
     }
 
     @Override
+    public Item getItemAt(int position) {
+        return itemsStorage.getItemAt(position);
+    }
+
+    @Override
     public Item getItemById(UUID itemId) {
         return itemsStorage.getItemById(itemId);
     }

@@ -41,6 +41,11 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
     }
 
     @Override
+    public Item getItemAt(int position) {
+        return items.get(position);
+    }
+
+    @Override
     public boolean isEmpty() {
         return items.isEmpty();
     }

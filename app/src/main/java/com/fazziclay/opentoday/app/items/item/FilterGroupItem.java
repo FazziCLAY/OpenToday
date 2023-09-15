@@ -302,6 +302,11 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     }
 
     @Override
+    public Item getItemAt(int position) {
+        return items.get(position).item;
+    }
+
+    @Override
     public Item getItemById(UUID itemId) {
         return ItemUtil.getItemByIdRecursive(getAllItems(), itemId);
     }
