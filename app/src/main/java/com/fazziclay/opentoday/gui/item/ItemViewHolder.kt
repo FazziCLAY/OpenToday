@@ -2,6 +2,7 @@ package com.fazziclay.opentoday.gui.item
 
 import android.content.Context
 import android.view.View
+import android.view.View.OnClickListener
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 
@@ -32,5 +33,9 @@ class ItemViewHolder(context: Context) : RecyclerView.ViewHolder(FrameLayout(con
             layout.setPadding(PADDING_LEFT, PADDING_TOP, PADDING_RIGHT, PADDING_BOTTOM)
             layout.addView(view)
         }
+    }
+
+    fun bindOnClick(onClickListener: OnClickListener) {
+        layout.setOnClickListener(onClickListener)
     }
 }

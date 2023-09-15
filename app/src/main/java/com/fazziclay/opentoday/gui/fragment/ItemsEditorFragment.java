@@ -38,6 +38,7 @@ import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
 import com.fazziclay.opentoday.gui.item.ItemsStorageDrawer;
 import com.fazziclay.opentoday.gui.item.ItemsStorageDrawerBehavior;
+import com.fazziclay.opentoday.gui.item.SettingsItemsStorageDrawerBehavior;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
@@ -129,6 +130,18 @@ public class ItemsEditorFragment extends Fragment {
             }
         }
 
+        ItemsStorageDrawerBehavior itemsStorageDrawerBehavior = new SettingsItemsStorageDrawerBehavior(settingsManager) {
+            @Override
+            public void onItemOpenEditor(Item item) {
+                rootNavigationHost.navigate(ItemEditorFragment.edit(item.getId()), true);
+            }
+
+            @Override
+            public void onItemOpenTextEditor(Item item) {
+                rootNavigationHost.navigate(ItemTextEditorFragment.create(item.getId()), true);
+            }
+        };
+
         ItemViewGeneratorBehavior itemViewGeneratorBehavior = new ItemViewGeneratorBehavior() {
 
             @Override
@@ -166,31 +179,16 @@ public class ItemsEditorFragment extends Fragment {
             public void onFilterGroupEdit(FilterGroupItem filterGroupItem) {
                 navigationHost.navigate(createItem(tabId, filterGroupItem.getId(), (filterGroupItem instanceof Readonly)), true);
             }
-        };
-
-        ItemsStorageDrawerBehavior itemsStorageDrawerBehavior = new ItemsStorageDrawerBehavior() {
-            @Override
-            public SettingsManager.ItemAction getItemOnClickAction() {
-                return settingsManager.getItemOnClickAction();
-            }
 
             @Override
-            public boolean isScrollToAddedItem() {
-                return settingsManager.isScrollToAddedItem();
-            }
-
-            @Override
-            public SettingsManager.ItemAction getItemOnLeftAction() {
-                return settingsManager.getItemOnLeftAction();
+            public ItemsStorageDrawerBehavior getItemsStorageDrawerBehavior(Item item) {
+                return itemsStorageDrawerBehavior;
             }
         };
 
 
         this.itemsStorageDrawer = ItemsStorageDrawer.builder(activity, itemsStorageDrawerBehavior, itemViewGeneratorBehavior, selectionManager, itemsStorage)
                 .setPreviewMode(previewMode)
-                .setOnItemOpenEditor((item) -> rootNavigationHost.navigate(ItemEditorFragment.edit(item.getId()), true))
-                .setOnItemTextEditor((item) -> rootNavigationHost.navigate(ItemTextEditorFragment.create(item.getId()), true))
-                .setDragsEnable(!(item instanceof FilterGroupItem))
                 .build();
 
         if (item instanceof FilterGroupItem) {

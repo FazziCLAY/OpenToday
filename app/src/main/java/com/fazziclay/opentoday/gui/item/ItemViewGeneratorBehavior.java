@@ -18,4 +18,6 @@ public interface ItemViewGeneratorBehavior {
     void onGroupEdit(GroupItem groupItem);
     void onCycleListEdit(CycleListItem cycleListItem);
     void onFilterGroupEdit(FilterGroupItem filterGroupItem);
+
+    ItemsStorageDrawerBehavior getItemsStorageDrawerBehavior(Item item);
 }

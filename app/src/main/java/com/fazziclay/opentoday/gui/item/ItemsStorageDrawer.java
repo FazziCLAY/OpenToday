@@ -5,8 +5,6 @@ import android.app.Activity;
 import android.os.Looper;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,7 +12,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fazziclay.opentoday.R;
@@ -39,41 +36,40 @@ import com.fazziclay.opentoday.util.callback.Status;
 /**
  * Drawer of ItemsStorage
  */
-public class ItemsStorageDrawer {
+public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
     private static final String TAG = "ItemStorageDrawer";
+
+
     private final Activity activity;
     private final ItemViewGenerator itemViewGenerator;
+    private final ItemViewGeneratorBehavior itemViewGeneratorBehavior;
     private final ItemsStorageDrawerBehavior behavior;
     private final SelectionManager selectionManager;
     private final ItemsStorage itemsStorage;
-    private final RecyclerView view;
-    private RecyclerView.Adapter<ItemViewHolder> adapter;
     private final Thread originalThread; // always is main(UI) thread.
 
-    private boolean destroyed = false;
-    private boolean created = false;
+
     private final OnItemsStorageUpdate onItemsStorageUpdate = new DrawerOnItemsStorageUpdated();
     private final SelectionCallback selectionCallback = new DrawerSelectionCallback();
     private final ItemInterface itemOnClick;
     private final boolean previewMode;
     private ItemViewWrapper itemViewWrapper = null;
-    private final ItemInterface onItemEditor;
-    @Nullable private final ItemInterface onItemTextEditor;
-    private boolean bind = false;
-    private boolean isDragsEnable;
 
     // Public
-    protected ItemsStorageDrawer(@NonNull Activity activity,
-                                 ItemsStorageDrawerBehavior itemsStorageDrawerBehavior,
-                                 ItemViewGeneratorBehavior itemViewGeneratorBehavior,
-                                 SelectionManager selectionManager,
-                                 ItemsStorage itemsStorage,
-                                 @Nullable ItemInterface itemOnClick,
-                                 @NonNull ItemInterface onItemEditor,
-                                 @Nullable ItemInterface onItemTextEditor,
-                                 boolean previewMode,
-                                 boolean isDragsEnable) {
-        this.isDragsEnable = isDragsEnable;
+    private ItemsStorageDrawer(@NonNull Activity activity,
+                               RecyclerView view,
+                               boolean isDragsEnable,
+                               boolean isSwipesEnable,
+
+                               ItemsStorageDrawerBehavior itemsStorageDrawerBehavior,
+                               ItemViewGeneratorBehavior itemViewGeneratorBehavior,
+
+                               SelectionManager selectionManager,
+                               ItemsStorage itemsStorage,
+                               @Nullable ItemInterface itemOnClick,
+                               boolean previewMode,
+                               @Nullable ItemViewWrapper itemViewWrapper) {
+        super(activity, view, isDragsEnable, isSwipesEnable);
         this.originalThread = Thread.currentThread();
         if (this.originalThread != Looper.getMainLooper().getThread()) {
             throw new RuntimeException("Creating an ItemsStorageDrawer object is allowed only in the main thread");
@@ -82,14 +78,11 @@ public class ItemsStorageDrawer {
         this.behavior = itemsStorageDrawerBehavior;
         this.selectionManager = selectionManager;
         this.itemsStorage = itemsStorage;
-        this.onItemTextEditor = onItemTextEditor;
-        this.onItemEditor = onItemEditor;
         this.itemOnClick = itemOnClick;
         this.previewMode = previewMode;
-        this.view = new RecyclerView(activity);
-        this.view.setLayoutManager(new LinearLayoutManager(activity));
-        this.view.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1));
-        this.itemViewGenerator = new ItemViewGenerator(this.activity, itemViewGeneratorBehavior, previewMode, this::onItemClick);
+        this.itemViewWrapper = itemViewWrapper;
+        this.itemViewGeneratorBehavior = itemViewGeneratorBehavior;
+        this.itemViewGenerator = new ItemViewGenerator(this.activity, previewMode);
     }
 
 
@@ -98,67 +91,32 @@ public class ItemsStorageDrawer {
     }
 
     public void create() {
+        super.create();
         throwIsBadThread();
-        if (destroyed) {
-            throw new RuntimeException("ItemsStorageDrawer already destroyed!");
-        }
-        if (created) {
-            throw new RuntimeException("ItemsStorageDrawer already created!");
-        }
-        this.created = true;
-        this.adapter = new DrawerAdapter();
-        this.view.setAdapter(adapter);
-        bind();
-        this.itemViewGenerator.create();
-
-        if (!previewMode) {
-            new ItemTouchHelper(new DrawerTouchCallback(isDragsEnable, true)).attachToRecyclerView(view);
-        }
     }
 
     public void destroy() {
-        if (!created) {
-            throw new RuntimeException("ItemsStorageDrawer no created!");
-        }
-        if (destroyed) {
-            throw new RuntimeException("ItemsStorageDrawer already destroyed!");
-        }
-        destroyed = true;
-        unbind();
-        this.view.setAdapter(null);
-        this.itemViewGenerator.destroy();
-        this.adapter = null;
+        super.destroy();
     }
 
-    // temp (maybe forever) unbind (remove callbacks)
-    public void unbind() {
-        if (!created) {
-            throw new RuntimeException("ItemsStorageDrawer no created!");
-        }
-
-        if (bind) {
-            this.itemsStorage.getOnItemsStorageCallbacks().removeCallback(onItemsStorageUpdate);
-            this.selectionManager.getOnSelectionUpdated().removeCallback(selectionCallback);
-            bind = false;
-        }
+    @Override
+    public void doFloatDestroy() {
+        super.doFloatDestroy();
+        this.itemsStorage.getOnItemsStorageCallbacks().removeCallback(onItemsStorageUpdate);
+        this.selectionManager.getOnSelectionUpdated().removeCallback(selectionCallback);
     }
 
-    public void bind() {
-        if (!created) {
-            throw new RuntimeException("ItemsStorageDrawer no created!");
-        }
-        if (destroyed) {
-            throw new RuntimeException("ItemsStorageDrawer already destroyed!");
-        }
-
-        if (!bind) {
-            this.itemsStorage.getOnItemsStorageCallbacks().addCallback(CallbackImportance.DEFAULT, onItemsStorageUpdate);
-            this.selectionManager.getOnSelectionUpdated().addCallback(CallbackImportance.DEFAULT, selectionCallback);
-            bind = true;
-        }
+    @Override
+    public void doFloatCreate() {
+        super.doFloatCreate();
+        this.itemsStorage.getOnItemsStorageCallbacks().addCallback(CallbackImportance.DEFAULT, onItemsStorageUpdate);
+        this.selectionManager.getOnSelectionUpdated().addCallback(CallbackImportance.DEFAULT, selectionCallback);
     }
 
-    private void onItemClick(Item item) {
+    @Override
+    protected void onItemClicked(View view, ItemViewHolder viewHolder, int position) {
+        final Item item = itemsStorage.getItemAt(position);
+
         if (this.itemOnClick != null) {
             this.itemOnClick.run(item);
             return;
@@ -169,7 +127,9 @@ public class ItemsStorageDrawer {
     }
 
     private void throwIsBadThread() {
-        if (Thread.currentThread() != originalThread) throw new RuntimeException("Access from non-original thread.");
+        if (Thread.currentThread() != originalThread) {
+            throw new RuntimeException("Access from non-original thread.");
+        }
     }
 
     private void runOnUiThread(Runnable r) {
@@ -178,10 +138,6 @@ public class ItemsStorageDrawer {
         } else {
             activity.runOnUiThread(r);
         }
-    }
-
-    public View getView() {
-        return this.view;
     }
 
     public void setItemViewWrapper(ItemViewWrapper itemViewWrapper) {
@@ -193,42 +149,38 @@ public class ItemsStorageDrawer {
         @Override
         public Status onAdded(Item item, int pos) {
             runOnUiThread(() -> {
-                runAdapter((adapter) -> adapter.notifyItemInserted(pos));
-                if (behavior.isScrollToAddedItem()) view.smoothScrollToPosition(pos);
+                callWithNonNullAdapter((adapter) -> adapter.notifyItemInserted(pos));
+                if (behavior.isScrollToAddedItem()) smoothScrollToPosition(pos);
             });
             return Status.NONE;
         }
 
         @Override
         public Status onPreDeleted(Item item, int pos) {
-            runOnUiThread(() -> runAdapter((adapter) -> adapter.notifyItemRemoved(pos)));
+            runOnUiThread(() -> callWithNonNullAdapter((adapter) -> adapter.notifyItemRemoved(pos)));
             return Status.NONE;
         }
 
         @Override
         public Status onMoved(Item item, int from, int to) {
-            runOnUiThread(() -> runAdapter((adapter) -> adapter.notifyItemMoved(from, to)));
+            runOnUiThread(() -> callWithNonNullAdapter((adapter) -> adapter.notifyItemMoved(from, to)));
             return Status.NONE;
         }
 
         @Override
         public Status onUpdated(Item item, int pos) {
-            runOnUiThread(() -> runAdapter(adapter -> adapter.notifyItemChanged(pos)));
+            runOnUiThread(() -> {
+                smoothUpdateItemAt(pos);
+            });
             return Status.NONE;
         }
     }
 
-    /**
-     * Run AdapterInterface if adapter not null
-     */
-    private void runAdapter(AdapterInterface i) {
-        if (adapter != null) i.run(adapter);
-    }
 
     @Nullable
     private View generateViewForItem(Item item) {
         boolean previewMode = this.previewMode || selectionManager.isSelected(item);
-        View toReturn = itemViewGenerator.generate(item, view, previewMode);
+        View toReturn = itemViewGenerator.generate(item, getView(), itemViewGeneratorBehavior, previewMode);
 
         boolean TEST = false;
         if (TEST) {
@@ -238,78 +190,48 @@ public class ItemsStorageDrawer {
         return toReturn;
     }
 
-    private class DrawerAdapter extends RecyclerView.Adapter<ItemViewHolder> {
-        @NonNull
-        @Override
-        public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ItemViewHolder(activity);
-        }
+    @Override
+    protected void onBindItem(@NonNull ItemViewHolder holder, int position) {
+        final Item item = itemsStorage.getItemAt(position);
+        @Nullable View view = generateViewForItem(item);
+        view = (itemViewWrapper != null) ? itemViewWrapper.wrap(item, view) : view;
 
-        @Override
-        public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-            final Item item = itemsStorage.getAllItems()[position];
-            @Nullable View view = generateViewForItem(item);
-            view = (itemViewWrapper != null) ? itemViewWrapper.wrap(item, view) : view;
-
-            holder.bind(view);
-        }
-
-        @Override
-        public int getItemCount() {
-            return itemsStorage.getAllItems().length;
-        }
+        holder.bind(view);
     }
 
-    private class DrawerTouchCallback extends ItemTouchHelper.SimpleCallback {
-        private static final int SWIPE_DIRS = ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT | ItemTouchHelper.START | ItemTouchHelper.END;
-        private static final int DRAG_DIRS = ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT | ItemTouchHelper.START | ItemTouchHelper.END;
+    @Override
+    protected int getItemCount() {
+        return itemsStorage.size();
+    }
 
-        private final boolean isDragsEnable;
-        private final boolean isSwipesEnable;
+    @Override
+    protected boolean onItemsMoved(int positionFrom, int positionTo) {
+        //! NOTE: Adapter receive notify signal from callbacks!
+        //ItemUIDrawer.this.adapter.notifyItemMoved(positionFrom, positionTo);
+        Logger.d(TAG, "onItemsMoved from="+positionFrom + "; to="+ positionTo);
+        ItemsStorageDrawer.this.itemsStorage.move(positionFrom, positionTo);
+        return true;
+    }
 
+    @Override
+    protected void onItemSwiped(RecyclerView.ViewHolder viewHolder, int position, int direction) {
+        final Item item = ItemsStorageDrawer.this.itemsStorage.getItemAt(position);
 
-        public DrawerTouchCallback(boolean isDragsEnable, boolean isSwipesEnable) {
-            super(isDragsEnable ? DRAG_DIRS : 0, isSwipesEnable ? SWIPE_DIRS : 0);
-            this.isDragsEnable = isDragsEnable;
-            this.isSwipesEnable = isSwipesEnable;
+        if (direction == ItemTouchHelper.LEFT) {
+            actionItem(item, behavior.getItemOnLeftAction());
+
+        } else if (direction == ItemTouchHelper.RIGHT) {
+            ItemViewHolder itemViewHolder = (ItemViewHolder) viewHolder;
+            showRightMenu(item, itemViewHolder.layout.getChildAt(0));
         }
-
-        @Override
-        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-            if (!isDragsEnable) return false;
-
-            int positionFrom = viewHolder.getAdapterPosition();
-            int positionTo = target.getAdapterPosition();
-
-            //! NOTE: Adapter receive notify signal from callbacks!
-            //ItemUIDrawer.this.adapter.notifyItemMoved(positionFrom, positionTo);
-            ItemsStorageDrawer.this.itemsStorage.move(positionFrom, positionTo);
-            return true;
-        }
-
-        @Override
-        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-            if (!isSwipesEnable) return;
-
-            final int position = viewHolder.getAdapterPosition();
-            final Item item = ItemsStorageDrawer.this.itemsStorage.getAllItems()[position];
-            runAdapter(adapter1 -> adapter1.notifyItemChanged(position));
-
-            if (direction == ItemTouchHelper.LEFT) {
-                actionItem(item, behavior.getItemOnLeftAction());
-
-            } else if (direction == ItemTouchHelper.RIGHT) {
-                ItemViewHolder itemViewHolder = (ItemViewHolder) viewHolder;
-                showRightMenu(item, itemViewHolder.layout.getChildAt(0));
-            }
-        }
+        updateItemAt(position);
     }
 
     private void actionItem(Item item, SettingsManager.ItemAction action) {
         CrashReportContext.FRONT.push("ItemsStorageDrawer.actionItem");
         switch (action) {
-            case OPEN_EDITOR -> onItemEditor.run(item);
-            case OPEN_TEXT_EDITOR -> onItemTextEditor.run(item);
+            case OPEN_EDITOR -> behavior.onItemOpenEditor(item);
+            case OPEN_TEXT_EDITOR -> behavior.onItemOpenTextEditor(item);
             case SELECT_ON -> selectionManager.selectItem(item);
             case SELECT_OFF -> selectionManager.deselectItem(item);
             case MINIMIZE_REVERT -> {
@@ -382,7 +304,7 @@ public class ItemsStorageDrawer {
                 case R.id.copy:
                     try {
                         Item copyItem = itemsStorage.copyItem(item);
-                        onItemEditor.run(copyItem);
+                        behavior.onItemOpenEditor(copyItem);
                     } catch (Exception e) {
                         Logger.e(TAG, "Copy error", e);
                         Toast.makeText(activity, activity.getString(R.string.menuItem_copy_exception, e.toString()), Toast.LENGTH_SHORT).show();
@@ -398,7 +320,7 @@ public class ItemsStorageDrawer {
                     break;
 
                 case R.id.textItem_editText:
-                    onItemTextEditor.run(item);
+                    behavior.onItemOpenTextEditor(item);
                     break;
 
                 case R.id.transform:
@@ -420,7 +342,7 @@ public class ItemsStorageDrawer {
 
             if (itemAction != null) actionItem(item, itemAction);
             if (save) item.save();
-            runAdapter(adapter1 -> adapter1.notifyItemChanged(itemsStorage.getItemPosition(item)));
+            callWithNonNullAdapter(adapter1 -> adapter1.notifyItemChanged(itemsStorage.getItemPosition(item)));
             return true;
         });
         menu.setGravity(Gravity.END);
@@ -440,10 +362,10 @@ public class ItemsStorageDrawer {
         private final SelectionManager selectionManager;
         private final ItemsStorage itemsStorage;
         private boolean previewMode = false;
-        private ItemInterface onItemClick = null;
-        private ItemInterface onItemOpenEditor = null;
         private ItemInterface onItemTextEditor = null;
         private boolean isDragsEnable = true;
+        private RecyclerView view = null;
+        private ItemViewWrapper itemViewWrapper = null;
 
         public CreateBuilder(Activity activity, ItemsStorageDrawerBehavior behavior, ItemViewGeneratorBehavior viewGeneratorBehavior, SelectionManager selectionManager, ItemsStorage itemsStorage) {
             this.activity = activity;
@@ -463,33 +385,33 @@ public class ItemsStorageDrawer {
             return this;
         }
 
-        public CreateBuilder setOnItemClick(ItemInterface i) {
-            this.onItemClick = i;
-            return this;
-        }
-
-        public CreateBuilder setOnItemOpenEditor(ItemInterface i) {
-            this.onItemOpenEditor = i;
-            return this;
-        }
-
         public CreateBuilder setOnItemTextEditor(ItemInterface onItemTextEditor) {
             this.onItemTextEditor = onItemTextEditor;
             return this;
         }
 
         public ItemsStorageDrawer build() {
-            return new ItemsStorageDrawer(activity, behavior, viewGeneratorBehavior, selectionManager, itemsStorage, onItemClick, onItemOpenEditor, onItemTextEditor, previewMode, isDragsEnable);
+            if (view == null) {
+                view = new RecyclerView(activity);
+            }
+            // TODO: 15.09.2023 isSwipesEnable
+            return new ItemsStorageDrawer(activity, view, isDragsEnable, true, behavior, viewGeneratorBehavior, selectionManager, itemsStorage, onItemTextEditor, previewMode, itemViewWrapper);
         }
 
         public CreateBuilder setDragsEnable(boolean b) {
             this.isDragsEnable = b;
             return this;
         }
-    }
 
-    private interface AdapterInterface {
-        void run(RecyclerView.Adapter<ItemViewHolder> adapter);
+        public CreateBuilder setView(RecyclerView view) {
+            this.view = view;
+            return this;
+        }
+
+        public CreateBuilder setItemViewWrapper(ItemViewWrapper itemViewWrapper) {
+            this.itemViewWrapper = itemViewWrapper;
+            return this;
+        }
     }
 
     private class DrawerSelectionCallback extends SelectionCallback {
@@ -497,7 +419,7 @@ public class ItemsStorageDrawer {
         public Status selected(Selection selection) {
             if (selection.getItem().getParentItemsStorage() == itemsStorage) {
                 int pos = itemsStorage.getItemPosition(selection.getItem());
-                adapter.notifyItemChanged(pos);
+                updateItemAt(pos);
             }
 
             return Status.NONE;
@@ -507,7 +429,7 @@ public class ItemsStorageDrawer {
         public Status unselected(Selection selection) {
             if (selection.getItem().getParentItemsStorage() == itemsStorage) {
                 int pos = itemsStorage.getItemPosition(selection.getItem());
-                adapter.notifyItemChanged(pos);
+                updateItemAt(pos);
             }
 
             return Status.NONE;
@@ -515,7 +437,7 @@ public class ItemsStorageDrawer {
 
         @Override
         public Status unselectedAll() {
-            runAdapter(RecyclerView.Adapter::notifyDataSetChanged);
+            callWithNonNullAdapter(RecyclerView.Adapter::notifyDataSetChanged);
             return Status.NONE;
         }
     }

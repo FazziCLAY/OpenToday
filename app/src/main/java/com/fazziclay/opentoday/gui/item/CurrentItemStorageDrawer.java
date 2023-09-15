@@ -16,13 +16,15 @@ public class CurrentItemStorageDrawer {
     private final Activity activity;
     private final LinearLayout view;
     private final ItemViewGenerator itemViewGenerator;
+    private final ItemViewGeneratorBehavior itemViewGeneratorBehavior;
     private final CurrentItemStorage currentItemStorage;
     private final OnUpdateListener listener = new OnUpdateListener();
     private OnCurrentItemStorageUpdate userListener = null;
 
-    public CurrentItemStorageDrawer(Activity activity, ItemViewGenerator itemViewGenerator, CurrentItemStorage currentItemStorage) {
+    public CurrentItemStorageDrawer(Activity activity, ItemViewGenerator itemViewGenerator, ItemViewGeneratorBehavior itemViewGeneratorBehavior, CurrentItemStorage currentItemStorage) {
         this.activity = activity;
         this.view = new LinearLayout(activity);
+        this.itemViewGeneratorBehavior = itemViewGeneratorBehavior;
         this.view.setOrientation(LinearLayout.VERTICAL);
         this.itemViewGenerator = itemViewGenerator;
         this.currentItemStorage = currentItemStorage;
@@ -48,7 +50,9 @@ public class CurrentItemStorageDrawer {
         if (userListener != null) {
             userListener.onCurrentChanged(currentItem);
         }
-        if (currentItem != null) view.addView(itemViewGenerator.generate(currentItem, view));
+        if (currentItem != null) {
+            view.addView(itemViewGenerator.generate(currentItem, view, itemViewGeneratorBehavior));
+        }
     }
 
     public void setOnUpdateListener(OnCurrentItemStorageUpdate listener) {

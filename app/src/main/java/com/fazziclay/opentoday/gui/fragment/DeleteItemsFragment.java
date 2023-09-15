@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
@@ -26,6 +27,7 @@ import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.item.ItemViewGenerator;
 import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
 import com.fazziclay.opentoday.gui.item.ItemViewHolder;
+import com.fazziclay.opentoday.gui.item.ItemsStorageDrawerBehavior;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +81,7 @@ public class DeleteItemsFragment extends Fragment {
         itemsToDelete = u.toArray(new Item[0]);
         // parse END
 
-        itemViewGenerator = ItemViewGenerator.builder(requireActivity(), new DeleteViewGeneratorBehavior())
+        itemViewGenerator = ItemViewGenerator.builder(requireActivity())
                 .setPreviewMode(true)
                 .build();
 
@@ -112,7 +114,7 @@ public class DeleteItemsFragment extends Fragment {
             public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
                 Item item = itemsToDelete[position];
                 holder.layout.removeAllViews();
-                holder.layout.addView(itemViewGenerator.generate(item, binding.list));
+                holder.layout.addView(itemViewGenerator.generate(item, binding.list, new DeleteViewGeneratorBehavior()));
             }
 
             @Override
@@ -165,6 +167,36 @@ public class DeleteItemsFragment extends Fragment {
 
         @Override
         public void onFilterGroupEdit(FilterGroupItem filterGroupItem) {
+        }
+
+        @Override
+        public ItemsStorageDrawerBehavior getItemsStorageDrawerBehavior(Item item) {
+            return new ItemsStorageDrawerBehavior() {
+                @Override
+                public SettingsManager.ItemAction getItemOnClickAction() {
+                    return null;
+                }
+
+                @Override
+                public boolean isScrollToAddedItem() {
+                    return false;
+                }
+
+                @Override
+                public SettingsManager.ItemAction getItemOnLeftAction() {
+                    return null;
+                }
+
+                @Override
+                public void onItemOpenEditor(Item item) {
+
+                }
+
+                @Override
+                public void onItemOpenTextEditor(Item item) {
+
+                }
+            };
         }
     }
 }
