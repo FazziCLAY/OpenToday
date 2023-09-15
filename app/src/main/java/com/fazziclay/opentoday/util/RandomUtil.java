@@ -4,8 +4,13 @@ import com.fazziclay.opentoday.app.OptionalField;
 
 import java.util.Random;
 
-public class RandomUtil {
+/**
+ * Utility class for quickly get unsafe random functions
+ */
+public final class RandomUtil {
     private static final OptionalField<Random> RANDOM = new OptionalField<>(Random::new);
+
+    private RandomUtil() {}
 
     public static void free() {
         RANDOM.free();
