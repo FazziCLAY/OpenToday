@@ -138,10 +138,12 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
     private class DrawerOnItemsStorageUpdated extends OnItemsStorageUpdate {
         @Override
         public Status onAdded(Item item, int pos) {
-            runOnUiThread(() -> {
-                callWithNonNullAdapter((adapter) -> adapter.notifyItemInserted(pos));
-                if (behavior.isScrollToAddedItem()) smoothScrollToPosition(pos);
-            });
+            runOnUiThread(() -> callWithNonNullAdapter((adapter) -> {
+                adapter.notifyItemInserted(pos);
+                if (behavior.isScrollToAddedItem()) {
+                    smoothScrollToPosition(pos);
+                }
+            }));
             return Status.NONE;
         }
 
@@ -159,9 +161,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
 
         @Override
         public Status onUpdated(Item item, int pos) {
-            runOnUiThread(() -> {
-                smoothUpdateItemAt(pos);
-            });
+            runOnUiThread(() -> smoothUpdateItemAt(pos));
             return Status.NONE;
         }
     }
@@ -170,14 +170,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
     @Nullable
     private View generateViewForItem(Item item, HolderDestroyer destroyer) {
         boolean previewMode = this.previewMode || selectionManager.isSelected(item);
-        View toReturn = itemViewGenerator.generate(item, getView(), itemViewGeneratorBehavior, previewMode, destroyer);
-
-        boolean TEST = false;
-        if (TEST) {
-            return RandomUtil.nextBoolean() ? null : toReturn;
-        }
-
-        return toReturn;
+        return itemViewGenerator.generate(item, getView(), itemViewGeneratorBehavior, previewMode, destroyer);
     }
 
     @Override

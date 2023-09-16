@@ -93,7 +93,7 @@ public abstract class AbstractItemsStorageDrawer {
             onBindItem(var, position);
         } else {
             // test change: if smooth is unavailable => rough
-            //roughUpdateItemAt(position);
+            roughUpdateItemAt(position);
         }
     }
 
