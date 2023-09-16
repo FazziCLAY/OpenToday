@@ -314,6 +314,8 @@ public class ItemsEditorFragment extends Fragment {
             layout.addView(filter);
             filter.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 70, 0));
             buttons.put(item, filter);
+
+            destroyer.addDestroyListener(() -> buttons.remove(item));
             return layout;
         });
 
