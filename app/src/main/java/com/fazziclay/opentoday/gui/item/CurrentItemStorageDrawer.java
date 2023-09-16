@@ -25,9 +25,6 @@ public class CurrentItemStorageDrawer {
     private final @NotNull HolderDestroyer holderDestroyer;
     private @Nullable OnCurrentItemStorageUpdate userListener = null;
 
-    // internal states
-    private boolean floatingCreate = false;
-
     public CurrentItemStorageDrawer(@NonNull Activity activity,
                                     @NotNull ViewGroup view,
                                     @NonNull ItemViewGenerator itemViewGenerator,
@@ -43,27 +40,13 @@ public class CurrentItemStorageDrawer {
     }
 
     public void create() {
-        floatingCreate();
+        currentItemStorage.getOnCurrentItemStorageUpdateCallbacks().addCallback(CallbackImportance.DEFAULT, listener);
         updateView(currentItemStorage.getCurrentItem());
     }
 
     public void destroy() {
-        floatingDestroy();
+        currentItemStorage.getOnCurrentItemStorageUpdateCallbacks().removeCallback(listener);
         view.removeAllViews();
-    }
-
-    public void floatingCreate() {
-        if (!floatingCreate) {
-            currentItemStorage.getOnCurrentItemStorageUpdateCallbacks().addCallback(CallbackImportance.DEFAULT, listener);
-            floatingCreate = true;
-        }
-    }
-
-    public void floatingDestroy() {
-        if (floatingCreate) {
-            currentItemStorage.getOnCurrentItemStorageUpdateCallbacks().removeCallback(listener);
-            floatingCreate = false;
-        }
     }
 
     @NonNull

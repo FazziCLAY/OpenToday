@@ -27,7 +27,6 @@ public abstract class AbstractItemsStorageDrawer {
 
     // internal states
     private boolean created = false;
-    private boolean floatingCreated = false;
     private boolean destroyed = false;
 
 
@@ -47,18 +46,6 @@ public abstract class AbstractItemsStorageDrawer {
         this.view.setLayoutManager(new LinearLayoutManager(context));
         this.view.setAdapter(adapter);
         new ItemTouchHelper(this.drawerTouchCallback).attachToRecyclerView(view);
-        floatingCreate();
-    }
-
-    public void floatingCreate() {
-        if (!floatingCreated) {
-            doFloatCreate();
-            floatingCreated = true;
-        }
-    }
-
-    protected void doFloatCreate() {
-
     }
 
     public void destroy() {
@@ -70,19 +57,6 @@ public abstract class AbstractItemsStorageDrawer {
         }
         destroyed = true;
         view.setAdapter(null);
-        floatingDestroy();
-    }
-
-
-    public void floatingDestroy() {
-        if (floatingCreated) {
-            doFloatDestroy();
-            floatingCreated = false;
-        }
-    }
-
-    protected void doFloatDestroy() {
-
     }
 
     protected abstract int getItemCount();

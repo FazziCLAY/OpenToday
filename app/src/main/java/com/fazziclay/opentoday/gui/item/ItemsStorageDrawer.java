@@ -91,26 +91,16 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
     }
 
     public void create() {
-        super.create();
         throwIsBadThread();
+        super.create();
+        this.itemsStorage.getOnItemsStorageCallbacks().addCallback(CallbackImportance.DEFAULT, onItemsStorageUpdate);
+        this.selectionManager.getOnSelectionUpdated().addCallback(CallbackImportance.DEFAULT, selectionCallback);
     }
 
     public void destroy() {
         super.destroy();
-    }
-
-    @Override
-    public void doFloatDestroy() {
-        super.doFloatDestroy();
         this.itemsStorage.getOnItemsStorageCallbacks().removeCallback(onItemsStorageUpdate);
         this.selectionManager.getOnSelectionUpdated().removeCallback(selectionCallback);
-    }
-
-    @Override
-    public void doFloatCreate() {
-        super.doFloatCreate();
-        this.itemsStorage.getOnItemsStorageCallbacks().addCallback(CallbackImportance.DEFAULT, onItemsStorageUpdate);
-        this.selectionManager.getOnSelectionUpdated().addCallback(CallbackImportance.DEFAULT, selectionCallback);
     }
 
     @Override
