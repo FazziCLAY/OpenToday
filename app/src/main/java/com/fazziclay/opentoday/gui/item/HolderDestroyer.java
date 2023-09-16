@@ -19,6 +19,7 @@ public class HolderDestroyer {
         if (!destroyed) {
             for (Runnable listener : listeners) {
                 listener.run();
+                Logger.d(TAG, "destroyed: " + listener);
             }
             destroyed = true;
         } else {
