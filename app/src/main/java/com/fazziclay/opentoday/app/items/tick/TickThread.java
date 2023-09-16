@@ -115,9 +115,6 @@ public class TickThread extends Thread {
             try {
                 int sleep = (int) (1000 - (tickEnd - tickStart));
                 if (sleep <= 0) sleep = 1;
-                { // TODO: 16.09.2023 remove
-                    sleep = 0;
-                }
                 //noinspection BusyWait
                 Thread.sleep(sleep);
             } catch (Exception e) {
