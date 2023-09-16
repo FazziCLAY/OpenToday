@@ -196,6 +196,9 @@ public class ItemsEditorFragment extends Fragment {
                 .setPreviewMode(previewMode)
                 .build();
 
+        // apply two MATCH_PARENT to RecycleView of ItemsStorageDrawer
+        this.itemsStorageDrawer.getView().setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
         if (item instanceof FilterGroupItem) {
             applyFilterGroupViewPatch((FilterGroupItem) item);
         }

@@ -380,10 +380,16 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         }
 
         if (isUpdated) {
+            List<ItemFilterWrapper> oldestActive = new ArrayList<>(activeItems);
             Set<ItemFilterWrapper> toUpdate = new HashSet<>(activeItems);
             activeItems.clear();
             activeItems.addAll(temps);
             toUpdate.addAll(temps);
+            for (ItemFilterWrapper itemFilterWrapper : oldestActive) {
+                if (temps.contains(itemFilterWrapper)) {
+                    toUpdate.remove(itemFilterWrapper);
+                }
+            }
             //visibleChanged();
 
             for (ItemFilterWrapper activeItem : toUpdate) {
