@@ -51,6 +51,7 @@ import com.fazziclay.opentoday.databinding.ItemTextBinding;
 import com.fazziclay.opentoday.util.ColorUtil;
 import com.fazziclay.opentoday.util.DebugUtil;
 import com.fazziclay.opentoday.util.Logger;
+import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.annotation.ForItem;
 import com.fazziclay.opentoday.util.callback.Status;
@@ -73,11 +74,11 @@ public class ItemViewGenerator {
         return new CreateBuilder(activity);
     }
 
-    public View generate(final Item item, final ViewGroup parent, ItemViewGeneratorBehavior behavior) {
-        return generate(item, parent, behavior, previewMode);
+    public View generate(final Item item, final ViewGroup parent, ItemViewGeneratorBehavior behavior, HolderDestroyer holderDestroyer) {
+        return generate(item, parent, behavior, previewMode, holderDestroyer);
     }
 
-    public View generate(final Item item, final ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode) {
+    public View generate(final Item item, final ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode, HolderDestroyer holderDestroyer) {
         final Class<? extends Item> type = item.getClass();
         final View resultView;
 
@@ -97,16 +98,16 @@ public class ItemViewGenerator {
             resultView = generateDayRepeatableCheckboxItemView((DayRepeatableCheckboxItem) item, parent, behavior, previewMode);
 
         } else if (type == CycleListItem.class) {
-            resultView = generateCycleListItemView((CycleListItem) item, parent, behavior, previewMode);
+            resultView = generateCycleListItemView((CycleListItem) item, parent, behavior, previewMode, holderDestroyer);
 
         } else if (type == CounterItem.class) {
             resultView = generateCounterItemView((CounterItem) item, parent, behavior, previewMode);
 
         } else if (type == GroupItem.class) {
-            resultView = generateGroupItemView((GroupItem) item, parent, behavior, previewMode);
+            resultView = generateGroupItemView((GroupItem) item, parent, behavior, previewMode, holderDestroyer);
 
         } else if (type == FilterGroupItem.class) {
-            resultView = generateFilterGroupItemView((FilterGroupItem) item, parent, behavior, previewMode);
+            resultView = generateFilterGroupItemView((FilterGroupItem) item, parent, behavior, previewMode, holderDestroyer);
 
         } else if (type == LongTextItem.class) {
             resultView = generateLongTextItemView((LongTextItem) item, parent, behavior, previewMode);
@@ -283,7 +284,7 @@ public class ItemViewGenerator {
     }
 
     @ForItem(key = FilterGroupItem.class)
-    private View generateFilterGroupItemView(final FilterGroupItem item, final ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode) {
+    private View generateFilterGroupItemView(final FilterGroupItem item, final ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode, HolderDestroyer holderDestroyer) {
         final ItemFilterGroupBinding binding = ItemFilterGroupBinding.inflate(this.layoutInflater, parent, false);
 
         // Text
@@ -293,7 +294,7 @@ public class ItemViewGenerator {
         if (!item.isMinimize()) {
             var drawer = createItemsStorageDrawerForFilterGroupItem(item, binding.content, behavior, previewMode, behavior.getItemsStorageDrawerBehavior(item));
             drawer.create();
-            binding.content.addOnAttachStateChangeListener(drawer.createSimplyFloatViewAttachListener());
+            holderDestroyer.addDestroyListener(drawer::destroy);
         }
 
         binding.externalEditor.setEnabled(!previewMode);
@@ -307,7 +308,7 @@ public class ItemViewGenerator {
                 .setView(content)
                 .setDragsEnable(false)
                 .setPreviewMode(previewMode)
-                .setItemViewWrapper((_iterItem, view) -> {
+                .setItemViewWrapper((_iterItem, view, destroyer) -> {
                     if (item.isActiveItem(_iterItem)) {
                         return view;
                     }
@@ -317,7 +318,7 @@ public class ItemViewGenerator {
     }
 
     @ForItem(key = GroupItem.class)
-    private View generateGroupItemView(GroupItem item, ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode) {
+    private View generateGroupItemView(GroupItem item, ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode, HolderDestroyer holderDestroyer) {
         final ItemGroupBinding binding = ItemGroupBinding.inflate(this.layoutInflater, parent, false);
 
         // Text
@@ -327,7 +328,7 @@ public class ItemViewGenerator {
         if (!item.isMinimize()) {
             var drawer = createItemsStorageDrawerForGroupItem(item, binding.content, behavior, previewMode, behavior.getItemsStorageDrawerBehavior(item));
             drawer.create();
-            binding.content.addOnAttachStateChangeListener(drawer.createSimplyFloatViewAttachListener());
+            holderDestroyer.addDestroyListener(drawer::destroy);
         }
 
         binding.externalEditor.setEnabled(!previewMode);
@@ -362,7 +363,7 @@ public class ItemViewGenerator {
     }
 
     @ForItem(key = CycleListItem.class)
-    public View generateCycleListItemView(CycleListItem item, ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode) {
+    public View generateCycleListItemView(CycleListItem item, ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode, HolderDestroyer holderDestroyer) {
         final ItemCycleListBinding binding = ItemCycleListBinding.inflate(this.layoutInflater, parent, false);
 
         // Text
@@ -378,13 +379,13 @@ public class ItemViewGenerator {
         binding.externalEditor.setOnClickListener(_ignore -> behavior.onCycleListEdit(item));
 
         if (!item.isMinimize()) {
-            final CurrentItemStorageDrawer currentItemStorageDrawer = new CurrentItemStorageDrawer(this.activity, this, behavior, item);
-            binding.content.addView(currentItemStorageDrawer.getView());
-            currentItemStorageDrawer.setOnUpdateListener(currentItem -> {
+            final var drawer = new CurrentItemStorageDrawer(this.activity, binding.content, this, behavior, item, holderDestroyer);
+            drawer.setOnUpdateListener(currentItem -> {
                 viewVisible(binding.empty, currentItem == null, View.GONE);
                 return Status.NONE;
             });
-            currentItemStorageDrawer.create();
+            drawer.create();
+            holderDestroyer.addDestroyListener(drawer::destroy);
         } else {
             binding.empty.setVisibility(View.GONE);
         }
@@ -434,6 +435,12 @@ public class ItemViewGenerator {
         }
         if (Debug.SHOW_ID_ON_ITEMTEXT) {
             view.setText(ColorUtil.colorize(item.getText() + "\n$[-#aaaaaa;S12]" + item.getId(), Color.WHITE, Color.TRANSPARENT, Typeface.NORMAL));
+            view.setTextSize(17);
+            return;
+        }
+
+        if (Debug.SHOW_GEN_ID_ON_ITEMTEXT) {
+            view.setText(ColorUtil.colorize(item.getText() + "\n$[-#aaaaaa;S12]" + RandomUtil.bounds(-9999, 9999), Color.WHITE, Color.TRANSPARENT, Typeface.NORMAL));
             view.setTextSize(17);
             return;
         }

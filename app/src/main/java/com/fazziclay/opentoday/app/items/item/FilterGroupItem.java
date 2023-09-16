@@ -18,6 +18,7 @@ import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.annotation.Setter;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
+import com.fazziclay.opentoday.util.callback.Status;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +26,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class FilterGroupItem extends TextItem implements ContainerItem, ItemsStorage {
@@ -208,7 +211,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         item.item.attach(groupItemController);
         itemStorageUpdateCallbacks.run((callbackStorage, callback) -> callback.onAdded(item.item, getItemPosition(item.item)));
         if (!recalculate(TickSession.getLatestGregorianCalendar())) {
-            visibleChanged();
+            //visibleChanged();
         }
         save();
     }
@@ -377,9 +380,19 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         }
 
         if (isUpdated) {
+            Set<ItemFilterWrapper> toUpdate = new HashSet<>(activeItems);
             activeItems.clear();
             activeItems.addAll(temps);
+            toUpdate.addAll(temps);
             //visibleChanged();
+
+            for (ItemFilterWrapper activeItem : toUpdate) {
+                getOnItemsStorageCallbacks().run((callbackStorage, callback) -> {
+                    return callback.onUpdated(activeItem.item, getWrapperPosition(activeItem));
+                });
+            }
+
+
         }
         return isUpdated;
     }

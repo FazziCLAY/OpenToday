@@ -16,6 +16,7 @@ public class Debug {
     public static final boolean SHOW_ID_ON_ITEMTEXT = App.debug(false);
 
     public static final int DEF = -1;
+    public static final boolean SHOW_GEN_ID_ON_ITEMTEXT = App.debug(true);
 
     public static long latestTick = DEF;
     public static int latestTickDuration = DEF;

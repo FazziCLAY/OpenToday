@@ -5,6 +5,7 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.fazziclay.opentoday.app.items.item.Item
 
 class ItemViewHolder(context: Context) : RecyclerView.ViewHolder(FrameLayout(context)) {
     companion object {
@@ -17,13 +18,18 @@ class ItemViewHolder(context: Context) : RecyclerView.ViewHolder(FrameLayout(con
 
     @JvmField
     val layout: FrameLayout = itemView as FrameLayout
+    @JvmField
+    var item: Item? = null
+    @JvmField
+    var destroyer: HolderDestroyer = HolderDestroyer()
 
     init {
         layout.setPadding(PADDING_LEFT, PADDING_TOP, PADDING_RIGHT, PADDING_BOTTOM)
         layout.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
     }
 
-    fun bind(view: View?) {
+    fun bind(item: Item?, view: View?) {
+        this.item = item
         layout.removeAllViews()
         if (view == null) {
             layout.visibility = View.GONE
@@ -35,7 +41,16 @@ class ItemViewHolder(context: Context) : RecyclerView.ViewHolder(FrameLayout(con
         }
     }
 
+    fun recycle() {
+        destroyer.destroy()
+        destroyer = HolderDestroyer()
+    }
+
     fun bindOnClick(onClickListener: OnClickListener) {
         layout.setOnClickListener(onClickListener)
+    }
+
+    override fun toString(): String {
+        return "ItemViewHolder{${item}}"
     }
 }

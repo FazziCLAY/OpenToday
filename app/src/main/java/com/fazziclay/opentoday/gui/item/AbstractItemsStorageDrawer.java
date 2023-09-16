@@ -20,11 +20,10 @@ public abstract class AbstractItemsStorageDrawer {
     private static final String TAG = "SimpleItemsStorageDrawer";
 
 
-    private final Context context;
-    private final RecyclerView view;
+    protected final Context context;
+    protected final RecyclerView view;
+    protected final DrawerTouchCallback drawerTouchCallback;
     private DrawerAdapter adapter;
-    private final boolean isDragsEnabled;
-    private final boolean isSwipesEnabled;
 
     // internal states
     private boolean created = false;
@@ -35,8 +34,7 @@ public abstract class AbstractItemsStorageDrawer {
     public AbstractItemsStorageDrawer(Context context, RecyclerView view, boolean isDragsEnabled, boolean isSwipesEnabled) {
         this.context = context;
         this.view = view;
-        this.isDragsEnabled = isDragsEnabled;
-        this.isSwipesEnabled = isSwipesEnabled;
+        this.drawerTouchCallback = new DrawerTouchCallback(isDragsEnabled, isSwipesEnabled);
     }
 
     public void create() {
@@ -48,7 +46,7 @@ public abstract class AbstractItemsStorageDrawer {
         this.adapter = new DrawerAdapter();
         this.view.setLayoutManager(new LinearLayoutManager(context));
         this.view.setAdapter(adapter);
-        new ItemTouchHelper(new DrawerTouchCallback(isDragsEnabled, isSwipesEnabled)).attachToRecyclerView(view);
+        new ItemTouchHelper(this.drawerTouchCallback).attachToRecyclerView(view);
         floatingCreate();
     }
 
@@ -75,6 +73,7 @@ public abstract class AbstractItemsStorageDrawer {
         floatingDestroy();
     }
 
+
     public void floatingDestroy() {
         if (floatingCreated) {
             doFloatDestroy();
@@ -92,7 +91,7 @@ public abstract class AbstractItemsStorageDrawer {
 
     protected abstract boolean onItemsMoved(int positionFrom, int positionTo);
 
-    protected abstract void onItemSwiped(RecyclerView.ViewHolder viewHolder, int position, int direction);
+    protected abstract void onItemSwiped(ItemViewHolder viewHolder, int position, int direction);
 
     protected abstract void onItemClicked(View view, ItemViewHolder viewHolder, int position);
 
@@ -101,7 +100,7 @@ public abstract class AbstractItemsStorageDrawer {
     }
 
     /**
-     * Run AdapterInterface if adapter not null
+     * Run consumer if adapter not null
      */
     protected void callWithNonNullAdapter(Consumer<DrawerAdapter> consumer) {
         if (adapter != null) {
@@ -109,7 +108,7 @@ public abstract class AbstractItemsStorageDrawer {
         }
     }
 
-    public void updateItemAt(int position) {
+    public void roughUpdateItemAt(int position) {
         callWithNonNullAdapter(drawerAdapter -> drawerAdapter.notifyItemChanged(position));
     }
 
@@ -118,25 +117,14 @@ public abstract class AbstractItemsStorageDrawer {
         var var = (ItemViewHolder) view.findViewHolderForAdapterPosition(position);
         if (var != null) {
             onBindItem(var, position);
+        } else {
+            // test change: if smooth is unavailable => rough
+            //roughUpdateItemAt(position);
         }
     }
 
-    public View.OnAttachStateChangeListener createSimplyFloatViewAttachListener() {
-        return new View.OnAttachStateChangeListener() {
-            @Override
-            public void onViewAttachedToWindow(@NonNull View view) {
-                floatingCreate();
-            }
-
-            @Override
-            public void onViewDetachedFromWindow(@NonNull View view) {
-                floatingDestroy();
-            }
-        };
-    }
-
-    public void smoothScrollToPosition(int pos) {
-        view.smoothScrollToPosition(pos);
+    public void smoothScrollToPosition(int position) {
+        view.smoothScrollToPosition(position);
     }
 
     protected class DrawerAdapter extends RecyclerView.Adapter<ItemViewHolder> {
@@ -152,6 +140,13 @@ public abstract class AbstractItemsStorageDrawer {
             onBindItem(holder, position);
             holder.bindOnClick(view -> onItemClicked(view, holder, position));
             CrashReportContext.FRONT.pop();
+            Logger.d(TAG, "binded holder = " + holder);
+        }
+
+        @Override
+        public void onViewRecycled(@NonNull ItemViewHolder holder) {
+            Logger.d(TAG, "recycled holder = " + holder);
+            holder.recycle();
         }
 
         @Override
@@ -161,12 +156,12 @@ public abstract class AbstractItemsStorageDrawer {
     }
 
 
-    private class DrawerTouchCallback extends ItemTouchHelper.SimpleCallback {
+    protected class DrawerTouchCallback extends ItemTouchHelper.SimpleCallback {
         private static final int SWIPE_DIRS = ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT | ItemTouchHelper.START | ItemTouchHelper.END;
         private static final int DRAG_DIRS = ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT | ItemTouchHelper.START | ItemTouchHelper.END;
 
-        private final boolean isDragsEnable;
-        private final boolean isSwipesEnable;
+        private boolean isDragsEnable;
+        private boolean isSwipesEnable;
 
 
         public DrawerTouchCallback(boolean isDragsEnable, boolean isSwipesEnable) {
@@ -190,7 +185,25 @@ public abstract class AbstractItemsStorageDrawer {
             if (!isSwipesEnable) return;
 
             final int position = viewHolder.getAdapterPosition();
-            AbstractItemsStorageDrawer.this.onItemSwiped(viewHolder, position, direction);
+            AbstractItemsStorageDrawer.this.onItemSwiped((ItemViewHolder) viewHolder, position, direction);
+        }
+
+        public boolean isDragsEnable() {
+            return isDragsEnable;
+        }
+
+        public boolean isSwipesEnable() {
+            return isSwipesEnable;
+        }
+
+        public void setDragsEnable(boolean dragsEnable) {
+            isDragsEnable = dragsEnable;
+            setDefaultDragDirs(dragsEnable ? DRAG_DIRS : 0);
+        }
+
+        public void setSwipesEnable(boolean swipesEnable) {
+            isSwipesEnable = swipesEnable;
+            setDefaultSwipeDirs(swipesEnable ? SWIPE_DIRS : 0);
         }
     }
 }

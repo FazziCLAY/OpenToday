@@ -2,9 +2,10 @@ package com.fazziclay.opentoday.gui.item;
 
 import android.app.Activity;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.items.CurrentItemStorage;
 import com.fazziclay.opentoday.app.items.callback.OnCurrentItemStorageUpdate;
@@ -12,32 +13,57 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
 
-public class CurrentItemStorageDrawer {
-    private final Activity activity;
-    private final LinearLayout view;
-    private final ItemViewGenerator itemViewGenerator;
-    private final ItemViewGeneratorBehavior itemViewGeneratorBehavior;
-    private final CurrentItemStorage currentItemStorage;
-    private final OnUpdateListener listener = new OnUpdateListener();
-    private OnCurrentItemStorageUpdate userListener = null;
+import org.jetbrains.annotations.NotNull;
 
-    public CurrentItemStorageDrawer(Activity activity, ItemViewGenerator itemViewGenerator, ItemViewGeneratorBehavior itemViewGeneratorBehavior, CurrentItemStorage currentItemStorage) {
+public class CurrentItemStorageDrawer {
+    private final @NonNull Activity activity;
+    private final @NotNull ViewGroup view;
+    private final @NotNull ItemViewGenerator itemViewGenerator;
+    private final @NotNull ItemViewGeneratorBehavior itemViewGeneratorBehavior;
+    private final @NotNull CurrentItemStorage currentItemStorage;
+    private final @NotNull OnUpdateListener listener = new OnUpdateListener();
+    private final @NotNull HolderDestroyer holderDestroyer;
+    private @Nullable OnCurrentItemStorageUpdate userListener = null;
+
+    // internal states
+    private boolean floatingCreate = false;
+
+    public CurrentItemStorageDrawer(@NonNull Activity activity,
+                                    @NotNull ViewGroup view,
+                                    @NonNull ItemViewGenerator itemViewGenerator,
+                                    @NonNull ItemViewGeneratorBehavior itemViewGeneratorBehavior,
+                                    @NonNull CurrentItemStorage currentItemStorage,
+                                    @NotNull HolderDestroyer holderDestroyer) {
         this.activity = activity;
-        this.view = new LinearLayout(activity);
         this.itemViewGeneratorBehavior = itemViewGeneratorBehavior;
-        this.view.setOrientation(LinearLayout.VERTICAL);
         this.itemViewGenerator = itemViewGenerator;
         this.currentItemStorage = currentItemStorage;
+        this.view = view;
+        this.holderDestroyer = holderDestroyer;
     }
 
     public void create() {
-        currentItemStorage.getOnCurrentItemStorageUpdateCallbacks().addCallback(CallbackImportance.DEFAULT, listener);
+        floatingCreate();
         updateView(currentItemStorage.getCurrentItem());
     }
 
     public void destroy() {
-        currentItemStorage.getOnCurrentItemStorageUpdateCallbacks().removeCallback(listener);
+        floatingDestroy();
         view.removeAllViews();
+    }
+
+    public void floatingCreate() {
+        if (!floatingCreate) {
+            currentItemStorage.getOnCurrentItemStorageUpdateCallbacks().addCallback(CallbackImportance.DEFAULT, listener);
+            floatingCreate = true;
+        }
+    }
+
+    public void floatingDestroy() {
+        if (floatingCreate) {
+            currentItemStorage.getOnCurrentItemStorageUpdateCallbacks().removeCallback(listener);
+            floatingCreate = false;
+        }
     }
 
     @NonNull
@@ -51,7 +77,7 @@ public class CurrentItemStorageDrawer {
             userListener.onCurrentChanged(currentItem);
         }
         if (currentItem != null) {
-            view.addView(itemViewGenerator.generate(currentItem, view, itemViewGeneratorBehavior));
+            view.addView(itemViewGenerator.generate(currentItem, view, itemViewGeneratorBehavior, holderDestroyer));
         }
     }
 

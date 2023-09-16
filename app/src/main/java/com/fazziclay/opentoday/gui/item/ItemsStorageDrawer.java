@@ -178,9 +178,9 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
 
 
     @Nullable
-    private View generateViewForItem(Item item) {
+    private View generateViewForItem(Item item, HolderDestroyer destroyer) {
         boolean previewMode = this.previewMode || selectionManager.isSelected(item);
-        View toReturn = itemViewGenerator.generate(item, getView(), itemViewGeneratorBehavior, previewMode);
+        View toReturn = itemViewGenerator.generate(item, getView(), itemViewGeneratorBehavior, previewMode, destroyer);
 
         boolean TEST = false;
         if (TEST) {
@@ -193,10 +193,10 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
     @Override
     protected void onBindItem(@NonNull ItemViewHolder holder, int position) {
         final Item item = itemsStorage.getItemAt(position);
-        @Nullable View view = generateViewForItem(item);
-        view = (itemViewWrapper != null) ? itemViewWrapper.wrap(item, view) : view;
+        @Nullable View view = generateViewForItem(item, holder.destroyer);
+        view = (itemViewWrapper != null) ? itemViewWrapper.wrap(item, view, holder.destroyer) : view;
 
-        holder.bind(view);
+        holder.bind(item, view);
     }
 
     @Override
@@ -214,17 +214,16 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
     }
 
     @Override
-    protected void onItemSwiped(RecyclerView.ViewHolder viewHolder, int position, int direction) {
+    protected void onItemSwiped(ItemViewHolder viewHolder, int position, int direction) {
         final Item item = ItemsStorageDrawer.this.itemsStorage.getItemAt(position);
 
         if (direction == ItemTouchHelper.LEFT) {
             actionItem(item, behavior.getItemOnLeftAction());
 
         } else if (direction == ItemTouchHelper.RIGHT) {
-            ItemViewHolder itemViewHolder = (ItemViewHolder) viewHolder;
-            showRightMenu(item, itemViewHolder.layout.getChildAt(0));
+            showRightMenu(item, viewHolder.layout.getChildAt(0));
         }
-        updateItemAt(position);
+        roughUpdateItemAt(position);
     }
 
     private void actionItem(Item item, SettingsManager.ItemAction action) {
@@ -352,7 +351,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
     @FunctionalInterface
     public interface ItemViewWrapper {
         @Nullable
-        View wrap(Item item, View view);
+        View wrap(Item item, View view, HolderDestroyer destroyer);
     }
 
     public static class CreateBuilder {
@@ -419,7 +418,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
         public Status selected(Selection selection) {
             if (selection.getItem().getParentItemsStorage() == itemsStorage) {
                 int pos = itemsStorage.getItemPosition(selection.getItem());
-                updateItemAt(pos);
+                roughUpdateItemAt(pos);
             }
 
             return Status.NONE;
@@ -429,7 +428,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
         public Status unselected(Selection selection) {
             if (selection.getItem().getParentItemsStorage() == itemsStorage) {
                 int pos = itemsStorage.getItemPosition(selection.getItem());
-                updateItemAt(pos);
+                roughUpdateItemAt(pos);
             }
 
             return Status.NONE;

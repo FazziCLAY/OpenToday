@@ -297,7 +297,7 @@ public class ItemsEditorFragment extends Fragment {
 
     private final HashMap<Item, ImageButton> buttons = new HashMap<>(); // TODO: 5/9/23 FIX THIIS: NOT DELETING OLDEST
     private void applyFilterGroupViewPatch(FilterGroupItem filterGroupItem) {
-        itemsStorageDrawer.setItemViewWrapper((item, view) -> {
+        itemsStorageDrawer.setItemViewWrapper((item, view, destroyer) -> {
             LinearLayout layout = new LinearLayout(view.getContext());
             layout.addView(view);
             view.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1));

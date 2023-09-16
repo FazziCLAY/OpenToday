@@ -114,7 +114,7 @@ public class DeleteItemsFragment extends Fragment {
             public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
                 Item item = itemsToDelete[position];
                 holder.layout.removeAllViews();
-                holder.layout.addView(itemViewGenerator.generate(item, binding.list, new DeleteViewGeneratorBehavior()));
+                holder.layout.addView(itemViewGenerator.generate(item, binding.list, new DeleteViewGeneratorBehavior(), holder.destroyer));
             }
 
             @Override
