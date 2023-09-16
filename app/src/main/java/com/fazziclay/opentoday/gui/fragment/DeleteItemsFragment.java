@@ -35,6 +35,7 @@ import java.util.UUID;
 
 public class DeleteItemsFragment extends Fragment {
     private static final String KEY_ITEMS_TO_DELETE = "itemsToDelete";
+    private static final ItemViewGeneratorBehavior ITEM_VIEW_GENERATOR_BEHAVIOR = new DeleteViewGeneratorBehavior();
 
     public static DeleteItemsFragment create(Item[] items) {
         List<UUID> u = new ArrayList<>();
@@ -112,9 +113,14 @@ public class DeleteItemsFragment extends Fragment {
 
             @Override
             public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-                Item item = itemsToDelete[position];
-                holder.layout.removeAllViews();
-                holder.layout.addView(itemViewGenerator.generate(item, binding.list, new DeleteViewGeneratorBehavior(), holder.destroyer));
+                final Item item = itemsToDelete[position];
+                final View view = itemViewGenerator.generate(item, binding.list, ITEM_VIEW_GENERATOR_BEHAVIOR, holder.destroyer);
+                holder.bind(item, view);
+            }
+
+            @Override
+            public void onViewRecycled(@NonNull ItemViewHolder holder) {
+                holder.recycle();
             }
 
             @Override
@@ -139,9 +145,41 @@ public class DeleteItemsFragment extends Fragment {
     }
 
 
-    public DeleteItemsFragment() {}
+    private DeleteItemsFragment() {}
 
     private static class DeleteViewGeneratorBehavior implements ItemViewGeneratorBehavior {
+
+        private static final ItemsStorageDrawerBehavior ITEM_STORAGE_DRAWER_BEHAVIOR = new ItemsStorageDrawerBehavior() {
+            @Override
+            public SettingsManager.ItemAction getItemOnClickAction() {
+                return null;
+            }
+
+            @Override
+            public boolean isScrollToAddedItem() {
+                return false;
+            }
+
+            @Override
+            public SettingsManager.ItemAction getItemOnLeftAction() {
+                return null;
+            }
+
+            @Override
+            public void onItemOpenEditor(Item item) {
+
+            }
+
+            @Override
+            public void onItemOpenTextEditor(Item item) {
+
+            }
+
+            @Override
+            public boolean ignoreFilterGroup() {
+                return true;
+            }
+        };
 
         @Override
         public boolean isConfirmFastChanges() {
@@ -171,32 +209,7 @@ public class DeleteItemsFragment extends Fragment {
 
         @Override
         public ItemsStorageDrawerBehavior getItemsStorageDrawerBehavior(Item item) {
-            return new ItemsStorageDrawerBehavior() {
-                @Override
-                public SettingsManager.ItemAction getItemOnClickAction() {
-                    return null;
-                }
-
-                @Override
-                public boolean isScrollToAddedItem() {
-                    return false;
-                }
-
-                @Override
-                public SettingsManager.ItemAction getItemOnLeftAction() {
-                    return null;
-                }
-
-                @Override
-                public void onItemOpenEditor(Item item) {
-
-                }
-
-                @Override
-                public void onItemOpenTextEditor(Item item) {
-
-                }
-            };
+            return ITEM_STORAGE_DRAWER_BEHAVIOR;
         }
     }
 }

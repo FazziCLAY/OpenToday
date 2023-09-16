@@ -363,6 +363,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
         private boolean previewMode = false;
         private ItemInterface onItemTextEditor = null;
         private boolean isDragsEnable = true;
+        private boolean isSwipesEnable = true;
         private RecyclerView view = null;
         private ItemViewWrapper itemViewWrapper = null;
 
@@ -393,8 +394,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
             if (view == null) {
                 view = new RecyclerView(activity);
             }
-            // TODO: 15.09.2023 isSwipesEnable
-            return new ItemsStorageDrawer(activity, view, isDragsEnable, true, behavior, viewGeneratorBehavior, selectionManager, itemsStorage, onItemTextEditor, previewMode, itemViewWrapper);
+            return new ItemsStorageDrawer(activity, view, isDragsEnable, isSwipesEnable, behavior, viewGeneratorBehavior, selectionManager, itemsStorage, onItemTextEditor, previewMode, itemViewWrapper);
         }
 
         public CreateBuilder setDragsEnable(boolean b) {
@@ -409,6 +409,11 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
 
         public CreateBuilder setItemViewWrapper(ItemViewWrapper itemViewWrapper) {
             this.itemViewWrapper = itemViewWrapper;
+            return this;
+        }
+
+        public CreateBuilder setSwipesEnable(boolean b) {
+            this.isSwipesEnable = b;
             return this;
         }
     }

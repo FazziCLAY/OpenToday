@@ -307,8 +307,12 @@ public class ItemViewGenerator {
         return ItemsStorageDrawer.builder(activity, itemsStorageDrawerBehavior, behavior, App.get(activity).getSelectionManager(), item)
                 .setView(content)
                 .setDragsEnable(false)
+                .setSwipesEnable(false)
                 .setPreviewMode(previewMode)
                 .setItemViewWrapper((_iterItem, view, destroyer) -> {
+                    if (itemsStorageDrawerBehavior.ignoreFilterGroup()) {
+                        return view;
+                    }
                     if (item.isActiveItem(_iterItem)) {
                         return view;
                     }

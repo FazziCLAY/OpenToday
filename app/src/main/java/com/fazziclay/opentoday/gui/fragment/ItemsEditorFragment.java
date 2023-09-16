@@ -140,6 +140,11 @@ public class ItemsEditorFragment extends Fragment {
             public void onItemOpenTextEditor(Item item) {
                 rootNavigationHost.navigate(ItemTextEditorFragment.create(item.getId()), true);
             }
+
+            @Override
+            public boolean ignoreFilterGroup() {
+                return false;
+            }
         };
 
         ItemViewGeneratorBehavior itemViewGeneratorBehavior = new ItemViewGeneratorBehavior() {
