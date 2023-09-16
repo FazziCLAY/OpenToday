@@ -18,7 +18,6 @@ import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.annotation.Setter;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
-import com.fazziclay.opentoday.util.callback.Status;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -390,6 +389,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
                     toUpdate.remove(itemFilterWrapper);
                 }
             }
+            toUpdate.removeIf(itemFilterWrapper -> !itemFilterWrapper.item.isAttached());
             //visibleChanged();
 
             for (ItemFilterWrapper activeItem : toUpdate) {
