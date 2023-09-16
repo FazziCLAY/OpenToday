@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import com.fazziclay.opentoday.app.items.CurrentItemStorage;
 import com.fazziclay.opentoday.app.items.callback.OnCurrentItemStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.Item;
+import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
 
@@ -23,6 +24,7 @@ public class CurrentItemStorageDrawer {
     private final @NotNull CurrentItemStorage currentItemStorage;
     private final @NotNull OnUpdateListener listener = new OnUpdateListener();
     private final @NotNull HolderDestroyer holderDestroyer;
+    private final @NotNull ItemInterface onItemClick;
     private @Nullable OnCurrentItemStorageUpdate userListener = null;
 
     public CurrentItemStorageDrawer(@NonNull Activity activity,
@@ -30,13 +32,15 @@ public class CurrentItemStorageDrawer {
                                     @NonNull ItemViewGenerator itemViewGenerator,
                                     @NonNull ItemViewGeneratorBehavior itemViewGeneratorBehavior,
                                     @NonNull CurrentItemStorage currentItemStorage,
-                                    @NotNull HolderDestroyer holderDestroyer) {
+                                    @NotNull HolderDestroyer holderDestroyer,
+                                    @NotNull ItemInterface onItemClick) {
         this.activity = activity;
         this.itemViewGeneratorBehavior = itemViewGeneratorBehavior;
         this.itemViewGenerator = itemViewGenerator;
         this.currentItemStorage = currentItemStorage;
         this.view = view;
         this.holderDestroyer = holderDestroyer;
+        this.onItemClick = onItemClick;
     }
 
     public void create() {
@@ -56,11 +60,13 @@ public class CurrentItemStorageDrawer {
 
     private void updateView(Item currentItem) {
         view.removeAllViews();
+        view.setOnClickListener(null);
         if (userListener != null) {
             userListener.onCurrentChanged(currentItem);
         }
         if (currentItem != null) {
-            view.addView(itemViewGenerator.generate(currentItem, view, itemViewGeneratorBehavior, holderDestroyer));
+            view.addView(itemViewGenerator.generate(currentItem, view, itemViewGeneratorBehavior, holderDestroyer, onItemClick));
+            view.setOnClickListener(view -> onItemClick.run(currentItem));
         }
     }
 

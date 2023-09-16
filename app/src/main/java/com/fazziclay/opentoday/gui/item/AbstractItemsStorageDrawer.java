@@ -67,8 +67,6 @@ public abstract class AbstractItemsStorageDrawer {
 
     protected abstract void onItemSwiped(ItemViewHolder viewHolder, int position, int direction);
 
-    protected abstract void onItemClicked(View view, ItemViewHolder viewHolder, int position);
-
     public RecyclerView getView() {
         return view;
     }
@@ -112,7 +110,6 @@ public abstract class AbstractItemsStorageDrawer {
         public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
             CrashReportContext.FRONT.push("bind ItemViewHolder in " + TAG);
             onBindItem(holder, position);
-            holder.bindOnClick(view -> onItemClicked(view, holder, position));
             CrashReportContext.FRONT.pop();
             Logger.d(TAG, "binded holder = " + holder);
         }

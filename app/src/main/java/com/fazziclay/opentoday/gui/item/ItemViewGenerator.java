@@ -48,6 +48,7 @@ import com.fazziclay.opentoday.databinding.ItemGroupBinding;
 import com.fazziclay.opentoday.databinding.ItemLongtextBinding;
 import com.fazziclay.opentoday.databinding.ItemMathGameBinding;
 import com.fazziclay.opentoday.databinding.ItemTextBinding;
+import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.util.ColorUtil;
 import com.fazziclay.opentoday.util.DebugUtil;
 import com.fazziclay.opentoday.util.Logger;
@@ -74,11 +75,11 @@ public class ItemViewGenerator {
         return new CreateBuilder(activity);
     }
 
-    public View generate(final Item item, final ViewGroup parent, ItemViewGeneratorBehavior behavior, HolderDestroyer holderDestroyer) {
-        return generate(item, parent, behavior, previewMode, holderDestroyer);
+    public View generate(final Item item, final ViewGroup parent, ItemViewGeneratorBehavior behavior, HolderDestroyer holderDestroyer, ItemInterface onItemClick) {
+        return generate(item, parent, behavior, previewMode, holderDestroyer, onItemClick);
     }
 
-    public View generate(final Item item, final ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode, HolderDestroyer holderDestroyer) {
+    public View generate(final Item item, final ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode, HolderDestroyer holderDestroyer, ItemInterface onItemClick) {
         final Class<? extends Item> type = item.getClass();
         final View resultView;
 
@@ -98,16 +99,16 @@ public class ItemViewGenerator {
             resultView = generateDayRepeatableCheckboxItemView((DayRepeatableCheckboxItem) item, parent, behavior, previewMode);
 
         } else if (type == CycleListItem.class) {
-            resultView = generateCycleListItemView((CycleListItem) item, parent, behavior, previewMode, holderDestroyer);
+            resultView = generateCycleListItemView((CycleListItem) item, parent, behavior, previewMode, holderDestroyer, onItemClick);
 
         } else if (type == CounterItem.class) {
             resultView = generateCounterItemView((CounterItem) item, parent, behavior, previewMode);
 
         } else if (type == GroupItem.class) {
-            resultView = generateGroupItemView((GroupItem) item, parent, behavior, previewMode, holderDestroyer);
+            resultView = generateGroupItemView((GroupItem) item, parent, behavior, previewMode, holderDestroyer, onItemClick);
 
         } else if (type == FilterGroupItem.class) {
-            resultView = generateFilterGroupItemView((FilterGroupItem) item, parent, behavior, previewMode, holderDestroyer);
+            resultView = generateFilterGroupItemView((FilterGroupItem) item, parent, behavior, previewMode, holderDestroyer, onItemClick);
 
         } else if (type == LongTextItem.class) {
             resultView = generateLongTextItemView((LongTextItem) item, parent, behavior, previewMode);
@@ -137,6 +138,7 @@ public class ItemViewGenerator {
             resultView.setLayoutParams(layoutParams);
         }
         applyForeground(resultView, item, behavior);
+        resultView.setOnClickListener(view -> onItemClick.run(item));
         return resultView;
     }
 
@@ -284,7 +286,7 @@ public class ItemViewGenerator {
     }
 
     @ForItem(key = FilterGroupItem.class)
-    private View generateFilterGroupItemView(final FilterGroupItem item, final ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode, HolderDestroyer holderDestroyer) {
+    private View generateFilterGroupItemView(final FilterGroupItem item, final ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode, HolderDestroyer holderDestroyer, ItemInterface onItemClick) {
         final ItemFilterGroupBinding binding = ItemFilterGroupBinding.inflate(this.layoutInflater, parent, false);
 
         // Text
@@ -292,7 +294,7 @@ public class ItemViewGenerator {
 
         // FilterGroup
         if (!item.isMinimize()) {
-            var drawer = createItemsStorageDrawerForFilterGroupItem(item, binding.content, behavior, previewMode, behavior.getItemsStorageDrawerBehavior(item));
+            var drawer = createItemsStorageDrawerForFilterGroupItem(item, binding.content, behavior, previewMode, behavior.getItemsStorageDrawerBehavior(item), onItemClick);
             drawer.create();
             holderDestroyer.addDestroyListener(drawer::destroy);
         }
@@ -303,11 +305,12 @@ public class ItemViewGenerator {
         return binding.getRoot();
     }
 
-    private ItemsStorageDrawer createItemsStorageDrawerForFilterGroupItem(FilterGroupItem item, RecyclerView content, ItemViewGeneratorBehavior behavior, boolean previewMode, ItemsStorageDrawerBehavior itemsStorageDrawerBehavior) {
+    private ItemsStorageDrawer createItemsStorageDrawerForFilterGroupItem(FilterGroupItem item, RecyclerView content, ItemViewGeneratorBehavior behavior, boolean previewMode, ItemsStorageDrawerBehavior itemsStorageDrawerBehavior, ItemInterface onItemClick) {
         return ItemsStorageDrawer.builder(activity, itemsStorageDrawerBehavior, behavior, App.get(activity).getSelectionManager(), item)
                 .setView(content)
                 .setDragsEnable(false)
                 .setSwipesEnable(false)
+                .setOnItemClick(onItemClick)
                 .setPreviewMode(previewMode)
                 .setItemViewWrapper((_iterItem, view, destroyer) -> {
                     if (itemsStorageDrawerBehavior.ignoreFilterGroup()) {
@@ -322,7 +325,7 @@ public class ItemViewGenerator {
     }
 
     @ForItem(key = GroupItem.class)
-    private View generateGroupItemView(GroupItem item, ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode, HolderDestroyer holderDestroyer) {
+    private View generateGroupItemView(GroupItem item, ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode, HolderDestroyer holderDestroyer, ItemInterface onItemClick) {
         final ItemGroupBinding binding = ItemGroupBinding.inflate(this.layoutInflater, parent, false);
 
         // Text
@@ -330,7 +333,7 @@ public class ItemViewGenerator {
 
         // Group
         if (!item.isMinimize()) {
-            var drawer = createItemsStorageDrawerForGroupItem(item, binding.content, behavior, previewMode, behavior.getItemsStorageDrawerBehavior(item));
+            var drawer = createItemsStorageDrawerForGroupItem(item, binding.content, behavior, previewMode, behavior.getItemsStorageDrawerBehavior(item), onItemClick);
             drawer.create();
             holderDestroyer.addDestroyListener(drawer::destroy);
         }
@@ -341,9 +344,10 @@ public class ItemViewGenerator {
         return binding.getRoot();
     }
 
-    private ItemsStorageDrawer createItemsStorageDrawerForGroupItem(GroupItem item, RecyclerView content, ItemViewGeneratorBehavior behavior, boolean previewMode, ItemsStorageDrawerBehavior itemsStorageDrawerBehavior) {
+    private ItemsStorageDrawer createItemsStorageDrawerForGroupItem(GroupItem item, RecyclerView content, ItemViewGeneratorBehavior behavior, boolean previewMode, ItemsStorageDrawerBehavior itemsStorageDrawerBehavior, ItemInterface onItemClick) {
         return ItemsStorageDrawer.builder(activity, itemsStorageDrawerBehavior, behavior, App.get(activity).getSelectionManager(), item)
                 .setView(content)
+                .setOnItemClick(onItemClick)
                 .setPreviewMode(previewMode)
                 .build();
     }
@@ -367,7 +371,7 @@ public class ItemViewGenerator {
     }
 
     @ForItem(key = CycleListItem.class)
-    public View generateCycleListItemView(CycleListItem item, ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode, HolderDestroyer holderDestroyer) {
+    public View generateCycleListItemView(CycleListItem item, ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode, HolderDestroyer holderDestroyer, ItemInterface onItemClick) {
         final ItemCycleListBinding binding = ItemCycleListBinding.inflate(this.layoutInflater, parent, false);
 
         // Text
@@ -383,7 +387,7 @@ public class ItemViewGenerator {
         binding.externalEditor.setOnClickListener(_ignore -> behavior.onCycleListEdit(item));
 
         if (!item.isMinimize()) {
-            final var drawer = new CurrentItemStorageDrawer(this.activity, binding.content, this, behavior, item, holderDestroyer);
+            final var drawer = new CurrentItemStorageDrawer(this.activity, binding.content, this, behavior, item, holderDestroyer, onItemClick);
             drawer.setOnUpdateListener(currentItem -> {
                 viewVisible(binding.empty, currentItem == null, View.GONE);
                 return Status.NONE;

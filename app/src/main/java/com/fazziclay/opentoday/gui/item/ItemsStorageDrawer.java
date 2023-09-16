@@ -29,7 +29,6 @@ import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType;
 import com.fazziclay.opentoday.gui.fragment.ItemEditorFragment;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.util.Logger;
-import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
 
@@ -103,10 +102,8 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
         this.selectionManager.getOnSelectionUpdated().removeCallback(selectionCallback);
     }
 
-    @Override
-    protected void onItemClicked(View view, ItemViewHolder viewHolder, int position) {
-        final Item item = itemsStorage.getItemAt(position);
 
+    protected void onItemClicked(Item item) {
         if (this.itemOnClick != null) {
             this.itemOnClick.run(item);
             return;
@@ -170,7 +167,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
     @Nullable
     private View generateViewForItem(Item item, HolderDestroyer destroyer) {
         boolean previewMode = this.previewMode || selectionManager.isSelected(item);
-        return itemViewGenerator.generate(item, getView(), itemViewGeneratorBehavior, previewMode, destroyer);
+        return itemViewGenerator.generate(item, getView(), itemViewGeneratorBehavior, previewMode, destroyer, this::onItemClicked);
     }
 
     @Override
@@ -344,11 +341,11 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
         private final SelectionManager selectionManager;
         private final ItemsStorage itemsStorage;
         private boolean previewMode = false;
-        private ItemInterface onItemTextEditor = null;
         private boolean isDragsEnable = true;
         private boolean isSwipesEnable = true;
         private RecyclerView view = null;
         private ItemViewWrapper itemViewWrapper = null;
+        private ItemInterface onItemClick = null;
 
         public CreateBuilder(Activity activity, ItemsStorageDrawerBehavior behavior, ItemViewGeneratorBehavior viewGeneratorBehavior, SelectionManager selectionManager, ItemsStorage itemsStorage) {
             this.activity = activity;
@@ -368,16 +365,11 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
             return this;
         }
 
-        public CreateBuilder setOnItemTextEditor(ItemInterface onItemTextEditor) {
-            this.onItemTextEditor = onItemTextEditor;
-            return this;
-        }
-
         public ItemsStorageDrawer build() {
             if (view == null) {
                 view = new RecyclerView(activity);
             }
-            return new ItemsStorageDrawer(activity, view, isDragsEnable, isSwipesEnable, behavior, viewGeneratorBehavior, selectionManager, itemsStorage, onItemTextEditor, previewMode, itemViewWrapper);
+            return new ItemsStorageDrawer(activity, view, isDragsEnable, isSwipesEnable, behavior, viewGeneratorBehavior, selectionManager, itemsStorage, onItemClick, previewMode, itemViewWrapper);
         }
 
         public CreateBuilder setDragsEnable(boolean b) {
@@ -397,6 +389,11 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
 
         public CreateBuilder setSwipesEnable(boolean b) {
             this.isSwipesEnable = b;
+            return this;
+        }
+
+        public CreateBuilder setOnItemClick(ItemInterface onItemClick) {
+            this.onItemClick = onItemClick;
             return this;
         }
     }
