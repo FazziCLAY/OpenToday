@@ -23,7 +23,7 @@ public class HolderDestroyer {
             }
             destroyed = true;
         } else {
-            Logger.d(TAG, "destroy called in destroyed!");
+            Logger.d(TAG, "destroy() called in already destroyed!");
         }
     }
 }
