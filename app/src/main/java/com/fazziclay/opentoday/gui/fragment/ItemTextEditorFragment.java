@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -223,6 +224,11 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
             UI.rootBack(this);
         });
         binding.editText.setText(getEditableText());
+
+        binding.editText.requestFocus();
+        InputMethodManager imm = getContext().getSystemService(InputMethodManager.class);
+        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0
+        );
         MinTextWatcher.after(binding.editText, this::updatePreview);
         updateCurrentSystem(0);
         binding.editText.setOnSelectionChangedListener((view, start, end) -> {
