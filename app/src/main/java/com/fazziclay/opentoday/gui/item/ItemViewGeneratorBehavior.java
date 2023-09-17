@@ -20,4 +20,6 @@ public interface ItemViewGeneratorBehavior {
     void onFilterGroupEdit(FilterGroupItem filterGroupItem);
 
     ItemsStorageDrawerBehavior getItemsStorageDrawerBehavior(Item item);
+
+    boolean isRenderMinimized(Item item);
 }

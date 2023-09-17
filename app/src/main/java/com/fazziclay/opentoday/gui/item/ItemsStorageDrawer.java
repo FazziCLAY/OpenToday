@@ -68,7 +68,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
                                @Nullable ItemInterface itemOnClick,
                                boolean previewMode,
                                @Nullable ItemViewWrapper itemViewWrapper) {
-        super(activity, view, isDragsEnable, isSwipesEnable);
+        super(activity, view, isDragsEnable && !previewMode, isSwipesEnable && !previewMode);
         this.originalThread = Thread.currentThread();
         if (this.originalThread != Looper.getMainLooper().getThread()) {
             throw new RuntimeException("Creating an ItemsStorageDrawer object is allowed only in the main thread");

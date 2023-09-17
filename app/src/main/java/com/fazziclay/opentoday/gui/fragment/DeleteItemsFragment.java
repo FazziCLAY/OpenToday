@@ -213,5 +213,10 @@ public class DeleteItemsFragment extends Fragment {
         public ItemsStorageDrawerBehavior getItemsStorageDrawerBehavior(Item item) {
             return ITEM_STORAGE_DRAWER_BEHAVIOR;
         }
+
+        @Override
+        public boolean isRenderMinimized(Item item) {
+            return false;
+        }
     }
 }

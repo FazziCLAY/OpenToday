@@ -189,6 +189,11 @@ public class ItemsEditorFragment extends Fragment {
             public ItemsStorageDrawerBehavior getItemsStorageDrawerBehavior(Item item) {
                 return itemsStorageDrawerBehavior;
             }
+
+            @Override
+            public boolean isRenderMinimized(Item item) {
+                return item.isMinimize();
+            }
         };
 
 

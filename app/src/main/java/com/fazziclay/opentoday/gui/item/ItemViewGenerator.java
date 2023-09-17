@@ -124,7 +124,7 @@ public class ItemViewGenerator {
         }
 
         // Minimal height
-        if (!item.isMinimize() && !previewMode) resultView.setMinimumHeight(item.getViewMinHeight());
+        if (!behavior.isRenderMinimized(item) && !previewMode) resultView.setMinimumHeight(item.getViewMinHeight());
 
         // BackgroundColor
         if (item.isViewCustomBackgroundColor()) {
@@ -132,7 +132,7 @@ public class ItemViewGenerator {
         }
 
         // Minimize view patch
-        if (!previewMode && item.isMinimize()) {
+        if (!previewMode && behavior.isRenderMinimized(item)) {
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(0, 0, 15, 0);
             resultView.setLayoutParams(layoutParams);
@@ -246,7 +246,7 @@ public class ItemViewGenerator {
         binding.number9.setEnabled(!previewMode);
 
 
-        if (item.isMinimize()) {
+        if (behavior.isRenderMinimized(item)) {
             binding.keyboard.setVisibility(View.GONE);
             binding.userEnterNumber.setVisibility(View.GONE);
             binding.questText.setGravity(Gravity.NO_GRAVITY);
@@ -293,7 +293,7 @@ public class ItemViewGenerator {
         applyTextItemToTextView(item, binding.title, behavior, previewMode);
 
         // FilterGroup
-        if (!item.isMinimize()) {
+        if (!behavior.isRenderMinimized(item)) {
             var drawer = createItemsStorageDrawerForFilterGroupItem(item, binding.content, behavior, previewMode, behavior.getItemsStorageDrawerBehavior(item), onItemClick);
             drawer.create();
             holderDestroyer.addDestroyListener(drawer::destroy);
@@ -332,7 +332,7 @@ public class ItemViewGenerator {
         applyTextItemToTextView(item, binding.title, behavior, previewMode);
 
         // Group
-        if (!item.isMinimize()) {
+        if (!behavior.isRenderMinimized(item)){
             var drawer = createItemsStorageDrawerForGroupItem(item, binding.content, behavior, previewMode, behavior.getItemsStorageDrawerBehavior(item), onItemClick);
             drawer.create();
             holderDestroyer.addDestroyListener(drawer::destroy);
@@ -386,7 +386,7 @@ public class ItemViewGenerator {
         binding.externalEditor.setEnabled(!previewMode);
         binding.externalEditor.setOnClickListener(_ignore -> behavior.onCycleListEdit(item));
 
-        if (!item.isMinimize()) {
+        if (!behavior.isRenderMinimized(item)) {
             final var drawer = new CurrentItemStorageDrawer(this.activity, binding.content, this, behavior, item, holderDestroyer, onItemClick);
             drawer.setOnUpdateListener(currentItem -> {
                 viewVisible(binding.empty, currentItem == null, View.GONE);

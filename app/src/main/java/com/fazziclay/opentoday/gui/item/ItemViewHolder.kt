@@ -2,7 +2,6 @@ package com.fazziclay.opentoday.gui.item
 
 import android.content.Context
 import android.view.View
-import android.view.View.OnClickListener
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.fazziclay.opentoday.app.items.item.Item
@@ -44,10 +43,6 @@ class ItemViewHolder(context: Context) : RecyclerView.ViewHolder(FrameLayout(con
     fun recycle() {
         destroyer.destroy()
         destroyer = HolderDestroyer()
-    }
-
-    fun bindOnClick(onClickListener: OnClickListener) {
-        layout.setOnClickListener(onClickListener)
     }
 
     override fun toString(): String {
