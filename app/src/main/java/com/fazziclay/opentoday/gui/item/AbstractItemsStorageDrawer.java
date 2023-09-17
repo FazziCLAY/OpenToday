@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Consumer;
 
 public abstract class AbstractItemsStorageDrawer {
-    private static final String TAG = "SimpleItemsStorageDrawer";
+    private static final String TAG = "AbstractItemsStorageDrawer";
 
 
     protected final Context context;

@@ -5,6 +5,8 @@ import static com.fazziclay.opentoday.util.InlineUtil.nullStat;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +24,6 @@ import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Readonly;
-import com.fazziclay.opentoday.app.items.callback.ItemCallback;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
@@ -75,7 +76,16 @@ public class ItemsEditorFragment extends Fragment {
     private Tab tab;
     private Item item;
     private OnItemsStorageUpdate onItemStorageChangeCallback;
-    private ItemCallback itemCallback;
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private final Runnable updateButtonsCallback = new Runnable() {
+        @Override
+        public void run() {
+            buttons.forEach((item, imageButton) -> filterGroup_setEditButtonBackground(imageButton, item));
+            if (isVisible()) {
+                handler.postDelayed(updateButtonsCallback, 500);
+            }
+        }
+    };
 
     public static ItemsEditorFragment createRoot(UUID tab, boolean previewMode) {
         return ItemsEditorFragment.create(tab, null, previewMode);
@@ -266,6 +276,15 @@ public class ItemsEditorFragment extends Fragment {
         if (root != null) {
             root.childAttached(this, item);
         }
+        if (item instanceof FilterGroupItem) {
+            handler.post(updateButtonsCallback);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        handler.removeCallbacks(updateButtonsCallback);
     }
 
     @Override
@@ -273,7 +292,6 @@ public class ItemsEditorFragment extends Fragment {
         super.onDestroy();
         if (this.itemsStorageDrawer != null) this.itemsStorageDrawer.destroy();
         if (this.itemsStorage != null) itemsStorage.getOnItemsStorageCallbacks().removeCallback(onItemStorageChangeCallback);
-        if (this.item != null) item.getItemCallbacks().removeCallback(itemCallback);
     }
 
     public ItemsStorage getItemStorage() {
@@ -308,7 +326,7 @@ public class ItemsEditorFragment extends Fragment {
         view.setBackgroundTintList(ColorStateList.valueOf(filterGroup.isActiveItem(item) ? COLOR_FILTER_GROUP_ACTIVE : COLOR_FILTER_GROUP_INACTIVE));
     }
 
-    private final HashMap<Item, ImageButton> buttons = new HashMap<>(); // TODO: 5/9/23 FIX THIIS: NOT DELETING OLDEST
+    private final HashMap<Item, ImageButton> buttons = new HashMap<>();
     private void applyFilterGroupViewPatch(FilterGroupItem filterGroupItem) {
         itemsStorageDrawer.setItemViewWrapper((item, view, destroyer) -> {
             LinearLayout layout = new LinearLayout(view.getContext());
@@ -326,15 +344,6 @@ public class ItemsEditorFragment extends Fragment {
             destroyer.addDestroyListener(() -> buttons.remove(item));
             return layout;
         });
-
-        itemCallback = new ItemCallback() {
-            @Override
-            public Status updateUi(Item item) {
-                buttons.forEach((imageItem, imageButton) -> filterGroup_setEditButtonBackground(imageButton, imageItem));
-                return Status.NONE;
-            }
-        };
-        if (item != null) item.getItemCallbacks().addCallback(CallbackImportance.MIN, itemCallback);
     }
 
     private void editFilterGroupItemFilter(FilterGroupItem filterGroupItem, Item item) {
