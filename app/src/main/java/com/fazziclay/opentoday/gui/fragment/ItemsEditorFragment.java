@@ -155,6 +155,11 @@ public class ItemsEditorFragment extends Fragment {
             public boolean ignoreFilterGroup() {
                 return false;
             }
+
+            @Override
+            public void onItemDeleteRequest(Item item) {
+                rootNavigationHost.navigate(DeleteItemsFragment.create(new UUID[]{item.getId()}), true);
+            }
         };
 
         ItemViewGeneratorBehavior itemViewGeneratorBehavior = new ItemViewGeneratorBehavior() {

@@ -181,6 +181,11 @@ public class DeleteItemsFragment extends Fragment {
             public boolean ignoreFilterGroup() {
                 return true;
             }
+
+            @Override
+            public void onItemDeleteRequest(Item item) {
+                // do nothing
+            }
         };
 
         @Override

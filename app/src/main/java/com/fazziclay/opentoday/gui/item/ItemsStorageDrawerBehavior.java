@@ -15,4 +15,6 @@ public interface ItemsStorageDrawerBehavior {
     void onItemOpenTextEditor(Item item);
 
     boolean ignoreFilterGroup();
+
+    void onItemDeleteRequest(Item item);
 }

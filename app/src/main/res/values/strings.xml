@@ -386,4 +386,5 @@
     <string name="transform_not_allowed">Transformation is impossible</string>
     <string name="transform_selectTypeDialog_message" />
     <string name="transform_selectTypeDialog_title">Select result type</string>
+    <string name="fragment_itemEditor_delete_message">Delete this item as well as %d of its child items?</string>
 </resources>

@@ -244,11 +244,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
                     selectionManager.selectItem(item);
                 }
             }
-            case DELETE_REQUEST -> new AlertDialog.Builder(activity)
-                    .setTitle(R.string.fragment_itemEditor_delete_title)
-                    .setNegativeButton(R.string.fragment_itemEditor_delete_cancel, null)
-                    .setPositiveButton(R.string.fragment_itemEditor_delete_apply, ((dialog1, which) -> item.delete()))
-                    .show();
+            case DELETE_REQUEST -> behavior.onItemDeleteRequest(item);
         }
         CrashReportContext.FRONT.pop();
     }
@@ -274,7 +270,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
             SettingsManager.ItemAction itemAction = null;
             switch (menuItem.getItemId()) {
                 case R.id.delete:
-                    ItemEditorFragment.deleteRequest(activity, item, null);
+                    itemAction = SettingsManager.ItemAction.DELETE_REQUEST;
                     break;
 
                 case R.id.edit:

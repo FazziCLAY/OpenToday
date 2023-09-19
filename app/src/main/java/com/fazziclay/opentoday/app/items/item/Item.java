@@ -185,6 +185,17 @@ public abstract class Item implements Unique, Tickable {
         this.id = controller != null ? controller.generateId(this) : UUID.randomUUID();
     }
 
+    public int getChildrenItemCount() {
+        if (this instanceof ContainerItem containerItem) {
+            int c = 0;
+            for (Item item : containerItem.getAllItems()) {
+                c+= 1 + item.getChildrenItemCount();
+            }
+            return c;
+        }
+        return 0;
+    }
+
     protected void updateStat() {
         stat.tick();
     }

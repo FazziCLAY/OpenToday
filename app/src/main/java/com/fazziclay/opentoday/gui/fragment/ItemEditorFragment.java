@@ -370,6 +370,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     public static void deleteRequest(Context context, Item item, Runnable onDelete) {
         new AlertDialog.Builder(context)
                 .setTitle(R.string.fragment_itemEditor_delete_title)
+                .setMessage(context.getString(R.string.fragment_itemEditor_delete_message, item.getChildrenItemCount()))
                 .setNegativeButton(R.string.fragment_itemEditor_delete_cancel, null)
                 .setPositiveButton(R.string.fragment_itemEditor_delete_apply, ((dialog1, which) -> {
                     item.delete();
