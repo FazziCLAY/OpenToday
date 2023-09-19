@@ -229,6 +229,9 @@ public abstract class Item implements Unique, Tickable {
     @NotNull
     @Override
     public String toString() {
-        return getClass().getSimpleName()+"@[ID:"+getId()+" HASH:"+hashCode() +" TEXT:'"+getText()+"']";
+        String text = getText().replace("\n", "");
+        int max = Math.min(text.length(), 30);
+        text = text.substring(0, max);
+        return getClass().getSimpleName()+"@[ID:"+getId()+" HASH:"+hashCode() +" TEXT:'"+text+"']";
     }
 }

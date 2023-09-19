@@ -13,6 +13,7 @@ import com.fazziclay.opentoday.app.items.item.filter.ItemFilter;
 import com.fazziclay.opentoday.app.items.item.filter.LogicContainerItemFilter;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.TickTarget;
+import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
@@ -387,6 +388,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
             toUpdate.removeIf(itemFilterWrapper -> !itemFilterWrapper.item.isAttached());
 
             for (ItemFilterWrapper activeItem : toUpdate) {
+                Logger.d(TAG, "recalculate: update item: " + activeItem.item);
                 getOnItemsStorageCallbacks().run((callbackStorage, callback) -> callback.onUpdated(activeItem.item, getWrapperPosition(activeItem)));
             }
         }
