@@ -1,6 +1,6 @@
 TODO: changelog
 == branch: fixes-itemstoragedrawer
-* Keyboard now shows automaticaly in ItemTextEditorFragment
+* Keyboard now shows automatically in ItemTextEditorFragment
 
 $[@bold;-#00FF00;S25]# Changelog v134 1.2 (2023.06.18)$[||]
 Correct release for 1.1.4

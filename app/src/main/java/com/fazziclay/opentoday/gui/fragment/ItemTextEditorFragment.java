@@ -227,8 +227,8 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
 
         binding.editText.requestFocus();
         InputMethodManager imm = getContext().getSystemService(InputMethodManager.class);
-        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0
-        );
+        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+
         MinTextWatcher.after(binding.editText, this::updatePreview);
         updateCurrentSystem(0);
         binding.editText.setOnSelectionChangedListener((view, start, end) -> {
