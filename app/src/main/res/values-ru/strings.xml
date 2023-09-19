@@ -379,4 +379,6 @@
     <string name="transform_selectTypeDialog_message" />
     <string name="transform_selectTypeDialog_title">Выберите тип результата</string>
     <string name="fragment_itemEditor_delete_message">Удалить этот айтем а также %d его дочерних айтемов?</string>
+    <string name="menu_itemEditor_export">Экспорт</string>
+    <string name="menu_itemEditor_copyItemId">Скопировать Айди</string>
 </resources>

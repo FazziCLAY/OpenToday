@@ -64,6 +64,7 @@ import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.dialog.DialogItemNotificationsEditor;
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
+import com.fazziclay.opentoday.util.ClipboardUtil;
 import com.fazziclay.opentoday.util.ColorUtil;
 import com.fazziclay.opentoday.util.EnumUtil;
 import com.fazziclay.opentoday.util.Logger;
@@ -241,7 +242,31 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         UI.getUIRoot(this).pushActivitySettings(a -> {
             a.setNotificationsVisible(false);
             a.setClockVisible(false);
-            a.setToolbarSettings(ActivitySettings.ToolbarSettings.createBack(EnumsRegistry.INSTANCE.nameResId(ItemsRegistry.REGISTRY.get(item.getClass()).getItemType()), this::cancelRequest));
+            a.setToolbarSettings(ActivitySettings.ToolbarSettings.createBack(EnumsRegistry.INSTANCE.nameResId(ItemsRegistry.REGISTRY.get(item.getClass()).getItemType()), this::cancelRequest)
+                    .setMenu(R.menu.menu_item_editor, menu -> {
+                        menu.findItem(R.id.exportItem)
+                                .setOnMenuItemClickListener(menuItem -> {
+                                    var export = ImportWrapper.createImport(ImportWrapper.Permission.ADD_ITEMS_TO_CURRENT)
+                                            .addItem(item)
+                                            .build();
+                                    try {
+                                        ClipboardUtil.selectText(requireContext(), "OpenToday export-text", export.finalExport());
+                                        Toast.makeText(requireContext(), R.string.export_success, Toast.LENGTH_SHORT).show();
+                                    } catch (Exception e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                    return true;
+                                })
+                                .setVisible(mode == MODE_EDIT);
+
+                        menu.findItem(R.id.copyItemId)
+                                .setOnMenuItemClickListener(menuItem -> {
+                                    ClipboardUtil.selectText(requireContext(), "Item ID", (item.getId() == null ? "null" : item.getId().toString()));
+                                    Toast.makeText(requireContext(), R.string.abc_coped, Toast.LENGTH_SHORT).show();
+                                    return true;
+                                })
+                                .setVisible(mode == MODE_EDIT);
+                    }));
         });
     }
 
@@ -444,25 +469,6 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
                                 onEditStart.run();
                             }));
             binding.minimize.setChecked(item.isMinimize());
-            viewVisible(binding.copyItemId, mode == MODE_EDIT, View.GONE);
-            viewClick(binding.copyItemId, () -> {
-                ClipboardManager clipboardManager = activity.getSystemService(ClipboardManager.class);
-                clipboardManager.setPrimaryClip(ClipData.newPlainText("Item id", item.getId() == null ? "null" : item.getId().toString()));
-            });
-
-            viewVisible(binding.exportItem, mode == MODE_EDIT, View.GONE);
-            viewClick(binding.exportItem, () -> {
-                ImportWrapper w = ImportWrapper.createImport(ImportWrapper.Permission.ADD_ITEMS_TO_CURRENT)
-                        .addItem(item)
-                        .build();
-                ClipboardManager clipboardManager = activity.getSystemService(ClipboardManager.class);
-                try {
-                    clipboardManager.setPrimaryClip(ClipData.newPlainText("OpenToday export", w.finalExport()));
-                    Toast.makeText(requireContext(), R.string.export_success, Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            });
 
             // On edit start
             binding.viewMinHeight.addTextChangedListener(new MinTextWatcher() {
