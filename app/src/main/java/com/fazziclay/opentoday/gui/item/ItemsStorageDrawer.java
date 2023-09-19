@@ -52,9 +52,9 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
     private final SelectionCallback selectionCallback = new DrawerSelectionCallback();
     private final ItemInterface itemOnClick;
     private final boolean previewMode;
-    private ItemViewWrapper itemViewWrapper = null;
+    private ItemViewWrapper itemViewWrapper;
 
-    // Public
+    // Private (available only with builder)
     private ItemsStorageDrawer(@NonNull Activity activity,
                                RecyclerView view,
                                boolean isDragsEnable,
