@@ -61,6 +61,7 @@ import java.util.Arrays;
 
 public class ItemViewGenerator {
     private static final String TAG = "ItemViewGenerator";
+    private static final String DESTROYED_CONST = "DESTROYED";
     @NonNull private final Activity activity;
     @NonNull private final LayoutInflater layoutInflater;
     private final boolean previewMode; // Disable items minimize view patch & disable buttons
@@ -87,22 +88,22 @@ public class ItemViewGenerator {
             throw new RuntimeException("Illegal itemType to generate view. Use children's of Item");
 
         } else if (type == TextItem.class) {
-            resultView = generateTextItemView((TextItem) item, parent, behavior, previewMode);
+            resultView = generateTextItemView((TextItem) item, parent, behavior, previewMode, holderDestroyer);
 
         } else if (type == CheckboxItem.class) {
-            resultView = generateCheckboxItemView((CheckboxItem) item, parent, behavior, previewMode);
+            resultView = generateCheckboxItemView((CheckboxItem) item, parent, behavior, previewMode, holderDestroyer);
 
         } else if (type == DebugTickCounterItem.class) {
-            resultView = generateDebugTickCounterItemView((DebugTickCounterItem) item, parent, behavior, previewMode);
+            resultView = generateDebugTickCounterItemView((DebugTickCounterItem) item, parent, behavior, previewMode, holderDestroyer);
 
         } else if (type == DayRepeatableCheckboxItem.class) {
-            resultView = generateDayRepeatableCheckboxItemView((DayRepeatableCheckboxItem) item, parent, behavior, previewMode);
+            resultView = generateDayRepeatableCheckboxItemView((DayRepeatableCheckboxItem) item, parent, behavior, previewMode, holderDestroyer);
 
         } else if (type == CycleListItem.class) {
             resultView = generateCycleListItemView((CycleListItem) item, parent, behavior, previewMode, holderDestroyer, onItemClick);
 
         } else if (type == CounterItem.class) {
-            resultView = generateCounterItemView((CounterItem) item, parent, behavior, previewMode);
+            resultView = generateCounterItemView((CounterItem) item, parent, behavior, previewMode, holderDestroyer);
 
         } else if (type == GroupItem.class) {
             resultView = generateGroupItemView((GroupItem) item, parent, behavior, previewMode, holderDestroyer, onItemClick);
@@ -111,10 +112,10 @@ public class ItemViewGenerator {
             resultView = generateFilterGroupItemView((FilterGroupItem) item, parent, behavior, previewMode, holderDestroyer, onItemClick);
 
         } else if (type == LongTextItem.class) {
-            resultView = generateLongTextItemView((LongTextItem) item, parent, behavior, previewMode);
+            resultView = generateLongTextItemView((LongTextItem) item, parent, behavior, previewMode, holderDestroyer);
 
         } else if (type == MathGameItem.class) {
-            resultView = generateMathGameItemView((MathGameItem) item, parent, behavior, previewMode);
+            resultView = generateMathGameItemView((MathGameItem) item, parent, behavior, previewMode, holderDestroyer);
 
         } else {
             RuntimeException exception = new RuntimeException("Unexpected item type '" + type.getName() + "'! check ItemViewGenerator for fix this.");
@@ -147,7 +148,7 @@ public class ItemViewGenerator {
     }
 
     @ForItem(key = MathGameItem.class)
-    private View generateMathGameItemView(MathGameItem item, ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode) {
+    private View generateMathGameItemView(MathGameItem item, ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode, HolderDestroyer destroyer) {
         final ItemMathGameBinding binding = ItemMathGameBinding.inflate(this.layoutInflater, parent, false);
 
         final MathGameInterface gameInterface = new MathGameInterface() {
@@ -226,7 +227,7 @@ public class ItemViewGenerator {
         };
 
         // Text
-        applyTextItemToTextView(item, binding.title, behavior, previewMode);
+        applyTextItemToTextView(item, binding.title, behavior, destroyer, previewMode);
         gameInterface.init();
 
         binding.keyboard.setEnabled(!previewMode);
@@ -261,22 +262,22 @@ public class ItemViewGenerator {
     }
 
     @ForItem(key = LongTextItem.class)
-    public View generateLongTextItemView(final LongTextItem item, final  ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode) {
+    public View generateLongTextItemView(final LongTextItem item, final  ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode, HolderDestroyer holderDestroyer) {
         final ItemLongtextBinding binding = ItemLongtextBinding.inflate(this.layoutInflater, parent, false);
 
         // Text
-        applyTextItemToTextView(item, binding.title, behavior, previewMode);
+        applyTextItemToTextView(item, binding.title, behavior, holderDestroyer, previewMode);
         applyLongTextItemToLongTextView(item, binding.longText);
 
         return binding.getRoot();
     }
 
     @ForItem(key = DebugTickCounterItem.class)
-    private View generateDebugTickCounterItemView(final DebugTickCounterItem item, final ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode) {
+    private View generateDebugTickCounterItemView(final DebugTickCounterItem item, final ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode, HolderDestroyer holderDestroyer) {
         final ItemLongtextBinding binding = ItemLongtextBinding.inflate(this.layoutInflater, parent, false);
 
         // Title
-        applyTextItemToTextView(item, binding.title, behavior, previewMode);
+        applyTextItemToTextView(item, binding.title, behavior, holderDestroyer, previewMode);
 
         // Debugs
         binding.longText.setText(ColorUtil.colorize(item.getDebugStat(), Color.WHITE, Color.TRANSPARENT, Typeface.NORMAL));
@@ -290,7 +291,7 @@ public class ItemViewGenerator {
         final ItemFilterGroupBinding binding = ItemFilterGroupBinding.inflate(this.layoutInflater, parent, false);
 
         // Text
-        applyTextItemToTextView(item, binding.title, behavior, previewMode);
+        applyTextItemToTextView(item, binding.title, behavior, holderDestroyer, previewMode);
 
         // FilterGroup
         if (!behavior.isRenderMinimized(item)) {
@@ -312,12 +313,12 @@ public class ItemViewGenerator {
                 .setSwipesEnable(false)
                 .setOnItemClick(onItemClick)
                 .setPreviewMode(previewMode)
-                .setItemViewWrapper((_iterItem, view, destroyer) -> {
+                .setItemViewWrapper((_iterItem, viewSupplier, destroyer) -> {
                     if (itemsStorageDrawerBehavior.ignoreFilterGroup()) {
-                        return view;
+                        return viewSupplier.get();
                     }
                     if (item.isActiveItem(_iterItem)) {
-                        return view;
+                        return viewSupplier.get();
                     }
                     return null;
                 })
@@ -329,7 +330,7 @@ public class ItemViewGenerator {
         final ItemGroupBinding binding = ItemGroupBinding.inflate(this.layoutInflater, parent, false);
 
         // Text
-        applyTextItemToTextView(item, binding.title, behavior, previewMode);
+        applyTextItemToTextView(item, binding.title, behavior, holderDestroyer, previewMode);
 
         // Group
         if (!behavior.isRenderMinimized(item)){
@@ -353,11 +354,11 @@ public class ItemViewGenerator {
     }
 
     @ForItem(key = CounterItem.class)
-    public View generateCounterItemView(CounterItem item, ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode) {
+    public View generateCounterItemView(CounterItem item, ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode, HolderDestroyer holderDestroyer) {
         final ItemCounterBinding binding = ItemCounterBinding.inflate(this.layoutInflater, parent, false);
 
         // Title
-        applyTextItemToTextView(item, binding.title, behavior, previewMode);
+        applyTextItemToTextView(item, binding.title, behavior, holderDestroyer, previewMode);
 
         // Counter
         viewClick(binding.up, () -> runFastChanges(behavior, R.string.item_counter_fastChanges_up, item::up));
@@ -375,7 +376,7 @@ public class ItemViewGenerator {
         final ItemCycleListBinding binding = ItemCycleListBinding.inflate(this.layoutInflater, parent, false);
 
         // Text
-        applyTextItemToTextView(item, binding.title, behavior, previewMode);
+        applyTextItemToTextView(item, binding.title, behavior, holderDestroyer, previewMode);
 
         // CycleList
         binding.next.setEnabled(!previewMode);
@@ -402,38 +403,38 @@ public class ItemViewGenerator {
     }
 
     @ForItem(key = DayRepeatableCheckboxItem.class)
-    public View generateDayRepeatableCheckboxItemView(DayRepeatableCheckboxItem item, ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode) {
+    public View generateDayRepeatableCheckboxItemView(DayRepeatableCheckboxItem item, ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode, HolderDestroyer holderDestroyer) {
         final ItemDayRepeatableCheckboxBinding binding = ItemDayRepeatableCheckboxBinding.inflate(this.layoutInflater, parent, false);
 
-        applyTextItemToTextView(item, binding.text, behavior, previewMode);
+        applyTextItemToTextView(item, binding.text, behavior, holderDestroyer, previewMode);
         applyCheckItemToCheckBoxView(item, binding.checkbox, behavior, previewMode);
 
         return binding.getRoot();
     }
 
     @ForItem(key = CheckboxItem.class)
-    public View generateCheckboxItemView(CheckboxItem item, ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode) {
+    public View generateCheckboxItemView(CheckboxItem item, ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode, HolderDestroyer holderDestroyer) {
         final ItemCheckboxBinding binding = ItemCheckboxBinding.inflate(this.layoutInflater, parent, false);
 
-        applyTextItemToTextView(item, binding.text, behavior, previewMode);
+        applyTextItemToTextView(item, binding.text, behavior, holderDestroyer, previewMode);
         applyCheckItemToCheckBoxView(item, binding.checkbox, behavior, previewMode);
 
         return binding.getRoot();
     }
 
     @ForItem(key = TextItem.class)
-    public View generateTextItemView(TextItem item, ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode) {
+    public View generateTextItemView(TextItem item, ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode, HolderDestroyer holderDestroyer) {
         final ItemTextBinding binding = ItemTextBinding.inflate(this.layoutInflater, parent, false);
 
         // Text
-        applyTextItemToTextView(item, binding.title, behavior, previewMode);
+        applyTextItemToTextView(item, binding.title, behavior, holderDestroyer, previewMode);
 
         return binding.getRoot();
     }
 
     //
     @SuppressLint("SetTextI18n")
-    private void applyTextItemToTextView(final TextItem item, final TextView view, ItemViewGeneratorBehavior behavior, boolean previewMode) {
+    private void applyTextItemToTextView(final TextItem item, final TextView view, ItemViewGeneratorBehavior behavior, HolderDestroyer destroyer, boolean previewMode) {
         if (Debug.SHOW_PATH_TO_ITEM_ON_ITEMTEXT) {
             view.setText(Arrays.toString(ItemUtil.getPathToItem(item)));
             view.setTextSize(15);
@@ -451,6 +452,14 @@ public class ItemViewGenerator {
             view.setText(ColorUtil.colorize(item.getText() + "\n$[-#aaaaaa;S12]" + RandomUtil.bounds(-9999, 9999), Color.WHITE, Color.TRANSPARENT, Typeface.NORMAL));
             view.setTextSize(17);
             return;
+        }
+        if (Debug.DESTROY_ANY_TEXTITEM_CHILD) {
+            destroyer.addDestroyListener(() -> {
+                view.setTextColor(Color.RED);
+                view.setText(DESTROYED_CONST);
+                view.setTextSize(15);
+                view.setBackgroundColor(Color.BLACK);
+            });
         }
 
         final int textColor = item.isCustomTextColor() ? item.getTextColor() : ResUtil.getAttrColor(activity, R.attr.item_textColor);

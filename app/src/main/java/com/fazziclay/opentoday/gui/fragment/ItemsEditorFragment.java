@@ -328,7 +328,8 @@ public class ItemsEditorFragment extends Fragment {
 
     private final HashMap<Item, ImageButton> buttons = new HashMap<>();
     private void applyFilterGroupViewPatch(FilterGroupItem filterGroupItem) {
-        itemsStorageDrawer.setItemViewWrapper((item, view, destroyer) -> {
+        itemsStorageDrawer.setItemViewWrapper((item, viewSupplier, destroyer) -> {
+            View view = viewSupplier.get();
             LinearLayout layout = new LinearLayout(view.getContext());
             layout.addView(view);
             view.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1));

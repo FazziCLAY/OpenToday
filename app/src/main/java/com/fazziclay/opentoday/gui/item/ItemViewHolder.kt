@@ -43,6 +43,8 @@ class ItemViewHolder(context: Context) : RecyclerView.ViewHolder(FrameLayout(con
     fun recycle() {
         destroyer.destroy()
         destroyer = HolderDestroyer()
+        layout.removeAllViews()
+        this.item = null
     }
 
     override fun toString(): String {

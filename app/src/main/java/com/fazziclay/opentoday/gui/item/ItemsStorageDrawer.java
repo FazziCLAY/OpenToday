@@ -32,6 +32,8 @@ import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
 
+import java.util.function.Supplier;
+
 /**
  * Drawer of ItemsStorage
  */
@@ -173,8 +175,14 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
     @Override
     protected void onBindItem(@NonNull ItemViewHolder holder, int position) {
         final Item item = itemsStorage.getItemAt(position);
-        @Nullable View view = generateViewForItem(item, holder.destroyer);
-        view = (itemViewWrapper != null) ? itemViewWrapper.wrap(item, view, holder.destroyer) : view;
+
+
+        @Nullable View view;
+        if (itemViewWrapper != null) {
+            view = itemViewWrapper.wrap(item, () -> generateViewForItem(item, holder.destroyer), holder.destroyer);
+        } else {
+            view = generateViewForItem(item, holder.destroyer);
+        }
 
         holder.bind(item, view);
     }
@@ -332,7 +340,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
     @FunctionalInterface
     public interface ItemViewWrapper {
         @Nullable
-        View wrap(Item item, View view, HolderDestroyer destroyer);
+        View wrap(Item item, Supplier<View> viewSupplier, HolderDestroyer destroyer);
     }
 
     public static class CreateBuilder {
