@@ -42,7 +42,9 @@ public class ActivitySettings implements Cloneable {
     @NotNull
     public ActivitySettings clone() {
         try {
-            return (ActivitySettings) super.clone();
+            ActivitySettings clone = (ActivitySettings) super.clone();
+            clone.toolbarSettings = this.toolbarSettings == null ? null : this.toolbarSettings.clone();
+            return clone;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
@@ -65,7 +67,17 @@ public class ActivitySettings implements Cloneable {
         this.toolbarSettings = toolbarSettings;
     }
 
-    public static class ToolbarSettings {
+    @Override
+    public String toString() {
+        return "ActivitySettings{" +
+                "clockVisible=" + clockVisible +
+                ", notificationsVisible=" + notificationsVisible +
+                ", dateClickCalendar=" + dateClickCalendar +
+                ", toolbarSettings=" + toolbarSettings +
+                '}';
+    }
+
+    public static class ToolbarSettings implements Cloneable {
         private String title;
         private int titleResId;
         private boolean backButton;
@@ -134,8 +146,33 @@ public class ActivitySettings implements Cloneable {
             return this;
         }
 
+        @NotNull
+        @Override
+        public ToolbarSettings clone() {
+            try {
+                ToolbarSettings clone = (ToolbarSettings) super.clone();
+                clone.menuInterface = menu -> menuInterface.run(menu);
+                clone.backButtonRunnable = () -> backButtonRunnable.run();
+                return clone;
+            } catch (CloneNotSupportedException e) {
+                throw new AssertionError();
+            }
+        }
+
         public interface MenuInterface {
             void run(Menu menu);
+        }
+
+        @Override
+        public String toString() {
+            return "ToolbarSettings{" +
+                    "title='" + title + '\'' +
+                    ", titleResId=" + titleResId +
+                    ", backButton=" + backButton +
+                    ", backButtonRunnable=" + backButtonRunnable +
+                    ", menu=" + menu +
+                    ", menuInterface=" + menuInterface +
+                    '}';
         }
     }
 }

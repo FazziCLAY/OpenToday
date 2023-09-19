@@ -7,6 +7,7 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.Menu
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -182,6 +183,14 @@ class MainActivity : AppCompatActivity(), UIRoot {
             }
         }
         return false
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val res = getCurrentActivitySettings().toolbarSettings?.menu
+        if (res != null) {
+            menuInflater.inflate(res, menu)
+        }
+        return true
     }
 
     private fun setupNotifications() {
@@ -371,6 +380,9 @@ class MainActivity : AppCompatActivity(), UIRoot {
 
     private fun updateByActivitySettings() {
         val settings = getCurrentActivitySettings()
+
+        Logger.i(TAG, "update activity settings: $settings")
+
         viewVisible(binding.currentDateDate, settings.isClockVisible, View.GONE)
         viewVisible(binding.currentDateTime, settings.isClockVisible, View.GONE)
         binding.currentDateDate.isEnabled = settings.isDateClickCalendar
@@ -389,11 +401,18 @@ class MainActivity : AppCompatActivity(), UIRoot {
             }
             supportActionBar?.setDisplayShowHomeEnabled(toolbarSettings.isBackButton)
             supportActionBar?.setDisplayHomeAsUpEnabled(toolbarSettings.isBackButton)
-            if (toolbarSettings.menu != 0 && toolbarSettings.menuInterface != null) {
-                binding.toolbar.inflateMenu(toolbarSettings.menu)
-                toolbarSettings.menuInterface.run(binding.toolbar.menu)
+            if (toolbarSettings.menu != 0) {
+                Logger.d(TAG, "toolbar inflated...")
+                Handler(Looper.getMainLooper()).postDelayed({
+                    binding.toolbar.menu.clear()
+                    binding.toolbar.invalidateMenu()
+                    binding.toolbar.inflateMenu(toolbarSettings.menu)
+                    toolbarSettings.menuInterface.run(binding.toolbar.menu)
+
+                }, 25)
             } else if (binding.toolbar.menu != null) {
                 binding.toolbar.menu.close()
+                Logger.d(TAG, "toolbar closed...")
             }
         }
     }
