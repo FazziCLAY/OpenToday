@@ -188,6 +188,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
     protected boolean onItemsMoved(int positionFrom, int positionTo) {
         //! NOTE: Adapter receive notify signal from callbacks!
         //ItemUIDrawer.this.adapter.notifyItemMoved(positionFrom, positionTo);
+
         Logger.d(TAG, "onItemsMoved from="+positionFrom + "; to="+ positionTo);
         ItemsStorageDrawer.this.itemsStorage.move(positionFrom, positionTo);
         return true;
