@@ -187,7 +187,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val res = getCurrentActivitySettings().toolbarSettings?.menu
-        if (res != null) {
+        if (res != null && res != 0) {
             menuInflater.inflate(res, menu)
         }
         return true
