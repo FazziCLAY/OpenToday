@@ -33,6 +33,7 @@ public class ItemsRegistry {
             new ItemInfo(GroupItem.class,                          "GroupItem",                     ItemType.GROUP,                      GroupItem.CODEC,                      GroupItem::createEmpty,                   (i) -> new GroupItem((GroupItem) i)),
             new ItemInfo(FilterGroupItem.class,                    "FilterGroupItem",               ItemType.FILTER_GROUP,               FilterGroupItem.CODEC,                FilterGroupItem::createEmpty,             (i) -> new FilterGroupItem((FilterGroupItem) i)),
             new ItemInfo(MathGameItem.class,                       "MathGameItem",                  ItemType.MATH_GAME,                  MathGameItem.CODEC,                   MathGameItem::createEmpty,                (i) -> new MathGameItem((MathGameItem) i)),
+            new ItemInfo(SleepTimeItem.class,                      "SleepTimeItem",                 ItemType.SLEEP_TIME,                 SleepTimeItem.CODEC,                  SleepTimeItem::createEmpty,               (i) -> new SleepTimeItem((SleepTimeItem) i))
     };
 
     private ItemsRegistry() {}

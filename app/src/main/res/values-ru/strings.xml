@@ -381,4 +381,6 @@
     <string name="fragment_itemEditor_delete_message">Удалить этот айтем а также %d его дочерних айтемов?</string>
     <string name="menu_itemEditor_export">Экспорт</string>
     <string name="menu_itemEditor_copyItemId">Скопировать Айди</string>
+    <string name="item_sleepTime_description">Автоматический расчёт времени сна</string>
+    <string name="item_sleepTime">Время сна</string>
 </resources>

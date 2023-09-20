@@ -1,4 +1,8 @@
 TODO: changelog
+== branch: item-sleepTime
+* Added new item: SleepTimeItem - automatically calculate sleep time
+* DATA_VERSIONS now is 11
+
 == branch: fixes-itemstoragedrawer
 * Keyboard now shows automatically in ItemTextEditorFragment
 * Fixes memory-leaks in ItemsEditorFragment if item instance of FilterItemGroup (related with edit-filter buttons)

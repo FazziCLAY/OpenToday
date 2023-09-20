@@ -38,6 +38,7 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemUtil;
 import com.fazziclay.opentoday.app.items.item.LongTextItem;
 import com.fazziclay.opentoday.app.items.item.MathGameItem;
+import com.fazziclay.opentoday.app.items.item.SleepTimeItem;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.databinding.ItemCheckboxBinding;
 import com.fazziclay.opentoday.databinding.ItemCounterBinding;
@@ -47,6 +48,7 @@ import com.fazziclay.opentoday.databinding.ItemFilterGroupBinding;
 import com.fazziclay.opentoday.databinding.ItemGroupBinding;
 import com.fazziclay.opentoday.databinding.ItemLongtextBinding;
 import com.fazziclay.opentoday.databinding.ItemMathGameBinding;
+import com.fazziclay.opentoday.databinding.ItemSleepTimeBinding;
 import com.fazziclay.opentoday.databinding.ItemTextBinding;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.util.ColorUtil;
@@ -56,6 +58,8 @@ import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.annotation.ForItem;
 import com.fazziclay.opentoday.util.callback.Status;
+import com.fazziclay.opentoday.util.time.ConvertMode;
+import com.fazziclay.opentoday.util.time.TimeUtil;
 
 import java.util.Arrays;
 
@@ -116,6 +120,9 @@ public class ItemViewGenerator {
 
         } else if (type == MathGameItem.class) {
             resultView = generateMathGameItemView((MathGameItem) item, parent, behavior, previewMode, holderDestroyer);
+
+        } else if (type == SleepTimeItem.class) {
+            resultView = generateSleepTimeItemView((SleepTimeItem) item, parent, behavior, previewMode, holderDestroyer);
 
         } else {
             RuntimeException exception = new RuntimeException("Unexpected item type '" + type.getName() + "'! check ItemViewGenerator for fix this.");
@@ -259,6 +266,18 @@ public class ItemViewGenerator {
 
     interface MathGameInterface {
         void init();
+    }
+
+    private View generateSleepTimeItemView(SleepTimeItem item, ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode, HolderDestroyer holderDestroyer) {
+        final ItemSleepTimeBinding binding = ItemSleepTimeBinding.inflate(this.layoutInflater, parent, false);
+        applyTextItemToTextView(item, binding.title, behavior, holderDestroyer, previewMode);
+        binding.description.setText(item.getSleepTextPattern()
+                .replace("$(elapsed)", TimeUtil.convertToHumanTime(item.getElapsedTime(), ConvertMode.HHMM))
+                .replace("$(wakeUpForRequired)", TimeUtil.convertToHumanTime(item.getWakeUpForRequiredAtCurr(), ConvertMode.HHMM))
+                .replace("$(wakeUpTime)", TimeUtil.convertToHumanTime(item.getWakeUpTime(), ConvertMode.HHMM))
+                .replace("$(requiredSleepTime)", TimeUtil.convertToHumanTime(item.getRequiredSleepTime(), ConvertMode.HHMM)));
+
+        return binding.getRoot();
     }
 
     @ForItem(key = LongTextItem.class)

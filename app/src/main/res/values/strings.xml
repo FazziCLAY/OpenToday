@@ -389,4 +389,6 @@
     <string name="fragment_itemEditor_delete_message">Delete this item as well as %d of its child items?</string>
     <string name="menu_itemEditor_export">Export</string>
     <string name="menu_itemEditor_copyItemId">Copy ID</string>
+    <string name="item_sleepTime_description">Automatically calc sleep time</string>
+    <string name="item_sleepTime">Sleep time</string>
 </resources>
