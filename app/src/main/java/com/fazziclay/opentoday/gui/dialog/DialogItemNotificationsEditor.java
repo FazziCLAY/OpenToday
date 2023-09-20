@@ -20,6 +20,7 @@ import com.fazziclay.opentoday.databinding.DialogItemNotificationBinding;
 import com.fazziclay.opentoday.databinding.DialogItemNotificationsEditorBinding;
 import com.fazziclay.opentoday.databinding.ItemNotificationBinding;
 import com.fazziclay.opentoday.util.MinBaseAdapter;
+import com.fazziclay.opentoday.util.MinTextWatcher;
 import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.time.ConvertMode;
 import com.fazziclay.opentoday.util.time.HumanTimeType;
@@ -84,7 +85,7 @@ public class DialogItemNotificationsEditor {
                     DayItemNotification d = (DayItemNotification) itemNotification;
 
                     l.notificationId.setText(String.valueOf(d.getNotificationId()));
-                    MinBaseAdapter.after(l.notificationId, () -> {
+                    MinTextWatcher.after(l.notificationId, () -> {
                         try {
                             int i = Integer.parseInt(l.notificationId.getText().toString());
                             d.setNotificationId(i);
@@ -100,7 +101,7 @@ public class DialogItemNotificationsEditor {
                         d.setNotifyTextFromItemText(l.textFromItem.isChecked());
                     });
                     l.text.setEnabled(!l.textFromItem.isChecked());
-                    MinBaseAdapter.after(l.text, () -> d.setNotifyText(l.text.getText().toString()));
+                    MinTextWatcher.after(l.text, () -> d.setNotifyText(l.text.getText().toString()));
                     l.title.setText(d.getNotifyTitle());
                     l.titleFromItem.setChecked(d.isNotifyTitleFromItemText());
                     l.titleFromItem.setOnClickListener(vvv -> {
@@ -108,10 +109,10 @@ public class DialogItemNotificationsEditor {
                         d.setNotifyTitleFromItemText(l.titleFromItem.isChecked());
                     });
                     l.title.setEnabled(!l.titleFromItem.isChecked());
-                    MinBaseAdapter.after(l.title, () -> d.setNotifyTitle(l.title.getText().toString()));
+                    MinTextWatcher.after(l.title, () -> d.setNotifyTitle(l.title.getText().toString()));
 
                     l.notifySubText.setText(d.getNotifySubText());
-                    MinBaseAdapter.after(l.notifySubText, () -> d.setNotifySubText(l.notifySubText.getText().toString()));
+                    MinTextWatcher.after(l.notifySubText, () -> d.setNotifySubText(l.notifySubText.getText().toString()));
 
                     l.test.setOnClickListener(v2132321 -> {
                         d.sendNotify(activity, item);
@@ -123,6 +124,22 @@ public class DialogItemNotificationsEditor {
                         item.save();
                         l.time.setText(activity.getString(R.string.dialog_itemNotification_time, TimeUtil.convertToHumanTime(d.getTime(), ConvertMode.HHMM)));
                     }, TimeUtil.getHumanValue(d.getTime(), HumanTimeType.HOUR), TimeUtil.getHumanValue(d.getTime(), HumanTimeType.MINUTE_OF_HOUR), true).show());
+
+
+                    l.fullScreen.setOnCheckedChangeListener((compoundButton, b1) -> {
+                        l.previewViewOnly.setEnabled(b1);
+                        l.sound.setEnabled(b1);
+                    });
+                    l.fullScreen.setOnClickListener(i____ -> d.setFullScreen(l.fullScreen.isChecked()));
+                    l.fullScreen.setChecked(d.isFullScreen());
+                    l.previewViewOnly.setEnabled(d.isFullScreen());
+                    l.sound.setEnabled(d.isFullScreen());
+
+                    l.previewViewOnly.setChecked(d.isPreRenderPreviewMode());
+                    l.previewViewOnly.setOnClickListener(i___ -> d.setPreRenderPreviewMode(l.previewViewOnly.isChecked()));
+
+                    l.sound.setChecked(d.isSound());
+                    l.sound.setOnClickListener(i____ -> d.setSound(l.sound.isChecked()));
 
                     new AlertDialog.Builder(activity)
                             .setView(l.getRoot())

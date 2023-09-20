@@ -8,8 +8,8 @@ var isDev = true
 var beta = false
 var appIdSuffix = "" // EMPTY FOR RELEASES!!!!
 var verBuild = 140
-var verName = "1.2+[patches:[fix-tick] + [fixes-itemstorageviewer] + [item-sleepTime]"
-var verBranch = "item-sleepTime" // use "RELEASE" for releases versions
+var verName = "1.2+[patches:[fix-tick] + [fixes-itemstorageviewer] + [item-sleepTime] + [notification-manager]"
+var verBranch = "notification-manager" // use "RELEASE" for releases versions
 var verReleaseTime = 1689778441 // in seconds
 // =====
 
