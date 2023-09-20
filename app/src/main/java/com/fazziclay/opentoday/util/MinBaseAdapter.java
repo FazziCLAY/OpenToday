@@ -1,7 +1,6 @@
 package com.fazziclay.opentoday.util;
 
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 
 public abstract class MinBaseAdapter extends BaseAdapter {
     @Override
