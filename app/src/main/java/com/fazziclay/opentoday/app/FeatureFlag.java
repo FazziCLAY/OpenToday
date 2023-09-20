@@ -5,7 +5,8 @@ public enum FeatureFlag {
     ALWAYS_SHOW_SAVE_STATUS("Always show save status on TabsManager using Toast"),
     DISABLE_AUTOMATIC_TICK("Disable auto-tick calling by MainActivity"),
     DISABLE_DEBUG_MODE_NOTIFICATION("Disable debug-app-warning in MainActivity"),
-    TOOLBAR_DEBUG("Show hidden DEBUG section in Toolbar");
+    TOOLBAR_DEBUG("Show hidden DEBUG section in Toolbar"),
+    ITEM_SLEEP_TIME("Show hidden item: SleepTime");
 
     private final String description;
 

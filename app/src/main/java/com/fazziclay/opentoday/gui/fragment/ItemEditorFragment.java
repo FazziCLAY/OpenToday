@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -1082,6 +1083,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         private LinearLayout layout;
         private TimePicker wakeUpTime;
         private TimePicker requiredSleepTime;
+        private EditText pattern;
 
         @Override
         public View getView() {
@@ -1094,6 +1096,10 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
             layout = new LinearLayout(activity);
             layout.setOrientation(LinearLayout.VERTICAL);
+
+            this.pattern = new EditText(activity);
+            pattern.setText(sleepTimeItem.getSleepTextPattern());
+            layout.addView(pattern);
 
             this.wakeUpTime = new TimePicker(activity);
             wakeUpTime.setMinute(TimeUtil.getHumanValue(sleepTimeItem.getWakeUpTime(), HumanTimeType.MINUTE_OF_HOUR));
@@ -1109,6 +1115,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         @Override
         public void commit(Item item) throws Exception {
             SleepTimeItem sleepTimeItem = (SleepTimeItem) item;
+            sleepTimeItem.setSleepTextPattern(pattern.getText().toString());
             sleepTimeItem.setWakeUpTime(wakeUpTime.getMinute() * TimeUtil.SECONDS_IN_MINUTE + wakeUpTime.getHour() * TimeUtil.SECONDS_IN_HOUR);
             sleepTimeItem.setRequiredSleepTime(requiredSleepTime.getMinute() * TimeUtil.SECONDS_IN_MINUTE + requiredSleepTime.getHour() * TimeUtil.SECONDS_IN_HOUR);
         }

@@ -16,6 +16,7 @@ public class TranslationImpl implements Translation {
             int resId = switch (i) {
                 case KEY_TABS_DEFAULT_MAIN_NAME -> R.string.tab_defaultFirstName;
                 case KEY_MATHGAME_PRIMITIVE_OPERATION -> R.string.item_mathGame_quest_primitive_text;
+                case KEY_SLEEP_TIME_ITEM_PATTERN -> R.string.item_sleepTime_defaultPattern;
                 default -> throw new IllegalStateException("Unknown translation key: " + i);
             };
             return translateInterface.translate(resId, args);

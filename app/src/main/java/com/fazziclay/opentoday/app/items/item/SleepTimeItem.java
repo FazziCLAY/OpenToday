@@ -2,6 +2,7 @@ package com.fazziclay.opentoday.app.items.item;
 
 import androidx.annotation.NonNull;
 
+import com.fazziclay.opentoday.app.Translation;
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.util.time.TimeUtil;
@@ -15,7 +16,8 @@ public class SleepTimeItem extends TextItem {
             SleepTimeItem sleepTimeItem = (SleepTimeItem) item;
             return super.exportItem(sleepTimeItem)
                     .put("wakeUpTime", sleepTimeItem.wakeUpTime)
-                    .put("requiredSleepTime", sleepTimeItem.requiredSleepTime);
+                    .put("requiredSleepTime", sleepTimeItem.requiredSleepTime)
+                    .put("sleepTextPattern", sleepTimeItem.sleepTextPattern);
         }
 
         private final SleepTimeItem defaultValues = new SleepTimeItem();
@@ -26,12 +28,14 @@ public class SleepTimeItem extends TextItem {
             super.importItem(cherry, sleepTimeItem);
             sleepTimeItem.wakeUpTime = cherry.optInt("wakeUpTime", defaultValues.wakeUpTime);
             sleepTimeItem.requiredSleepTime = cherry.optInt("requiredSleepTime", defaultValues.requiredSleepTime);
+            sleepTimeItem.sleepTextPattern = cherry.optString("sleepTextPattern", defaultValues.sleepTextPattern);
             return sleepTimeItem;
         }
     }
 
     private int wakeUpTime;
     private int requiredSleepTime;
+    private String sleepTextPattern = null;
 
     private int elapsedTime; // cached
     private int wakeUpForRequiredAtCurr; // cached
@@ -45,15 +49,29 @@ public class SleepTimeItem extends TextItem {
 
 
     public SleepTimeItem(SleepTimeItem copy) {
-        this.wakeUpTime = copy.wakeUpTime;
-        this.requiredSleepTime = copy.requiredSleepTime;
+        super(copy);
         tick = 0;
         elapsedTime = 0;
         wakeUpForRequiredAtCurr = 0;
+
+        if (copy != null) {
+            this.wakeUpTime = copy.wakeUpTime;
+            this.requiredSleepTime = copy.requiredSleepTime;
+            this.sleepTextPattern = copy.sleepTextPattern;
+        }
     }
 
     private SleepTimeItem() {
+        this(null);
+    }
 
+    @Override
+    protected void regenerateId() {
+        super.regenerateId();
+        if (sleepTextPattern == null) {
+            sleepTextPattern = getRoot().getTranslation().get(Translation.KEY_SLEEP_TIME_ITEM_PATTERN);
+            save();
+        }
     }
 
     @Override
@@ -101,8 +119,11 @@ public class SleepTimeItem extends TextItem {
 
 
     public String getSleepTextPattern() {
-        // TODO: 20.09.2023 make translatable
-        return "$(elapsed) осталось до $(wakeUpTime)\nТекущее + $(requiredSleepTime) = $(wakeUpForRequired)";
+        if (sleepTextPattern == null) return "";
+        return sleepTextPattern;
     }
 
+    public void setSleepTextPattern(String sleepTextPattern) {
+        this.sleepTextPattern = sleepTextPattern;
+    }
 }

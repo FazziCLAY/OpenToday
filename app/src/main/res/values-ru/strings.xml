@@ -383,4 +383,5 @@
     <string name="menu_itemEditor_copyItemId">Скопировать Айди</string>
     <string name="item_sleepTime_description">Автоматический расчёт времени сна</string>
     <string name="item_sleepTime">Время сна</string>
+    <string name="item_sleepTime_defaultPattern">$(elapsed) осталось до $(wakeUpTime)\nТекущее + $(requiredSleepTime) = $(wakeUpForRequired)</string>
 </resources>
