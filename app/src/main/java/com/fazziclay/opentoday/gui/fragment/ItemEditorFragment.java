@@ -18,8 +18,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TimePicker;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,12 +41,14 @@ import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem;
+import com.fazziclay.opentoday.app.items.item.DebugTickCounterItem;
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.item.LongTextItem;
 import com.fazziclay.opentoday.app.items.item.MathGameItem;
 import com.fazziclay.opentoday.app.items.item.SleepTimeItem;
+import com.fazziclay.opentoday.app.items.item.MissingNoItem;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.notification.DayItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
@@ -215,7 +219,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
         navigationHost = UI.findFragmentInParents(this, MainRootFragment.class);
 
-        if (item instanceof Item) {
+        if (item instanceof Item && (!(item instanceof MissingNoItem)) ) {
             binding.modules.addView(addEditModule(new ItemEditModule()));
         }
         if (item instanceof TextItem) {
@@ -244,6 +248,19 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         }
         if (item instanceof SleepTimeItem) {
             binding.modules.addView(addEditModule(new SleepTimeItemEditModule()));
+        }
+        if (item instanceof DebugTickCounterItem) {
+            binding.modules.addView(addEditModule(new DebugTickCounterItemEditModule()));
+        }
+        if (item instanceof MissingNoItem missingNoItem) {
+            TextView textView = new TextView(getActivity());
+            StringBuilder text = new StringBuilder();
+            for (Exception exception : missingNoItem.getExceptionList()) {
+                text.append(exception.getMessage()).append("\n\n");
+            }
+            textView.setText(text.toString());
+
+            binding.modules.addView(textView);
         }
 
         UI.getUIRoot(this).pushActivitySettings(a -> {
@@ -1078,6 +1095,47 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             this.onEditStart = o;
         }
     }
+  
+    private static class DebugTickCounterItemEditModule extends BaseEditUiModule {
+        private LinearLayout layout;
+        private CheckBox check;
+        private Runnable edit;
+      
+    @Override
+        public View getView() {
+            return layout;
+        }
+
+        @Override
+        public void setup(Item item, Activity activity, View view) {
+           final var debugTickCounter = (DebugTickCounterItem) item;
+          
+          
+          layout = new LinearLayout(activity);
+            layout.setOrientation(LinearLayout.VERTICAL);
+          
+          var t = new TextView(activity);
+            t.setText("DEBUG: rose is enabled");
+            layout.addView(t);
+
+            check = new CheckBox(activity);
+            check.setChecked(debugTickCounter.isRoseEnabled());
+            layout.addView(check);
+            viewClick(check, edit);
+        }
+
+        @Override
+        public void commit(Item item) {
+            final var debugTickCounter = (DebugTickCounterItem) item;
+            debugTickCounter.setRoseEnabled(check.isChecked());
+          
+        }
+        @Override
+        public void setOnStartEditListener(Runnable o) {
+          this.edit = o;
+        }
+          
+
 
     private class SleepTimeItemEditModule extends BaseEditUiModule {
         private LinearLayout layout;
@@ -1094,8 +1152,10 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         public void setup(Item item, Activity activity, View view) {
             SleepTimeItem sleepTimeItem = (SleepTimeItem) item;
 
+
             layout = new LinearLayout(activity);
             layout.setOrientation(LinearLayout.VERTICAL);
+
 
             this.pattern = new EditText(activity);
             pattern.setText(sleepTimeItem.getSleepTextPattern());
@@ -1122,7 +1182,6 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
         @Override
         public void setOnStartEditListener(Runnable o) {
-
         }
     }
 }

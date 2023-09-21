@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum ItemType {
+    MISSING_NO,
     TEXT,
     DEBUG_TICK_COUNTER(TEXT),
     LONG_TEXT(TEXT),
