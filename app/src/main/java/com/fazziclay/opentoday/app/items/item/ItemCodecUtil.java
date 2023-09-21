@@ -36,11 +36,16 @@ public class ItemCodecUtil {
 
     // import item (JSON -> Item)
     public static Item importItem(Cherry cherry) {
-        /*get itemType form json*/String itemType = cherry.getString(KEY_ITEMTYPE);
-        /*get class by itemType*/Class<? extends Item> itemClass = ItemsRegistry.REGISTRY.get(itemType).getClassType();
-        /*get IETool by class*/
-        AbstractItemCodec codec = ItemsRegistry.REGISTRY.get(itemClass).getCodec();
-        return codec.importItem(cherry, null);
+        try {
+            /*get itemType form json*/String itemType = cherry.getString(KEY_ITEMTYPE);
+            /*get class by itemType*/Class<? extends Item> itemClass = ItemsRegistry.REGISTRY.get(itemType).getClassType();
+            /*get IETool by class*/
+            AbstractItemCodec codec = ItemsRegistry.REGISTRY.get(itemClass).getCodec();
+            return codec.importItem(cherry, null);
+        } catch (Exception e) {
+            return ((MissingNoItem)ItemsRegistry.REGISTRY.get(ItemType.MISSING_NO).getCodec().importItem(cherry, null))
+                    .putException(e);
+        }
     }
 
     // export item (Item -> JSON)
@@ -48,7 +53,10 @@ public class ItemCodecUtil {
         /*IETool from itemClass*/
         AbstractItemCodec codec = ItemsRegistry.REGISTRY.get(item.getClass()).getCodec();
         /*Export from IETool*/Cherry cherry = codec.exportItem(item);
-        /*Put itemType to json*/cherry.put(KEY_ITEMTYPE, ItemsRegistry.REGISTRY.get(item.getClass()).getStringType());
+        /*Put itemType to json*/
+        if (!(item instanceof MissingNoItem)) {
+            cherry.put(KEY_ITEMTYPE, ItemsRegistry.REGISTRY.get(item.getClass()).getStringType());
+        }
         return cherry;
     }
 }

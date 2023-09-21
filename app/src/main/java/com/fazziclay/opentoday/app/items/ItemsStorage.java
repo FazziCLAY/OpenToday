@@ -117,4 +117,6 @@ public interface ItemsStorage extends Tickable {
     @NonNull CallbackStorage<OnItemsStorageUpdate> getOnItemsStorageCallbacks();
 
     boolean isEmpty();
+
+    Item getItemAt(int position);
 }

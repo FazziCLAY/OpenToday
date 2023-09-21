@@ -2,30 +2,45 @@ package com.fazziclay.opentoday.gui.item;
 
 import android.app.Activity;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.items.CurrentItemStorage;
 import com.fazziclay.opentoday.app.items.callback.OnCurrentItemStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.Item;
+import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
 
-public class CurrentItemStorageDrawer {
-    private final Activity activity;
-    private final LinearLayout view;
-    private final ItemViewGenerator itemViewGenerator;
-    private final CurrentItemStorage currentItemStorage;
-    private final OnUpdateListener listener = new OnUpdateListener();
-    private OnCurrentItemStorageUpdate userListener = null;
+import org.jetbrains.annotations.NotNull;
 
-    public CurrentItemStorageDrawer(Activity activity, ItemViewGenerator itemViewGenerator, CurrentItemStorage currentItemStorage) {
+public class CurrentItemStorageDrawer {
+    private final @NonNull Activity activity;
+    private final @NotNull ViewGroup view;
+    private final @NotNull ItemViewGenerator itemViewGenerator;
+    private final @NotNull ItemViewGeneratorBehavior itemViewGeneratorBehavior;
+    private final @NotNull CurrentItemStorage currentItemStorage;
+    private final @NotNull OnUpdateListener listener = new OnUpdateListener();
+    private final @NotNull HolderDestroyer holderDestroyer;
+    private final @NotNull ItemInterface onItemClick;
+    private @Nullable OnCurrentItemStorageUpdate userListener = null;
+
+    public CurrentItemStorageDrawer(@NonNull Activity activity,
+                                    @NotNull ViewGroup view,
+                                    @NonNull ItemViewGenerator itemViewGenerator,
+                                    @NonNull ItemViewGeneratorBehavior itemViewGeneratorBehavior,
+                                    @NonNull CurrentItemStorage currentItemStorage,
+                                    @NotNull HolderDestroyer holderDestroyer,
+                                    @NotNull ItemInterface onItemClick) {
         this.activity = activity;
-        this.view = new LinearLayout(activity);
-        this.view.setOrientation(LinearLayout.VERTICAL);
+        this.itemViewGeneratorBehavior = itemViewGeneratorBehavior;
         this.itemViewGenerator = itemViewGenerator;
         this.currentItemStorage = currentItemStorage;
+        this.view = view;
+        this.holderDestroyer = holderDestroyer;
+        this.onItemClick = onItemClick;
     }
 
     public void create() {
@@ -45,10 +60,14 @@ public class CurrentItemStorageDrawer {
 
     private void updateView(Item currentItem) {
         view.removeAllViews();
+        view.setOnClickListener(null);
         if (userListener != null) {
             userListener.onCurrentChanged(currentItem);
         }
-        if (currentItem != null) view.addView(itemViewGenerator.generate(currentItem, view));
+        if (currentItem != null) {
+            view.addView(itemViewGenerator.generate(currentItem, view, itemViewGeneratorBehavior, holderDestroyer, onItemClick));
+            view.setOnClickListener(view -> onItemClick.run(currentItem));
+        }
     }
 
     public void setOnUpdateListener(OnCurrentItemStorageUpdate listener) {

@@ -5,6 +5,8 @@ import static com.fazziclay.opentoday.util.InlineUtil.nullStat;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +24,6 @@ import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Readonly;
-import com.fazziclay.opentoday.app.items.callback.ItemCallback;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
@@ -38,6 +39,7 @@ import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
 import com.fazziclay.opentoday.gui.item.ItemsStorageDrawer;
 import com.fazziclay.opentoday.gui.item.ItemsStorageDrawerBehavior;
+import com.fazziclay.opentoday.gui.item.SettingsItemsStorageDrawerBehavior;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
@@ -74,7 +76,16 @@ public class ItemsEditorFragment extends Fragment {
     private Tab tab;
     private Item item;
     private OnItemsStorageUpdate onItemStorageChangeCallback;
-    private ItemCallback itemCallback;
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private final Runnable updateButtonsCallback = new Runnable() {
+        @Override
+        public void run() {
+            buttons.forEach((item, imageButton) -> filterGroup_setEditButtonBackground(imageButton, item));
+            if (isVisible()) {
+                handler.postDelayed(updateButtonsCallback, 500);
+            }
+        }
+    };
 
     public static ItemsEditorFragment createRoot(UUID tab, boolean previewMode) {
         return ItemsEditorFragment.create(tab, null, previewMode);
@@ -129,6 +140,28 @@ public class ItemsEditorFragment extends Fragment {
             }
         }
 
+        ItemsStorageDrawerBehavior itemsStorageDrawerBehavior = new SettingsItemsStorageDrawerBehavior(settingsManager) {
+            @Override
+            public void onItemOpenEditor(Item item) {
+                rootNavigationHost.navigate(ItemEditorFragment.edit(item.getId()), true);
+            }
+
+            @Override
+            public void onItemOpenTextEditor(Item item) {
+                rootNavigationHost.navigate(ItemTextEditorFragment.create(item.getId()), true);
+            }
+
+            @Override
+            public boolean ignoreFilterGroup() {
+                return false;
+            }
+
+            @Override
+            public void onItemDeleteRequest(Item item) {
+                rootNavigationHost.navigate(DeleteItemsFragment.create(new UUID[]{item.getId()}), true);
+            }
+        };
+
         ItemViewGeneratorBehavior itemViewGeneratorBehavior = new ItemViewGeneratorBehavior() {
 
             @Override
@@ -166,31 +199,25 @@ public class ItemsEditorFragment extends Fragment {
             public void onFilterGroupEdit(FilterGroupItem filterGroupItem) {
                 navigationHost.navigate(createItem(tabId, filterGroupItem.getId(), (filterGroupItem instanceof Readonly)), true);
             }
-        };
 
-        ItemsStorageDrawerBehavior itemsStorageDrawerBehavior = new ItemsStorageDrawerBehavior() {
             @Override
-            public SettingsManager.ItemAction getItemOnClickAction() {
-                return settingsManager.getItemOnClickAction();
+            public ItemsStorageDrawerBehavior getItemsStorageDrawerBehavior(Item item) {
+                return itemsStorageDrawerBehavior;
             }
 
             @Override
-            public boolean isScrollToAddedItem() {
-                return settingsManager.isScrollToAddedItem();
-            }
-
-            @Override
-            public SettingsManager.ItemAction getItemOnLeftAction() {
-                return settingsManager.getItemOnLeftAction();
+            public boolean isRenderMinimized(Item item) {
+                return item.isMinimize();
             }
         };
 
 
         this.itemsStorageDrawer = ItemsStorageDrawer.builder(activity, itemsStorageDrawerBehavior, itemViewGeneratorBehavior, selectionManager, itemsStorage)
                 .setPreviewMode(previewMode)
-                .setOnItemOpenEditor((item) -> rootNavigationHost.navigate(ItemEditorFragment.edit(item.getId()), true))
-                .setOnItemTextEditor((item) -> rootNavigationHost.navigate(ItemTextEditorFragment.create(item.getId()), true))
                 .build();
+
+        // apply two MATCH_PARENT to RecycleView of ItemsStorageDrawer
+        this.itemsStorageDrawer.getView().setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         if (item instanceof FilterGroupItem) {
             applyFilterGroupViewPatch((FilterGroupItem) item);
@@ -254,6 +281,15 @@ public class ItemsEditorFragment extends Fragment {
         if (root != null) {
             root.childAttached(this, item);
         }
+        if (item instanceof FilterGroupItem) {
+            handler.post(updateButtonsCallback);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        handler.removeCallbacks(updateButtonsCallback);
     }
 
     @Override
@@ -261,7 +297,6 @@ public class ItemsEditorFragment extends Fragment {
         super.onDestroy();
         if (this.itemsStorageDrawer != null) this.itemsStorageDrawer.destroy();
         if (this.itemsStorage != null) itemsStorage.getOnItemsStorageCallbacks().removeCallback(onItemStorageChangeCallback);
-        if (this.item != null) item.getItemCallbacks().removeCallback(itemCallback);
     }
 
     public ItemsStorage getItemStorage() {
@@ -296,9 +331,10 @@ public class ItemsEditorFragment extends Fragment {
         view.setBackgroundTintList(ColorStateList.valueOf(filterGroup.isActiveItem(item) ? COLOR_FILTER_GROUP_ACTIVE : COLOR_FILTER_GROUP_INACTIVE));
     }
 
-    private final HashMap<Item, ImageButton> buttons = new HashMap<>(); // TODO: 5/9/23 FIX THIIS: NOT DELETING OLDEST
+    private final HashMap<Item, ImageButton> buttons = new HashMap<>();
     private void applyFilterGroupViewPatch(FilterGroupItem filterGroupItem) {
-        itemsStorageDrawer.setItemViewWrapper((item, view) -> {
+        itemsStorageDrawer.setItemViewWrapper((item, viewSupplier, destroyer) -> {
+            View view = viewSupplier.get();
             LinearLayout layout = new LinearLayout(view.getContext());
             layout.addView(view);
             view.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
@@ -310,17 +346,10 @@ public class ItemsEditorFragment extends Fragment {
             layout.addView(filter);
             filter.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 70, 0));
             buttons.put(item, filter);
+
+            destroyer.addDestroyListener(() -> buttons.remove(item));
             return layout;
         });
-
-        itemCallback = new ItemCallback() {
-            @Override
-            public Status updateUi(Item item) {
-                buttons.forEach((imageItem, imageButton) -> filterGroup_setEditButtonBackground(imageButton, imageItem));
-                return Status.NONE;
-            }
-        };
-        if (item != null) item.getItemCallbacks().addCallback(CallbackImportance.MIN, itemCallback);
     }
 
     private void editFilterGroupItemFilter(FilterGroupItem filterGroupItem, Item item) {

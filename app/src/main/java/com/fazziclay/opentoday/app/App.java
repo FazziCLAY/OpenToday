@@ -50,7 +50,7 @@ import ru.fazziclay.opentoday.telemetry.OpenTodayTelemetry;
 
 public class App extends Application {
     // Application
-    public static final int APPLICATION_DATA_VERSION = 10;
+    public static final int APPLICATION_DATA_VERSION = 11;
     public static final String VERSION_NAME = CustomBuildConfig.VERSION_NAME;
     public static final int VERSION_CODE = CustomBuildConfig.VERSION_CODE;
     public static final long VERSION_RELEASE_TIME = CustomBuildConfig.VERSION_RELEASE_TIME;

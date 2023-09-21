@@ -1,3 +1,18 @@
+TODO: changelog
+== branch: item-sleepTime
+* Added new item: SleepTimeItem - automatically calculate sleep time
+* DATA_VERSIONS now is 11
+
+== branch: fixes-itemstoragedrawer
+* Keyboard now shows automatically in ItemTextEditorFragment
+* Fixes memory-leaks in ItemsEditorFragment if item instance of FilterItemGroup (related with edit-filter buttons)
+* Fixes memory-leaks in CycleListItem while rendering
+* ItemsStorage: added "getItemAt(int)" method.
+* Basic logic of "ItemsStorageDrawer" moved to new parent "AbstractItemsStorageDrawer"
+* Drag&Drop re-order now not resets while item updated.
+* Drag&Drop re-order(and maybe swipes...) now available in child items
+* Fixed DeleteItemsFragment: now all items un-minimized
+
 $[@bold;-#00FF00;S25]# Changelog v134 1.2 (2023.06.18)$[||]
 Correct release for 1.1.4
 * Fixed untranslated text in MathGameItem editor

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum ItemType {
+    MISSING_NO,
     TEXT,
     DEBUG_TICK_COUNTER(TEXT),
     LONG_TEXT(TEXT),
@@ -14,7 +15,8 @@ public enum ItemType {
     CYCLE_LIST(TEXT),
     GROUP(TEXT),
     FILTER_GROUP(TEXT),
-    MATH_GAME(TEXT);
+    MATH_GAME(TEXT),
+    SLEEP_TIME(TEXT);
 
     private final List<ItemType> parents = new ArrayList<>();
 

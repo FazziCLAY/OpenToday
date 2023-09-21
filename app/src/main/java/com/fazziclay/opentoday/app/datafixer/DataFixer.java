@@ -148,6 +148,13 @@ public class DataFixer {
             isUpdated = true;
         }
 
+        if (dataVersion == 10) {
+            // nothing to fix in to11Version: added SleepTimeItem
+            log("v10 -> v11", "Nothing to fix while 10to11 upgrade...");
+            dataVersion = 11;
+            isUpdated = true;
+        }
+
         return dataVersion;
     }
 
@@ -365,6 +372,12 @@ public class DataFixer {
             from = 10;
         }
 
+
+        if (from == 10) {
+            // nothing to fix
+            from = 11;
+        }
+
         return result;
     }
 
@@ -381,6 +394,11 @@ public class DataFixer {
         if (from == 9) {
             // nothing to fix
             from = 10;
+        }
+
+        if (from == 10) {
+            // nothing to fix
+            from = 11;
         }
         return result;
     }

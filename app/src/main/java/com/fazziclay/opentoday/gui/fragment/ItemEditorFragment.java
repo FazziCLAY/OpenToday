@@ -18,7 +18,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.TimePicker;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -38,17 +41,19 @@ import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem;
+import com.fazziclay.opentoday.app.items.item.DebugTickCounterItem;
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.item.LongTextItem;
 import com.fazziclay.opentoday.app.items.item.MathGameItem;
+import com.fazziclay.opentoday.app.items.item.SleepTimeItem;
+import com.fazziclay.opentoday.app.items.item.MissingNoItem;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.notification.DayItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.Tab;
-import com.fazziclay.opentoday.app.items.tag.ItemTag;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleCheckboxBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleCounterBinding;
@@ -62,11 +67,11 @@ import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleTextBinding;
 import com.fazziclay.opentoday.gui.ActivitySettings;
 import com.fazziclay.opentoday.gui.ColorPicker;
 import com.fazziclay.opentoday.gui.EnumsRegistry;
-import com.fazziclay.opentoday.gui.ItemTagGui;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.dialog.DialogItemNotificationsEditor;
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
+import com.fazziclay.opentoday.util.ClipboardUtil;
 import com.fazziclay.opentoday.util.ColorUtil;
 import com.fazziclay.opentoday.util.EnumUtil;
 import com.fazziclay.opentoday.util.Logger;
@@ -74,8 +79,8 @@ import com.fazziclay.opentoday.util.MinTextWatcher;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 import com.fazziclay.opentoday.util.time.ConvertMode;
+import com.fazziclay.opentoday.util.time.HumanTimeType;
 import com.fazziclay.opentoday.util.time.TimeUtil;
-import com.google.android.material.chip.Chip;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -84,7 +89,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 public class ItemEditorFragment extends Fragment implements BackStackMember {
     private static final int MODE_UNKNOWN = 0x00;
@@ -215,7 +219,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
         navigationHost = UI.findFragmentInParents(this, MainRootFragment.class);
 
-        if (item instanceof Item) {
+        if (item instanceof Item && (!(item instanceof MissingNoItem))) {
             binding.modules.addView(addEditModule(new ItemEditModule()));
         }
         if (item instanceof TextItem) {
@@ -242,11 +246,51 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         if (item instanceof MathGameItem) {
             binding.modules.addView(addEditModule(new MathGameItemEditModule()));
         }
+        if (item instanceof SleepTimeItem) {
+            binding.modules.addView(addEditModule(new SleepTimeItemEditModule()));
+        }
+        if (item instanceof DebugTickCounterItem) {
+            binding.modules.addView(addEditModule(new DebugTickCounterItemEditModule()));
+        }
+        if (item instanceof MissingNoItem missingNoItem) {
+            TextView textView = new TextView(getActivity());
+            StringBuilder text = new StringBuilder();
+            for (Exception exception : missingNoItem.getExceptionList()) {
+                text.append(exception.getMessage()).append("\n\n");
+            }
+            textView.setText(text.toString());
+
+            binding.modules.addView(textView);
+        }
 
         UI.getUIRoot(this).pushActivitySettings(a -> {
             a.setNotificationsVisible(false);
             a.setClockVisible(false);
-            a.setToolbarSettings(ActivitySettings.ToolbarSettings.createBack(EnumsRegistry.INSTANCE.nameResId(ItemsRegistry.REGISTRY.get(item.getClass()).getItemType()), this::cancelRequest));
+            a.setToolbarSettings(ActivitySettings.ToolbarSettings.createBack(EnumsRegistry.INSTANCE.nameResId(ItemsRegistry.REGISTRY.get(item.getClass()).getItemType()), this::cancelRequest)
+                    .setMenu(R.menu.menu_item_editor, menu -> {
+                        menu.findItem(R.id.exportItem)
+                                .setOnMenuItemClickListener(menuItem -> {
+                                    var export = ImportWrapper.createImport(ImportWrapper.Permission.ADD_ITEMS_TO_CURRENT)
+                                            .addItem(item)
+                                            .build();
+                                    try {
+                                        ClipboardUtil.selectText(requireContext(), "OpenToday export-text", export.finalExport());
+                                        Toast.makeText(requireContext(), R.string.export_success, Toast.LENGTH_SHORT).show();
+                                    } catch (Exception e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                    return true;
+                                })
+                                .setVisible(mode == MODE_EDIT);
+
+                        menu.findItem(R.id.copyItemId)
+                                .setOnMenuItemClickListener(menuItem -> {
+                                    ClipboardUtil.selectText(requireContext(), "Item ID", (item.getId() == null ? "null" : item.getId().toString()));
+                                    Toast.makeText(requireContext(), R.string.abc_coped, Toast.LENGTH_SHORT).show();
+                                    return true;
+                                })
+                                .setVisible(mode == MODE_EDIT);
+                    }));
         });
     }
 
@@ -375,6 +419,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     public static void deleteRequest(Context context, Item item, Runnable onDelete) {
         new AlertDialog.Builder(context)
                 .setTitle(R.string.fragment_itemEditor_delete_title)
+                .setMessage(context.getString(R.string.fragment_itemEditor_delete_message, item.getChildrenItemCount()))
                 .setNegativeButton(R.string.fragment_itemEditor_delete_cancel, null)
                 .setPositiveButton(R.string.fragment_itemEditor_delete_apply, ((dialog1, which) -> {
                     item.delete();
@@ -760,7 +805,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.longClickableUrls.setChecked(longTextItem.isLongTextClickableUrls());
 
             // On edit start
-            binding.longText.addTextChangedListener(textWatcher = new MinTextWatcher(){
+            binding.longText.addTextChangedListener(textWatcher = new MinTextWatcher() {
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     if (disableLongTextUpdated) {
@@ -794,7 +839,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         @Override
         public void onResume() {
             if (updateLongTextItemOnResume) {
-                MinTextWatcher.runAtDisabled(binding.longText, textWatcher, () -> binding.longText.setText(((LongTextItem)item).getLongText()));
+                MinTextWatcher.runAtDisabled(binding.longText, textWatcher, () -> binding.longText.setText(((LongTextItem) item).getLongText()));
                 updateLongTextItemOnResume = false;
             }
         }
@@ -1138,5 +1183,96 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         public void setOnStartEditListener(Runnable o) {
             this.onEditStart = o;
         }
+    }
+
+    private static class DebugTickCounterItemEditModule extends BaseEditUiModule {
+        private LinearLayout layout;
+        private CheckBox check;
+        private Runnable edit;
+
+        @Override
+        public View getView() {
+            return layout;
+        }
+
+        @Override
+        public void setup(Item item, Activity activity, View view) {
+            final var debugTickCounter = (DebugTickCounterItem) item;
+
+
+            layout = new LinearLayout(activity);
+            layout.setOrientation(LinearLayout.VERTICAL);
+
+            var t = new TextView(activity);
+            t.setText("DEBUG: rose is enabled");
+            layout.addView(t);
+
+            check = new CheckBox(activity);
+            check.setChecked(debugTickCounter.isRoseEnabled());
+            layout.addView(check);
+            viewClick(check, edit);
+        }
+
+        @Override
+        public void commit(Item item) {
+            final var debugTickCounter = (DebugTickCounterItem) item;
+            debugTickCounter.setRoseEnabled(check.isChecked());
+
+        }
+
+        @Override
+        public void setOnStartEditListener(Runnable o) {
+            this.edit = o;
+        }
+
+    }
+
+    private static class SleepTimeItemEditModule extends BaseEditUiModule {
+        private LinearLayout layout;
+        private TimePicker wakeUpTime;
+        private TimePicker requiredSleepTime;
+        private EditText pattern;
+
+        @Override
+        public View getView() {
+            return layout;
+        }
+
+        @Override
+        public void setup(Item item, Activity activity, View view) {
+            SleepTimeItem sleepTimeItem = (SleepTimeItem) item;
+
+
+            layout = new LinearLayout(activity);
+            layout.setOrientation(LinearLayout.VERTICAL);
+
+
+            this.pattern = new EditText(activity);
+            pattern.setText(sleepTimeItem.getSleepTextPattern());
+            layout.addView(pattern);
+
+            this.wakeUpTime = new TimePicker(activity);
+            wakeUpTime.setMinute(TimeUtil.getHumanValue(sleepTimeItem.getWakeUpTime(), HumanTimeType.MINUTE_OF_HOUR));
+            wakeUpTime.setHour(TimeUtil.getHumanValue(sleepTimeItem.getWakeUpTime(), HumanTimeType.HOUR));
+            layout.addView(wakeUpTime);
+
+            this.requiredSleepTime = new TimePicker(activity);
+            requiredSleepTime.setMinute(TimeUtil.getHumanValue(sleepTimeItem.getRequiredSleepTime(), HumanTimeType.MINUTE_OF_HOUR));
+            requiredSleepTime.setHour(TimeUtil.getHumanValue(sleepTimeItem.getRequiredSleepTime(), HumanTimeType.HOUR));
+            layout.addView(requiredSleepTime);
+        }
+
+        @Override
+        public void commit(Item item) throws Exception {
+            SleepTimeItem sleepTimeItem = (SleepTimeItem) item;
+            sleepTimeItem.setSleepTextPattern(pattern.getText().toString());
+            sleepTimeItem.setWakeUpTime(wakeUpTime.getMinute() * TimeUtil.SECONDS_IN_MINUTE + wakeUpTime.getHour() * TimeUtil.SECONDS_IN_HOUR);
+            sleepTimeItem.setRequiredSleepTime(requiredSleepTime.getMinute() * TimeUtil.SECONDS_IN_MINUTE + requiredSleepTime.getHour() * TimeUtil.SECONDS_IN_HOUR);
+        }
+
+        @Override
+        public void setOnStartEditListener(Runnable o) {
+        }
+
     }
 }

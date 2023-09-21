@@ -8,10 +8,9 @@ var isDev = true
 var beta = false
 var appIdSuffix = "" // EMPTY FOR RELEASES!!!!
 var verBuild = 140
-var verName = "1.2+[patches:[fix-tick] + [tags]"
-var verBranch = "tags" // use "RELEASE" for releases versions
-var verReleaseTime = 1689778441 + 1001 // in seconds
-// =====
+var verName = "1.2+[patches:[fix-tick] + [special_widget] + [fixes-itemstorageviewer] + [item-sleepTime] + [notification-manager] + [tags]"
+var verBranch = "fixes-itemstorageviewer + special_widget + item-sleepTime + notification-manager (currently main)+ tags" // use "RELEASE" for releases versions
+var verReleaseTime = 1689778441 // in seconds
 
 android {
     compileSdk 33

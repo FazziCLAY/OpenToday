@@ -148,4 +148,9 @@ public class Debug202305RandomTab extends Tab implements Tickable, Readonly {
     public boolean isEmpty() {
         return itemsStorage.isEmpty();
     }
+
+    @Override
+    public Item getItemAt(int position) {
+        return itemsStorage.getItemAt(position);
+    }
 }

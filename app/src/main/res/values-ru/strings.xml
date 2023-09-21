@@ -378,4 +378,10 @@
     <string name="transform_not_allowed">Трансформация невозможна</string>
     <string name="transform_selectTypeDialog_message" />
     <string name="transform_selectTypeDialog_title">Выберите тип результата</string>
+    <string name="fragment_itemEditor_delete_message">Удалить этот айтем а также %d его дочерних айтемов?</string>
+    <string name="menu_itemEditor_export">Экспорт</string>
+    <string name="menu_itemEditor_copyItemId">Скопировать Айди</string>
+    <string name="item_sleepTime_description">Автоматический расчёт времени сна</string>
+    <string name="item_sleepTime">Время сна</string>
+    <string name="item_sleepTime_defaultPattern">$(elapsed) осталось до $(wakeUpTime)\nТекущее + $(requiredSleepTime) = $(wakeUpForRequired)</string>
 </resources>
