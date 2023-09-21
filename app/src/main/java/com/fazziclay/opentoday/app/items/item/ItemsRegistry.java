@@ -33,6 +33,7 @@ public class ItemsRegistry {
             new ItemInfo(GroupItem.class,                          "GroupItem",                     ItemType.GROUP,                      GroupItem.CODEC,                      GroupItem::createEmpty,                   (i) -> new GroupItem((GroupItem) i)),
             new ItemInfo(FilterGroupItem.class,                    "FilterGroupItem",               ItemType.FILTER_GROUP,               FilterGroupItem.CODEC,                FilterGroupItem::createEmpty,             (i) -> new FilterGroupItem((FilterGroupItem) i)),
             new ItemInfo(MathGameItem.class,                       "MathGameItem",                  ItemType.MATH_GAME,                  MathGameItem.CODEC,                   MathGameItem::createEmpty,                (i) -> new MathGameItem((MathGameItem) i)),
+            new ItemInfo(MissingNoItem.class,                      "MissingNoItem",                 ItemType.MISSING_NO,                 MissingNoItem.CODEC,                  () -> null,                               (i) -> null).noAvailableToCreate(),
     };
 
     private ItemsRegistry() {}
@@ -82,6 +83,7 @@ public class ItemsRegistry {
         private final AbstractItemCodec codec;
         private final ItemCreateInterface createInterface;
         private final ItemCopyInterface copyInterface;
+        private boolean noAvailableToCreate;
         private FeatureFlag requiredFeatureFlag;
 
         public ItemInfo(@NonNull Class<? extends Item> classType, @NonNull String stringType, @NonNull ItemType itemType, @NonNull AbstractItemCodec codec, @NonNull ItemCreateInterface createInterface, @NonNull ItemCopyInterface copyInterface) {
@@ -132,6 +134,7 @@ public class ItemsRegistry {
         }
 
         public boolean isCompatibility(FeatureFlag[] flags) {
+            if (noAvailableToCreate) return false;
             if (requiredFeatureFlag == null) return true;
             for (FeatureFlag f : flags) {
                 if (f == requiredFeatureFlag) {
@@ -139,6 +142,11 @@ public class ItemsRegistry {
                 }
             }
             return false;
+        }
+
+        public ItemInfo noAvailableToCreate() {
+            this.noAvailableToCreate = true;
+            return this;
         }
     }
 

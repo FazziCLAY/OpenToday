@@ -14,7 +14,8 @@ public enum ItemType {
     CYCLE_LIST(TEXT),
     GROUP(TEXT),
     FILTER_GROUP(TEXT),
-    MATH_GAME(TEXT);
+    MATH_GAME(TEXT),
+    MISSING_NO;
 
     private final List<ItemType> parents = new ArrayList<>();
 

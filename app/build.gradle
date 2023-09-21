@@ -7,7 +7,7 @@ plugins {
 var isDev = true
 var beta = false
 var appIdSuffix = "" // EMPTY FOR RELEASES!!!!
-var verBuild = 139
+var verBuild = 140
 var verName = "1.2+[patches:[fix-tick] + [special_widget]"
 var verBranch = "special_widget" // use "RELEASE" for releases versions
 var verReleaseTime = 1689778441+9999 // in seconds

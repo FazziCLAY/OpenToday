@@ -45,6 +45,7 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.item.LongTextItem;
 import com.fazziclay.opentoday.app.items.item.MathGameItem;
+import com.fazziclay.opentoday.app.items.item.MissingNoItem;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.notification.DayItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
@@ -213,7 +214,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
         navigationHost = UI.findFragmentInParents(this, MainRootFragment.class);
 
-        if (item instanceof Item) {
+        if (item instanceof Item && (!(item instanceof MissingNoItem)) ) {
             binding.modules.addView(addEditModule(new ItemEditModule()));
         }
         if (item instanceof TextItem) {
@@ -242,6 +243,16 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         }
         if (item instanceof DebugTickCounterItem) {
             binding.modules.addView(addEditModule(new DebugTickCounterItemEditModule()));
+        }
+        if (item instanceof MissingNoItem missingNoItem) {
+            TextView textView = new TextView(getActivity());
+            StringBuilder text = new StringBuilder();
+            for (Exception exception : missingNoItem.getExceptionList()) {
+                text.append(exception.getMessage()).append("\n\n");
+            }
+            textView.setText(text.toString());
+
+            binding.modules.addView(textView);
         }
 
         UI.getUIRoot(this).pushActivitySettings(a -> {
