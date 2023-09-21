@@ -57,11 +57,9 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/content"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:paddingTop="1sp"
         android:paddingLeft="3sp"
         android:paddingBottom="2sp"
@@ -73,5 +71,10 @@
             android:layout_height="wrap_content"
             android:text="@string/item_cycleList_empty" />
 
-    </LinearLayout>
+        <FrameLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </FrameLayout>
 </LinearLayout>

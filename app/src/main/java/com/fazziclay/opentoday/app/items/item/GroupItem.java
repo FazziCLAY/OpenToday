@@ -101,6 +101,11 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
     }
 
     @Override
+    public Item getItemAt(int position) {
+        return itemsStorage.getItemAt(position);
+    }
+
+    @Override
     public Item getItemById(UUID itemId) {
         return itemsStorage.getItemById(itemId);
     }
@@ -119,13 +124,11 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
     @Override
     public void addItem(Item item) {
         itemsStorage.addItem(item);
-        visibleChanged();
     }
 
     @Override
     public void addItem(Item item, int position) {
         itemsStorage.addItem(item, position);
-        visibleChanged();
     }
 
     @Override
@@ -160,7 +163,6 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
         @Override
         public void delete(Item item) {
             GroupItem.this.deleteItem(item);
-            visibleChanged();
         }
 
         @Override
@@ -171,7 +173,6 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
         @Override
         public void updateUi(Item item) {
             GroupItem.this.getOnItemsStorageCallbacks().run(((callbackStorage, callback) -> callback.onUpdated(item, getItemPosition(item))));
-            visibleChanged();
         }
 
         @Override

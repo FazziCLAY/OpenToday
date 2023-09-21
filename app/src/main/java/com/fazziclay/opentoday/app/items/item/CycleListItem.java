@@ -172,6 +172,11 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
     }
 
     @Override
+    public Item getItemAt(int position) {
+        return itemsCycleStorage.getItemAt(position);
+    }
+
+    @Override
     public Item getItemById(UUID itemId) {
         return itemsCycleStorage.getItemById(itemId);
     }

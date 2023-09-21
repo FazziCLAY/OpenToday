@@ -129,6 +129,11 @@ public class Logger {
         return App.get().getLogs();
     }
 
+    public static void trace(String tag, String s) {
+        s = s + "\n" + stackTrace(new Throwable("Stacktrace throwable"));
+        d(tag, s);
+    }
+
     private enum Level {
         ERROR("$[-#ff1111]", "$[||]"),
         WARNING("$[-#FFFF00]", "$[||]"),

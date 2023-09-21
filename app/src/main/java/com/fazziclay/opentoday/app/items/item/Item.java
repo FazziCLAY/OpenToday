@@ -185,6 +185,17 @@ public abstract class Item implements Unique, Tickable {
         this.id = controller != null ? controller.generateId(this) : UUID.randomUUID();
     }
 
+    public int getChildrenItemCount() {
+        if (this instanceof ContainerItem containerItem) {
+            int c = 0;
+            for (Item item : containerItem.getAllItems()) {
+                c+= 1 + item.getChildrenItemCount();
+            }
+            return c;
+        }
+        return 0;
+    }
+
     protected void updateStat() {
         stat.tick();
     }
@@ -229,6 +240,9 @@ public abstract class Item implements Unique, Tickable {
     @NotNull
     @Override
     public String toString() {
-        return getClass().getSimpleName()+"@[ID:"+getId()+" HASH:"+hashCode() +" TEXT:'"+getText()+"']";
+        String text = getText().replace("\n", "");
+        int max = Math.min(text.length(), 30);
+        text = text.substring(0, max);
+        return getClass().getSimpleName()+"@[ID:"+getId()+" HASH:"+hashCode() +" TEXT:'"+text+"']";
     }
 }
