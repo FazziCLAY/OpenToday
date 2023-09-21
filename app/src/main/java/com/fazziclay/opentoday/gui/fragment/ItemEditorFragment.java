@@ -17,6 +17,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.TimePicker;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -45,6 +47,7 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.item.LongTextItem;
 import com.fazziclay.opentoday.app.items.item.MathGameItem;
+import com.fazziclay.opentoday.app.items.item.SleepTimeItem;
 import com.fazziclay.opentoday.app.items.item.MissingNoItem;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.notification.DayItemNotification;
@@ -76,6 +79,7 @@ import com.fazziclay.opentoday.util.MinTextWatcher;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 import com.fazziclay.opentoday.util.time.ConvertMode;
+import com.fazziclay.opentoday.util.time.HumanTimeType;
 import com.fazziclay.opentoday.util.time.TimeUtil;
 
 import java.text.SimpleDateFormat;
@@ -241,6 +245,9 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         }
         if (item instanceof MathGameItem) {
             binding.modules.addView(addEditModule(new MathGameItemEditModule()));
+        }
+        if (item instanceof SleepTimeItem) {
+            binding.modules.addView(addEditModule(new SleepTimeItemEditModule()));
         }
         if (item instanceof DebugTickCounterItem) {
             binding.modules.addView(addEditModule(new DebugTickCounterItemEditModule()));
@@ -1088,25 +1095,26 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             this.onEditStart = o;
         }
     }
-
+  
     private static class DebugTickCounterItemEditModule extends BaseEditUiModule {
         private LinearLayout layout;
         private CheckBox check;
         private Runnable edit;
-
-        @Override
+      
+    @Override
         public View getView() {
             return layout;
         }
 
         @Override
         public void setup(Item item, Activity activity, View view) {
-            final var debugTickCounter = (DebugTickCounterItem) item;
-
-            layout = new LinearLayout(activity);
+           final var debugTickCounter = (DebugTickCounterItem) item;
+          
+          
+          layout = new LinearLayout(activity);
             layout.setOrientation(LinearLayout.VERTICAL);
-
-            var t = new TextView(activity);
+          
+          var t = new TextView(activity);
             t.setText("DEBUG: rose is enabled");
             layout.addView(t);
 
@@ -1120,11 +1128,60 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         public void commit(Item item) {
             final var debugTickCounter = (DebugTickCounterItem) item;
             debugTickCounter.setRoseEnabled(check.isChecked());
+          
+        }
+        @Override
+        public void setOnStartEditListener(Runnable o) {
+          this.edit = o;
+        }
+          
+
+
+    private class SleepTimeItemEditModule extends BaseEditUiModule {
+        private LinearLayout layout;
+        private TimePicker wakeUpTime;
+        private TimePicker requiredSleepTime;
+        private EditText pattern;
+
+        @Override
+        public View getView() {
+            return layout;
+        }
+
+        @Override
+        public void setup(Item item, Activity activity, View view) {
+            SleepTimeItem sleepTimeItem = (SleepTimeItem) item;
+
+
+            layout = new LinearLayout(activity);
+            layout.setOrientation(LinearLayout.VERTICAL);
+
+
+            this.pattern = new EditText(activity);
+            pattern.setText(sleepTimeItem.getSleepTextPattern());
+            layout.addView(pattern);
+
+            this.wakeUpTime = new TimePicker(activity);
+            wakeUpTime.setMinute(TimeUtil.getHumanValue(sleepTimeItem.getWakeUpTime(), HumanTimeType.MINUTE_OF_HOUR));
+            wakeUpTime.setHour(TimeUtil.getHumanValue(sleepTimeItem.getWakeUpTime(), HumanTimeType.HOUR));
+            layout.addView(wakeUpTime);
+
+            this.requiredSleepTime = new TimePicker(activity);
+            requiredSleepTime.setMinute(TimeUtil.getHumanValue(sleepTimeItem.getRequiredSleepTime(), HumanTimeType.MINUTE_OF_HOUR));
+            requiredSleepTime.setHour(TimeUtil.getHumanValue(sleepTimeItem.getRequiredSleepTime(), HumanTimeType.HOUR));
+            layout.addView(requiredSleepTime);
+        }
+
+        @Override
+        public void commit(Item item) throws Exception {
+            SleepTimeItem sleepTimeItem = (SleepTimeItem) item;
+            sleepTimeItem.setSleepTextPattern(pattern.getText().toString());
+            sleepTimeItem.setWakeUpTime(wakeUpTime.getMinute() * TimeUtil.SECONDS_IN_MINUTE + wakeUpTime.getHour() * TimeUtil.SECONDS_IN_HOUR);
+            sleepTimeItem.setRequiredSleepTime(requiredSleepTime.getMinute() * TimeUtil.SECONDS_IN_MINUTE + requiredSleepTime.getHour() * TimeUtil.SECONDS_IN_HOUR);
         }
 
         @Override
         public void setOnStartEditListener(Runnable o) {
-            this.edit = o;
         }
     }
 }
