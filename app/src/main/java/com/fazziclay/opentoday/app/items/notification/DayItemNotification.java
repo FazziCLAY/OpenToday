@@ -1,6 +1,7 @@
 package com.fazziclay.opentoday.app.items.notification;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -12,7 +13,9 @@ import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.TickTarget;
+import com.fazziclay.opentoday.gui.activity.AlarmActivity;
 import com.fazziclay.opentoday.util.ColorUtil;
+import com.fazziclay.opentoday.util.RandomUtil;
 
 import java.util.Calendar;
 
@@ -30,7 +33,10 @@ public class DayItemNotification implements ItemNotification {
                     .put("notifyTextFromItemText", d.notifyTextFromItemText)
                     .put("latestDayOfYear", d.latestDayOfYear)
                     .put("notifySubText", d.notifySubText)
-                    .put("time", d.time);
+                    .put("time", d.time)
+                    .put("isPreRenderPreviewMode", d.isPreRenderPreviewMode)
+                    .put("sound", d.sound)
+                    .put("fullScreen", d.fullScreen);
 
                     //- (WARNING) "isVibrate" & "vibration" key removed since 1.0.4 version. Don't forget handle maybe-oldest-values in DataFixer if re-add this keys.
                     //- .put("isVibrate", false)
@@ -48,6 +54,9 @@ public class DayItemNotification implements ItemNotification {
             o.notifySubText = cherry.optString("notifySubText", "");
             o.latestDayOfYear = cherry.optInt("latestDayOfYear", 0);
             o.time = cherry.optInt("time", 0);
+            o.isPreRenderPreviewMode = cherry.optBoolean("isPreRenderPreviewMode", true);
+            o.sound = cherry.optBoolean("sound", true);
+            o.fullScreen = cherry.optBoolean("fullScreen", true);
             return o;
         }
     }
@@ -60,6 +69,10 @@ public class DayItemNotification implements ItemNotification {
     private String notifySubText;
     private int latestDayOfYear;
     private int time;
+
+    private boolean fullScreen = true;
+    private boolean isPreRenderPreviewMode = true;
+    private boolean sound = true;
 
     public DayItemNotification() {
 
@@ -113,6 +126,11 @@ public class DayItemNotification implements ItemNotification {
                 .setContentText(nText)
                 .setSubText(notifySubText)
                 .setPriority(NotificationCompat.PRIORITY_MAX);
+
+        if (fullScreen) {
+            PendingIntent pending = PendingIntent.getActivity(context, RandomUtil.nextInt(), AlarmActivity.createIntent(context, item.getId(), isPreRenderPreviewMode, nTitle, sound), PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+            builder.setFullScreenIntent(pending, true);
+        }
 
         context.getSystemService(NotificationManager.class).notify(this.notificationId, builder.build());
     }
@@ -179,5 +197,29 @@ public class DayItemNotification implements ItemNotification {
 
     public void setNotifyTextFromItemText(boolean notifyTextFromItemText) {
         this.notifyTextFromItemText = notifyTextFromItemText;
+    }
+
+    public boolean isPreRenderPreviewMode() {
+        return isPreRenderPreviewMode;
+    }
+
+    public void setPreRenderPreviewMode(boolean preRenderPreviewMode) {
+        isPreRenderPreviewMode = preRenderPreviewMode;
+    }
+
+    public boolean isSound() {
+        return sound;
+    }
+
+    public void setSound(boolean sound) {
+        this.sound = sound;
+    }
+
+    public boolean isFullScreen() {
+        return fullScreen;
+    }
+
+    public void setFullScreen(boolean fullScreen) {
+        this.fullScreen = fullScreen;
     }
 }

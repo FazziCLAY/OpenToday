@@ -1,0 +1,184 @@
+package com.fazziclay.opentoday.gui.activity;
+
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.Settings;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.SettingsManager;
+import com.fazziclay.opentoday.app.items.ItemsRoot;
+import com.fazziclay.opentoday.app.items.item.CycleListItem;
+import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
+import com.fazziclay.opentoday.app.items.item.GroupItem;
+import com.fazziclay.opentoday.app.items.item.Item;
+import com.fazziclay.opentoday.databinding.ActivityAlarmBinding;
+import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
+import com.fazziclay.opentoday.gui.item.HolderDestroyer;
+import com.fazziclay.opentoday.gui.item.ItemViewGenerator;
+import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
+import com.fazziclay.opentoday.gui.item.ItemsStorageDrawerBehavior;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
+import java.util.UUID;
+
+public class AlarmActivity extends AppCompatActivity {
+
+    private App app;
+    private ActivityAlarmBinding binding;
+    private MediaPlayer mediaPlayer;
+    private final HolderDestroyer holderDestroy = new HolderDestroyer();
+
+    @NotNull
+    public static Intent createIntent(@NotNull Context context, @Nullable UUID previewItem, boolean isPreviewMode, @NotNull String title, boolean sound) {
+        return new Intent(context, AlarmActivity.class)
+                .putExtra("previewItemId", Objects.toString(previewItem, null))
+                .putExtra("previewItemIsPreviewMode", isPreviewMode)
+                .putExtra("title", title)
+                .putExtra("sound", sound);
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setTurnScreenOn(true);
+            setShowWhenLocked(true);
+        }
+
+        String previewItemStr = getIntent().getStringExtra("previewItemId");
+        boolean previewMode = getIntent().getBooleanExtra("previewItemIsPreviewMode", true);
+        String title = getIntent().getStringExtra("title");
+        boolean sound = getIntent().getBooleanExtra("sound", true);
+
+        app = App.get(this);
+        binding = ActivityAlarmBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        binding.title.setText(title);
+        binding.okButton.setOnClickListener(view -> {
+            finish();
+        });
+
+        if (previewItemStr != null) {
+            UUID id = UUID.fromString(previewItemStr);
+            setupPreviewItem(id, previewMode);
+        }
+
+        if (sound) {
+            mediaPlayer = MediaPlayer.create(this, Settings.System.DEFAULT_ALARM_ALERT_URI);
+            mediaPlayer.setLooping(true);
+            mediaPlayer.start();
+        }
+
+        new Handler(Looper.getMainLooper()).postDelayed(this::finish, 1000*60*2);
+    }
+
+    private void setupPreviewItem(UUID id, boolean previewMode) {
+        ItemsRoot itemsRoot = app.getItemsRoot();
+        Item item = itemsRoot.getItemById(id);
+        ItemViewGenerator itemViewGenerator = new ItemViewGenerator(this, previewMode);
+        ItemViewGeneratorBehavior behavior = new ItemViewGeneratorBehavior() {
+            @Override
+            public boolean isConfirmFastChanges() {
+                return false;
+            }
+
+            @Override
+            public void setConfirmFastChanges(boolean b) {
+
+            }
+
+            @Override
+            public Drawable getForeground(Item item) {
+                return null;
+            }
+
+            @Override
+            public void onGroupEdit(GroupItem groupItem) {
+
+            }
+
+            @Override
+            public void onCycleListEdit(CycleListItem cycleListItem) {
+
+            }
+
+            @Override
+            public void onFilterGroupEdit(FilterGroupItem filterGroupItem) {
+
+            }
+
+            @Override
+            public ItemsStorageDrawerBehavior getItemsStorageDrawerBehavior(Item item) {
+                return new ItemsStorageDrawerBehavior() {
+                    @Override
+                    public SettingsManager.ItemAction getItemOnClickAction() {
+                        return SettingsManager.ItemAction.OPEN_EDITOR;
+                    }
+
+                    @Override
+                    public boolean isScrollToAddedItem() {
+                        return false;
+                    }
+
+                    @Override
+                    public SettingsManager.ItemAction getItemOnLeftAction() {
+                        return SettingsManager.ItemAction.OPEN_EDITOR;
+                    }
+
+                    @Override
+                    public void onItemOpenEditor(Item item) {
+
+                    }
+
+                    @Override
+                    public void onItemOpenTextEditor(Item item) {
+
+                    }
+
+                    @Override
+                    public boolean ignoreFilterGroup() {
+                        return false;
+                    }
+
+                    @Override
+                    public void onItemDeleteRequest(Item item) {
+
+                    }
+                };
+            }
+
+            @Override
+            public boolean isRenderMinimized(Item item) {
+                return item.isMinimize();
+            }
+        };
+        ItemInterface onItemClick = new ItemInterface() {
+            @Override
+            public void run(@Nullable Item item) {
+                // do nothing
+            }
+        };
+        binding.preview.addView(itemViewGenerator.generate(item, binding.preview, behavior, holderDestroy, onItemClick));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+        }
+        holderDestroy.destroy();
+    }
+}
