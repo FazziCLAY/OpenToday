@@ -53,7 +53,10 @@ public class ItemCodecUtil {
         /*IETool from itemClass*/
         AbstractItemCodec codec = ItemsRegistry.REGISTRY.get(item.getClass()).getCodec();
         /*Export from IETool*/Cherry cherry = codec.exportItem(item);
-        /*Put itemType to json*/cherry.put(KEY_ITEMTYPE, ItemsRegistry.REGISTRY.get(item.getClass()).getStringType());
+        /*Put itemType to json*/
+        if (!(item instanceof MissingNoItem)) {
+            cherry.put(KEY_ITEMTYPE, ItemsRegistry.REGISTRY.get(item.getClass()).getStringType());
+        }
         return cherry;
     }
 }
