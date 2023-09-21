@@ -392,4 +392,6 @@
     <string name="item_sleepTime_description">Automatically calc sleep time</string>
     <string name="item_sleepTime">Sleep time</string>
     <string name="item_sleepTime_defaultPattern">$(elapsed) elapsed to $(wakeUpTime)\nCurrent + $(requiredSleepTime) = $(wakeUpForRequired)</string>
+    <string name="item_missingNo">missingno (error item)</string>
+    <string name="item_missingNo_description">This item is unknown item....</string>
 </resources>
