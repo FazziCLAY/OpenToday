@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -94,7 +95,13 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
 
         UUID id = UUID.fromString(getArguments().getString(KEY_ID));
         int editableType = getArguments().getInt(KEY_EDITABLE_TYPE);
-        item = (TextItem) itemsRoot.getItemById(id);
+        var _item = itemsRoot.getItemById(id);
+        if (!(_item instanceof TextItem)) {
+            Toast.makeText(requireContext(), R.string.abc_unknown, Toast.LENGTH_SHORT).show();
+            UI.rootBack(this);
+            return;
+        }
+        item = (TextItem) _item;
         if (item == null) throw new RuntimeException("Item not found in ItemsRoot by provided UUID");
         if (editableType == EDITABLE_TYPE_AUTO || editableType == EDITABLE_TYPE_LONG_TEXT) {
             isLongText = true;
@@ -188,10 +195,12 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
     }
 
     private boolean isUnsavedChanges() {
+        if (item == null) return false;
         return !getEditableText().equals(binding.editText.getText().toString());
     }
 
     private String getEditableText() {
+        if (item == null) return "";
         if (isLongText && item instanceof LongTextItem l) {
             return l.getLongText();
         }
