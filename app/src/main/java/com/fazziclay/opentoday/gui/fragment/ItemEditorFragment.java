@@ -141,8 +141,6 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     }
 
 
-
-
     private FragmentItemEditorBinding binding;
     private App app;
     private ItemsRoot itemsRoot;
@@ -194,7 +192,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         colorHistoryManager = app.getColorHistoryManager();
         selectionManager = app.getSelectionManager();
         mode = getArguments().getInt(KEY_MODE, MODE_UNKNOWN);
-        
+
         if (mode == MODE_EDIT) {
             if (getArguments().containsKey(KEY_EDIT_TAB_ID)) {
                 Tab tab = itemsRoot.getTabById(getArgTabId());
@@ -208,7 +206,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             addItemPosition = getArgAddItemPosition();
             ItemsRegistry.ItemInfo itemInfo = ItemsRegistry.REGISTRY.get(getArgItemType());
             item = itemInfo.create();
-            
+
         } else {
             throw new RuntimeException("Unknown mode: " + mode);
         }
@@ -219,7 +217,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
         navigationHost = UI.findFragmentInParents(this, MainRootFragment.class);
 
-        if (item instanceof Item && (!(item instanceof MissingNoItem)) ) {
+        if (item instanceof Item && (!(item instanceof MissingNoItem))) {
             binding.modules.addView(addEditModule(new ItemEditModule()));
         }
         if (item instanceof TextItem) {
@@ -336,6 +334,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     public String getArgItemType() {
         return getArguments().getString(KEY_CREATE_ITEM_TYPE);
     }
+
     public int getArgAddItemPosition() {
         return getArguments().getInt(KEY_ADD_ITEM_POSITION);
     }
@@ -450,11 +449,18 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
     public abstract static class BaseEditUiModule {
         public abstract View getView();
+
         public abstract void setup(Item item, Activity activity, View view);
+
         public abstract void commit(Item item) throws Exception;
+
         public abstract void setOnStartEditListener(Runnable o);
-        public void notifyCreateMode() {}
-        public void onResume() {}
+
+        public void notifyCreateMode() {
+        }
+
+        public void onResume() {
+        }
     }
 
     public class ItemEditModule extends BaseEditUiModule {
@@ -716,7 +722,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.longClickableUrls.setChecked(longTextItem.isLongTextClickableUrls());
 
             // On edit start
-            binding.longText.addTextChangedListener(textWatcher = new MinTextWatcher(){
+            binding.longText.addTextChangedListener(textWatcher = new MinTextWatcher() {
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     if (disableLongTextUpdated) {
@@ -750,7 +756,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         @Override
         public void onResume() {
             if (updateLongTextItemOnResume) {
-                MinTextWatcher.runAtDisabled(binding.longText, textWatcher, () -> binding.longText.setText(((LongTextItem)item).getLongText()));
+                MinTextWatcher.runAtDisabled(binding.longText, textWatcher, () -> binding.longText.setText(((LongTextItem) item).getLongText()));
                 updateLongTextItemOnResume = false;
             }
         }
@@ -884,7 +890,8 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
                 }
 
                 @Override
-                public void onNothingSelected(AdapterView<?> parent) {}
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
             });
         }
 
@@ -956,10 +963,12 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         }
 
         @Override
-        public void commit(Item item) {}
+        public void commit(Item item) {
+        }
 
         @Override
-        public void setOnStartEditListener(Runnable o) { }
+        public void setOnStartEditListener(Runnable o) {
+        }
     }
 
     private static class FilterGroupItemEditModule extends BaseEditUiModule {
@@ -983,6 +992,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.tickBehavior.setSelection(simpleSpinnerAdapter.getValuePosition(filterGroupItem.getTickBehavior()));
             binding.tickBehavior.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 int counter = 0;
+
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                     if (counter > 0) {
@@ -992,7 +1002,8 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
                 }
 
                 @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {}
+                public void onNothingSelected(AdapterView<?> adapterView) {
+                }
             });
         }
 
@@ -1044,10 +1055,11 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
         // 4 EditText call this function at the same time when onStateRestored
         int boundsDisableCounter = 0;
+
         private void boundsChanged() {
             if (disableMathGameBoundsEdits) {
                 boundsDisableCounter++;
-                if (boundsDisableCounter >= 4)disableMathGameBoundsEdits = false;
+                if (boundsDisableCounter >= 4) disableMathGameBoundsEdits = false;
                 return;
             }
             boundsDisableCounter = 0;
@@ -1077,16 +1089,20 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             operationChange(MathGameItem.Operation.DIVIDE, binding.primitiveDivide.isChecked());
             try {
                 this.item.setPrimitiveNumber1Min(Integer.parseInt(binding.n1min.getText().toString()));
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
             try {
                 this.item.setPrimitiveNumber1Max(Integer.parseInt(binding.n1max.getText().toString()));
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
             try {
                 this.item.setPrimitiveNumber2Min(Integer.parseInt(binding.n2min.getText().toString()));
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
             try {
                 this.item.setPrimitiveNumber2Max(Integer.parseInt(binding.n2max.getText().toString()));
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
             if (mode == MODE_EDIT) this.item.generateQuest();
         }
 
@@ -1095,26 +1111,26 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             this.onEditStart = o;
         }
     }
-  
+
     private static class DebugTickCounterItemEditModule extends BaseEditUiModule {
         private LinearLayout layout;
         private CheckBox check;
         private Runnable edit;
-      
-    @Override
+
+        @Override
         public View getView() {
             return layout;
         }
 
         @Override
         public void setup(Item item, Activity activity, View view) {
-           final var debugTickCounter = (DebugTickCounterItem) item;
-          
-          
-          layout = new LinearLayout(activity);
+            final var debugTickCounter = (DebugTickCounterItem) item;
+
+
+            layout = new LinearLayout(activity);
             layout.setOrientation(LinearLayout.VERTICAL);
-          
-          var t = new TextView(activity);
+
+            var t = new TextView(activity);
             t.setText("DEBUG: rose is enabled");
             layout.addView(t);
 
@@ -1128,16 +1144,17 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         public void commit(Item item) {
             final var debugTickCounter = (DebugTickCounterItem) item;
             debugTickCounter.setRoseEnabled(check.isChecked());
-          
+
         }
+
         @Override
         public void setOnStartEditListener(Runnable o) {
-          this.edit = o;
+            this.edit = o;
         }
-          
 
+    }
 
-    private class SleepTimeItemEditModule extends BaseEditUiModule {
+    private static class SleepTimeItemEditModule extends BaseEditUiModule {
         private LinearLayout layout;
         private TimePicker wakeUpTime;
         private TimePicker requiredSleepTime;
@@ -1183,5 +1200,6 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         @Override
         public void setOnStartEditListener(Runnable o) {
         }
+
     }
 }
