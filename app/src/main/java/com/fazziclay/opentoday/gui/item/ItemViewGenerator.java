@@ -38,6 +38,7 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemUtil;
 import com.fazziclay.opentoday.app.items.item.LongTextItem;
 import com.fazziclay.opentoday.app.items.item.MathGameItem;
+import com.fazziclay.opentoday.app.items.item.MissingNoItem;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.databinding.ItemCheckboxBinding;
 import com.fazziclay.opentoday.databinding.ItemCounterBinding;
@@ -117,6 +118,9 @@ public class ItemViewGenerator {
         } else if (type == MathGameItem.class) {
             resultView = generateMathGameItemView((MathGameItem) item, parent, behavior, previewMode, holderDestroyer);
 
+        } else if (type == MissingNoItem.class) {
+            resultView = generateMissingNoItem(parent);
+
         } else {
             RuntimeException exception = new RuntimeException("Unexpected item type '" + type.getName() + "'! check ItemViewGenerator for fix this.");
             Logger.e(TAG, "Unexpected item type to generate view. (wait 3000ms in DebugUtil.sleep())", exception);
@@ -141,6 +145,14 @@ public class ItemViewGenerator {
         applyForeground(resultView, item, behavior);
         resultView.setOnClickListener(view -> onItemClick.run(item));
         return resultView;
+    }
+  
+  private View generateMissingNoItem(ViewGroup parent) {
+        ItemTextBinding binding = ItemTextBinding.inflate(layoutInflater, parent, false);
+        binding.title.setText("missingno (error item...)");
+        binding.title.setTextColor(Color.RED);
+        binding.getRoot().setBackground(null);
+        return binding.getRoot();
     }
 
     private void applyForeground(View view, Item item, ItemViewGeneratorBehavior behavior) {
