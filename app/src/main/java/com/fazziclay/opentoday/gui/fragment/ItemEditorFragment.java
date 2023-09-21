@@ -54,6 +54,7 @@ import com.fazziclay.opentoday.app.items.notification.DayItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.Tab;
+import com.fazziclay.opentoday.app.items.tag.ItemTag;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleCheckboxBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleCounterBinding;
@@ -67,6 +68,7 @@ import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleTextBinding;
 import com.fazziclay.opentoday.gui.ActivitySettings;
 import com.fazziclay.opentoday.gui.ColorPicker;
 import com.fazziclay.opentoday.gui.EnumsRegistry;
+import com.fazziclay.opentoday.gui.ItemTagGui;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.dialog.DialogItemNotificationsEditor;
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
@@ -81,6 +83,7 @@ import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 import com.fazziclay.opentoday.util.time.ConvertMode;
 import com.fazziclay.opentoday.util.time.HumanTimeType;
 import com.fazziclay.opentoday.util.time.TimeUtil;
+import com.google.android.material.chip.Chip;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -89,6 +92,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class ItemEditorFragment extends Fragment implements BackStackMember {
     private static final int MODE_UNKNOWN = 0x00;
@@ -505,25 +509,6 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
                                 onEditStart.run();
                             }));
             binding.minimize.setChecked(item.isMinimize());
-            viewVisible(binding.copyItemId, mode == MODE_EDIT, View.GONE);
-            viewClick(binding.copyItemId, () -> {
-                ClipboardManager clipboardManager = activity.getSystemService(ClipboardManager.class);
-                clipboardManager.setPrimaryClip(ClipData.newPlainText("Item id", item.getId() == null ? "null" : item.getId().toString()));
-            });
-
-            viewVisible(binding.exportItem, mode == MODE_EDIT, View.GONE);
-            viewClick(binding.exportItem, () -> {
-                ImportWrapper w = ImportWrapper.createImport(ImportWrapper.Permission.ADD_ITEMS_TO_CURRENT)
-                        .addItem(item)
-                        .build();
-                ClipboardManager clipboardManager = activity.getSystemService(ClipboardManager.class);
-                try {
-                    clipboardManager.setPrimaryClip(ClipData.newPlainText("OpenToday export", w.finalExport()));
-                    Toast.makeText(requireContext(), R.string.export_success, Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            });
 
             // On edit start
             binding.viewMinHeight.addTextChangedListener(new MinTextWatcher() {
