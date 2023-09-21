@@ -386,4 +386,6 @@
     <string name="transform_not_allowed">Transformation is impossible</string>
     <string name="transform_selectTypeDialog_message" />
     <string name="transform_selectTypeDialog_title">Select result type</string>
+    <string name="item_missingNo">missingno (error item)</string>
+    <string name="item_missingNo_description">This item is unknown item....</string>
 </resources>

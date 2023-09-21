@@ -4,13 +4,13 @@ plugins {
 }
 
 // =====
-var isDev = false
+var isDev = true
 var beta = false
 var appIdSuffix = "" // EMPTY FOR RELEASES!!!!
-var verBuild = 136
-var verName = "1.2+[patches:[fix-tick]"
-var verBranch = "RELEASE" // use "RELEASE" for releases versions
-var verReleaseTime = 1689778441 // in seconds
+var verBuild = 140
+var verName = "1.2+[patches:[fix-tick] + [special_widget]"
+var verBranch = "special_widget" // use "RELEASE" for releases versions
+var verReleaseTime = 1689778441+9999 // in seconds
 // =====
 
 android {
@@ -60,6 +60,7 @@ dependencies {
     implementation files("./libs/OpenTodayTelemetry-v2-v11.jar")
     implementation files("./libs/NeoSocket-1.0.jar")
     implementation files("./libs/JavaNeoUtil-1.1.jar")
+    implementation files("./libs/WarningRose-v0.4.1.jar")
     implementation 'com.github.martin-stone:hsv-alpha-color-picker-android:3.0.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
