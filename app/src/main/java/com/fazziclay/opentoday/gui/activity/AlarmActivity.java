@@ -1,8 +1,11 @@
 package com.fazziclay.opentoday.gui.activity;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +32,7 @@ import com.fazziclay.opentoday.gui.item.ItemsStorageDrawerBehavior;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -36,16 +40,18 @@ public class AlarmActivity extends AppCompatActivity {
 
     private App app;
     private ActivityAlarmBinding binding;
+    private int cancelNotifyId;
     private MediaPlayer mediaPlayer;
     private final HolderDestroyer holderDestroy = new HolderDestroyer();
 
     @NotNull
-    public static Intent createIntent(@NotNull Context context, @Nullable UUID previewItem, boolean isPreviewMode, @NotNull String title, boolean sound) {
+    public static Intent createIntent(@NotNull Context context, @Nullable UUID previewItem, boolean isPreviewMode, @NotNull String title, boolean sound, int cancelNotifyId) {
         return new Intent(context, AlarmActivity.class)
                 .putExtra("previewItemId", Objects.toString(previewItem, null))
                 .putExtra("previewItemIsPreviewMode", isPreviewMode)
                 .putExtra("title", title)
-                .putExtra("sound", sound);
+                .putExtra("sound", sound)
+                .putExtra("cancelNotifyId", cancelNotifyId);
     }
 
     @Override
@@ -61,12 +67,15 @@ public class AlarmActivity extends AppCompatActivity {
         String title = getIntent().getStringExtra("title");
         boolean sound = getIntent().getBooleanExtra("sound", true);
 
+        cancelNotifyId = getIntent().getIntExtra("cancelNotifyId", 0);
+
         app = App.get(this);
         binding = ActivityAlarmBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         binding.title.setText(title);
         binding.okButton.setOnClickListener(view -> {
+            getSystemService(NotificationManager.class).cancel(cancelNotifyId);
             finish();
         });
 
@@ -76,9 +85,21 @@ public class AlarmActivity extends AppCompatActivity {
         }
 
         if (sound) {
-            mediaPlayer = MediaPlayer.create(this, Settings.System.DEFAULT_ALARM_ALERT_URI);
-            mediaPlayer.setLooping(true);
-            mediaPlayer.start();
+            setVolumeControlStream(AudioManager.STREAM_ALARM);
+            try {
+                mediaPlayer = new MediaPlayer();
+                mediaPlayer.setDataSource(this, Settings.System.DEFAULT_ALARM_ALERT_URI);
+                mediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_ALARM)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build());
+                mediaPlayer.setVolume(1.0f, 1.0f);
+                mediaPlayer.setLooping(true);
+                mediaPlayer.prepare();
+                mediaPlayer.start();
+            } catch (IOException e) {
+                App.exception(this, e); // no crash
+            }
         }
 
         new Handler(Looper.getMainLooper()).postDelayed(this::finish, 1000*60*2);
@@ -180,5 +201,21 @@ public class AlarmActivity extends AppCompatActivity {
             mediaPlayer.stop();
         }
         holderDestroy.destroy();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mediaPlayer != null) {
+            mediaPlayer.pause();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mediaPlayer != null) {
+            mediaPlayer.start();
+        }
     }
 }
