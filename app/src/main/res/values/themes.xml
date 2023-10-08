@@ -49,7 +49,7 @@
         <item name="item_filterGroup_backgroundColor">#803D3D3D</item>
         <item name="item_filterGroup_textColor">#2B2B2B</item>
 
-        <item name="item_selectionForegroundColor">#66ff7722</item>
+        <item name="item_selectionForegroundColor">#B2EA6512</item>
         <item name="toolbar_background">#8C000000</item>
         <item name="itemFilterState_true">#19FF00</item>
         <item name="itemFilterState_false">#FF0000</item>
