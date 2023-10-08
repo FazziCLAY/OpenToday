@@ -25,6 +25,7 @@ import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.annotation.Setter;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
+import com.fazziclay.opentoday.util.callback.Status;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -211,6 +212,15 @@ public abstract class Item implements Unique, Tickable {
 
     public CallbackStorage<ItemCallback> getItemCallbacks() {
         return itemCallbacks;
+    }
+
+    public void dispatchClick() {
+        itemCallbacks.run(new CallbackStorage.RunCallbackInterface<ItemCallback>() {
+            @Override
+            public Status run(CallbackStorage<ItemCallback> callbackStorage, ItemCallback callback) {
+                return callback.click(Item.this);
+            }
+        });
     }
 
     // Getters & Setters
