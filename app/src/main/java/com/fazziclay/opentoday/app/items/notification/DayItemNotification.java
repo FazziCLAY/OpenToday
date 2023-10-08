@@ -128,7 +128,7 @@ public class DayItemNotification implements ItemNotification {
                 .setPriority(NotificationCompat.PRIORITY_MAX);
 
         if (fullScreen) {
-            PendingIntent pending = PendingIntent.getActivity(context, RandomUtil.nextInt(), AlarmActivity.createIntent(context, item.getId(), isPreRenderPreviewMode, nTitle, sound, this.notificationId), PendingIntent.FLAG_IMMUTABLE);
+            PendingIntent pending = PendingIntent.getActivity(context, RandomUtil.nextInt(), AlarmActivity.createIntent(context, item.getId(), isPreRenderPreviewMode, nTitle, sound, this.notificationId), PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_CANCEL_CURRENT);
             builder.setFullScreenIntent(pending, true);
         }
         builder.setUsesChronometer(true);
