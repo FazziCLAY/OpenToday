@@ -119,6 +119,7 @@ public class App extends Application {
     private final OptionalField<TickThread> tickThread = new OptionalField<>(this::preCheckTickThread, TickThread::requestTerminate, this::validateTickThread);
     private final OptionalField<Translation> translation = new OptionalField<>(() -> new TranslationImpl(this::getString));
     private final OptionalField<CallbackStorage<ImportantDebugCallback>> importantDebugCallbacks = new OptionalField<>(CallbackStorage::new);
+    private final OptionalField<BeautifyColorManager> beautifyColorManager = new OptionalField<>(() -> new BeautifyColorManager(this));
     private final List<FeatureFlag> featureFlags = new ArrayList<>(App.DEBUG ? Arrays.asList(
             FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
             //FeatureFlag.ALWAYS_SHOW_SAVE_STATUS,
@@ -202,6 +203,7 @@ public class App extends Application {
             Debug.free();
             TimeUtil.free();
             RandomUtil.free();
+            beautifyColorManager.free();
         }
     }
 
@@ -492,6 +494,10 @@ public class App extends Application {
     }
     public ItemsRoot getItemsRoot() {
         return getTabsManager();
+    }
+
+    public BeautifyColorManager getBeautifyColorManager() {
+        return beautifyColorManager.get();
     }
 
     public StringBuilder getLogs() {
