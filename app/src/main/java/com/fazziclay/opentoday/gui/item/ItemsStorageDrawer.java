@@ -2,6 +2,7 @@ package com.fazziclay.opentoday.gui.item;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.os.Handler;
 import android.os.Looper;
 import android.view.Gravity;
 import android.view.View;
@@ -9,7 +10,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,7 +26,6 @@ import com.fazziclay.opentoday.app.items.item.Transform;
 import com.fazziclay.opentoday.app.items.selection.Selection;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType;
-import com.fazziclay.opentoday.gui.fragment.ItemEditorFragment;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
@@ -55,6 +54,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
     private final ItemInterface itemOnClick;
     private final boolean previewMode;
     private ItemViewWrapper itemViewWrapper;
+    private Handler handler;
 
     // Private (available only with builder)
     private ItemsStorageDrawer(@NonNull Activity activity,
@@ -84,6 +84,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
         this.itemViewWrapper = itemViewWrapper;
         this.itemViewGeneratorBehavior = itemViewGeneratorBehavior;
         this.itemViewGenerator = new ItemViewGenerator(this.activity, previewMode);
+        this.handler = new Handler(Looper.getMainLooper());
     }
 
 
@@ -104,6 +105,15 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
         this.selectionManager.getOnSelectionUpdated().removeCallback(selectionCallback);
     }
 
+    @Override
+    protected void runOnUiThread(Runnable r) {
+        if (Thread.currentThread() == originalThread) {
+            r.run();
+        } else {
+            handler.post(r);
+        }
+    }
+
 
     protected void onItemClicked(Item item) {
         if (this.itemOnClick != null) {
@@ -121,14 +131,6 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
         }
     }
 
-    private void runOnUiThread(Runnable r) {
-        if (Thread.currentThread() == originalThread) {
-            r.run();
-        } else {
-            activity.runOnUiThread(r);
-        }
-    }
-
     public void setItemViewWrapper(ItemViewWrapper itemViewWrapper) {
         this.itemViewWrapper = itemViewWrapper;
     }
@@ -138,7 +140,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
         @Override
         public Status onAdded(Item item, int pos) {
             runOnUiThread(() -> callWithNonNullAdapter((adapter) -> {
-                adapter.notifyItemInserted(pos);
+                adapter.notifyItemRangeInserted(adapter.getItemCount(), pos);
                 if (behavior.isScrollToAddedItem()) {
                     smoothScrollToPosition(pos);
                 }

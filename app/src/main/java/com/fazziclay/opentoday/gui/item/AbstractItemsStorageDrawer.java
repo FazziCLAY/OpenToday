@@ -1,7 +1,6 @@
 package com.fazziclay.opentoday.gui.item;
 
 import android.content.Context;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -59,6 +58,8 @@ public abstract class AbstractItemsStorageDrawer {
         view.setAdapter(null);
     }
 
+    protected abstract void runOnUiThread(Runnable r);
+
     protected abstract int getItemCount();
 
     protected abstract void onBindItem(@NotNull ItemViewHolder holder, int position);
@@ -81,14 +82,14 @@ public abstract class AbstractItemsStorageDrawer {
     }
 
     public void roughUpdateItemAt(int position) {
-        callWithNonNullAdapter(drawerAdapter -> drawerAdapter.notifyItemChanged(position));
+        runOnUiThread(() -> callWithNonNullAdapter(drawerAdapter -> drawerAdapter.notifyItemChanged(position)));
     }
 
     public void smoothUpdateItemAt(int position) {
         // if update viewHolder is null, it currently out of screen bounds
         var var = (ItemViewHolder) view.findViewHolderForAdapterPosition(position);
         if (var != null) {
-            onBindItem(var, position);
+            runOnUiThread(() -> onBindItem(var, position));
         } else {
             // test change: if smooth is unavailable => rough
             roughUpdateItemAt(position);
