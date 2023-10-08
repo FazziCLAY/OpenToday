@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.BeautifyColorManager;
 import com.fazziclay.opentoday.app.FeatureFlag;
 import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.SettingsManager;
@@ -266,9 +267,10 @@ public class AppToolbar {
             int color = Color.RED;
             int padding = 0;
             int paddingModifier = 1;
+            BeautifyColorManager c = app.getBeautifyColorManager();
             @Override
             public void run() {
-                color += 0x050301;
+                color = c.randomBackgroundColor();
                 padding+= paddingModifier;
                 l.onlyTrue.setTextColor(color | 0xFF000000);
                 l.onlyTrue.setPadding(padding, 0, 0, 0);
@@ -580,9 +582,15 @@ public class AppToolbar {
                         autoClose();
                     });
                     viewClick(holder.add, () -> {
+                        final Item item = ItemsRegistry.REGISTRY.get(itemInfo.getClassType()).create();
+                        if (settingsManager.isRandomItemBackground()) {
+                            item.setViewCustomBackgroundColor(true);
+                            item.setViewBackgroundColor(app.getBeautifyColorManager().randomBackgroundColor());
+                        }
+
                         switch (settingsManager.getItemAddPosition()) {
-                            case TOP -> itemsStorage.addItem(ItemsRegistry.REGISTRY.get(itemInfo.getClassType()).create(), 0);
-                            case BOTTOM -> itemsStorage.addItem(ItemsRegistry.REGISTRY.get(itemInfo.getClassType()).create());
+                            case TOP -> itemsStorage.addItem(item, 0);
+                            case BOTTOM -> itemsStorage.addItem(item);
                         }
                     });
                     viewClick(holder.description, () -> showItemDescriptionDialog(itemInfo));

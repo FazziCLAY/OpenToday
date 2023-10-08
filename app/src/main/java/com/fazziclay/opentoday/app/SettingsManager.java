@@ -235,6 +235,10 @@ public class SettingsManager {
         load();
     }
 
+    public boolean isRandomItemBackground() {
+        return true; // TODO: 08.10.2023 make editable...
+    }
+
     public enum ItemAction {
         OPEN_EDITOR,
         OPEN_TEXT_EDITOR,

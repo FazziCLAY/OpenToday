@@ -1,11 +1,17 @@
 package com.fazziclay.opentoday.app.items.tab;
 
+import android.graphics.Color;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.fazziclay.javaneoutil.FileUtil;
+import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.data.Cherry;
+import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Readonly;
+import com.fazziclay.opentoday.app.items.callback.ItemCallback;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
@@ -17,10 +23,19 @@ import com.fazziclay.opentoday.app.items.item.SimpleItemsStorage;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.Tickable;
+import com.fazziclay.opentoday.util.ColorUtil;
 import com.fazziclay.opentoday.util.RandomUtil;
+import com.fazziclay.opentoday.util.StreamUtil;
+import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
+import com.fazziclay.opentoday.util.callback.Status;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.UUID;
+import java.util.function.ToIntFunction;
 
 public class Debug202305RandomTab extends Tab implements Tickable, Readonly {
     public static final TabCodec CODEC = new TabCodec() {
@@ -38,16 +53,52 @@ public class Debug202305RandomTab extends Tab implements Tickable, Readonly {
             return t;
         }
     };
+    private static final boolean GEN_COLORS = true;
 
-    private final SimpleItemsStorage itemsStorage = new SimpleItemsStorage(getRoot()) {
+    private final SimpleItemsStorage itemsStorage = new SimpleItemsStorage((ItemsRoot) null) {
         @Override
         public void save() {
             // do nothing in Debug tab
         }
     };
 
+    double DistanceSquared(int a, int b)
+    {
+        int deltaR = Color.red(a) - Color.red(b);
+        int deltaG = Color.green(a) - Color.green(b);
+        int deltaB = Color.blue(a) - Color.blue(b);
+        int deltaAlpha = Color.alpha(a) - Color.alpha(b);
+        double rgbDistanceSquared = (deltaR * deltaR + deltaG * deltaG + deltaB * deltaB) / 3.0;
+        return deltaAlpha * deltaAlpha / 2.0 + rgbDistanceSquared * Color.alpha(a) * Color.alpha(b) / (255 * 255);
+    }
+
     public Debug202305RandomTab() {
         super("Debug202305RandomTab");
+
+        String[] s = new String[0];
+        try {
+            s = StreamUtil.read(App.get().getAssets().open("beautify_colors.txt")).split("\n");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+//        Arrays.parallelSort(s, Comparator.comparingInt(s12 -> {
+//            return (int) DistanceSquared(Color.WHITE, Color.parseColor(s12));
+//        }));
+        for (String s1 : s) {
+            if (s1.startsWith("//")) continue;
+            s1 = s1.split(";")[0];
+            TextItem item = (TextItem) ItemsRegistry.REGISTRY.get(ItemType.TEXT).create();
+            try {
+                int c = Color.parseColor(s1);
+                item.setViewCustomBackgroundColor(true);
+                item.setViewBackgroundColor(c);
+                item.setText("Всем привет, это тестовый текстик <3");
+            } catch (Exception e) {
+                item.setText("Exception: " + e);
+            }
+            itemsStorage.addItem(item);
+        }
+
     }
 
     @Override
@@ -98,12 +149,60 @@ public class Debug202305RandomTab extends Tab implements Tickable, Readonly {
     public void tick(TickSession tickSession) {
         if (!tickSession.isAllowed(this)) return;
 
+        if (GEN_COLORS) {
+            for (int i = 0; i < 2; i++) {
+                tick_genColors(tickSession);
+            }
+
+            return;
+        }
         tick111(itemsStorage);
         for (Item item : getAllItems()) {
             if (item instanceof ItemsStorage) {
                 tick111((ItemsStorage) item);
             }
         }
+    }
+
+    boolean flag = true;
+    int color;
+    ItemCallback itemCallback = new ItemCallback() {
+        @Override
+        public Status click(Item item) {
+            String color = ColorUtil.colorToHex(item.getViewBackgroundColor());
+            FileUtil.addText(new File(App.get().getExternalCacheDir(), "beautify_colors.txt"), color + "\n");
+            item.setMinimize(true);
+            if (item instanceof TextItem t) {
+                t.setText("[YES]  " + t.getText());
+            }
+            item.visibleChanged();
+            return super.click(item);
+        }
+    };
+    private void tick_genColors(TickSession tickSession) {
+        if (flag) {
+            color = RandomUtil.nextInt() | 0xFF000000;
+            Item item = ItemsRegistry.REGISTRY.get(ItemType.values()[RandomUtil.nextInt(ItemType.values().length)]).create();
+            if (item instanceof TextItem textItem) {
+                textItem.setViewCustomBackgroundColor(true);
+                textItem.setViewBackgroundColor(color);
+                textItem.setText("Hello everybody!");
+            }
+            item.getItemCallbacks().addCallback(CallbackImportance.DEFAULT, itemCallback);
+            itemsStorage.addItem(item);
+        }
+        if (!flag) {
+            Item item = ItemsRegistry.REGISTRY.get(ItemType.values()[RandomUtil.nextInt(ItemType.values().length)]).create();
+            if (item instanceof TextItem textItem) {
+                textItem.setViewCustomBackgroundColor(true);
+                textItem.setViewBackgroundColor(color);
+                textItem.setParagraphColorize(true);
+                textItem.setText("$[-#ffffff]White text!  $[-#000000] Black text $[-#ff00ff]" + ColorUtil.colorToHex(color));
+            }
+            item.getItemCallbacks().addCallback(CallbackImportance.DEFAULT, itemCallback);
+            itemsStorage.addItem(item);
+        }
+        flag = !flag;
     }
 
     public void tick111(ItemsStorage itemsStorage) {

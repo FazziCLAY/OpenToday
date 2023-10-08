@@ -162,6 +162,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     // Edit
     // Create
     private ItemsStorage itemsStorage; // for create
+    private int initBackgroundColor; // for create
 
     // Internal
     private final List<BaseEditUiModule> editModules = new ArrayList<>();
@@ -212,7 +213,10 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             addItemPosition = getArgAddItemPosition();
             ItemsRegistry.ItemInfo itemInfo = ItemsRegistry.REGISTRY.get(getArgItemType());
             item = itemInfo.create();
-            
+            if (settingsManager.isRandomItemBackground()) {
+                initBackgroundColor = app.getBeautifyColorManager().randomBackgroundColor();
+            }
+
         } else {
             throw new RuntimeException("Unknown mode: " + mode);
         }
@@ -495,10 +499,20 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.viewMinHeight.setText(String.valueOf(item.getViewMinHeight()));
             binding.defaultBackgroundColor.setChecked(!item.isViewCustomBackgroundColor());
             temp_backgroundColor = item.getViewBackgroundColor();
+            if (mode == MODE_CREATE && settingsManager.isRandomItemBackground()) {
+                temp_backgroundColor = initBackgroundColor;
+                binding.defaultBackgroundColor.setChecked(false);
+            }
             updateTextColorIndicator(activity);
             viewClick(binding.viewBackgroundColorEdit, () -> new ColorPicker(activity, temp_backgroundColor)
                     .setting(true, true, true)
                     .setColorHistoryManager(colorHistoryManager)
+                    .setNeutralDialogButton(R.string.fragment_itemEditor_module_item_backgroundColor_dialog_random, () -> {
+                        temp_backgroundColor = app.getBeautifyColorManager().randomBackgroundColor();
+                        binding.defaultBackgroundColor.setChecked(false);
+                        updateTextColorIndicator(activity);
+                        onEditStart.run();
+                    })
                     .showDialog(R.string.fragment_itemEditor_module_item_backgroundColor_dialog_title,
                             R.string.fragment_itemEditor_module_item_backgroundColor_dialog_cancel,
                             R.string.fragment_itemEditor_module_item_backgroundColor_dialog_apply,
