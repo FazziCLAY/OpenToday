@@ -109,6 +109,12 @@ public class ColorPicker {
         return this;
     }
 
+    public ColorPicker setNeutralDialogButton(int resId, Runnable runnable) {
+        this.neutralDialogButtonText = context.getString(resId);
+        this.neutralDialogButtonRunnable = runnable;
+        return this;
+    }
+
     public interface ColorPickerInterface {
         void selected(int color);
     }
