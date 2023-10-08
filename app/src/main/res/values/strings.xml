@@ -394,4 +394,5 @@
     <string name="item_sleepTime_defaultPattern">$(elapsed) elapsed to $(wakeUpTime)\nCurrent + $(requiredSleepTime) = $(wakeUpForRequired)</string>
     <string name="item_missingNo">missingno (error item)</string>
     <string name="item_missingNo_description">This item is unknown item....</string>
+    <string name="fragment_itemEditor_module_item_backgroundColor_dialog_random">Random</string>
 </resources>

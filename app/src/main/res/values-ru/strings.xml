@@ -384,4 +384,7 @@
     <string name="item_sleepTime_description">Автоматический расчёт времени сна</string>
     <string name="item_sleepTime">Время сна</string>
     <string name="item_sleepTime_defaultPattern">$(elapsed) осталось до $(wakeUpTime)\nТекущее + $(requiredSleepTime) = $(wakeUpForRequired)</string>
+    <string name="item_missingNo">missingno (айтем ошибки)</string>
+    <string name="item_missingNo_description">Это неизвестный айтем</string>
+    <string name="fragment_itemEditor_module_item_backgroundColor_dialog_random">Случайно</string>
 </resources>

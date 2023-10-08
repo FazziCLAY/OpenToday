@@ -2,6 +2,7 @@ package com.fazziclay.opentoday.app.items.item;
 
 import androidx.annotation.NonNull;
 
+import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.Translation;
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
@@ -69,7 +70,7 @@ public class SleepTimeItem extends TextItem {
     protected void regenerateId() {
         super.regenerateId();
         if (sleepTextPattern == null) {
-            sleepTextPattern = getRoot().getTranslation().get(Translation.KEY_SLEEP_TIME_ITEM_PATTERN);
+            sleepTextPattern = App.get().getTranslation().get(Translation.KEY_SLEEP_TIME_ITEM_PATTERN); // TODO: 08.10.2023 uses static App.get() is bad...
             save();
         }
     }
