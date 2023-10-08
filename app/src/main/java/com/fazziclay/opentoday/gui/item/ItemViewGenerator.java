@@ -150,7 +150,10 @@ public class ItemViewGenerator {
             resultView.setLayoutParams(layoutParams);
         }
         applyForeground(resultView, item, behavior);
-        resultView.setOnClickListener(view -> onItemClick.run(item));
+        resultView.setOnClickListener(view -> {
+            item.dispatchClick();
+            onItemClick.run(item);
+        });
         return resultView;
     }
   
