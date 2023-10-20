@@ -8,10 +8,10 @@ import com.fazziclay.opentoday.app.items.item.Item
 
 class ItemViewHolder(context: Context) : RecyclerView.ViewHolder(FrameLayout(context)) {
     companion object {
-        private const val PADDING_LEFT = 0
-        private const val PADDING_TOP = 5
-        private const val PADDING_RIGHT = 0
-        private const val PADDING_BOTTOM = 5
+        private const val PADDING_LEFT = 1
+        private const val PADDING_TOP = 8
+        private const val PADDING_RIGHT = 1
+        private const val PADDING_BOTTOM = 8
     }
 
 

@@ -34,8 +34,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/title"
-        android:paddingLeft="3sp"
         android:orientation="vertical"
-        android:paddingRight="2sp" />
+        android:paddingLeft="3sp"
+        android:paddingRight="2sp"
+        android:paddingBottom="5sp"
+        android:paddingTop="2sp" />
 
 </RelativeLayout>

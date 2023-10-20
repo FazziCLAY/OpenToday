@@ -36,6 +36,8 @@
         android:layout_below="@id/title"
         android:paddingLeft="3sp"
         android:paddingRight="2sp"
+        android:paddingBottom="5sp"
+        android:paddingTop="2sp"
         android:orientation="vertical" />
 
 </RelativeLayout>
