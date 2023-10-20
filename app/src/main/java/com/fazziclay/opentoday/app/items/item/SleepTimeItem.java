@@ -40,6 +40,7 @@ public class SleepTimeItem extends TextItem {
 
     private int elapsedTime; // cached
     private int wakeUpForRequiredAtCurr; // cached
+    private int elapsedToStartSleep; // cached
     private long tick; // cached
 
     @NonNull
@@ -88,6 +89,14 @@ public class SleepTimeItem extends TextItem {
             wakeUpForRequiredAtCurr-=TimeUtil.SECONDS_IN_DAY;
         }
 
+        elapsedToStartSleep = wakeUpTime - requiredSleepTime - TimeUtil.getDaySeconds();
+        if (elapsedToStartSleep < 0) {
+            elapsedToStartSleep += TimeUtil.SECONDS_IN_DAY;
+        }
+        if (elapsedToStartSleep < 0) {
+            elapsedToStartSleep += TimeUtil.SECONDS_IN_DAY;
+        }
+
         if (tick % 5 == 0) {
             visibleChanged();
         }
@@ -97,6 +106,12 @@ public class SleepTimeItem extends TextItem {
     public int getElapsedTime() {
         return elapsedTime;
     }
+
+
+    public int getElapsedTimeToStartSleep() {
+        return elapsedToStartSleep;
+    }
+
 
     public void setWakeUpTime(int wakeUpTime) {
         this.wakeUpTime = wakeUpTime;

@@ -288,6 +288,8 @@ public class ItemViewGenerator {
         applyTextItemToTextView(item, binding.title, behavior, holderDestroyer, previewMode);
         binding.description.setText(item.getSleepTextPattern()
                 .replace("$(elapsed)", TimeUtil.convertToHumanTime(item.getElapsedTime(), ConvertMode.HHMM))
+                .replace("$(elapsedToStartSleep)", TimeUtil.convertToHumanTime(item.getElapsedTimeToStartSleep(), ConvertMode.HHMM))
+                .replace("$(current)", TimeUtil.convertToHumanTime(TimeUtil.getDaySeconds(), ConvertMode.HHMM))
                 .replace("$(wakeUpForRequired)", TimeUtil.convertToHumanTime(item.getWakeUpForRequiredAtCurr(), ConvertMode.HHMM))
                 .replace("$(wakeUpTime)", TimeUtil.convertToHumanTime(item.getWakeUpTime(), ConvertMode.HHMM))
                 .replace("$(requiredSleepTime)", TimeUtil.convertToHumanTime(item.getRequiredSleepTime(), ConvertMode.HHMM)));
