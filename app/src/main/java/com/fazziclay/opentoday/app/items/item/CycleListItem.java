@@ -193,6 +193,11 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
     }
 
     @Override
+    public int totalSize() {
+        return itemsCycleStorage.totalSize();
+    }
+
+    @Override
     public void addItem(Item item) {
         Item p = getCurrentItem();
         itemsCycleStorage.addItem(item);

@@ -17,7 +17,6 @@ import java.util.UUID;
 
 public abstract class Tab implements ItemsStorage, Unique {
     private static final String TAG = "Tab";
-
     protected static class TabCodec extends AbstractTabCodec {
         private static final String KEY_ID = "id";
         private static final String KEY_NAME = "name";

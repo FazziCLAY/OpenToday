@@ -122,6 +122,11 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
     }
 
     @Override
+    public int totalSize() {
+        return itemsStorage.totalSize();
+    }
+
+    @Override
     public void addItem(Item item) {
         itemsStorage.addItem(item);
     }

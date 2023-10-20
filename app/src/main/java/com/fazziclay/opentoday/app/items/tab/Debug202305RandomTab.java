@@ -237,6 +237,11 @@ public class Debug202305RandomTab extends Tab implements Tickable, Readonly {
         return itemsStorage.size();
     }
 
+    @Override
+    public int totalSize() {
+        return itemsStorage.totalSize();
+    }
+
     @NonNull
     @Override
     public CallbackStorage<OnItemsStorageUpdate> getOnItemsStorageCallbacks() {

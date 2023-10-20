@@ -71,7 +71,7 @@
     <string name="filterRegistry_filterType_LOGIC_CONTAINER">Контейнер</string>
     <string name="fragment_deleteItems_delete_apply">УДАЛИТЬ</string>
     <string name="fragment_deleteItems_delete_cancel">Отмена</string>
-    <string name="fragment_deleteItems_delete_title">Удалить %s айтемов?</string>
+    <string name="fragment_deleteItems_delete_title">Удалить %s айтемов(%s с учётом дочерних)?</string>
     <string name="fragment_enterPincode_timeout">Попробуйте позже (перезайдите в приложение)</string>
     <string name="fragment_enterPincode_title">Введите пин-код</string>
     <string name="fragment_filterGroup_itemFilter_editor_error_unknownFilter">Неизвестный фильтр! Это баг. Сообщите разработчику.\nCanonical: %s</string>

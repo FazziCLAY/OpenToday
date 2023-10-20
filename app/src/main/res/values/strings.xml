@@ -78,7 +78,7 @@
     <string name="filterRegistry_filterType_LOGIC_CONTAINER">Container</string>
     <string name="fragment_deleteItems_delete_apply">DELETE!</string>
     <string name="fragment_deleteItems_delete_cancel">Cancel</string>
-    <string name="fragment_deleteItems_delete_title">Delete %s items?</string>
+    <string name="fragment_deleteItems_delete_title">Delete %s items (%s include child-items)?</string>
     <string name="fragment_enterPincode_timeout">Try later (reopen app)</string>
     <string name="fragment_enterPincode_title">Enter pin-code</string>
     <string name="fragment_filterGroup_itemFilter_editor_error_unknownFilter">Unknown filter! This is a bug. Report to developer.\nCanonical: %s</string>

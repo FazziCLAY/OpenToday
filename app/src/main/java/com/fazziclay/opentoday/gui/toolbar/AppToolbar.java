@@ -507,7 +507,7 @@ public class AppToolbar {
                 })
                 .setNegativeButton(R.string.abc_cancel, null)
                 .setNeutralButton(R.string.toolbar_more_tabs_tab_delete, (dialog, w) -> new AlertDialog.Builder(activity)
-                        .setTitle(activity.getString(R.string.fragment_deleteItems_delete_title, String.valueOf(tab.size())))
+                        .setTitle(activity.getString(R.string.fragment_deleteItems_delete_title, String.valueOf(tab.size()), String.valueOf(tab.totalSize())))
                         .setNegativeButton(R.string.fragment_deleteItems_delete_cancel, null)
                         .setPositiveButton(R.string.fragment_deleteItems_delete_apply, ((dialog1, which) -> {
                             if (tabsManager.isOneTabMode()) {

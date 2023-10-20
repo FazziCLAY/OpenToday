@@ -200,6 +200,16 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         return items.size();
     }
 
+    @Override
+    public int totalSize() {
+        int c = 0;
+        for (ItemFilterWrapper item : items) {
+            c++;
+            c+= item.item.getChildrenItemCount();
+        }
+        return c;
+    }
+
     private void addItem(ItemFilterWrapper item) {
         addItem(item, items.size());
     }

@@ -66,6 +66,7 @@ public class DeleteItemsFragment extends Fragment {
     private ItemsRoot itemsRoot;
     private ItemViewGenerator itemViewGenerator;
     private Item[] itemsToDelete;
+    private int totalToDelete;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,6 +81,10 @@ public class DeleteItemsFragment extends Fragment {
             u.add(itemsRoot.getItemById(UUID.fromString(s)));
         }
         itemsToDelete = u.toArray(new Item[0]);
+        totalToDelete = 0;
+        for (Item item : itemsToDelete) {
+            totalToDelete += item.getChildrenItemCount() + 1;
+        }
         // parse END
 
         itemViewGenerator = ItemViewGenerator.builder(requireActivity())
@@ -88,7 +93,7 @@ public class DeleteItemsFragment extends Fragment {
 
         UI.getUIRoot(this).pushActivitySettings(a -> {
             a.setNotificationsVisible(false);
-            a.setToolbarSettings(ActivitySettings.ToolbarSettings.createBack(requireActivity().getString(R.string.fragment_deleteItems_delete_title, String.valueOf(itemsToDelete.length)), () -> UI.rootBack(DeleteItemsFragment.this)));
+            a.setToolbarSettings(ActivitySettings.ToolbarSettings.createBack(requireActivity().getString(R.string.fragment_deleteItems_delete_title, String.valueOf(itemsToDelete.length), String.valueOf(totalToDelete)), () -> UI.rootBack(DeleteItemsFragment.this)));
         });
     }
 
@@ -132,7 +137,7 @@ public class DeleteItemsFragment extends Fragment {
         });
 
         binding.deleteButton.setOnClickListener(v -> new AlertDialog.Builder(requireContext())
-                .setTitle(requireActivity().getString(R.string.fragment_deleteItems_delete_title, String.valueOf(itemsToDelete.length)))
+                .setTitle(requireActivity().getString(R.string.fragment_deleteItems_delete_title, String.valueOf(itemsToDelete.length), String.valueOf(totalToDelete)))
                 .setNegativeButton(R.string.fragment_deleteItems_delete_cancel, null)
                 .setPositiveButton(R.string.fragment_deleteItems_delete_apply, ((_dialog1, _which) -> {
                     for (Item item : itemsToDelete) {
