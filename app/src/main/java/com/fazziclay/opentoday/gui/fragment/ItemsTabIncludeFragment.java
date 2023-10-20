@@ -289,7 +289,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
             i++;
         }
 
-        binding.tabs.setVisibility(binding.tabs.getTabCount() == 1 ? View.GONE : View.VISIBLE);
+        binding.tabsScrollView.setVisibility(binding.tabs.getTabCount() == 1 ? View.GONE : View.VISIBLE);
         binding.tabs.addOnTabSelectedListener(uiOnTabSelectedListener);
     }
 
