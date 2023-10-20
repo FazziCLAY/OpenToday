@@ -19,6 +19,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.BeautifyColorManager;
 import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
@@ -207,7 +208,11 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
             } else {
                 Item item = settingsManager.getDefaultQuickNoteType().create();
                 if (item instanceof TextItem) ((TextItem) item).setText(text);
-                if (app.getSettingsManager().isParseTimeFromQuickNote()) item.getNotifications().addAll(QUICK_NOTE_NOTIFICATIONS_PARSE.run(text));
+                if (settingsManager.isParseTimeFromQuickNote()) item.getNotifications().addAll(QUICK_NOTE_NOTIFICATIONS_PARSE.run(text));
+                if (settingsManager.isRandomItemBackground()) {
+                    item.setViewCustomBackgroundColor(true);
+                    item.setViewBackgroundColor(BeautifyColorManager.randomBackgroundColor(requireContext()));
+                }
                 switch (settingsManager.getItemAddPosition()) {
                     case TOP -> currentItemsStorage.addItem(item, 0);
                     case BOTTOM -> currentItemsStorage.addItem(item);

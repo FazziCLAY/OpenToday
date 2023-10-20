@@ -267,10 +267,9 @@ public class AppToolbar {
             int color = Color.RED;
             int padding = 0;
             int paddingModifier = 1;
-            BeautifyColorManager c = app.getBeautifyColorManager();
             @Override
             public void run() {
-                color = c.randomBackgroundColor();
+                color = color + 55;
                 padding+= paddingModifier;
                 l.onlyTrue.setTextColor(color | 0xFF000000);
                 l.onlyTrue.setPadding(padding, 0, 0, 0);
@@ -585,7 +584,7 @@ public class AppToolbar {
                         final Item item = ItemsRegistry.REGISTRY.get(itemInfo.getClassType()).create();
                         if (settingsManager.isRandomItemBackground()) {
                             item.setViewCustomBackgroundColor(true);
-                            item.setViewBackgroundColor(app.getBeautifyColorManager().randomBackgroundColor());
+                            item.setViewBackgroundColor(BeautifyColorManager.randomBackgroundColor(app));
                         }
 
                         switch (settingsManager.getItemAddPosition()) {

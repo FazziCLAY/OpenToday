@@ -31,6 +31,7 @@ import androidx.fragment.app.Fragment;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.BeautifyColorManager;
 import com.fazziclay.opentoday.app.ColorHistoryManager;
 import com.fazziclay.opentoday.app.CrashReportContext;
 import com.fazziclay.opentoday.app.ImportWrapper;
@@ -214,7 +215,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             ItemsRegistry.ItemInfo itemInfo = ItemsRegistry.REGISTRY.get(getArgItemType());
             item = itemInfo.create();
             if (settingsManager.isRandomItemBackground()) {
-                initBackgroundColor = app.getBeautifyColorManager().randomBackgroundColor();
+                initBackgroundColor = BeautifyColorManager.randomBackgroundColor(app);
             }
 
         } else {
@@ -508,7 +509,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
                     .setting(true, true, true)
                     .setColorHistoryManager(colorHistoryManager)
                     .setNeutralDialogButton(R.string.fragment_itemEditor_module_item_backgroundColor_dialog_random, () -> {
-                        temp_backgroundColor = app.getBeautifyColorManager().randomBackgroundColor();
+                        temp_backgroundColor = BeautifyColorManager.randomBackgroundColor(app);
                         binding.defaultBackgroundColor.setChecked(false);
                         updateTextColorIndicator(activity);
                         onEditStart.run();

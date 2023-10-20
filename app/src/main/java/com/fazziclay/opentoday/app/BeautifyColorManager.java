@@ -19,6 +19,10 @@ public class BeautifyColorManager {
         load();
     }
 
+    public static int randomBackgroundColor(Context context) {
+        return App.get(context).getBeautifyColorManager().randomBackgroundColor();
+    }
+
     public int randomBackgroundColor() {
         if (colors.isEmpty()) {
             return RandomUtil.nextInt();
