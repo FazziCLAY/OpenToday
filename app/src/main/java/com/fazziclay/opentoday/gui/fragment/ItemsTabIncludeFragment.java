@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -122,7 +123,13 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         updateViewPager(false);
 
 
-        this.toolbar.setOnMoreVisibleChangedListener(visible -> binding.quickNote.setVisibility(!visible ? View.VISIBLE : View.INVISIBLE));
+        this.toolbar.setOnMoreVisibleChangedListener(visible -> {
+            binding.quickNote.setVisibility(!visible ? View.VISIBLE : View.INVISIBLE);
+            final InputMethodManager imm = getContext().getSystemService(InputMethodManager.class);
+            if (imm.isActive()) {
+                binding.quickNote.requestFocus();
+            }
+        });
         this.toolbar.create();
 
         setupQuickNote();
