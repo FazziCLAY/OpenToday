@@ -312,8 +312,8 @@
     <string name="settings_pincode_title">Pin-code for app</string>
     <string name="settings_quickNote">Quick Note notification</string>
     <string name="settings_scrollToAddedItem">Scroll to added item</string>
-    <string name="settings_theme_light">Light</string>
-    <string name="settings_theme_night">Night</string>
+    <string name="settings_theme_light">☀ ️Light</string>
+    <string name="settings_theme_night">🌙 Night</string>
     <string name="settings_theme_system">System follow</string>
     <string name="settings_theme_title">Theme</string>
     <string name="settings_title">Settings</string>
@@ -395,4 +395,5 @@
     <string name="item_missingNo">missingno (error item)</string>
     <string name="item_missingNo_description">This item is unknown item....</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_dialog_random">Random</string>
+    <string name="tab_autoName">Tab №%s</string>
 </resources>

@@ -305,8 +305,8 @@
     <string name="settings_pincode_title">Пин-код приложения</string>
     <string name="settings_quickNote">Уведомление быстрой заметки</string>
     <string name="settings_scrollToAddedItem">Перемещаться к созданному айтему</string>
-    <string name="settings_theme_light">Светлая</string>
-    <string name="settings_theme_night">Тёмная</string>
+    <string name="settings_theme_light">☀ Светлая</string>
+    <string name="settings_theme_night">🌙 Тёмная</string>
     <string name="settings_theme_system">Как в системе</string>
     <string name="settings_theme_title">Тема</string>
     <string name="settings_title">Настройки</string>
@@ -387,4 +387,5 @@
     <string name="item_missingNo">missingno (айтем ошибки)</string>
     <string name="item_missingNo_description">Это неизвестный айтем</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_dialog_random">Случайно</string>
+    <string name="tab_autoName">Вкладка №%s</string>
 </resources>

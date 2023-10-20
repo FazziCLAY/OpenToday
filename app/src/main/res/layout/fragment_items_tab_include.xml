@@ -6,13 +6,34 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Tabs -->
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabs"
+    <HorizontalScrollView
+        android:id="@+id/tabsScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:background="#00ff00"
-        app:tabGravity="start"
-        app:tabMode="scrollable" />
+        android:scrollbarSize="0px">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:background="#00ff00"
+                app:tabGravity="start"
+                app:tabMode="scrollable" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/addTabInlineButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+"
+                android:textSize="25sp"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+    </HorizontalScrollView>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
@@ -22,7 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/quickNote"
-        android:layout_below="@id/tabs" />
+        android:layout_below="@id/tabsScrollView" />
 
     <RelativeLayout
         android:id="@+id/quickNote"

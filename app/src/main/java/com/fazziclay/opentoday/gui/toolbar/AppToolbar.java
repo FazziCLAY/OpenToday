@@ -445,24 +445,26 @@ public class AppToolbar {
 
 
 
-        viewClick(localBinding.addTab, () -> {
-            EditText tabNameEditText = new EditText(activity);
-            tabNameEditText.setHint(R.string.toolbar_more_tabs_addNew_name_hint);
-            tabNameEditText.setFilters(new InputFilter.LengthFilter[]{new InputFilter.LengthFilter(TabsManager.TAB_NAME_MAX_LENGTH)});
-            new AlertDialog.Builder(activity)
-                    .setTitle(R.string.toolbar_more_tabs_addNew_dialog_title)
-                    .setView(tabNameEditText)
-                    .setPositiveButton(R.string.toolbar_more_tabs_tab_add, (dialog, which) -> {
-                        String text = tabNameEditText.getText().toString();
-                        if (!text.trim().isEmpty()) {
-                            tabsManager.createLocalTab(tabNameEditText.getText().toString());
-                        } else {
-                            Toast.makeText(activity, R.string.tab_noEmptyName, Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .setNegativeButton(R.string.abc_cancel, null)
-                    .show();
-        });
+        viewClick(localBinding.addTab, () -> showAddTabDialog(activity, tabsManager));
+    }
+
+    public static void showAddTabDialog(Context context, TabsManager tabsManager) {
+        EditText tabNameEditText = new EditText(context);
+        tabNameEditText.setHint(R.string.toolbar_more_tabs_addNew_name_hint);
+        tabNameEditText.setFilters(new InputFilter.LengthFilter[]{new InputFilter.LengthFilter(TabsManager.TAB_NAME_MAX_LENGTH)});
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.toolbar_more_tabs_addNew_dialog_title)
+                .setView(tabNameEditText)
+                .setPositiveButton(R.string.toolbar_more_tabs_tab_add, (dialog, which) -> {
+                    String text = tabNameEditText.getText().toString();
+                    if (!text.trim().isEmpty()) {
+                        tabsManager.createLocalTab(tabNameEditText.getText().toString());
+                    } else {
+                        tabsManager.createLocalTab(context.getString(R.string.tab_autoName, Long.toHexString(System.nanoTime()).substring(5)));
+                    }
+                })
+                .setNegativeButton(R.string.abc_cancel, null)
+                .show();
     }
 
     private void showEditTabDialog(final Tab tab) {

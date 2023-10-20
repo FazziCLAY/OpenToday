@@ -1,6 +1,7 @@
 package com.fazziclay.opentoday.gui.fragment;
 
 import static com.fazziclay.opentoday.util.InlineUtil.nullStat;
+import static com.fazziclay.opentoday.util.InlineUtil.viewClick;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -121,6 +123,9 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
 
         reloadTabs();
         updateViewPager(false);
+        viewClick(binding.addTabInlineButton, () -> {
+            AppToolbar.showAddTabDialog(requireContext(), tabsManager);
+        });
 
 
         this.toolbar.setOnMoreVisibleChangedListener(visible -> {
