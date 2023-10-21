@@ -3,8 +3,10 @@ package com.fazziclay.opentoday.gui.activity
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import com.fazziclay.opentoday.api.PluginManager
 import com.fazziclay.opentoday.app.App
 import com.fazziclay.opentoday.gui.UI
+import com.fazziclay.opentoday.plugins.gcp.GlobalChangesPlugin
 import com.fazziclay.opentoday.util.DebugUtil
 
 class LauncherActivity : Activity() {
@@ -33,6 +35,15 @@ class LauncherActivity : Activity() {
         UI.setTheme(app.settingsManager.theme)
         val sharedPreferences = getSharedPreferences(App.SHARED_NAME, MODE_PRIVATE)
         val isSetupDone = sharedPreferences.getBoolean(App.SHARED_KEY_IS_SETUP_DONE, false)
+
+        app.settingsManager.plugins.split(",").forEach { s ->
+            if (s.trim() == "gcp") {
+                PluginManager.loadPlugin(
+                    "fazziclay://opentoday/plugins/global_changes_plugin",
+                    GlobalChangesPlugin())
+            }
+        }
+
         if (isSetupDone) {
             startActivity(Intent(this, MainActivity::class.java))
         } else {

@@ -7,8 +7,8 @@ public class PluginManager {
 
     public static void loadPlugin(String packageId, OpenTodayPlugin plugin) {
         disablePlugin(packageId);
-        plugin.onEnable();
         activePlugins.put(packageId, plugin);
+        plugin.onEnable();
     }
 
     public static void disablePlugin(String packageId) {
@@ -21,8 +21,12 @@ public class PluginManager {
 
     public static void callEvent(Event event) {
         activePlugins.forEach((s, plugin) -> {
-            for (EventHandler eventHandler : plugin.getEventHandlers()) {
-                eventHandler.handle(event);
+            try {
+                for (EventHandler eventHandler : plugin.getEventHandlers()) {
+                    eventHandler.handle(event);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Exception while process eventHandlers in \"" + s + "\"(" + plugin + ") plugin");
             }
         });
     }
