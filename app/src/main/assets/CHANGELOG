@@ -1,4 +1,13 @@
 TODO: changelog
+== branch: tags
+* added tags for items (no use keys currently :/)
+* added random color background for items on item creating
+* added (+) button to tabs list in top of screen
+* after toolbar closed focus set to quickNote
+* calc children-elements while deleting items
+* item margins increased
+* plugins support: gcp - global(mass) changes
+
 == branch: item-sleepTime
 * Added new item: SleepTimeItem - automatically calculate sleep time
 * DATA_VERSIONS now is 11
