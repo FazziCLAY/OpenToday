@@ -36,9 +36,6 @@ public class DeveloperFragment extends Fragment {
         super.onCreate(savedInstanceState);
         this.context = requireContext();
         this.app = App.get(context);
-        UI.getUIRoot(this).pushActivitySettings(a -> {
-            a.setNotificationsVisible(true);
-        });
     }
 
     @Nullable
