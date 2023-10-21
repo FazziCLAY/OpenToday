@@ -21,10 +21,12 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
+import com.fazziclay.opentoday.api.EventHandler;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.BeautifyColorManager;
 import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.SettingsManager;
+import com.fazziclay.opentoday.app.events.gui.CurrentItemsStorageContextChanged;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
@@ -101,6 +103,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         } else {
             throw new RuntimeException("Unknown firstTab settings!");
         }
+        EventHandler.call(new CurrentItemsStorageContextChanged(currentItemsStorage));
 
         this.toolbar = new AppToolbar(requireActivity(), tabsManager, settingsManager, selectionManager, currentItemsStorage, rootNavigationHost, binding.toolbar, binding.toolbarMore);
 
@@ -257,6 +260,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         Logger.d(TAG, "setItemStorageInContext", itemsStorage);
         this.currentItemsStorage = itemsStorage;
         this.toolbar.setItemStorage(itemsStorage);
+        EventHandler.call(new CurrentItemsStorageContextChanged(currentItemsStorage));
     }
 
     private void updateViewPager(boolean smoothScroll) {

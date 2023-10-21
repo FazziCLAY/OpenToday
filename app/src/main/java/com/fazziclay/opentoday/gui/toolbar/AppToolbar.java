@@ -32,11 +32,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
+import com.fazziclay.opentoday.api.EventHandler;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.BeautifyColorManager;
 import com.fazziclay.opentoday.app.FeatureFlag;
 import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.SettingsManager;
+import com.fazziclay.opentoday.app.events.gui.toolbar.AppToolbarSelectionClickEvent;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
 import com.fazziclay.opentoday.app.items.callback.SelectionCallback;
@@ -674,6 +676,8 @@ public class AppToolbar {
         };
         selectionCallback.onSelectionChanged(selectionManager.getSelections()); // First run
         selectionManager.getOnSelectionUpdated().addCallback(CallbackImportance.MIN, selectionCallback); // Add to callbackStorage
+
+        EventHandler.call(new AppToolbarSelectionClickEvent(activity, localBinding, selectionManager));
     }
 
     private void exportSelected() {
