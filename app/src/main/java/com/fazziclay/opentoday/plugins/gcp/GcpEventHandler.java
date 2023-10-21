@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -64,7 +65,6 @@ public class GcpEventHandler extends EventHandler {
         Button massBgColor = new Button(context);
         massBgColor.setText("Mass BG color");
         massBgColor.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        localBinding.getRoot().addView(massBgColor);
 
         massBgColor.setOnClickListener(i -> new ColorPicker(context, 0xffff00)
                 .setting(true, true, true)
@@ -89,7 +89,7 @@ public class GcpEventHandler extends EventHandler {
         Button selectAll = new Button(context);
         selectAll.setText("Select all");
         selectAll.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        localBinding.getRoot().addView(selectAll);
+
 
         selectAll.setOnClickListener(i -> {
             if (currentItemsStorage != null) {
@@ -105,7 +105,6 @@ public class GcpEventHandler extends EventHandler {
         Button massTextColor = new Button(context);
         massTextColor.setText("Mass TeXT color");
         massTextColor.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        localBinding.getRoot().addView(massTextColor);
 
         massTextColor.setOnClickListener(i -> new ColorPicker(context, 0xffff00)
                 .setting(true, true, true)
@@ -133,7 +132,7 @@ public class GcpEventHandler extends EventHandler {
         Button massRemoveNotification = new Button(context);
         massRemoveNotification.setText("Mass remove notifications");
         massRemoveNotification.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        localBinding.getRoot().addView(massRemoveNotification);
+
 
         massRemoveNotification.setOnClickListener(i -> {
             var view = new LinearLayout(context);
@@ -220,5 +219,23 @@ public class GcpEventHandler extends EventHandler {
                     })
                     .show();
         });
+
+
+
+        TextView gcp = new TextView(context);
+        gcp.setText("Global Changes Plugin:");
+        localBinding.getRoot().addView(gcp);
+
+        var horizont = new LinearLayout(context);
+        horizont.setOrientation(LinearLayout.HORIZONTAL);
+        horizont.addView(massBgColor);
+        horizont.addView(selectAll);
+        horizont.addView(massTextColor);
+        horizont.addView(massRemoveNotification);
+
+        var h = new HorizontalScrollView(context);
+        h.addView(horizont);
+        localBinding.getRoot().addView(h);
+
     }
 }
