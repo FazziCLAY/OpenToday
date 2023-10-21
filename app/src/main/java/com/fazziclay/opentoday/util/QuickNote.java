@@ -22,8 +22,9 @@ public class QuickNote {
                             int minutes = Integer.parseInt(String.valueOf(chars[i + 1]) + chars[i + 2]);
 
                             DayItemNotification noti = new DayItemNotification();
+                            noti.setNotificationId(RandomUtil.nextIntPositive());
                             noti.setTime((hours * 60 * 60) + (minutes * 60));
-                            noti.setNotifyTextFromItemText(true);
+                            noti.setNotifyTitleFromItemText(true);
                             notifys.add(noti);
                         }
                     } catch (Exception ignored) {
