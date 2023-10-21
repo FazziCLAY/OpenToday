@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 
 import com.fazziclay.opentoday.api.Event;
+import com.fazziclay.opentoday.api.EventExceptionEvent;
 import com.fazziclay.opentoday.api.EventHandler;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.events.gui.CurrentItemsStorageContextChanged;
@@ -38,15 +39,20 @@ import org.json.JSONException;
 
 public class GcpEventHandler extends EventHandler {
     private ItemsStorage currentItemsStorage = null;
-    private final GlobalChangesPlugin globalChangesPlugin;
+    private final GlobalChangesPlugin plugin;
 
-    public GcpEventHandler(GlobalChangesPlugin globalChangesPlugin) {
-        this.globalChangesPlugin = globalChangesPlugin;
+    public GcpEventHandler(GlobalChangesPlugin plugin) {
+        this.plugin = plugin;
     }
 
     @Override
     public void handle(Event event) {
         super.handle(event);
+
+        // TODO: 21.10.2023 move another
+        if (event instanceof EventExceptionEvent e) {
+            Toast.makeText(App.get(), "Exception in plugin : " + e.getException().toString(), Toast.LENGTH_SHORT).show();
+        }
 
         if (event instanceof AppToolbarSelectionClickEvent e) {
             injectSelections(e);

@@ -12,13 +12,13 @@ public class GlobalChangesPlugin extends OpenTodayPlugin {
     @Override
     public void onEnable() {
         super.onEnable();
-        Logger.d(TAG, "onEnable");
+        Logger.d(TAG, "gcp plugin is enabled!");
     }
 
     @Override
     public void onDisable() {
         super.onDisable();
-        Logger.d(TAG, "onDisable");
+        Logger.d(TAG, "gcp plugin is disabled!");
     }
 
     @Override
