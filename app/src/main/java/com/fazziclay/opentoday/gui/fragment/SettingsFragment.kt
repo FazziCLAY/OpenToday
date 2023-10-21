@@ -239,6 +239,12 @@ class SettingsFragment : Fragment() {
             settingsManager.isItemEditorBackgroundFromItem = binding.itemInternalBackgroundFromItem.isChecked
             settingsManager.save()
         })
+
+        binding.isItemBackgroundRandom.isChecked = settingsManager.isRandomItemBackground
+        viewClick(binding.isItemBackgroundRandom, Runnable {
+            settingsManager.isRandomItemBackground = binding.isItemBackgroundRandom.isChecked
+            settingsManager.save()
+        })
     }
 
     private fun setupFirstTabSpinner() {

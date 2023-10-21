@@ -19,6 +19,12 @@ public class PluginManager {
         }
     }
 
+    public static void disableAllPlugins() {
+        for (String s : activePlugins.keySet()) {
+            disablePlugin(s);
+        }
+    }
+
     public static void callEvent(Event event) {
         activePlugins.forEach((s, plugin) -> {
             try {

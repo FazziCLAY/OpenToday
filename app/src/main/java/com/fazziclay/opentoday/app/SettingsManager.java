@@ -3,8 +3,8 @@ package com.fazziclay.opentoday.app;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.fazziclay.javaneoutil.FileUtil;
+import com.fazziclay.opentoday.app.items.item.ItemType;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
-import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.Setter;
@@ -29,11 +29,6 @@ public class SettingsManager {
     private static final String FIRST_DAY_OF_WEEK_SATURDAY = "saturday";
     private static final String FIRST_DAY_OF_WEEK_MONDAY = "monday";
 
-    private static final String KEY_QUICK_NOTE_NOTIFICATION = "quickNote"; // TODO: 14.10.2022 rename & add to DataFixer
-    private static final String KEY_PARSETIMEFROMQUICKNOTE = "parseTimeFromQuickNote"; // TODO: 14.10.2022 add to datafixer
-    private static final String KEY_ISMINIMIZEGRAYCOLOR = "isMinimizeGrayColor"; // TODO: 14.10.2022 add to datafixer
-    private static final String KEY_TRIMITEMNAMESONEDIT = "trimItemNamesOnEdit";
-
     // local
     private final File saveFile;
 
@@ -44,18 +39,20 @@ public class SettingsManager {
     private boolean isMinimizeGrayColor = false;
     private boolean trimItemNamesOnEdit = true;
     private ItemAction itemOnClickAction = ItemAction.OPEN_EDITOR;
-    private ItemAction itemOnLeftAction = ItemAction.MINIMIZE_REVERT;
+    private ItemAction itemOnLeftAction = ItemAction.SHOW_ACTION_DIALOG;
     private UUID quickNoteNotificationItemsStorageId = null;
     private boolean isTelemetry = true;
-    private ItemsRegistry.ItemInfo defaultQuickNoteType = ItemsRegistry.REGISTRY.get(TextItem.class);
+    private ItemsRegistry.ItemInfo defaultQuickNoteType = ItemsRegistry.REGISTRY.get(ItemType.CHECKBOX);
     private FirstTab firstTab = FirstTab.TAB_ON_CLOSING;
-    private String datePattern = "yyyy.MM.dd EE";
-    private String timePattern = "HH:mm:ss";
+    private String datePattern = DateAndTimePreset.DEFAULT.date;
+    private String timePattern = DateAndTimePreset.DEFAULT.time;
     private ItemAddPosition itemAddPosition = ItemAddPosition.BOTTOM;
     private boolean confirmFastChanges = true;
     private boolean isAutoCloseToolbar = true;
     private boolean isScrollToAddedItem = true;
     private boolean isItemEditorBackgroundFromItem = false;
+    private boolean isRandomItemBackground = true;
+    private String plugins = "";
 
 
     public SettingsManager(File saveFile) {
@@ -101,31 +98,29 @@ public class SettingsManager {
     @Getter public boolean isConfirmFastChanges() {return confirmFastChanges;}
     @Setter public void setConfirmFastChanges(boolean confirmFastChanges) {this.confirmFastChanges = confirmFastChanges;}
 
+    @Getter public boolean isItemEditorBackgroundFromItem() {return isItemEditorBackgroundFromItem;}
+    @Setter public void setItemEditorBackgroundFromItem(boolean itemEditorBackgroundFromItem) {this.isItemEditorBackgroundFromItem = itemEditorBackgroundFromItem;}
 
-
-    public boolean isItemEditorBackgroundFromItem() {
-        return isItemEditorBackgroundFromItem;
-    }
-
-    public boolean isScrollToAddedItem() {
+    @Getter public boolean isScrollToAddedItem() {
         return isScrollToAddedItem;
     }
 
-    public boolean isAutoCloseToolbar() {
-        return isAutoCloseToolbar;
-    }
-
-    public void setAutoCloseToolbar(boolean autoCloseToolbar) {
-        isAutoCloseToolbar = autoCloseToolbar;
-    }
-
-    public void setItemEditorBackgroundFromItem(boolean itemEditorBackgroundFromItem) {
-        isItemEditorBackgroundFromItem = itemEditorBackgroundFromItem;
-    }
-
-    public void setScrollToAddedItem(boolean scrollToAddedItem) {
+    @Setter public void setScrollToAddedItem(boolean scrollToAddedItem) {
         isScrollToAddedItem = scrollToAddedItem;
     }
+
+    @Getter public boolean isAutoCloseToolbar() {
+        return isAutoCloseToolbar;
+    }
+    @Setter public void setAutoCloseToolbar(boolean autoCloseToolbar) {this.isAutoCloseToolbar = autoCloseToolbar;}
+
+    @Getter public boolean isRandomItemBackground() {return isRandomItemBackground;}
+    @Setter public void setRandomItemBackground(boolean randomItemBackground) {this.isRandomItemBackground = randomItemBackground;}
+
+    @Getter public String getPlugins() {
+        return plugins;
+    }
+    @Setter public void setPlugins(String plugins) {this.plugins = plugins;}
 
     private void load() {
         if (!FileUtil.isExist(saveFile)) {
@@ -152,10 +147,10 @@ public class SettingsManager {
             }
 
             // Quick note and etc...
-            this.quickNoteNotification = j.optBoolean(KEY_QUICK_NOTE_NOTIFICATION, this.quickNoteNotification);
-            this.parseTimeFromQuickNote = j.optBoolean(KEY_PARSETIMEFROMQUICKNOTE, this.parseTimeFromQuickNote);
-            this.isMinimizeGrayColor = j.optBoolean(KEY_ISMINIMIZEGRAYCOLOR, this.isMinimizeGrayColor);
-            this.trimItemNamesOnEdit = j.optBoolean(KEY_TRIMITEMNAMESONEDIT, this.trimItemNamesOnEdit);
+            this.quickNoteNotification = j.optBoolean("quickNote", this.quickNoteNotification);
+            this.parseTimeFromQuickNote = j.optBoolean("parseTimeFromQuickNote", this.parseTimeFromQuickNote);
+            this.isMinimizeGrayColor = j.optBoolean("isMinimizeGrayColor", this.isMinimizeGrayColor);
+            this.trimItemNamesOnEdit = j.optBoolean("trimItemNamesOnEdit", this.trimItemNamesOnEdit);
             try {
                 this.itemOnClickAction = ItemAction.valueOf(j.optString("itemOnClickAction"));
             } catch (Exception ignored) {}
@@ -183,6 +178,8 @@ public class SettingsManager {
             this.isAutoCloseToolbar = j.optBoolean("isAutoCloseToolbar", this.isAutoCloseToolbar);
             this.isScrollToAddedItem = j.optBoolean("isScrollToAddedItem", this.isScrollToAddedItem);
             this.isItemEditorBackgroundFromItem = j.optBoolean("isItemEditorBackgroundFromItem", this.isItemEditorBackgroundFromItem);
+            this.isRandomItemBackground = j.optBoolean("isRandomItemBackground", this.isRandomItemBackground);
+            this.plugins = j.optString("plugins", this.plugins);
 
         } catch (Exception e) {
             Logger.e(TAG, "load", e);
@@ -210,10 +207,10 @@ public class SettingsManager {
 
         j.put(KEY_THEME, temp_theme);
         j.put(KEY_FIRST_DAY_OF_WEEK, temp_firstDayOfWeek);
-        j.put(KEY_QUICK_NOTE_NOTIFICATION, this.quickNoteNotification);
-        j.put(KEY_PARSETIMEFROMQUICKNOTE, this.parseTimeFromQuickNote);
-        j.put(KEY_ISMINIMIZEGRAYCOLOR, this.isMinimizeGrayColor);
-        j.put(KEY_TRIMITEMNAMESONEDIT, this.trimItemNamesOnEdit);
+        j.put("quickNote", this.quickNoteNotification);
+        j.put("parseTimeFromQuickNote", this.parseTimeFromQuickNote);
+        j.put("isMinimizeGrayColor", this.isMinimizeGrayColor);
+        j.put("trimItemNamesOnEdit", this.trimItemNamesOnEdit);
         j.put("itemOnClickAction", itemOnClickAction.name());
         j.put("itemOnLeftAction", itemOnLeftAction.name());
         j.put("quickNoteNotificationItemsStorageId", quickNoteNotificationItemsStorageId != null ? quickNoteNotificationItemsStorageId.toString() : null);
@@ -227,16 +224,14 @@ public class SettingsManager {
         j.put("isAutoCloseToolbar", this.isAutoCloseToolbar);
         j.put("isScrollToAddedItem", this.isScrollToAddedItem);
         j.put("isItemEditorBackgroundFromItem", this.isItemEditorBackgroundFromItem);
+        j.put("isRandomItemBackground", this.isRandomItemBackground);
+        j.put("plugins", this.plugins);
         return j;
     }
 
     public void importData(JSONObject settings) {
         FileUtil.setText(saveFile, settings.toString());
         load();
-    }
-
-    public boolean isRandomItemBackground() {
-        return true; // TODO: 08.10.2023 make editable...
     }
 
     public enum ItemAction {

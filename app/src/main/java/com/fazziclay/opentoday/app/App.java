@@ -17,6 +17,7 @@ import com.fazziclay.javaneoutil.NonNull;
 import com.fazziclay.neosocket.NeoSocket;
 import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
+import com.fazziclay.opentoday.api.PluginManager;
 import com.fazziclay.opentoday.app.datafixer.DataFixer;
 import com.fazziclay.opentoday.app.datafixer.FixResult;
 import com.fazziclay.opentoday.app.items.ItemsRoot;
@@ -26,6 +27,7 @@ import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.tick.TickThread;
 import com.fazziclay.opentoday.debug.TestItemViewGenerator;
 import com.fazziclay.opentoday.gui.activity.CrashReportActivity;
+import com.fazziclay.opentoday.plugins.gcp.GlobalChangesPlugin;
 import com.fazziclay.opentoday.util.DebugUtil;
 import com.fazziclay.opentoday.util.License;
 import com.fazziclay.opentoday.util.Logger;
@@ -232,6 +234,18 @@ public class App extends Application {
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
         notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_QUCIKNOTE_CHANNEL, getString(R.string.notificationChannel_quickNote_title), NotificationManager.IMPORTANCE_HIGH));
         notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_ITEMS_CHANNEL, getString(R.string.notificationChannel_items_title), NotificationManager.IMPORTANCE_HIGH));
+    }
+
+
+    public void reinitPlugins() {
+        PluginManager.disableAllPlugins();
+        for (String s : getSettingsManager().getPlugins().split(",")) {
+            if (s.trim().equals("gcp")) {
+                PluginManager.loadPlugin(
+                        "fazziclay://opentoday/plugins/global_changes_plugin",
+                        new GlobalChangesPlugin());
+            }
+        }
     }
 
     /**

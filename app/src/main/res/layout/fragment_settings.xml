@@ -84,10 +84,17 @@
             android:text="@string/settings_minimizeGrayColor" />
 
         <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/trimItemNamesOnEdit"
+            android:id="@+id/isItemBackgroundRandom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/minimizeGrayColor"
+            android:text="@string/settings_isItemBackgroundRandom" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/trimItemNamesOnEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/isItemBackgroundRandom"
             android:text="@string/settings_trimItemNamesOnEdit" />
 
         <com.google.android.material.checkbox.MaterialCheckBox

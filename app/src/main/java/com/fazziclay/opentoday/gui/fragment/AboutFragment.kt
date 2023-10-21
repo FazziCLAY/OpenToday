@@ -38,7 +38,7 @@ class AboutFragment : Fragment() {
         super.onCreate(savedInstanceState)
         UI.getUIRoot(this).pushActivitySettings { a ->
             a.isClockVisible = false
-            a.isNotificationsVisible = false
+            a.isNotificationsVisible = true
             a.toolbarSettings = ActivitySettings.ToolbarSettings.createBack(R.string.aboutapp_title) { UI.rootBack(this) }
         }
     }
@@ -63,7 +63,7 @@ class AboutFragment : Fragment() {
         binding.textBranch.text = App.VERSION_BRANCH
         if (!App.VERSION_BRANCH.equals("RELEASE", ignoreCase = true)) binding.textBranch.setTextColor(Color.RED)
         binding.textPackage.text = App.APPLICATION_ID
-        viewClick(binding.aboutText, this::manuallyCrashInteract)
+        viewClick(binding.aboutText, this::manuallySecretSettingsInteract)
         viewClick(binding.sourceCode, Runnable { NetworkUtil.openBrowser(requireActivity(), LINK_OPENSOURCE) })
         viewClick(binding.issues, Runnable { NetworkUtil.openBrowser(requireActivity(), LINK_ISSUES) })
         viewClick(binding.licenses, Runnable { requireActivity().startActivity(OpenSourceLicensesActivity.createLaunchIntent(requireContext())) })
@@ -75,15 +75,15 @@ class AboutFragment : Fragment() {
         return SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault()).format(Date(App.VERSION_RELEASE_TIME * 1000))
     }
 
-    private fun manuallyCrashInteract() {
+    private fun manuallySecretSettingsInteract() {
         if (System.currentTimeMillis() - easterEggLastClick < 1000) {
             easterEggCounter++
             if (easterEggCounter == 3) {
-                Toast.makeText(requireContext(), R.string.manuallyCrash_7tap, Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), R.string.fragment_about_secretSettingsWarning, Toast.LENGTH_SHORT).show()
             }
             if (easterEggCounter >= 10) {
                 easterEggCounter = 0
-                UI.Debug.showCrashWithMessageDialog(requireContext(), "Crash by AboutFragment easterEgg :) %s")
+                UI.findFragmentInParents(this, MainRootFragment::class.java)?.navigate(DeveloperFragment(), true)
             }
         } else {
             easterEggCounter = 0

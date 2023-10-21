@@ -226,7 +226,7 @@
     <string name="logic_container_item_filter_part_editor_name_empty"><![CDATA[<Без описания>]]></string>
     <string name="logic_container_logicMode_AND">И (&amp;&amp;)</string>
     <string name="logic_container_logicMode_OR">ИЛИ (||)</string>
-    <string name="manuallyCrash_7tap">Нажмите ещё 7 раз для вылета</string>
+    <string name="fragment_about_secretSettingsWarning">Нажмите ещё 7 раз для вылета</string>
     <string name="manuallyCrash_crash">Краш</string>
     <string name="manuallyCrash_dialog_apply">КРАШНУТЬ!</string>
     <string name="manuallyCrash_dialog_cancel">Отмена</string>
@@ -388,4 +388,6 @@
     <string name="item_missingNo_description">Это неизвестный айтем</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_dialog_random">Случайно</string>
     <string name="tab_autoName">Вкладка №%s</string>
+    <string name="itemAction_SHOW_ACTION_DIALOG">Показать диалог выбора</string>
+    <string name="settings_isItemBackgroundRandom">Случайный фон айтемов</string>
 </resources>
