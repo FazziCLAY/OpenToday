@@ -25,6 +25,7 @@ import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.item.Transform;
 import com.fazziclay.opentoday.app.items.selection.Selection;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
+import com.fazziclay.opentoday.gui.dialog.DialogSelectItemAction;
 import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.util.Logger;
@@ -247,6 +248,15 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
                 }
             }
             case DELETE_REQUEST -> behavior.onItemDeleteRequest(item);
+            case SHOW_ACTION_DIALOG -> {
+                new DialogSelectItemAction(activity, null, new DialogSelectItemAction.OnSelected() {
+                    @Override
+                    public void run(SettingsManager.ItemAction dialogAction) {
+                        actionItem(item, dialogAction);
+                    }
+                    // TODO: 21.10.2023 make translatable
+                }, "Click to action now").excludeFromList(SettingsManager.ItemAction.SHOW_ACTION_DIALOG).show();
+            }
         }
         CrashReportContext.FRONT.pop();
     }

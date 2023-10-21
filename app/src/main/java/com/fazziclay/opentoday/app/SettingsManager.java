@@ -248,7 +248,8 @@ public class SettingsManager {
         DELETE_REQUEST,
         MINIMIZE_REVERT,
         MINIMIZE_ON,
-        MINIMIZE_OFF
+        MINIMIZE_OFF,
+        SHOW_ACTION_DIALOG
     }
 
     public enum FirstTab {

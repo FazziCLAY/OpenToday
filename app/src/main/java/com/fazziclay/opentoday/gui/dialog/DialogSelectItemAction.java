@@ -6,10 +6,12 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import com.fazziclay.opentoday.R;
@@ -17,15 +19,20 @@ import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.util.MinBaseAdapter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class DialogSelectItemAction {
     private final Activity activity;
-    private final SettingsManager.ItemAction selected;
+    @Nullable private final SettingsManager.ItemAction selected;
     private final OnSelected onSelected;
     private final String message;
     private Dialog dialog;
     private final View view;
+    private List<SettingsManager.ItemAction> excludeList = new ArrayList<>();
 
-    public DialogSelectItemAction(Activity activity, SettingsManager.ItemAction selected, OnSelected onSelected) {
+    public DialogSelectItemAction(Activity activity, @Nullable SettingsManager.ItemAction selected, OnSelected onSelected) {
         this(activity, selected, onSelected, null);
     }
 
@@ -60,6 +67,9 @@ public class DialogSelectItemAction {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 SettingsManager.ItemAction itemAction = SettingsManager.ItemAction.values()[position];
+                if (excludeList.contains(itemAction)) {
+                    return new FrameLayout(activity);
+                }
 
                 TextView textView = new TextView(DialogSelectItemAction.this.activity);
                 textView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -74,6 +84,11 @@ public class DialogSelectItemAction {
             DialogSelectItemAction.this.onSelected.run(itemAction);
             dialog.cancel();
         });
+    }
+
+    public DialogSelectItemAction excludeFromList(SettingsManager.ItemAction... actions) {
+        excludeList.addAll(Arrays.asList(actions));
+        return this;
     }
 
     public void show() {

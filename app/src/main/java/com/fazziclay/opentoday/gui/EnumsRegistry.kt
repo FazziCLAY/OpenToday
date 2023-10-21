@@ -27,6 +27,7 @@ object EnumsRegistry {
         EnumInfo(SettingsManager.ItemAction.MINIMIZE_REVERT,        R.string.itemAction_MINIMIZE_REVERT),
         EnumInfo(SettingsManager.ItemAction.MINIMIZE_ON,            R.string.itemAction_MINIMIZE_ON),
         EnumInfo(SettingsManager.ItemAction.MINIMIZE_OFF,           R.string.itemAction_MINIMIZE_OFF),
+        EnumInfo(SettingsManager.ItemAction.SHOW_ACTION_DIALOG,     R.string.itemAction_SHOW_ACTION_DIALOG),
         EnumInfo(ImportWrapper.ErrorCode.NOT_IMPORT_TEXT,           R.string.importWrapper_errorCode_NOT_IMPORT_TEXT),
         EnumInfo(ImportWrapper.ErrorCode.VERSION_NOT_COMPATIBLE,    R.string.importWrapper_errorCode_VERSION_NOT_COMPATIBLE),
         EnumInfo(FiltersRegistry.FilterType.DATE,                   R.string.filterRegistry_filterType_DATE),
