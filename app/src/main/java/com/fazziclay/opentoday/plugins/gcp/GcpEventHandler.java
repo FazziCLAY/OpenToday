@@ -10,6 +10,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -23,6 +24,7 @@ import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
+import com.fazziclay.opentoday.app.items.item.ItemCodecUtil;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.databinding.ToolbarMoreSelectionBinding;
@@ -31,6 +33,8 @@ import com.fazziclay.opentoday.gui.item.HolderDestroyer;
 import com.fazziclay.opentoday.gui.item.ItemViewGenerator;
 import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
 import com.fazziclay.opentoday.gui.item.ItemsStorageDrawerBehavior;
+
+import org.json.JSONException;
 
 public class GcpEventHandler extends EventHandler {
     private ItemsStorage currentItemsStorage = null;
@@ -222,6 +226,27 @@ public class GcpEventHandler extends EventHandler {
 
 
 
+
+        Button massJSON = new Button(context);
+        massJSON.setText("Mass JSON");
+        massJSON.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+
+        massJSON.setOnClickListener(i -> {
+            var orchard = ItemCodecUtil.exportItemList(selectionManager.getItems());
+            try {
+                String s = orchard.toJSONArray().toString(2);
+                new AlertDialog.Builder(context)
+                        .setTitle("Export")
+                        .setMessage(s)
+                        .setPositiveButton("Close", null)
+                        .show();
+            } catch (JSONException ex) {
+                Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+
         TextView gcp = new TextView(context);
         gcp.setText("Global Changes Plugin:");
         localBinding.getRoot().addView(gcp);
@@ -232,6 +257,7 @@ public class GcpEventHandler extends EventHandler {
         horizont.addView(selectAll);
         horizont.addView(massTextColor);
         horizont.addView(massRemoveNotification);
+        horizont.addView(massJSON);
 
         var h = new HorizontalScrollView(context);
         h.addView(horizont);
