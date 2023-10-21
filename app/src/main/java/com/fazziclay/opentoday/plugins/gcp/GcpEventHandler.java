@@ -18,6 +18,7 @@ import com.fazziclay.opentoday.api.Event;
 import com.fazziclay.opentoday.api.EventExceptionEvent;
 import com.fazziclay.opentoday.api.EventHandler;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.BeautifyColorManager;
 import com.fazziclay.opentoday.app.events.gui.CurrentItemsStorageContextChanged;
 import com.fazziclay.opentoday.app.events.gui.toolbar.AppToolbarSelectionClickEvent;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
@@ -34,6 +35,7 @@ import com.fazziclay.opentoday.gui.item.HolderDestroyer;
 import com.fazziclay.opentoday.gui.item.ItemViewGenerator;
 import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
 import com.fazziclay.opentoday.gui.item.ItemsStorageDrawerBehavior;
+import com.fazziclay.opentoday.util.RandomUtil;
 
 import org.json.JSONException;
 
@@ -82,16 +84,43 @@ public class GcpEventHandler extends EventHandler {
                 .setNeutralDialogButton("Reset ALL", () -> {
                     for (Item item : selectionManager.getItems()) {
                         item.setViewCustomBackgroundColor(false);
+                        item.visibleChanged();
                     }
                 })
                 .showDialog("Mass background", "Cancel", "Apply", color -> {
                     for (Item item : selectionManager.getItems()) {
                         item.setViewBackgroundColor(color);
                         item.setViewCustomBackgroundColor(true);
+                        item.visibleChanged();
                     }
                 }));
 
 
+
+
+
+
+
+        Button massRandomBgColor = new Button(context);
+        massRandomBgColor.setText("Mass random BG");
+        massRandomBgColor.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        massRandomBgColor.setOnClickListener(i -> {
+            for (Item item : selectionManager.getItems()) {
+                item.setViewBackgroundColor(BeautifyColorManager.randomBackgroundColor(context));
+                item.setViewCustomBackgroundColor(true);
+                item.visibleChanged();
+            }
+        });
+
+        massRandomBgColor.setOnLongClickListener(i -> {
+            for (Item item : selectionManager.getItems()) {
+                item.setViewBackgroundColor(RandomUtil.nextInt() | 0xff000000);
+                item.setViewCustomBackgroundColor(true);
+                item.visibleChanged();
+            }
+            return true;
+        });
 
 
 
@@ -123,14 +152,17 @@ public class GcpEventHandler extends EventHandler {
                     for (Item item : selectionManager.getItems()) {
                         if (item instanceof TextItem textItem) {
                             textItem.setCustomTextColor(false);
+                            textItem.visibleChanged();
                         }
                     }
+
                 })
                 .showDialog("Mass text color", "Cancel", "Apply", color -> {
                     for (Item item : selectionManager.getItems()) {
                         if (item instanceof TextItem textItem) {
                             textItem.setCustomTextColor(true);
                             textItem.setTextColor(color);
+                            textItem.visibleChanged();
                         }
                     }
                 }));
@@ -185,7 +217,7 @@ public class GcpEventHandler extends EventHandler {
 
                 @Override
                 public ItemsStorageDrawerBehavior getItemsStorageDrawerBehavior(Item item) {
-                    return null;
+                    return null; // null because isRenderMinimized is true
                 }
 
                 @Override
@@ -225,6 +257,7 @@ public class GcpEventHandler extends EventHandler {
                     .setPositiveButton("Apply", (dialogInterface, i1) -> {
                         for (Item item : selectionManager.getItems()) {
                             item.getNotifications().clear();
+                            item.visibleChanged();
                         }
                     })
                     .show();
@@ -260,6 +293,7 @@ public class GcpEventHandler extends EventHandler {
         var horizont = new LinearLayout(context);
         horizont.setOrientation(LinearLayout.HORIZONTAL);
         horizont.addView(massBgColor);
+        horizont.addView(massRandomBgColor);
         horizont.addView(selectAll);
         horizont.addView(massTextColor);
         horizont.addView(massRemoveNotification);
