@@ -25,6 +25,7 @@ import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.item.Transform;
 import com.fazziclay.opentoday.app.items.selection.Selection;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
+import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.dialog.DialogSelectItemAction;
 import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
@@ -141,7 +142,8 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
         @Override
         public Status onAdded(Item item, int pos) {
             runOnUiThread(() -> callWithNonNullAdapter((adapter) -> {
-                adapter.notifyItemRangeInserted(adapter.getItemCount(), pos);
+                adapter.notifyItemInserted(pos);
+                adapter.notifyItemRangeChanged(adapter.getItemCount(), pos);
                 if (behavior.isScrollToAddedItem()) {
                     smoothScrollToPosition(pos);
                 }
@@ -324,7 +326,9 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
                         Transform.Result result = Transform.transform(item, type);
                         if (result.isAllow()) {
                             int pos = itemsStorage.getItemPosition(item);
-                            itemsStorage.addItem(result.generate(), pos + 1);
+                            Item newItem = result.generate();
+
+                            UI.postDelayed(() -> itemsStorage.addItem(newItem, pos + 1), 500);
 
                         } else {
                             Toast.makeText(activity, R.string.transform_not_allowed, Toast.LENGTH_SHORT).show();

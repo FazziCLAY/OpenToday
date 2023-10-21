@@ -29,9 +29,18 @@ public class Transform {
     public static Result transform(Item item, ItemType to) {
         ItemType from = ItemUtil.getItemType(item);
 
+        if (to == ItemType.SLEEP_TIME) {
+            return Result.allow(() -> new SleepTimeItem((TextItem) item));
+        }
+
+        if (to == ItemType.TEXT) {
+            if (item instanceof TextItem textItem) {
+                return Result.allow(() -> new TextItem(textItem));
+            }
+        }
+
         if (to == ItemType.COUNTER) {
-            if (from == ItemType.TEXT) {
-                TextItem textItem = (TextItem) item;
+            if (item instanceof TextItem textItem) {
                 return Result.allow(() -> new CounterItem(textItem));
             }
         }
@@ -40,19 +49,34 @@ public class Transform {
             if (from == ItemType.CHECKBOX) {
                 return Result.allow(() -> new DayRepeatableCheckboxItem((CheckboxItem) item, false, 0));
 
-            } else if (from == ItemType.TEXT) {
+            } else if (item instanceof TextItem) {
                 return Result.allow(() -> new DayRepeatableCheckboxItem(new CheckboxItem((TextItem) item, false), false, 0));
             }
         }
 
         if (to == ItemType.CHECKBOX) {
-            if (from == ItemType.TEXT) {
+            if (item instanceof CheckboxItem) {
+                return Result.allow(() -> new CheckboxItem((CheckboxItem) item));
+            }
+
+            if (item instanceof TextItem) {
                 return Result.allow(() -> new CheckboxItem((TextItem) item, false));
             }
         }
 
         if (to == ItemType.LONG_TEXT) {
-            if (from == ItemType.TEXT) {
+            if (item instanceof ContainerItem containerItem) {
+                return Result.allow(() -> {
+                    String text = "";
+                    for (Item intItem : containerItem.getAllItems()) {
+                        String t = ((intItem instanceof CheckboxItem checkboxItem) ? (checkboxItem.isChecked() ? "[*]" : "[ ]") : "") + intItem.getText();
+                        text += t + "\n\n";
+                    }
+                    return new LongTextItem((TextItem) item, text);
+                });
+            }
+
+            if (item instanceof TextItem) {
                 return Result.allow(() -> new LongTextItem((TextItem) item, item.getText()));
             }
         }

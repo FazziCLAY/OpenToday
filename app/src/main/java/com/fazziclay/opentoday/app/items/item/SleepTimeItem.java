@@ -49,6 +49,12 @@ public class SleepTimeItem extends TextItem {
     }
 
 
+    public SleepTimeItem(TextItem append) {
+        super(append);
+        tick = 0;
+        elapsedTime = 0;
+        wakeUpForRequiredAtCurr = 0;
+    }
 
     public SleepTimeItem(SleepTimeItem copy) {
         super(copy);
