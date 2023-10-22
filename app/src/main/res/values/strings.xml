@@ -411,4 +411,6 @@
     <string name="transform_not_allowed">Transformation is impossible</string>
     <string name="transform_selectTypeDialog_message" />
     <string name="transform_selectTypeDialog_title">Select result type</string>
+    <string name="main_activity_allowExactAlarms">Please allow exact alarms!</string>
+    <string name="main_activity_allowFullScreenIntent">Please allow full screen intents</string>
 </resources>

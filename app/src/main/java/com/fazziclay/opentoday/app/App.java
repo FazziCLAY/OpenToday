@@ -76,7 +76,7 @@ public class App extends Application {
     public static final boolean DEBUG = !SHADOW_RELEASE && CustomBuildConfig.DEBUG;
     public static final boolean LOG = debug(true);
     public static final boolean LOGS_SAVE = debug(false);
-
+    public static final boolean SECRET_SETTINGS_AVAILABLE = false;
 
     public static boolean debug(boolean b) {
         return (DEBUG && b);

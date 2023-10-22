@@ -399,6 +399,10 @@ class SettingsFragment : Fragment() {
     }
 
     private fun experimentalFeaturesInteract() {
+        if (!App.SECRET_SETTINGS_AVAILABLE) {
+            return
+        }
+
         if (System.currentTimeMillis() - easterEggLastClick < 1000) {
             easterEggCounter++
             if (easterEggCounter >= 6) {

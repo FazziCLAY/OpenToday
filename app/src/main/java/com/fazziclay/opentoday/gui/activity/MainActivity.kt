@@ -1,12 +1,17 @@
 package com.fazziclay.opentoday.gui.activity
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
 import android.app.DatePickerDialog
+import android.app.NotificationManager
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.view.Menu
 import android.view.View
 import android.widget.LinearLayout
@@ -108,7 +113,12 @@ class MainActivity : AppCompatActivity(), UIRoot {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.hide()
         debugRunnable = Runnable {
-            binding.debugInfo.text = ColorUtil.colorize(Debug.getDebugInfoText(), Color.WHITE, Color.TRANSPARENT, Typeface.NORMAL)
+            binding.debugInfo.text = ColorUtil.colorize(
+                Debug.getDebugInfoText(),
+                Color.WHITE,
+                Color.TRANSPARENT,
+                Typeface.NORMAL
+            )
             if (debugView && debugHandler != null) {
                 debugHandler!!.postDelayed(this.debugRunnable, 50)
             }
@@ -116,8 +126,8 @@ class MainActivity : AppCompatActivity(), UIRoot {
         if (Debug.CUSTOM_MAINACTIVITY_BACKGROUND) binding.root.setBackgroundColor(Color.parseColor("#00ffff"))
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                    .replace(CONTAINER_ID, MainRootFragment.create(), "MainRootFragment")
-                    .commit()
+                .replace(CONTAINER_ID, MainRootFragment.create(), "MainRootFragment")
+                .commit()
         }
         setupNotifications()
         setupCurrentDate()
@@ -125,12 +135,16 @@ class MainActivity : AppCompatActivity(), UIRoot {
             QuickNoteReceiver.sendQuickNoteNotification(this)
         }
         updateDebugView()
-        onBackPressedDispatcher.addCallback(object: OnBackPressedCallback(true) {
+        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 val exit = Runnable { this@MainActivity.finish() }
                 val def = Runnable {
                     if (System.currentTimeMillis() - lastExitClick > 2000) {
-                        Toast.makeText(this@MainActivity, R.string.abc_pressAgainForExitWarning, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@MainActivity,
+                            R.string.abc_pressAgainForExitWarning,
+                            Toast.LENGTH_SHORT
+                        ).show()
                         lastExitClick = System.currentTimeMillis()
                     } else {
                         exit.run()
@@ -151,7 +165,14 @@ class MainActivity : AppCompatActivity(), UIRoot {
         app.importantDebugCallbacks.addCallback(CallbackImportance.DEFAULT, importantDebugCallback)
         if (Debug.DEBUG_LOG_ALL_IN_MAINACTIVITY) {
             Logger.i(TAG, "------------------")
-            Logger.d(TAG, "Example debug message", 10, 20, 30, Exception("Exception in debug logging"))
+            Logger.d(
+                TAG,
+                "Example debug message",
+                10,
+                20,
+                30,
+                Exception("Exception in debug logging")
+            )
             Logger.w(TAG, "Example warning message")
             Logger.e(TAG, "Example error message", Exception("Example exception for logger"))
             Logger.i(TAG, "------------------")
@@ -165,7 +186,29 @@ class MainActivity : AppCompatActivity(), UIRoot {
                     binding.importantTodo.visibility = View.VISIBLE
                     binding.importantTodo.text = todo
                 }
-            } catch (ignored: Exception) {}
+            } catch (ignored: Exception) {
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager: AlarmManager = getSystemService(AlarmManager::class.java)
+            if (!alarmManager.canScheduleExactAlarms()) {
+                Toast.makeText(this, R.string.main_activity_allowExactAlarms, Toast.LENGTH_LONG).show()
+                app.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+                return
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            val notificationManager: NotificationManager = getSystemService(NotificationManager::class.java)
+            if (!notificationManager.canUseFullScreenIntent()) {
+                Toast.makeText(this, R.string.main_activity_allowFullScreenIntent, Toast.LENGTH_LONG).show()
+                app.startActivity(Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT))
+                return
+            }
         }
     }
 

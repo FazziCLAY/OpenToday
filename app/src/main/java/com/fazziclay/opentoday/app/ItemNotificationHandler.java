@@ -58,7 +58,20 @@ public class ItemNotificationHandler {
                     flags);
 
             final AlarmManager alarmManager = context.getSystemService(AlarmManager.class);
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMs, pendingIntent);
+            // owoo
+            {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    if (alarmManager.canScheduleExactAlarms()) {
+                        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMs, pendingIntent);
+
+                    } else {
+                        Logger.w(TAG, "alarm canScheduleExactAlarms=false. for " + itemNotification + " to " + triggerAtMs + "unix-ms: " + TimeUtil.getDebugDate(triggerAtMs));
+                        return;
+                    }
+                } else {
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMs, pendingIntent);
+                }
+            }
             cachedAlarms.put(requestId, triggerAtMs);
             Logger.d(TAG, "alarm set for " + itemNotification + " to " + triggerAtMs + "unix-ms: " + TimeUtil.getDebugDate(triggerAtMs));
 

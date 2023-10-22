@@ -403,4 +403,6 @@
     <string name="transform_not_allowed">Трансформация невозможна</string>
     <string name="transform_selectTypeDialog_message" />
     <string name="transform_selectTypeDialog_title">Выберите тип результата</string>
+    <string name="main_activity_allowExactAlarms">Пожалуйста разрешите отложенные будильники</string>
+    <string name="main_activity_allowFullScreenIntent">Пожалуйста разрешите полноэкранные уведомления</string>
 </resources>

@@ -13,7 +13,7 @@ var verBranch = "fixes-itemstorageviewer + special_widget + item-sleepTime + not
 var verReleaseTime = 1689778441 // in seconds
 
 android {
-    compileSdk 33
+    compileSdk 34
     defaultConfig {
         applicationId "com.fazziclay.opentoday" + (isDev ? ".dev" : "") + (beta ? ".beta" : "") + appIdSuffix
         minSdk 26

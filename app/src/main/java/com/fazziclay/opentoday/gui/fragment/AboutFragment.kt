@@ -76,6 +76,10 @@ class AboutFragment : Fragment() {
     }
 
     private fun manuallySecretSettingsInteract() {
+        if (!App.SECRET_SETTINGS_AVAILABLE) {
+            return
+        }
+
         if (System.currentTimeMillis() - easterEggLastClick < 1000) {
             easterEggCounter++
             if (easterEggCounter == 3) {
