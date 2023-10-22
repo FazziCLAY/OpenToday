@@ -8,7 +8,6 @@ import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
 
-import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.notification.DayItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
@@ -84,7 +83,7 @@ public class ItemNotificationHandler {
             final String nText = dayItemNotification.isNotifyTextFromItemText() ? (item.isParagraphColorize() ? ColorUtil.colorizeToPlain(item.getText()) : item.getText()) : dayItemNotification.getNotifyText();
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, App.NOTIFICATION_ITEMS_CHANNEL)
-                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setSmallIcon(dayItemNotification.getIcon().getResId())
                     .setContentTitle(nTitle)
                     .setContentText(nText)
                     .setSubText(dayItemNotification.getNotifySubText())

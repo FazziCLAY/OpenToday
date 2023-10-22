@@ -55,23 +55,31 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <ImageButton
+        android:id="@+id/icon"
+        android:scaleType="fitXY"
+        android:src="@drawable/minimize_gray_foreground"
+        android:layout_width="60sp"
+        android:layout_height="55sp"
+        android:contentDescription="Icon" />
+
     <CheckBox
         android:id="@+id/fullScreen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="FullScreen" />
+        android:text="@string/dialog_itemNotification_fullScreen" />
 
     <CheckBox
         android:id="@+id/previewViewOnly"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Preview item is ViewOnly" />
+        android:text="@string/dialog_itemNotification_previewViewOnly" />
 
     <CheckBox
         android:id="@+id/sound"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sound" />
+        android:text="@string/dialog_itemNotification_sound" />
 
     <Button
         android:id="@+id/test"

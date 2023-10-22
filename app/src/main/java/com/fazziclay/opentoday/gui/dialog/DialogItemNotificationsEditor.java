@@ -6,14 +6,18 @@ import static com.fazziclay.opentoday.util.InlineUtil.viewVisible;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.content.res.AppCompatResources;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.icons.IconsRegistry;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.notification.DayItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
@@ -29,6 +33,7 @@ import com.fazziclay.opentoday.util.time.TimeUtil;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.function.Consumer;
 
 public class DialogItemNotificationsEditor {
     private final Activity activity;
@@ -87,6 +92,15 @@ public class DialogItemNotificationsEditor {
                     DialogItemNotificationBinding l = DialogItemNotificationBinding.inflate(activity.getLayoutInflater());
 
                     DayItemNotification d = (DayItemNotification) itemNotification;
+
+                    Drawable drawable = AppCompatResources.getDrawable(activity, d.getIcon().getResId());
+                    l.icon.setImageDrawable(drawable);
+                    l.icon.setScaleType(ImageView.ScaleType.FIT_XY);
+                    l.icon.setOnClickListener(ignore -> new IconSelectorDialog(activity, icon -> {
+                        d.setIcon(icon);
+                        Drawable drawable1 = AppCompatResources.getDrawable(activity, d.getIcon().getResId());
+                        l.icon.setImageDrawable(drawable1);
+                    }).show());
 
                     l.notificationId.setText(String.valueOf(d.getNotificationId()));
                     MinTextWatcher.after(l.notificationId, () -> {

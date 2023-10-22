@@ -404,4 +404,8 @@
     <string name="fragment_developer_crash">Crash!</string>
     <string name="fragment_developer_plugins_reloadedNotification">Plugins reloaded! (-5s)</string>
     <string name="fragment_developer_featureFlags">Feature flags</string>
+    <string name="fragment_developer_icons">Icons…</string>
+    <string name="dialog_itemNotification_fullScreen">Is fullscreen</string>
+    <string name="dialog_itemNotification_previewViewOnly">FullScreen Preview is ViewOnly</string>
+    <string name="dialog_itemNotification_sound">FullScreen Sound</string>
 </resources>

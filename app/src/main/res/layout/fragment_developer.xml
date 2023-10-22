@@ -33,6 +33,13 @@
             android:backgroundTint="#aaa00aaa"
             android:text="@string/fragment_developer_featureFlags" />
 
+        <Button
+            android:id="@+id/icons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#AA0AE581"
+            android:text="@string/fragment_developer_icons" />
+
         <TextView
             android:id="@+id/debugText"
             android:layout_width="wrap_content"

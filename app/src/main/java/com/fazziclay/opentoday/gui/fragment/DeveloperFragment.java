@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,11 +20,15 @@ import androidx.fragment.app.Fragment;
 import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.icons.IconsRegistry;
 import com.fazziclay.opentoday.databinding.FragmentDeveloperBinding;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.UINotification;
 import com.fazziclay.opentoday.gui.activity.MainActivity;
+import com.fazziclay.opentoday.gui.dialog.IconSelectorDialog;
 import com.fazziclay.opentoday.util.ColorUtil;
+
+import java.util.function.Consumer;
 
 public class DeveloperFragment extends Fragment {
 
@@ -51,6 +56,9 @@ public class DeveloperFragment extends Fragment {
         binding.crash.setOnClickListener(_ignore -> UI.Debug.showCrashWithMessageDialog(context, "DeveloperFragment love you <3"));
         binding.featureFlags.setOnClickListener(_ignore -> UI.Debug.showFeatureFlagsDialog(app, context));
         binding.debugText.setText(ColorUtil.colorize(Debug.getDebugInfoText(), Color.WHITE, Color.BLACK, Typeface.NORMAL));
+        binding.icons.setOnClickListener(_ignore -> new IconSelectorDialog(context, icon -> {
+            Toast.makeText(context, "icon = " + icon.getId(), Toast.LENGTH_SHORT).show();
+        }).show());
     }
 
     private void showPluginsDialog() {

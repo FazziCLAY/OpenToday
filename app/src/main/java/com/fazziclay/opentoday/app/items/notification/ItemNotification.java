@@ -3,6 +3,7 @@ package com.fazziclay.opentoday.app.items.notification;
 import androidx.annotation.NonNull;
 
 import com.fazziclay.opentoday.app.data.Cherry;
+import com.fazziclay.opentoday.app.icons.IconsRegistry;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 
@@ -16,7 +17,8 @@ public abstract class ItemNotification implements Cloneable {
         @Override
         public Cherry exportNotification(ItemNotification itemNotification) {
             return new Cherry()
-                    .put("id", itemNotification.id == null ? null : itemNotification.id.toString());
+                    .put("id", itemNotification.id == null ? null : itemNotification.id.toString())
+                    .put("icon", itemNotification.icon.getId());
         }
 
         @Override
@@ -26,6 +28,7 @@ public abstract class ItemNotification implements Cloneable {
                     notification.id = UUID.fromString(cherry.getString("id"));
                 } catch (Exception ignored) {}
             }
+            notification.icon = IconsRegistry.REGISTRY.getById(cherry.optString("icon", "opentoday"));
             return notification;
         }
     }
@@ -33,6 +36,7 @@ public abstract class ItemNotification implements Cloneable {
 
     private UUID id;
     private NotificationController controller;
+    @NotNull private IconsRegistry.Icon icon = IconsRegistry.REGISTRY.OPENTODAY;
 
     public abstract boolean tick(TickSession tickSession);
 
@@ -82,6 +86,16 @@ public abstract class ItemNotification implements Cloneable {
     // DO NOT USE THIS!!!!!! (used only for importing)
     public void setController(NotificationController controller) {
         this.controller = controller;
+    }
+
+
+    public void setIcon(@NonNull IconsRegistry.Icon icon) {
+        this.icon = icon;
+    }
+
+    @NonNull
+    public IconsRegistry.Icon getIcon() {
+        return icon;
     }
 
     @NonNull
