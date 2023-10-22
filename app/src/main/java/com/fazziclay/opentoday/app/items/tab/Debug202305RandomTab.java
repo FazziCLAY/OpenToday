@@ -54,6 +54,7 @@ public class Debug202305RandomTab extends Tab implements Tickable, Readonly {
         }
     };
     private static final boolean GEN_COLORS = true;
+    private static final boolean DISABLE_TAB = true; // yes, disable this tab in releases. (this tab causes crashes...)
 
     private final SimpleItemsStorage itemsStorage = new SimpleItemsStorage((ItemsRoot) null) {
         @Override
@@ -148,7 +149,9 @@ public class Debug202305RandomTab extends Tab implements Tickable, Readonly {
     @Override
     public void tick(TickSession tickSession) {
         if (!tickSession.isAllowed(this)) return;
-
+        if (DISABLE_TAB) {
+            return;
+        }
         if (GEN_COLORS) {
             for (int i = 0; i < 2; i++) {
                 tick_genColors(tickSession);
