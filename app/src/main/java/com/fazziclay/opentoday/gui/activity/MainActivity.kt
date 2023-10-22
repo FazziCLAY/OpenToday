@@ -454,6 +454,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
 
                 }, 25)
             } else if (binding.toolbar.menu != null) {
+                binding.toolbar.menu.clear()
                 binding.toolbar.menu.close()
                 Logger.d(TAG, "toolbar closed...")
             }
