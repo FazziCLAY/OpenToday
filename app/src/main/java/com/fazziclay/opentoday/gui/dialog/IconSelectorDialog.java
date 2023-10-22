@@ -31,6 +31,7 @@ public class IconSelectorDialog {
     public void show() {
         var view = new LinearLayout(context);
         view.setOrientation(LinearLayout.VERTICAL);
+        view.setPadding(4, 2, 4, 2);
 
         for (IconsRegistry.Icon icon : IconsRegistry.REGISTRY.getIconsList()) {
             LinearLayout l = new LinearLayout(context);
@@ -62,6 +63,7 @@ public class IconSelectorDialog {
         scroll.addView(view);
 
         dialog = new AlertDialog.Builder(context)
+                .setTitle(R.string.dialog_iconSelector_title)
                 .setView(scroll)
                 .setNegativeButton(R.string.abc_cancel, null)
                 .show();

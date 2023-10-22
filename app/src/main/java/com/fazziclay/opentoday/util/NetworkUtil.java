@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.widget.Toast;
 
+import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 
@@ -26,7 +27,7 @@ public class NetworkUtil {
 
     static {
         if (App.DEBUG) NETWORK_LISTENERS.add((logKey, state, url, result) -> Logger.d(TAG, "Networking '"+logKey+"' State: " + state + " URL: " + url + " Result: " + result));
-        if (App.DEBUG_NETWORK_UTIL_SHADOWCONTENT) {
+        if (Debug.DEBUG_NETWORK_UTIL_SHADOWCONTENT) {
             // Update checked test
             DEBUG_CONTENTS.put("https://fazziclay.github.io/api/project_3/v2/latest_build", "999");
         }

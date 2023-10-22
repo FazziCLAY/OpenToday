@@ -84,7 +84,7 @@ public class ItemsTickReceiver extends BroadcastReceiver {
     }
 
     private void debugNotification(Context context) {
-        if (App.DEBUG_TICK_NOTIFICATION) {
+        if (Debug.DEBUG_TICK_NOTIFICATION) {
             context.getSystemService(NotificationManager.class).notify(321, new NotificationCompat.Builder(context, App.NOTIFICATION_ITEMS_CHANNEL)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setSilent(true)

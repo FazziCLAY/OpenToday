@@ -163,6 +163,7 @@ public class DialogItemNotificationsEditor {
                     var scroll = new ScrollView(activity);
                     scroll.addView(l.getRoot());
                     new AlertDialog.Builder(activity)
+                            .setTitle(R.string.dialog_itemNotification_dialogTitle)
                             .setView(scroll)
                             .setPositiveButton(R.string.dialog_itemNotification_apply, (_refre, _werwer) -> {
                                 if (d.getTime() > TimeUtil.getDaySeconds()) d.setLatestDayOfYear(0);

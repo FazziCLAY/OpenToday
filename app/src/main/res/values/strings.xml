@@ -25,6 +25,7 @@
     <string name="crash_activity_sendToDeveloper_agree">I agree</string>
     <string name="crash_activity_sendToDeveloper_message">Sending anonymous statistics is disabled in your settings.\n\nThe following data will be used:\n* The text of the crash report that you see on the screen\n* IP address</string>
     <string name="crash_activity_sendToDeveloper_title">Send crash-report?</string>
+    <string name="crash_activity_updateAvailable">Update available!\nClick to download new version</string>
     <string name="crash_notification_big_summary" translatable="false">""</string>
     <string name="crash_notification_big_text" translatable="false">""</string>
     <string name="crash_notification_big_title">OpenToday crashed</string>
@@ -41,12 +42,17 @@
     <string name="dialog_editItemFilter_title_value">Value</string>
     <string name="dialog_editItemFilter_weekOfYear">Week of year</string>
     <string name="dialog_editItemFilter_year">Year</string>
+    <string name="dialog_iconSelector_title">Select a icon…</string>
     <string name="dialog_itemNotification_apply">Apply</string>
     <string name="dialog_itemNotification_cancel">Cancel</string>
+    <string name="dialog_itemNotification_dialogTitle">Edit a item notification</string>
     <string name="dialog_itemNotification_empty_description">Press (+) button for add item notification</string>
     <string name="dialog_itemNotification_empty_title">No notifications here</string>
+    <string name="dialog_itemNotification_fullScreen">Is fullscreen</string>
     <string name="dialog_itemNotification_incorrectNotificationId">Incorrect notification id field</string>
     <string name="dialog_itemNotification_notifyid">Notification ID</string>
+    <string name="dialog_itemNotification_previewViewOnly">FullScreen Preview is ViewOnly</string>
+    <string name="dialog_itemNotification_sound">FullScreen Sound</string>
     <string name="dialog_itemNotification_subtext">Sub text</string>
     <string name="dialog_itemNotification_testNotify">Test send notify</string>
     <string name="dialog_itemNotification_text">Notification text</string>
@@ -76,9 +82,17 @@
     <string name="filterRegistry_filterType_DATE"><![CDATA[Date&Time]]></string>
     <string name="filterRegistry_filterType_ITEM_STAT">Item stat</string>
     <string name="filterRegistry_filterType_LOGIC_CONTAINER">Container</string>
+    <string name="fragment_about_secretSettingsWarning">Hello :)\nStop clicking, please…</string>
     <string name="fragment_deleteItems_delete_apply">DELETE!</string>
     <string name="fragment_deleteItems_delete_cancel">Cancel</string>
     <string name="fragment_deleteItems_delete_title">Delete %s items (%s include child-items)?</string>
+    <string name="fragment_developer_crash">Crash!</string>
+    <string name="fragment_developer_featureFlags">Feature flags</string>
+    <string name="fragment_developer_icons">Icons…</string>
+    <string name="fragment_developer_plugins">Plugins</string>
+    <string name="fragment_developer_plugins_message">Enter plugins separate by comma , \nAvailable:\n  * gcp - global changes</string>
+    <string name="fragment_developer_plugins_reloadedNotification">Plugins reloaded! (-5s)</string>
+    <string name="fragment_developer_plugins_title">Plugins</string>
     <string name="fragment_enterPincode_timeout">Try later (reopen app)</string>
     <string name="fragment_enterPincode_title">Enter pin-code</string>
     <string name="fragment_filterGroup_itemFilter_editor_error_unknownFilter">Unknown filter! This is a bug. Report to developer.\nCanonical: %s</string>
@@ -106,6 +120,7 @@
     <string name="fragment_itemEditor_delete">Delete</string>
     <string name="fragment_itemEditor_delete_apply">Delete!</string>
     <string name="fragment_itemEditor_delete_cancel">Cancel</string>
+    <string name="fragment_itemEditor_delete_message">Delete this item as well as %d of its child items?</string>
     <string name="fragment_itemEditor_delete_title">Delete?</string>
     <string name="fragment_itemEditor_filterGroup_tickBehavior">Tick behavior</string>
     <string name="fragment_itemEditor_longtext_textColor">Long text color</string>
@@ -115,6 +130,7 @@
     <string name="fragment_itemEditor_module_cyclelist_tickMode">Tick mode</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_dialog_apply">Apply</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_dialog_cancel">Cancel</string>
+    <string name="fragment_itemEditor_module_item_backgroundColor_dialog_random">Random</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_dialog_title">Background color</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_edit">Edit</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_hint">Background Color</string>
@@ -179,6 +195,7 @@
     <string name="itemAction_SELECT_OFF">Selection: OFF</string>
     <string name="itemAction_SELECT_ON">Selection: ON</string>
     <string name="itemAction_SELECT_REVERT">Selection: revert</string>
+    <string name="itemAction_SHOW_ACTION_DIALOG">Show action dialog</string>
     <string name="itemFilter_dateAndTime_activeItems">Active items</string>
     <string name="itemFilter_dateAndTime_dayOfMonth">Day of month</string>
     <string name="itemFilter_dateAndTime_dayOfWeek">Day of week</string>
@@ -224,6 +241,11 @@
     <string name="item_mathGame">Math game</string>
     <string name="item_mathGame_description">А math game to warm up the brain.</string>
     <string name="item_mathGame_quest_primitive_text">How much is\n%s %s %s?</string>
+    <string name="item_missingNo">missingno (error item)</string>
+    <string name="item_missingNo_description">This item is unknown item....</string>
+    <string name="item_sleepTime">Sleep time</string>
+    <string name="item_sleepTime_defaultPattern">$(elapsed) elapsed to $(wakeUpTime)\nCurrent + $(requiredSleepTime) = $(wakeUpForRequired)</string>
+    <string name="item_sleepTime_description">Automatically calc sleep time</string>
     <string name="item_text">Text</string>
     <string name="item_text_clickableUrls">Clickable URLs</string>
     <string name="item_text_description">A simple text note. It has the text itself, as well as the color of the text, whether to format it, and whether to highlight links.</string>
@@ -233,7 +255,6 @@
     <string name="logic_container_item_filter_part_editor_name_empty"><![CDATA[<No description>]]></string>
     <string name="logic_container_logicMode_AND">And (&amp;&amp;)</string>
     <string name="logic_container_logicMode_OR">Or (||)</string>
-    <string name="fragment_about_secretSettingsWarning">Hello :)\nStop clicking, please…</string>
     <string name="manuallyCrash_crash">Crashed</string>
     <string name="manuallyCrash_dialog_apply">CRASH!</string>
     <string name="manuallyCrash_dialog_cancel">Cancel</string>
@@ -247,6 +268,8 @@
     <string name="menuItem_openEditDialog">Edit</string>
     <string name="menuItem_selected">Selected</string>
     <string name="menuItem_transform">Transform</string>
+    <string name="menu_itemEditor_copyItemId">Copy ID</string>
+    <string name="menu_itemEditor_export">Export</string>
     <string name="notificationChannel_crash_title">App Crash</string>
     <string name="notificationChannel_items_title">Items</string>
     <string name="notificationChannel_quickNote_title">Quick note</string>
@@ -284,6 +307,7 @@
     <string name="settings_firstTab_first">First</string>
     <string name="settings_firstTab_onClosed">Last open</string>
     <string name="settings_firstTab_title">Startup tab</string>
+    <string name="settings_isItemBackgroundRandom">Random item background</string>
     <string name="settings_isTelemetry">@string/setup_telemetry</string>
     <string name="settings_itemAddPosition_BOTTOM">Bottom</string>
     <string name="settings_itemAddPosition_TOP">Top</string>
@@ -321,6 +345,7 @@
     <string name="setup_telemetry">Allow to send anonymous statistics</string>
     <string name="setup_telemetry_details">These statistics will help the developer a lot. They contain:\n * IP-address\n * Instance ID\n * App open/close (max 1 per day)\n * Crashes and Errors</string>
     <string name="setup_theme_title">Choose a comfortable theme</string>
+    <string name="tab_autoName">Tab №%s</string>
     <string name="tab_defaultFirstName">My first tab</string>
     <string name="tab_noEmptyName">Name can\'t be empty!</string>
     <string name="toolbar_debug">Debug</string>
@@ -386,27 +411,4 @@
     <string name="transform_not_allowed">Transformation is impossible</string>
     <string name="transform_selectTypeDialog_message" />
     <string name="transform_selectTypeDialog_title">Select result type</string>
-    <string name="fragment_itemEditor_delete_message">Delete this item as well as %d of its child items?</string>
-    <string name="menu_itemEditor_export">Export</string>
-    <string name="menu_itemEditor_copyItemId">Copy ID</string>
-    <string name="item_sleepTime_description">Automatically calc sleep time</string>
-    <string name="item_sleepTime">Sleep time</string>
-    <string name="item_sleepTime_defaultPattern">$(elapsed) elapsed to $(wakeUpTime)\nCurrent + $(requiredSleepTime) = $(wakeUpForRequired)</string>
-    <string name="item_missingNo">missingno (error item)</string>
-    <string name="item_missingNo_description">This item is unknown item....</string>
-    <string name="fragment_itemEditor_module_item_backgroundColor_dialog_random">Random</string>
-    <string name="tab_autoName">Tab №%s</string>
-    <string name="itemAction_SHOW_ACTION_DIALOG">Show action dialog</string>
-    <string name="settings_isItemBackgroundRandom">Random item background</string>
-    <string name="fragment_developer_plugins">Plugins</string>
-    <string name="fragment_developer_plugins_title">Plugins</string>
-    <string name="fragment_developer_plugins_message">Enter plugins separate by comma , \nAvailable:\n  * gcp - global changes</string>
-    <string name="fragment_developer_crash">Crash!</string>
-    <string name="fragment_developer_plugins_reloadedNotification">Plugins reloaded! (-5s)</string>
-    <string name="fragment_developer_featureFlags">Feature flags</string>
-    <string name="fragment_developer_icons">Icons…</string>
-    <string name="dialog_itemNotification_fullScreen">Is fullscreen</string>
-    <string name="dialog_itemNotification_previewViewOnly">FullScreen Preview is ViewOnly</string>
-    <string name="dialog_itemNotification_sound">FullScreen Sound</string>
-    <string name="crash_activity_updateAvailable">Update available!\nClick to download new version</string>
 </resources>

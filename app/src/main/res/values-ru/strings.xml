@@ -22,6 +22,7 @@
     <string name="crash_activity_sendToDeveloper_agree">Я согласен</string>
     <string name="crash_activity_sendToDeveloper_message">Отправка анонимной статистики отключена в настройках.\n\nЭти данные будут использованы:\n* Текст отчёта об ошибке, который вы видите на экране\n* IP-адресс</string>
     <string name="crash_activity_sendToDeveloper_title">Отправить отчёт об ошибке?</string>
+    <string name="crash_activity_updateAvailable">Доступное обновление!\nНажите чтобы скачать новую версию</string>
     <string name="crash_notification_big_title">OpenToday завершился с ошибкой</string>
     <string name="crash_notification_text">Нажмите для деталей</string>
     <string name="crash_notification_title">Ошибка приложения OpenToday</string>
@@ -34,12 +35,17 @@
     <string name="dialog_editItemFilter_title_value">Значение</string>
     <string name="dialog_editItemFilter_weekOfYear">Номер недели в году</string>
     <string name="dialog_editItemFilter_year">Год</string>
+    <string name="dialog_iconSelector_title">Выберите иконку…</string>
     <string name="dialog_itemNotification_apply">Применить</string>
     <string name="dialog_itemNotification_cancel">Отменить</string>
+    <string name="dialog_itemNotification_dialogTitle">Редактирование айтема</string>
     <string name="dialog_itemNotification_empty_description">Нажмите (+) для добавления уведомлений к этому айтему</string>
     <string name="dialog_itemNotification_empty_title">Уведомления отсутствуют</string>
+    <string name="dialog_itemNotification_fullScreen">На весь экран</string>
     <string name="dialog_itemNotification_incorrectNotificationId">Не корректное поле \'АЙДИ Уведомления\'</string>
     <string name="dialog_itemNotification_notifyid">АЙДИ Уведомления</string>
+    <string name="dialog_itemNotification_previewViewOnly">неизменяемые</string>
+    <string name="dialog_itemNotification_sound">звук</string>
     <string name="dialog_itemNotification_subtext">Доп. текст</string>
     <string name="dialog_itemNotification_testNotify">Отправить тестовое уведомление</string>
     <string name="dialog_itemNotification_text">Текст уведомления</string>
@@ -69,9 +75,17 @@
     <string name="filterRegistry_filterType_DATE">Дата и Время</string>
     <string name="filterRegistry_filterType_ITEM_STAT">Статистика айтема</string>
     <string name="filterRegistry_filterType_LOGIC_CONTAINER">Контейнер</string>
+    <string name="fragment_about_secretSettingsWarning">Нажмите ещё 7 раз для вылета</string>
     <string name="fragment_deleteItems_delete_apply">УДАЛИТЬ</string>
     <string name="fragment_deleteItems_delete_cancel">Отмена</string>
     <string name="fragment_deleteItems_delete_title">Удалить %s айтемов(%s с учётом дочерних)?</string>
+    <string name="fragment_developer_crash">Крашнуть!</string>
+    <string name="fragment_developer_featureFlags">Флаги фичей</string>
+    <string name="fragment_developer_icons">Иконки</string>
+    <string name="fragment_developer_plugins">Плагины</string>
+    <string name="fragment_developer_plugins_message">Введите список нужных плагинов через запятую ,\nДоступные:\n * gcp - global changes (массовые изменения)</string>
+    <string name="fragment_developer_plugins_reloadedNotification">Плагины перезагружены (-5s)</string>
+    <string name="fragment_developer_plugins_title">Плагины</string>
     <string name="fragment_enterPincode_timeout">Попробуйте позже (перезайдите в приложение)</string>
     <string name="fragment_enterPincode_title">Введите пин-код</string>
     <string name="fragment_filterGroup_itemFilter_editor_error_unknownFilter">Неизвестный фильтр! Это баг. Сообщите разработчику.\nCanonical: %s</string>
@@ -99,6 +113,7 @@
     <string name="fragment_itemEditor_delete">Удалить</string>
     <string name="fragment_itemEditor_delete_apply">Удалить!</string>
     <string name="fragment_itemEditor_delete_cancel">Отмена</string>
+    <string name="fragment_itemEditor_delete_message">Удалить этот айтем а также %d его дочерних айтемов?</string>
     <string name="fragment_itemEditor_delete_title">Удалить?</string>
     <string name="fragment_itemEditor_filterGroup_tickBehavior">Поведение тика</string>
     <string name="fragment_itemEditor_longtext_textColor">Цвет большого текста</string>
@@ -108,6 +123,7 @@
     <string name="fragment_itemEditor_module_cyclelist_tickMode">Поведение тика</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_dialog_apply">Применить</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_dialog_cancel">Отмена</string>
+    <string name="fragment_itemEditor_module_item_backgroundColor_dialog_random">Случайно</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_dialog_title">Фоновый цвет</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_edit">Редактировать</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_hint">Фоновый цвет</string>
@@ -172,6 +188,7 @@
     <string name="itemAction_SELECT_OFF">Выделение: ВЫКЛ</string>
     <string name="itemAction_SELECT_ON">Выделение: ВКЛ</string>
     <string name="itemAction_SELECT_REVERT">Выделение: Инвертировать</string>
+    <string name="itemAction_SHOW_ACTION_DIALOG">Показать диалог выбора</string>
     <string name="itemFilter_dateAndTime_activeItems">Активные айтемы</string>
     <string name="itemFilter_dateAndTime_dayOfMonth">День месяца</string>
     <string name="itemFilter_dateAndTime_dayOfWeek">День недели</string>
@@ -217,6 +234,11 @@
     <string name="item_mathGame">Математическая игра</string>
     <string name="item_mathGame_description">Математическая игра поможет размять мозг простыми задачками.</string>
     <string name="item_mathGame_quest_primitive_text">Сколько будет %s %s %s</string>
+    <string name="item_missingNo">missingno (айтем ошибки)</string>
+    <string name="item_missingNo_description">Это неизвестный айтем</string>
+    <string name="item_sleepTime">Время сна</string>
+    <string name="item_sleepTime_defaultPattern">$(elapsed) осталось до $(wakeUpTime)\nТекущее + $(requiredSleepTime) = $(wakeUpForRequired)</string>
+    <string name="item_sleepTime_description">Автоматический расчёт времени сна</string>
     <string name="item_text">Текст</string>
     <string name="item_text_clickableUrls">Выделять ссылки</string>
     <string name="item_text_description">Простая текстовая заметка. В нем есть сам текст, а также цвет текста, следует ли его форматировать и выделять ли ссылки.</string>
@@ -226,7 +248,6 @@
     <string name="logic_container_item_filter_part_editor_name_empty"><![CDATA[<Без описания>]]></string>
     <string name="logic_container_logicMode_AND">И (&amp;&amp;)</string>
     <string name="logic_container_logicMode_OR">ИЛИ (||)</string>
-    <string name="fragment_about_secretSettingsWarning">Нажмите ещё 7 раз для вылета</string>
     <string name="manuallyCrash_crash">Краш</string>
     <string name="manuallyCrash_dialog_apply">КРАШНУТЬ!</string>
     <string name="manuallyCrash_dialog_cancel">Отмена</string>
@@ -240,6 +261,8 @@
     <string name="menuItem_openEditDialog">Редактировать</string>
     <string name="menuItem_selected">Выделенный</string>
     <string name="menuItem_transform">Трансформация</string>
+    <string name="menu_itemEditor_copyItemId">Скопировать Айди</string>
+    <string name="menu_itemEditor_export">Экспорт</string>
     <string name="notificationChannel_crash_title">Ошибкочка</string>
     <string name="notificationChannel_items_title">Айтемы</string>
     <string name="notificationChannel_quickNote_title">Быстрая заметка</string>
@@ -277,6 +300,7 @@
     <string name="settings_firstTab_first">Первая</string>
     <string name="settings_firstTab_onClosed">На момент закрытия</string>
     <string name="settings_firstTab_title">Начальная вкладка</string>
+    <string name="settings_isItemBackgroundRandom">Случайный фон айтемов</string>
     <string name="settings_isTelemetry">@string/setup_telemetry</string>
     <string name="settings_itemAddPosition_BOTTOM">Вниз</string>
     <string name="settings_itemAddPosition_TOP">Вверх</string>
@@ -314,6 +338,7 @@
     <string name="setup_telemetry">Разрешить анонимную статистику</string>
     <string name="setup_telemetry_details">Эта статистика очень поможет разработчику; Она содержит:\n * IP-адресс\n * Идентификатор приложения\n * Открытие/закрытие (макс. 1 раз/день)\n * Краши и Ошибки</string>
     <string name="setup_theme_title">Выберите комфортную тему</string>
+    <string name="tab_autoName">Вкладка №%s</string>
     <string name="tab_defaultFirstName">Моя первая вкладка</string>
     <string name="tab_noEmptyName">Имя не может быть пустым</string>
     <string name="toolbar_debug">Отладка</string>
@@ -378,27 +403,4 @@
     <string name="transform_not_allowed">Трансформация невозможна</string>
     <string name="transform_selectTypeDialog_message" />
     <string name="transform_selectTypeDialog_title">Выберите тип результата</string>
-    <string name="fragment_itemEditor_delete_message">Удалить этот айтем а также %d его дочерних айтемов?</string>
-    <string name="menu_itemEditor_export">Экспорт</string>
-    <string name="menu_itemEditor_copyItemId">Скопировать Айди</string>
-    <string name="item_sleepTime_description">Автоматический расчёт времени сна</string>
-    <string name="item_sleepTime">Время сна</string>
-    <string name="item_sleepTime_defaultPattern">$(elapsed) осталось до $(wakeUpTime)\nТекущее + $(requiredSleepTime) = $(wakeUpForRequired)</string>
-    <string name="item_missingNo">missingno (айтем ошибки)</string>
-    <string name="item_missingNo_description">Это неизвестный айтем</string>
-    <string name="fragment_itemEditor_module_item_backgroundColor_dialog_random">Случайно</string>
-    <string name="tab_autoName">Вкладка №%s</string>
-    <string name="itemAction_SHOW_ACTION_DIALOG">Показать диалог выбора</string>
-    <string name="settings_isItemBackgroundRandom">Случайный фон айтемов</string>
-    <string name="fragment_developer_plugins">Плагины</string>
-    <string name="fragment_developer_plugins_title">Плагины</string>
-    <string name="fragment_developer_plugins_message">Введите список нужных плагинов через запятую ,\nДоступные:\n * gcp - global changes (массовые изменения)</string>
-    <string name="fragment_developer_crash">Крашнуть!</string>
-    <string name="fragment_developer_plugins_reloadedNotification">Плагины перезагружены (-5s)</string>
-    <string name="fragment_developer_featureFlags">Флаги фичей</string>
-    <string name="fragment_developer_icons">Иконки</string>
-    <string name="dialog_itemNotification_fullScreen">На весь экран</string>
-    <string name="dialog_itemNotification_previewViewOnly">неизменяемые</string>
-    <string name="dialog_itemNotification_sound">звук</string>
-    <string name="crash_activity_updateAvailable">Доступное обновление!\nНажите чтобы скачать новую версию</string>
 </resources>

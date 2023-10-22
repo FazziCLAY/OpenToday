@@ -76,15 +76,7 @@ public class App extends Application {
     public static final boolean DEBUG = !SHADOW_RELEASE && CustomBuildConfig.DEBUG;
     public static final boolean LOG = debug(true);
     public static final boolean LOGS_SAVE = debug(false);
-    public static final boolean DEBUG_TICK_NOTIFICATION = debug(false);
-    public static final int DEBUG_MAIN_ACTIVITY_START_SLEEP = debug(false) ? 6000 : 0;
-    public static final int DEBUG_APP_START_SLEEP = debug(false) ? 8000 : 0;
-    public static Class<? extends Activity> DEBUG_MAIN_ACTIVITY = debug(false) ? TestItemViewGenerator.class : null;
-    public static final boolean DEBUG_TEST_EXCEPTION_ON_LAUNCH = false;
-    public static final boolean DEBUG_IMPORTANT_NOTIFICATIONS = debug(false);
-    public static final boolean DEBUG_ALWAYS_SHOW_UI_NOTIFICATIONS = debug(false);
-    public static final boolean DEBUG_LOG_ALL_IN_MAINACTIVITY = debug(false);
-    public static final boolean DEBUG_NETWORK_UTIL_SHADOWCONTENT = debug(false);
+
 
     public static boolean debug(boolean b) {
         return (DEBUG && b);
@@ -149,7 +141,7 @@ public class App extends Application {
             super.onCreate();
             instance = this;
             setupCrashReporter();
-            DebugUtil.sleep(DEBUG_APP_START_SLEEP);
+            DebugUtil.sleep(Debug.DEBUG_APP_START_SLEEP);
             CrashReportContext.BACK.push("App onCreate");
             if (DEBUG) {
                 StrictMode.enableDefaults();
