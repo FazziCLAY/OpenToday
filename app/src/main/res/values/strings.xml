@@ -400,7 +400,7 @@
     <string name="settings_isItemBackgroundRandom">Random item background</string>
     <string name="fragment_developer_plugins">Plugins</string>
     <string name="fragment_developer_plugins_title">Plugins</string>
-    <string name="fragment_developer_plugins_message">Enter plugins separate by comma ,\nAvailable:\n * gcp - global changes</string>
+    <string name="fragment_developer_plugins_message">Enter plugins separate by comma , \nAvailable:\n  * gcp - global changes</string>
     <string name="fragment_developer_crash">Crash!</string>
     <string name="fragment_developer_plugins_reloadedNotification">Plugins reloaded! (-5s)</string>
     <string name="fragment_developer_featureFlags">Feature flags</string>
@@ -408,4 +408,5 @@
     <string name="dialog_itemNotification_fullScreen">Is fullscreen</string>
     <string name="dialog_itemNotification_previewViewOnly">FullScreen Preview is ViewOnly</string>
     <string name="dialog_itemNotification_sound">FullScreen Sound</string>
+    <string name="crash_activity_updateAvailable">Update available!\nClick to download new version</string>
 </resources>

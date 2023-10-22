@@ -21,6 +21,8 @@ import com.fazziclay.javaneoutil.FileUtil;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.Telemetry;
+import com.fazziclay.opentoday.app.UpdateChecker;
+import com.fazziclay.opentoday.util.NetworkUtil;
 
 import java.io.File;
 import java.util.UUID;
@@ -42,6 +44,7 @@ public class CrashReportActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crash_report);
         Button sendToDeveloper = findViewById(R.id.sendToDeveloper);
+        Button updateAvailable = findViewById(R.id.update_available);
         TextView crashReportText = findViewById(R.id.crashReportText);
 
         if (sendToDeveloper == null || crashReportText == null) {
@@ -52,6 +55,25 @@ public class CrashReportActivity extends Activity {
         if (getIntent() == null || getIntent().getExtras() == null || !getIntent().getExtras().containsKey(EXTRA_PATH)) {
             Toast.makeText(this, "App break... (Extras)", Toast.LENGTH_SHORT).show();
             return;
+        }
+
+        if (updateAvailable != null) {
+            try {
+                UpdateChecker.check(this, (available, url, name) -> runOnUiThread(() -> {
+                    if (available) {
+                        updateAvailable.setVisibility(View.VISIBLE);
+                        updateAvailable.setOnClickListener(view -> {
+                            try {
+                                NetworkUtil.openBrowser(this, url);
+                            } catch (Exception e) {
+                                Toast.makeText(this, "Error: " + e, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }));
+            } catch (Exception e) {
+                Toast.makeText(this, "Check update exception: " + e, Toast.LENGTH_SHORT).show();
+            }
         }
 
         File file = new File(getIntent().getExtras().getString(EXTRA_PATH));

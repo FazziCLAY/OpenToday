@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
     private var debugViewBackground: Int = 0x33000000
     @SuppressLint("SetTextI18n")
     private var importantDebugCallback = ImportantDebugCallback { m ->
-        if (!App.DEBUG_IMPORTANT_NOTIFICATIONS) return@ImportantDebugCallback Status.Builder()
+        if (!Debug.DEBUG_IMPORTANT_NOTIFICATIONS) return@ImportantDebugCallback Status.Builder()
             .setRemoveCallback(true)
             .build()
         val text = TextView(this@MainActivity)
@@ -149,7 +149,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
         updateByActivitySettings()
         Debug.mainActivityStartupTime = System.currentTimeMillis() - startTime
         app.importantDebugCallbacks.addCallback(CallbackImportance.DEFAULT, importantDebugCallback)
-        if (App.DEBUG_LOG_ALL_IN_MAINACTIVITY) {
+        if (Debug.DEBUG_LOG_ALL_IN_MAINACTIVITY) {
             Logger.i(TAG, "------------------")
             Logger.d(TAG, "Example debug message", 10, 20, 30, Exception("Exception in debug logging"))
             Logger.w(TAG, "Example warning message")
@@ -387,7 +387,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
         viewVisible(binding.currentDateTime, settings.isClockVisible, View.GONE)
         binding.currentDateDate.isEnabled = settings.isDateClickCalendar
         binding.currentDateTime.isEnabled = settings.isDateClickCalendar
-        viewVisible(binding.notifications, settings.isNotificationsVisible || App.DEBUG_ALWAYS_SHOW_UI_NOTIFICATIONS, View.GONE)
+        viewVisible(binding.notifications, settings.isNotificationsVisible || Debug.DEBUG_ALWAYS_SHOW_UI_NOTIFICATIONS, View.GONE)
 
         val toolbarSettings = settings.toolbarSettings
         if (toolbarSettings == null) {

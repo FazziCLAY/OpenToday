@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingEnd="6sp"
+    android:paddingStart="6sp"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
         android:id="@+id/title"
         android:textSize="20sp"
-        android:text="OwO"
+        tools:text="Alarm! Wake up!"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20sp"
         android:layout_width="wrap_content"
@@ -30,7 +33,7 @@
         android:layout_width="300sp"
         android:layout_height="100sp"
         android:layout_marginBottom="20sp"
-        android:text="OK"
+        android:text="@string/abc_ok"
         android:textSize="35sp" />
 
 </RelativeLayout>

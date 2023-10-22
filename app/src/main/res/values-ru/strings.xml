@@ -390,4 +390,15 @@
     <string name="tab_autoName">Вкладка №%s</string>
     <string name="itemAction_SHOW_ACTION_DIALOG">Показать диалог выбора</string>
     <string name="settings_isItemBackgroundRandom">Случайный фон айтемов</string>
+    <string name="fragment_developer_plugins">Плагины</string>
+    <string name="fragment_developer_plugins_title">Плагины</string>
+    <string name="fragment_developer_plugins_message">Введите список нужных плагинов через запятую ,\nДоступные:\n * gcp - global changes (массовые изменения)</string>
+    <string name="fragment_developer_crash">Крашнуть!</string>
+    <string name="fragment_developer_plugins_reloadedNotification">Плагины перезагружены (-5s)</string>
+    <string name="fragment_developer_featureFlags">Флаги фичей</string>
+    <string name="fragment_developer_icons">Иконки</string>
+    <string name="dialog_itemNotification_fullScreen">На весь экран</string>
+    <string name="dialog_itemNotification_previewViewOnly">неизменяемые</string>
+    <string name="dialog_itemNotification_sound">звук</string>
+    <string name="crash_activity_updateAvailable">Доступное обновление!\nНажите чтобы скачать новую версию</string>
 </resources>
