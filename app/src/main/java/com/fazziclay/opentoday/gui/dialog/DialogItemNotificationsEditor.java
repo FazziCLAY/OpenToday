@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -159,8 +160,10 @@ public class DialogItemNotificationsEditor {
                     l.sound.setChecked(d.isSound());
                     l.sound.setOnClickListener(i____ -> d.setSound(l.sound.isChecked()));
 
+                    var scroll = new ScrollView(activity);
+                    scroll.addView(l.getRoot());
                     new AlertDialog.Builder(activity)
-                            .setView(l.getRoot())
+                            .setView(scroll)
                             .setPositiveButton(R.string.dialog_itemNotification_apply, (_refre, _werwer) -> {
                                 if (d.getTime() > TimeUtil.getDaySeconds()) d.setLatestDayOfYear(0);
                                 notifyDataSetChanged();
