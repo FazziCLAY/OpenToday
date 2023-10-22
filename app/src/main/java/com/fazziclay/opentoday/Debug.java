@@ -16,6 +16,7 @@ public class Debug {
     public static final boolean SHOW_ID_ON_ITEMTEXT = App.debug(false);
     public static final boolean SHOW_GEN_ID_ON_ITEMTEXT = App.debug(false);
     public static final boolean DESTROY_ANY_TEXTITEM_CHILD = App.debug(false);
+    public static final boolean SHOW_DEBUG_MESSAGE_TOAST_IN_ITEMSTICKRECEIVER = App.debug(false);
 
     public static final int DEF = -1;
 

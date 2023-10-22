@@ -238,7 +238,7 @@ public class TickThread extends Thread {
         int daySeconds = (int) ((gregorianCalendar.getTimeInMillis() - noTimeCalendar.getTimeInMillis()) / 1000);
 
 
-        return new TickSession(context, App.get(context).getItemNotificationHandler(), gregorianCalendar, noTimeCalendar, daySeconds, false);
+        return new TickSession(App.get(context).getItemNotificationHandler(), gregorianCalendar, noTimeCalendar, daySeconds, false);
     }
 
     public void requestTerminate() {

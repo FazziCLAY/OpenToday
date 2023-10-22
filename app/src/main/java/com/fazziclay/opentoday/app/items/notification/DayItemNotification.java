@@ -6,6 +6,7 @@ import com.fazziclay.opentoday.app.ItemNotificationHandler;
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.TickTarget;
+import com.fazziclay.opentoday.util.time.TimeUtil;
 
 import java.util.Calendar;
 
@@ -71,26 +72,20 @@ public class DayItemNotification extends ItemNotification {
         // do nothing
     }
 
-    public DayItemNotification(int notificationId, String notifyTitle, String notifyText, String notifySubText, int time) {
-        this.notificationId = notificationId;
-        this.notifyTitle = notifyTitle;
-        this.notifyText = notifyText;
-        this.notifySubText = notifySubText;
-        this.time = time;
-    }
-
-
-
     @Override
     public boolean tick(TickSession tickSession) {
+        boolean isTimeToSend = tickSession.getDayTime() >= time;
+
         if (tickSession.isTickTargetAllowed(TickTarget.ITEM_NOTIFICATION_SCHEDULE)) {
-            tickSession.setAlarmDayOfTimeInSeconds(time, getParentItem());
+            final long shift = isTimeToSend ? TimeUtil.SECONDS_IN_DAY : 0;
+            final long baseDayMs = tickSession.getNoTimeCalendar().getTimeInMillis() + (shift * 1000L);
+            long triggerAtMs = baseDayMs + (time * 1000L) + 599;
+            tickSession.getItemNotificationHandler().setAlarm(this, triggerAtMs);
         }
+
         if (tickSession.isTickTargetAllowed(TickTarget.ITEM_NOTIFICATION_UPDATE)) {
             int dayOfYear = tickSession.getGregorianCalendar().get(Calendar.DAY_OF_YEAR);
             if (dayOfYear != latestDayOfYear) {
-                boolean isTimeToSend = tickSession.getDayTime() >= time;
-
                 if (isTimeToSend) {
                     sendNotify(tickSession.getItemNotificationHandler());
                     latestDayOfYear = dayOfYear;

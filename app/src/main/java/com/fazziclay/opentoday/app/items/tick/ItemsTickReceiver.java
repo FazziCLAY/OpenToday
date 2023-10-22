@@ -4,11 +4,15 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
+import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.items.item.Item;
+import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.util.Logger;
 
 import java.util.ArrayList;
@@ -35,6 +39,12 @@ public class ItemsTickReceiver extends BroadcastReceiver {
                 .putExtra(EXTRA_PERSONAL_TICK_MODE, (usePaths ? PersonalTickMode.PERSONAL_AND_PATH : PersonalTickMode.PERSONAL_ONLY).name());
     }
 
+    public static Intent createNotificationTriggerIntent(Context context, ItemNotification itemNotification) {
+        final Item item = itemNotification.getParentItem();
+        return createIntent(context, item.getId(), true);
+        // TODO: 22.10.2023 currently while item tick ticked all item notifications! maybe need specify by notify id?
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Logger.d(TAG, "onReceive(...)");
@@ -45,7 +55,9 @@ public class ItemsTickReceiver extends BroadcastReceiver {
 
         if (intent != null && intent.getExtras() != null && intent.getExtras().containsKey("debugMessage")) {
             String s = intent.getExtras().getString("debugMessage", "none");
-            //Toast.makeText(context, "ItemsTickReceive: " + s, Toast.LENGTH_SHORT).show();
+            if (Debug.SHOW_DEBUG_MESSAGE_TOAST_IN_ITEMSTICKRECEIVER) {
+                Toast.makeText(context, "ItemsTickReceive: " + s, Toast.LENGTH_SHORT).show();
+            }
             Logger.d("ItemsTickReceiver", "DebugMessage! " + s);
         }
 

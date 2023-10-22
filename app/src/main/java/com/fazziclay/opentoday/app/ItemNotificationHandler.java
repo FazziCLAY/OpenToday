@@ -1,8 +1,11 @@
 package com.fazziclay.opentoday.app;
 
+import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.os.Build;
+import android.widget.RemoteViews;
 
 import androidx.core.app.NotificationCompat;
 
@@ -10,17 +13,49 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.notification.DayItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
+import com.fazziclay.opentoday.app.items.tick.ItemsTickReceiver;
 import com.fazziclay.opentoday.gui.activity.AlarmActivity;
 import com.fazziclay.opentoday.util.ColorUtil;
 import com.fazziclay.opentoday.util.RandomUtil;
 
 public class ItemNotificationHandler {
+    private static boolean exceptionOnce = true;
+
     private final Context context;
     private final App app;
 
     public ItemNotificationHandler(Context context, App app) {
         this.context = context;
         this.app = app;
+    }
+
+    public void setAlarm(ItemNotification itemNotification, long triggerAtMs) {
+        if (!itemNotification.isAttached()) {
+            throw new IllegalArgumentException("setAlarm required attached ItemNotification for working...");
+        }
+
+        int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            flags = flags | PendingIntent.FLAG_IMMUTABLE;
+        }
+
+        try {
+            var intent = ItemsTickReceiver.createNotificationTriggerIntent(context, itemNotification);
+
+            var pendingIntent = PendingIntent.getBroadcast(context,
+                    itemNotification.getId().hashCode(),
+                    intent,
+                    flags);
+
+            final AlarmManager alarmManager = context.getSystemService(AlarmManager.class);
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMs, pendingIntent);
+
+        } catch (Exception e) {
+            if (exceptionOnce) {
+                App.exception(null, e);
+                exceptionOnce = false;
+            }
+        }
     }
 
     public void handle(Item item, ItemNotification notification) {
