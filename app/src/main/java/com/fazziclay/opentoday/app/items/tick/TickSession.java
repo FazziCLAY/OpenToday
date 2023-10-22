@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Build;
 
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.ItemNotificationHandler;
 import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.util.Logger;
@@ -34,6 +35,7 @@ public class TickSession {
     }
 
     private final Context context;
+    private final ItemNotificationHandler itemNotificationHandler;
     private GregorianCalendar gregorianCalendar;
     private GregorianCalendar noTimeCalendar;
     private int dayTime;
@@ -44,8 +46,9 @@ public class TickSession {
     private final List<UUID> whitelist = new ArrayList<>();
     private boolean isWhitelist = false;
 
-    public TickSession(Context context, GregorianCalendar gregorianCalendar, GregorianCalendar noTimeCalendar, int dayTime, boolean isPersonalTick) {
+    public TickSession(Context context, ItemNotificationHandler itemNotificationHandler, GregorianCalendar gregorianCalendar, GregorianCalendar noTimeCalendar, int dayTime, boolean isPersonalTick) {
         this.context = context;
+        this.itemNotificationHandler = itemNotificationHandler;
         this.gregorianCalendar = gregorianCalendar;
         this.noTimeCalendar = noTimeCalendar;
         this.dayTime = dayTime;
@@ -178,6 +181,10 @@ public class TickSession {
 
     public void importantSaveNeeded() {
         this.importantSaveNeeded = true;
+    }
+
+    public ItemNotificationHandler getItemNotificationHandler() {
+        return itemNotificationHandler;
     }
 
     @NotNull

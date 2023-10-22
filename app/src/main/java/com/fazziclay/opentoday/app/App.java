@@ -122,6 +122,7 @@ public class App extends Application {
     private final OptionalField<Translation> translation = new OptionalField<>(() -> new TranslationImpl(this::getString));
     private final OptionalField<CallbackStorage<ImportantDebugCallback>> importantDebugCallbacks = new OptionalField<>(CallbackStorage::new);
     private final OptionalField<BeautifyColorManager> beautifyColorManager = new OptionalField<>(() -> new BeautifyColorManager(this));
+    private final OptionalField<ItemNotificationHandler> itemNotificationHandler = new OptionalField<>(() -> new ItemNotificationHandler(this, this));
     private final List<FeatureFlag> featureFlags = new ArrayList<>(App.DEBUG ? Arrays.asList(
             FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
             //FeatureFlag.ALWAYS_SHOW_SAVE_STATUS,
@@ -179,6 +180,7 @@ public class App extends Application {
         selectionManager.free();
         telemetry.free();
         tickThread.free();
+        beautifyColorManager.free();
 
         Debug.free();
         TimeUtil.free();
@@ -238,14 +240,19 @@ public class App extends Application {
 
 
     public void reinitPlugins() {
+        CrashReportContext.BACK.push("App::reinitPlugins");
+        CrashReportContext.BACK.push("disabling all...");
         PluginManager.disableAllPlugins();
         for (String s : getSettingsManager().getPlugins().split(",")) {
+            CrashReportContext.BACK.swap("plugin: " + s.trim());
             if (s.trim().equals("gcp")) {
                 PluginManager.loadPlugin(
                         "fazziclay://opentoday/plugins/global_changes_plugin",
                         new GlobalChangesPlugin());
             }
         }
+        CrashReportContext.BACK.pop();
+        CrashReportContext.BACK.pop();
     }
 
     /**
@@ -516,5 +523,9 @@ public class App extends Application {
 
     public StringBuilder getLogs() {
         return logs;
+    }
+
+    public ItemNotificationHandler getItemNotificationHandler() {
+        return itemNotificationHandler.get();
     }
 }

@@ -7,7 +7,7 @@ import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.databinding.ToolbarMoreSelectionBinding;
 
 public class AppToolbarSelectionClickEvent implements Event {
-    private Activity activity;
+    private final Activity activity;
     private final com.fazziclay.opentoday.databinding.ToolbarMoreSelectionBinding localBinding;
     private final SelectionManager selectionManager;
 

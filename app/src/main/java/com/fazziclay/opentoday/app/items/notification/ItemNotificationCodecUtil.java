@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemNotificationCodecUtil {
-    private static final String KEY_TYPE = "type";
+    private static final String KEY_TYPE = "type"; // TODO: 22.10.2023 maybe rename to "notificationType"? (it need write fixes in DataFaxer....) 
 
     // must return mutable list (arraylist!)
     public static List<ItemNotification> importNotificationList(CherryOrchard orchard) {
@@ -14,8 +14,8 @@ public class ItemNotificationCodecUtil {
 
         orchard.forEachCherry((_ignore, cherry) -> {
             final String type = cherry.getString(KEY_TYPE);
-            final ItemNotificationCodec codec = ItemNotificationsRegistry.REGISTRY.getByStringType(type).getCodec();
-            result.add(codec.importNotification(cherry));
+            final AbstractItemNotificationCodec codec = ItemNotificationsRegistry.REGISTRY.getByStringType(type).getCodec();
+            result.add(codec.importNotification(cherry, null));
         });
 
         return result;

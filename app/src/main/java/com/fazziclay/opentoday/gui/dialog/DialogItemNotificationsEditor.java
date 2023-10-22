@@ -13,6 +13,7 @@ import android.widget.BaseAdapter;
 import androidx.appcompat.app.AlertDialog;
 
 import com.fazziclay.opentoday.R;
+import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.notification.DayItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
@@ -25,6 +26,9 @@ import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.time.ConvertMode;
 import com.fazziclay.opentoday.util.time.HumanTimeType;
 import com.fazziclay.opentoday.util.time.TimeUtil;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class DialogItemNotificationsEditor {
     private final Activity activity;
@@ -48,16 +52,16 @@ public class DialogItemNotificationsEditor {
         view = binding.getRoot();
 
         viewClick(binding.cancelButton, dialog::cancel);
-        updateEmptyView(item.getNotifications().isEmpty());
+        updateEmptyView(item.getNotifications().length == 0);
         binding.list.setAdapter(new MinBaseAdapter() {
             @Override
             public int getCount() {
-                return item.getNotifications().size();
+                return item.getNotifications().length;
             }
 
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                ItemNotification itemNotification = item.getNotifications().get(position);
+                ItemNotification itemNotification = item.getNotifications()[position];
 
                 ItemNotificationBinding b = ItemNotificationBinding.inflate(activity.getLayoutInflater(), parent, false);
 
@@ -69,10 +73,10 @@ public class DialogItemNotificationsEditor {
                     new AlertDialog.Builder(activity)
                             .setTitle(R.string.fragment_itemEditor_delete_title)
                             .setPositiveButton(R.string.fragment_itemEditor_delete_apply, (ee, eee) -> {
-                                item.getNotifications().remove(itemNotification);
+                                item.removeNotifications(itemNotification);
                                 item.save();
                                 notifyDataSetChanged();
-                                updateEmptyView(item.getNotifications().isEmpty());
+                                updateEmptyView(item.getNotifications().length == 0);
                             })
                             .setNegativeButton(R.string.fragment_itemEditor_delete_cancel, null)
                             .show();
@@ -115,7 +119,7 @@ public class DialogItemNotificationsEditor {
                     MinTextWatcher.after(l.notifySubText, () -> d.setNotifySubText(l.notifySubText.getText().toString()));
 
                     l.test.setOnClickListener(v2132321 -> {
-                        d.sendNotify(activity, item);
+                        d.sendNotify(App.get(activity).getItemNotificationHandler());
                     });
                     l.time.setText(activity.getString(R.string.dialog_itemNotification_time, TimeUtil.convertToHumanTime(d.getTime(), ConvertMode.HHMM)));
                     l.time.setOnClickListener(_ignore -> new TimePickerDialog(activity, (view, hourOfDay, minute) -> {
@@ -159,9 +163,10 @@ public class DialogItemNotificationsEditor {
         binding.add.setOnClickListener(v -> {
             DayItemNotification dayItemNotification = new DayItemNotification();
             dayItemNotification.setNotificationId(RandomUtil.nextIntPositive());
-            item.getNotifications().add(dayItemNotification);
+            dayItemNotification.setLatestDayOfYear(new GregorianCalendar().get(Calendar.DAY_OF_YEAR));
+            item.addNotifications(dayItemNotification);
             item.save();
-            updateEmptyView(item.getNotifications().isEmpty());
+            updateEmptyView(item.getNotifications().length == 0);
             ((BaseAdapter) binding.list.getAdapter()).notifyDataSetChanged();
         });
     }

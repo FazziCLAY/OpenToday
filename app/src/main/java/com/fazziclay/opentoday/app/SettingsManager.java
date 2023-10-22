@@ -234,6 +234,10 @@ public class SettingsManager {
         load();
     }
 
+    public boolean isChangeDefaultQuickNoteInLongSendClick() {
+        return false; // TODO: 22.10.2023 make editable
+    }
+
     public enum ItemAction {
         OPEN_EDITOR,
         OPEN_TEXT_EDITOR,

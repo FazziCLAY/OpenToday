@@ -76,5 +76,10 @@ public class CrashReportContext {
         public void pop() {
             stack.pop();
         }
+
+        public void swap(String s) {
+            pop();
+            push(s);
+        }
     }
 }

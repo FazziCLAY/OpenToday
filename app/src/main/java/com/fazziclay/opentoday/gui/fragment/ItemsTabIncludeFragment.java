@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,7 +22,6 @@ import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.api.EventHandler;
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.BeautifyColorManager;
 import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.events.gui.CurrentItemsStorageContextChanged;
@@ -32,12 +30,12 @@ import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
-import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.databinding.FragmentItemsTabIncludeBinding;
+import com.fazziclay.opentoday.gui.GuiItemsHelper;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType;
 import com.fazziclay.opentoday.gui.interfaces.CurrentItemsTab;
@@ -49,7 +47,6 @@ import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
 import com.google.android.material.tabs.TabLayout;
 
-import java.util.List;
 import java.util.UUID;
 
 public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab, NavigationHost {
@@ -221,36 +218,27 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
                     Toast.makeText(requireContext(), R.string.toolbar_more_file_import_unsupported, Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Item item = settingsManager.getDefaultQuickNoteType().create();
-                if (item instanceof TextItem) ((TextItem) item).setText(text);
-                if (settingsManager.isParseTimeFromQuickNote()) item.getNotifications().addAll(QUICK_NOTE_NOTIFICATIONS_PARSE.run(text));
-                if (settingsManager.isRandomItemBackground()) {
-                    item.setViewCustomBackgroundColor(true);
-                    item.setViewBackgroundColor(BeautifyColorManager.randomBackgroundColor(requireContext()));
-                }
-                switch (settingsManager.getItemAddPosition()) {
-                    case TOP -> currentItemsStorage.addItem(item, 0);
-                    case BOTTOM -> currentItemsStorage.addItem(item);
-                }
+                Item item = GuiItemsHelper.createItem(requireContext(), settingsManager.getDefaultQuickNoteType(), text, settingsManager);
+                if (settingsManager.isParseTimeFromQuickNote()) item.addNotifications(QUICK_NOTE_NOTIFICATIONS_PARSE.run(text));
+                GuiItemsHelper.addItem(item, currentItemsStorage, settingsManager);
             }
         });
 
         binding.quickNoteAdd.setOnLongClickListener(v -> {
             new DialogSelectItemType(requireContext(), (type) -> {
-                ItemsRegistry.ItemInfo registryItem = ItemsRegistry.REGISTRY.get(type);
-                settingsManager.setDefaultQuickNoteType(registryItem);
-                settingsManager.save();
+                final ItemsRegistry.ItemInfo registryItem = ItemsRegistry.REGISTRY.get(type);
+                if (settingsManager.isChangeDefaultQuickNoteInLongSendClick()) {
+                    settingsManager.setDefaultQuickNoteType(registryItem);
+                    settingsManager.save();
+                }
 
                 String text = binding.quickNoteText.getText().toString();
-                Item item = registryItem.create();
                 binding.quickNoteText.setText("");
 
-                if (item instanceof TextItem) ((TextItem) item).setText(text);
-                if (settingsManager.isParseTimeFromQuickNote()) item.getNotifications().addAll(QUICK_NOTE_NOTIFICATIONS_PARSE.run(text));
-                switch (settingsManager.getItemAddPosition()) {
-                    case TOP -> currentItemsStorage.addItem(item, 0);
-                    case BOTTOM -> currentItemsStorage.addItem(item);
-                }
+                Item item = GuiItemsHelper.createItem(requireContext(), registryItem, text, settingsManager);
+                if (settingsManager.isParseTimeFromQuickNote()) item.addNotifications(QUICK_NOTE_NOTIFICATIONS_PARSE.run(text));
+
+                GuiItemsHelper.addItem(item, currentItemsStorage, settingsManager);
             }).show();
             return true;
         });
@@ -349,7 +337,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     }
 
     public interface QuickNoteInterface {
-        List<ItemNotification> run(String text);
+        ItemNotification[] run(String text);
     }
 
     // On UI tab selected

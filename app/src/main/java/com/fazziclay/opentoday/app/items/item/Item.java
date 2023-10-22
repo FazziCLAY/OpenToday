@@ -14,6 +14,7 @@ import com.fazziclay.opentoday.app.items.callback.ItemCallback;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationCodecUtil;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationUtil;
+import com.fazziclay.opentoday.app.items.notification.NotificationController;
 import com.fazziclay.opentoday.app.items.tag.ItemTag;
 import com.fazziclay.opentoday.app.items.tag.TagsCodecUtil;
 import com.fazziclay.opentoday.app.items.tag.TagsUtil;
@@ -81,6 +82,13 @@ public abstract class Item implements Unique, Tickable {
             item.viewCustomBackgroundColor = cherry.optBoolean(KEY_VIEW_CUSTOM_BACKGROUND_COLOR, defaultValues.viewCustomBackgroundColor);
             item.minimize = cherry.optBoolean(KEY_MINIMIZE, defaultValues.minimize);
             item.notifications = ItemNotificationCodecUtil.importNotificationList(cherry.optOrchard(KEY_NOTIFICATIONS));
+            for (ItemNotification notification : item.notifications) {
+                if (notification.getId() == null) {
+                    notification.attach(item.notificationController);
+                } else {
+                    notification.setController(item.notificationController);
+                }
+            }
             item.tags = TagsCodecUtil.importTagsList(cherry.optOrchard(KEY_TAGS));
             return item;
         }
@@ -112,6 +120,7 @@ public abstract class Item implements Unique, Tickable {
     @SaveKey(key = "minimize") @RequireSave private boolean minimize = false;
     @NonNull @SaveKey(key = "notifications") @RequireSave private List<ItemNotification> notifications = new ArrayList<>();
     @NonNull @SaveKey(key = "tags") @RequireSave private List<ItemTag> tags = new ArrayList<>();
+    @NonNull private final NotificationController notificationController = new ItemNotificationController();
 
     // Copy constructor
     public Item(@Nullable Item copy) {
@@ -187,7 +196,7 @@ public abstract class Item implements Unique, Tickable {
     public void tick(TickSession tickSession) {
         if (!tickSession.isAllowed(this)) return;
         Debug.tickedItems++;
-        if (tickSession.isTickTargetAllowed(TickTarget.ITEM_NOTIFICATIONS)) ItemNotificationUtil.tick(tickSession, notifications, this);
+        if (tickSession.isTickTargetAllowed(TickTarget.ITEM_NOTIFICATIONS)) ItemNotificationUtil.tick(tickSession, notifications);
         if (tickSession.isTickTargetAllowed(TickTarget.ITEM_CALLBACKS)) itemCallbacks.run((callbackStorage, callback) -> callback.tick(Item.this));
     }
 
@@ -243,7 +252,25 @@ public abstract class Item implements Unique, Tickable {
     @Getter public boolean isMinimize() { return minimize; }
     @Setter public void setMinimize(boolean minimize) { this.minimize = minimize; }
 
-    @Getter @NonNull public List<ItemNotification> getNotifications() { return notifications; }
+    @Getter @NonNull public ItemNotification[] getNotifications() { return notifications.toArray(new ItemNotification[0]); }
+
+    public void addNotifications(ItemNotification... notifications) {
+        for (ItemNotification notification : notifications) {
+            notification.attach(notificationController);
+            this.notifications.add(notification);
+        }
+    }
+
+    public void removeNotifications(ItemNotification... notifications) {
+        for (ItemNotification notification : notifications) {
+            notification.detach();
+            this.notifications.remove(notification);
+        }
+    }
+
+    public void removeAllNotifications() {
+        removeNotifications(getNotifications());
+    }
 
     @Getter @NonNull public ItemStat getStat() {
         return stat;
@@ -277,5 +304,17 @@ public abstract class Item implements Unique, Tickable {
         int max = Math.min(text.length(), 30);
         text = text.substring(0, max);
         return getClass().getSimpleName()+"@[ID:"+getId()+" HASH:"+hashCode() +" TEXT:'"+text+"']";
+    }
+
+    private class ItemNotificationController implements NotificationController {
+        @Override
+        public UUID generateId(ItemNotification notification) {
+            return UUID.randomUUID();
+        }
+
+        @Override
+        public Item getParentItem(ItemNotification itemNotification) {
+            return Item.this;
+        }
     }
 }

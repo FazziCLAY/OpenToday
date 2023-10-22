@@ -33,6 +33,6 @@ public class QuickNote {
                 i++;
             }
         }
-        return notifys;
+        return notifys.toArray(new ItemNotification[0]);
     };
 }

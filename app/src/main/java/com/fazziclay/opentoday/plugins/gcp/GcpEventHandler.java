@@ -232,7 +232,7 @@ public class GcpEventHandler extends EventHandler {
                 LinearLayout layout = new LinearLayout(context);
                 layout.setOrientation(LinearLayout.HORIZONTAL);
 
-                int size = item.getNotifications().size();
+                int size = item.getNotifications().length;
                 TextView t = new TextView(context);
                 t.setText(String.valueOf(size));
                 if (size > 0) {
@@ -256,7 +256,7 @@ public class GcpEventHandler extends EventHandler {
                     .setNegativeButton("Cancel", null)
                     .setPositiveButton("Apply", (dialogInterface, i1) -> {
                         for (Item item : selectionManager.getItems()) {
-                            item.getNotifications().clear();
+                            item.removeAllNotifications();
                             item.visibleChanged();
                         }
                     })

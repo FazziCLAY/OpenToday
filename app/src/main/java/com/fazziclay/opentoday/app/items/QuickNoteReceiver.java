@@ -74,7 +74,7 @@ public class QuickNoteReceiver extends BroadcastReceiver {
         }
         if (rawText != null) {
             final TextItem item = new TextItem(context.getString(R.string.quickNote_notificationPattern, rawText));
-            if (settingsManager.isParseTimeFromQuickNote()) item.getNotifications().addAll(ItemsTabIncludeFragment.QUICK_NOTE_NOTIFICATIONS_PARSE.run(rawText));
+            if (settingsManager.isParseTimeFromQuickNote()) item.addNotifications(ItemsTabIncludeFragment.QUICK_NOTE_NOTIFICATIONS_PARSE.run(rawText));
             UUID itemsStorageIdForQuickNote = settingsManager.getQuickNoteNotificationItemsStorageId();
             ItemsStorage itemsStorage;
             if (itemsStorageIdForQuickNote == null) {
