@@ -17,7 +17,7 @@ android {
     defaultConfig {
         applicationId "com.fazziclay.opentoday" + (isDev ? ".dev" : "") + (beta ? ".beta" : "") + appIdSuffix
         minSdk 26
-        targetSdk 33
+        targetSdk 34
         versionCode verBuild
         versionName verName + " (build " + verBuild + (isDev ? " dev" : "") + ")"
 
