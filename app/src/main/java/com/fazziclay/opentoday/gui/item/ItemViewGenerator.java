@@ -286,13 +286,15 @@ public class ItemViewGenerator {
     private View generateSleepTimeItemView(SleepTimeItem item, ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode, HolderDestroyer holderDestroyer) {
         final ItemSleepTimeBinding binding = ItemSleepTimeBinding.inflate(this.layoutInflater, parent, false);
         applyTextItemToTextView(item, binding.title, behavior, holderDestroyer, previewMode);
-        binding.description.setText(item.getSleepTextPattern()
+        String s = item.getSleepTextPattern()
                 .replace("$(elapsed)", TimeUtil.convertToHumanTime(item.getElapsedTime(), ConvertMode.HHMM))
                 .replace("$(elapsedToStartSleep)", TimeUtil.convertToHumanTime(item.getElapsedTimeToStartSleep(), ConvertMode.HHMM))
                 .replace("$(current)", TimeUtil.convertToHumanTime(TimeUtil.getDaySeconds(), ConvertMode.HHMM))
                 .replace("$(wakeUpForRequired)", TimeUtil.convertToHumanTime(item.getWakeUpForRequiredAtCurr(), ConvertMode.HHMM))
                 .replace("$(wakeUpTime)", TimeUtil.convertToHumanTime(item.getWakeUpTime(), ConvertMode.HHMM))
-                .replace("$(requiredSleepTime)", TimeUtil.convertToHumanTime(item.getRequiredSleepTime(), ConvertMode.HHMM)));
+                .replace("$(requiredSleepTime)", TimeUtil.convertToHumanTime(item.getRequiredSleepTime(), ConvertMode.HHMM));
+        var span = ColorUtil.colorize(s, item.getTextColor(), Color.TRANSPARENT, Typeface.NORMAL);
+        binding.description.setText(span);
 
         return binding.getRoot();
     }

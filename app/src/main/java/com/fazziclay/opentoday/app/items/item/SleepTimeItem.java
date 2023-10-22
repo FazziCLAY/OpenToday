@@ -61,6 +61,7 @@ public class SleepTimeItem extends TextItem {
         tick = 0;
         elapsedTime = 0;
         wakeUpForRequiredAtCurr = 0;
+        elapsedToStartSleep = 0;
 
         if (copy != null) {
             this.wakeUpTime = copy.wakeUpTime;
