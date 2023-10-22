@@ -196,5 +196,21 @@ public class DayItemNotification extends ItemNotification {
         this.fullScreen = fullScreen;
     }
 
-
+    @NonNull
+    @Override
+    public String toString() {
+        return "DayItemNotification{" +
+                "notificationId=" + notificationId +
+                ", notifyTitle='" + notifyTitle + '\'' +
+                ", notifyTitleFromItemText=" + notifyTitleFromItemText +
+                ", notifyText='" + notifyText + '\'' +
+                ", notifyTextFromItemText=" + notifyTextFromItemText +
+                ", notifySubText='" + notifySubText + '\'' +
+                ", latestDayOfYear=" + latestDayOfYear +
+                ", time=" + time +
+                ", fullScreen=" + fullScreen +
+                ", isPreRenderPreviewMode=" + isPreRenderPreviewMode +
+                ", sound=" + sound +
+                "} " + super.toString();
+    }
 }

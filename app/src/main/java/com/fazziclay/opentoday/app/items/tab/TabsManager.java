@@ -504,6 +504,7 @@ public class TabsManager implements ItemsRoot, Tickable {
                 writer.write(originalData);
                 writer.flush();
                 writer.close();
+                gz.close();
             }
 
             if (debugPrintSaveStatusAlways) {

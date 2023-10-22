@@ -83,4 +83,13 @@ public abstract class ItemNotification implements Cloneable {
     public void setController(NotificationController controller) {
         this.controller = controller;
     }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "ItemNotification{" +
+                "id=" + id +
+                ", controller=" + controller +
+                '}';
+    }
 }

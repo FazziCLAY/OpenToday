@@ -43,13 +43,13 @@ public class Debug {
             androidReleaseOrCodename = "sdk<R(30)";
         }
         return String.format("""
-                        OpenToday %s; Branch: %s
-                        [Android] ((int)sdk)=%s relOrCod=%s
+                        $[@bold;-#33ff33]OpenToday$[@reset] %s; $[-#ff33ff]Branch: %s
+                        $[-#00ffff][Android] ((int)sdk)=%s relOrCod=%s
                         $[@bold;-#ffff00][Tick]$[||] %s ago %sms all=%s; Personal: %s ago %sms
                         $[-#ffa000]%s$[||]; personal=$[-fff000]%s$[||]
                         [Save] %s ago; req=%s
                         [App] init=%sms
-                        [GUI] %sms; Toolbar-ctx=$[@italic;-#0055ff]%s$[||]
+                        [GUI] %sms; Toolbar-ctx=$[@italic;-#00bbff;=#000000]%s$[||]
                         [ItemTextEditor] %s""",
 
                 App.VERSION_NAME, App.VERSION_BRANCH,

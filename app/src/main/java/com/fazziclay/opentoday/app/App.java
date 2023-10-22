@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.os.Build;
+import android.os.StrictMode;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
@@ -74,7 +75,7 @@ public class App extends Application {
     public static final boolean SHADOW_RELEASE = false;
     public static final boolean DEBUG = !SHADOW_RELEASE && CustomBuildConfig.DEBUG;
     public static final boolean LOG = debug(true);
-    public static final boolean LOGS_SAVE = debug(true);
+    public static final boolean LOGS_SAVE = debug(false);
     public static final boolean DEBUG_TICK_NOTIFICATION = debug(false);
     public static final int DEBUG_MAIN_ACTIVITY_START_SLEEP = debug(false) ? 6000 : 0;
     public static final int DEBUG_APP_START_SLEEP = debug(false) ? 8000 : 0;
@@ -150,6 +151,9 @@ public class App extends Application {
             setupCrashReporter();
             DebugUtil.sleep(DEBUG_APP_START_SLEEP);
             CrashReportContext.BACK.push("App onCreate");
+            if (DEBUG) {
+                StrictMode.enableDefaults();
+            }
 
             logsFile = new File(getExternalCacheDir(), "latest.log");
             final FixResult fixResult = Logger.dur("App", "[DataFixer] fixToCurrentVersion", () -> getDataFixer().fixToCurrentVersion());

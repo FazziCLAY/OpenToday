@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.os.Build;
-import android.widget.RemoteViews;
 
 import androidx.core.app.NotificationCompat;
 
@@ -16,13 +15,20 @@ import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.app.items.tick.ItemsTickReceiver;
 import com.fazziclay.opentoday.gui.activity.AlarmActivity;
 import com.fazziclay.opentoday.util.ColorUtil;
+import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.RandomUtil;
+import com.fazziclay.opentoday.util.time.TimeUtil;
+
+import java.util.HashMap;
 
 public class ItemNotificationHandler {
+    private static final String TAG = "ItemNotificationHandler";
     private static boolean exceptionOnce = true;
 
     private final Context context;
     private final App app;
+
+    private final HashMap<Integer, Long> cachedAlarms = new HashMap<>();
 
     public ItemNotificationHandler(Context context, App app) {
         this.context = context;
@@ -33,6 +39,12 @@ public class ItemNotificationHandler {
         if (!itemNotification.isAttached()) {
             throw new IllegalArgumentException("setAlarm required attached ItemNotification for working...");
         }
+        int requestId = itemNotification.getId().hashCode();
+
+        boolean isCached = isCachedAlarm(requestId, triggerAtMs);
+        if (isCached) {
+            return;
+        }
 
         int flags = PendingIntent.FLAG_UPDATE_CURRENT;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -41,14 +53,15 @@ public class ItemNotificationHandler {
 
         try {
             var intent = ItemsTickReceiver.createNotificationTriggerIntent(context, itemNotification);
-
             var pendingIntent = PendingIntent.getBroadcast(context,
-                    itemNotification.getId().hashCode(),
+                    requestId,
                     intent,
                     flags);
 
             final AlarmManager alarmManager = context.getSystemService(AlarmManager.class);
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMs, pendingIntent);
+            cachedAlarms.put(requestId, triggerAtMs);
+            Logger.d(TAG, "alarm set for " + itemNotification + " to " + triggerAtMs + "unix-ms: " + TimeUtil.getDebugDate(triggerAtMs));
 
         } catch (Exception e) {
             if (exceptionOnce) {
@@ -56,6 +69,13 @@ public class ItemNotificationHandler {
                 exceptionOnce = false;
             }
         }
+    }
+
+    private boolean isCachedAlarm(int requestId, long triggerAtMs) {
+        if (cachedAlarms.containsKey(requestId)) {
+            return cachedAlarms.get(requestId) == triggerAtMs;
+        }
+        return false;
     }
 
     public void handle(Item item, ItemNotification notification) {

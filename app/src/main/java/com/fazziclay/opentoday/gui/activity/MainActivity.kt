@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
         debugRunnable = Runnable {
             binding.debugInfo.text = ColorUtil.colorize(Debug.getDebugInfoText(), Color.WHITE, Color.TRANSPARENT, Typeface.NORMAL)
             if (debugView && debugHandler != null) {
-                debugHandler!!.postDelayed(this.debugRunnable, 99)
+                debugHandler!!.postDelayed(this.debugRunnable, 50)
             }
         }
         if (Debug.CUSTOM_MAINACTIVITY_BACKGROUND) binding.root.setBackgroundColor(Color.parseColor("#00ffff"))
