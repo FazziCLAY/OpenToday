@@ -135,6 +135,9 @@ public abstract class Item implements Unique, Tickable {
             this.viewCustomBackgroundColor = copy.viewCustomBackgroundColor;
             this.minimize = copy.minimize;
             this.notifications = ItemNotificationUtil.copy(copy.notifications);
+            for (ItemNotification notification : this.notifications) {
+                notification.attach(notificationController);
+            }
             this.tags = TagsUtil.copy(copy.tags);
         }
     }
