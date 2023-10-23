@@ -540,7 +540,7 @@ public class TabsManager implements ItemsRoot, Tickable {
         public void run() {
             while (!isInterrupted() && enabled) {
                 if (request && (requestImportance > 0 || ((System.currentTimeMillis() - firstRequestTime) > 1000 * 10))) {
-                    if (App.LOG) Logger.i(TAG, String.format("SaveThread: requestCount=%s\nfirstTime=%s\nlatestTime=%s", requestsCount, TimeUtil.getDebugDate(firstRequestTime), TimeUtil.getDebugDate(latestRequestTime)));
+                    Logger.i(TAG, String.format("SaveThread: requestCount=%s\nfirstTime=%s\nlatestTime=%s", requestsCount, TimeUtil.getDebugDate(firstRequestTime), TimeUtil.getDebugDate(latestRequestTime)));
 
                     request = false;
                     requestsCount = Debug.latestSaveRequestsCount = 0;

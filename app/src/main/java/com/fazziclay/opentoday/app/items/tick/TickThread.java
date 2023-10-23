@@ -55,7 +55,7 @@ public class TickThread extends Thread {
     }
 
     private void log(String s) {
-        if (App.LOG && LOG) {
+        if (LOG) {
             if (LOG_ONLY_PERSONAL) {
                 if (currentlyExecutingTickPersonal) {
                     Logger.d(TAG, s);

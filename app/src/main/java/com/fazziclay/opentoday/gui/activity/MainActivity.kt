@@ -179,7 +179,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
         }
 
         val HIDE_IMPORTANT_TODOS = true
-        if (App.DEBUG || App.SHADOW_RELEASE) {
+        if (App.DEBUG) {
             try {
                 val todo = StreamUtil.read(assets.open("IMPORTANT_TODO"))
                 if (todo.isNotEmpty() && !HIDE_IMPORTANT_TODOS) {

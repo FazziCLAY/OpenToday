@@ -74,7 +74,7 @@ public class CrashReport {
                  * DATA_VERSION: %_APPLICATION_DATA_VERSION_%
                  * RELEASE_TIME: %_APPLICATION_VERSION_RELEASE_TIME_%
                  * version-data: %_VERSION_DATA_%
-                 * SHADOW_RELEASE: %_SHADOW_RELEASE_%
+                 * build-report: %_BUILD_REPORT_%
                  * DEBUG: %_APPLICATION_DEBUG_%
                  * DEBUG_TICK_NOTIFICATION: %_APPLICATION_DEBUG_TICK_NOTIFICATION_%
                  * DEBUG_MAIN_ACTIVITY_START_SLEEP: %_APPLICATION_DEBUG_MAIN_ACTIVITY_START_SLEEP_%
@@ -188,7 +188,7 @@ public class CrashReport {
         text = text.replace("%_DEVICE_DISPLAY_%", getText(Build.DISPLAY));
         text = text.replace("%_DEVICE_BOOTLOADER_%", getText(() -> Build.BOOTLOADER));
         text = text.replace("%_L_LOGS_%", getText(() -> startAllLines("| ", App.get().getLogs().toString())));
-        text = text.replace("%_SHADOW_RELEASE_%", getText(() -> !App.SHADOW_RELEASE ? "false" : "WARNING! SHADOW RELEASE IS TRUE (ENABLED)"));
+        text = text.replace("%_BUILD_REPORT_%", getText(com.fazziclay.opentoday.Build::getBuildDebugReport));
 
         return text;
     }

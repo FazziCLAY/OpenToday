@@ -1,6 +1,5 @@
 package com.fazziclay.opentoday.app;
 
-import android.app.Activity;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -26,7 +25,6 @@ import com.fazziclay.opentoday.app.items.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.tick.TickThread;
-import com.fazziclay.opentoday.debug.TestItemViewGenerator;
 import com.fazziclay.opentoday.gui.activity.CrashReportActivity;
 import com.fazziclay.opentoday.plugins.gcp.GlobalChangesPlugin;
 import com.fazziclay.opentoday.util.DebugUtil;
@@ -44,7 +42,6 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -72,11 +69,10 @@ public class App extends Application {
     public static final String SHARED_KEY_LAST_TAB = "app_tabInclude_lastTabId";
 
     // DEBUG
-    public static final boolean SHADOW_RELEASE = false;
-    public static final boolean DEBUG = !SHADOW_RELEASE && CustomBuildConfig.DEBUG;
-    public static final boolean LOG = debug(true);
-    public static final boolean LOGS_SAVE = debug(false);
-    public static final boolean SECRET_SETTINGS_AVAILABLE = false;
+    public static final boolean DEBUG = com.fazziclay.opentoday.Build.isDebug();
+    public static final boolean LOG = com.fazziclay.opentoday.Build.isLogs();
+    public static final boolean LOGS_SAVE = com.fazziclay.opentoday.Build.isLogsSave();
+    public static final boolean SECRET_SETTINGS_AVAILABLE = com.fazziclay.opentoday.Build.isSecretSettingAvailable();
 
     public static boolean debug(boolean b) {
         return (DEBUG && b);
@@ -116,13 +112,7 @@ public class App extends Application {
     private final OptionalField<CallbackStorage<ImportantDebugCallback>> importantDebugCallbacks = new OptionalField<>(CallbackStorage::new);
     private final OptionalField<BeautifyColorManager> beautifyColorManager = new OptionalField<>(() -> new BeautifyColorManager(this));
     private final OptionalField<ItemNotificationHandler> itemNotificationHandler = new OptionalField<>(() -> new ItemNotificationHandler(this, this));
-    private final List<FeatureFlag> featureFlags = new ArrayList<>(App.DEBUG ? Arrays.asList(
-            FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
-            //FeatureFlag.ALWAYS_SHOW_SAVE_STATUS,
-            //FeatureFlag.DISABLE_AUTOMATIC_TICK,
-            FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION,
-            FeatureFlag.TOOLBAR_DEBUG
-    ) : Collections.emptyList());
+    private final List<FeatureFlag> featureFlags = new ArrayList<>(Arrays.asList(com.fazziclay.opentoday.Build.INITIAL_FEATURE_FLAGS));
     private long appStartupTime = 0;
 
     /**

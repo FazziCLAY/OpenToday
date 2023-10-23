@@ -1,9 +1,10 @@
 package com.fazziclay.opentoday.app;
 
+import com.fazziclay.opentoday.Build;
 import com.fazziclay.opentoday.BuildConfig;
 
 public class CustomBuildConfig {
-    public static final boolean SHADOW_BUILD_CONFIG = false;
+    public static final boolean SHADOW_BUILD_CONFIG = Build.IS_SHADOW_CUSTOM_BUILD_CONFIG;
 
     public static final String VERSION_NAME;
     public static final int VERSION_CODE;

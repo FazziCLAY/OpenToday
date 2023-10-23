@@ -51,6 +51,7 @@ public class Logger {
     }
 
     private static void log(Level level, final String s, boolean noChecks) {
+        if (level == Level.DEBUG && !App.DEBUG) return;
         final String time = TimeUtil.getDebugDate(System.currentTimeMillis());
         final App app = App.get();
         if (app == null) return;
