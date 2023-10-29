@@ -405,4 +405,5 @@
     <string name="transform_selectTypeDialog_title">Выберите тип результата</string>
     <string name="main_activity_allowExactAlarms">Пожалуйста разрешите отложенные будильники</string>
     <string name="main_activity_allowFullScreenIntent">Пожалуйста разрешите полноэкранные уведомления</string>
+    <string name="settings_isAnalogClock">Показывать оверлей стрелочных часов</string>
 </resources>

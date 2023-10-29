@@ -53,6 +53,7 @@ public class SettingsManager {
     private boolean isItemEditorBackgroundFromItem = false;
     private boolean isRandomItemBackground = true;
     private String plugins = "";
+    private boolean isAnalogClock = false;
 
 
     public SettingsManager(File saveFile) {
@@ -122,6 +123,14 @@ public class SettingsManager {
     }
     @Setter public void setPlugins(String plugins) {this.plugins = plugins;}
 
+    @Getter public boolean isAnalogClock() {
+        return isAnalogClock;
+    }
+
+    @Setter public void setAnalogClock(boolean b) {
+        this.isAnalogClock = b;
+    }
+
     private void load() {
         if (!FileUtil.isExist(saveFile)) {
             return;
@@ -180,6 +189,7 @@ public class SettingsManager {
             this.isItemEditorBackgroundFromItem = j.optBoolean("isItemEditorBackgroundFromItem", this.isItemEditorBackgroundFromItem);
             this.isRandomItemBackground = j.optBoolean("isRandomItemBackground", this.isRandomItemBackground);
             this.plugins = j.optString("plugins", this.plugins);
+            this.isAnalogClock = j.optBoolean("isAnalogClock", this.isAnalogClock);
 
         } catch (Exception e) {
             Logger.e(TAG, "load", e);
@@ -226,6 +236,7 @@ public class SettingsManager {
         j.put("isItemEditorBackgroundFromItem", this.isItemEditorBackgroundFromItem);
         j.put("isRandomItemBackground", this.isRandomItemBackground);
         j.put("plugins", this.plugins);
+        j.put("isAnalogClock", this.isAnalogClock);
         return j;
     }
 
@@ -261,6 +272,10 @@ public class SettingsManager {
         DEFAULT_FULLY_WEEKDAY("HH:mm:ss", "yyyy.MM.dd EEEE"),
         NO_SECONDS("HH:mm", "yyyy.MM.dd EE"),
         NO_SECONDS_FULLY_WEEKDAY("HH:mm", "yyyy.MM.dd EEEE"),
+        NO_TIME("", "yyyy.MM.dd EE"),
+        NO_TIME_INVERT("", "dd.MM.yyyy EE"),
+        NO_TIME_FULLY_WEEKDAY("", "yyyy.MM.dd EEEE"),
+        NO_TIME_FULLY_WEEKDAY_INVERT("", "dd.MM.yyyy EEEE"),
         INVERT_DATE("HH:mm:ss", "dd.MM.yyyy EE"),
         INVERT_DATE_FULLY_WEEKDAY("HH:mm:ss", "dd.MM.yyyy EEEE"),
         ;

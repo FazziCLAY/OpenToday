@@ -245,6 +245,12 @@ class SettingsFragment : Fragment() {
             settingsManager.isRandomItemBackground = binding.isItemBackgroundRandom.isChecked
             settingsManager.save()
         })
+
+        binding.isAnalogClock.isChecked = settingsManager.isAnalogClock
+        viewClick(binding.isAnalogClock, Runnable {
+            settingsManager.isAnalogClock = binding.isAnalogClock.isChecked
+            settingsManager.save()
+        })
     }
 
     private fun setupFirstTabSpinner() {

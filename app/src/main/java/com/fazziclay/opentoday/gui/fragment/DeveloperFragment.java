@@ -20,27 +20,45 @@ import androidx.fragment.app.Fragment;
 import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.icons.IconsRegistry;
 import com.fazziclay.opentoday.databinding.FragmentDeveloperBinding;
+import com.fazziclay.opentoday.gui.ActivitySettings;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.UINotification;
 import com.fazziclay.opentoday.gui.activity.MainActivity;
 import com.fazziclay.opentoday.gui.dialog.IconSelectorDialog;
+import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.util.ColorUtil;
 
-import java.util.function.Consumer;
-
-public class DeveloperFragment extends Fragment {
+public class DeveloperFragment extends Fragment implements NavigationHost {
 
     private Context context;
     private FragmentDeveloperBinding binding;
     private App app;
+    private boolean popBackStackFlag = true;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.context = requireContext();
         this.app = App.get(context);
+        UI.getUIRoot(this).pushActivitySettings(a -> {
+            a.setClockVisible(true);
+            a.setDateClickCalendar(true);
+            a.setNotificationsVisible(true);
+            a.setToolbarSettings(ActivitySettings.ToolbarSettings.createBack("OwO!~", () -> {
+                Toast.makeText(context, "back in toolbar clicked! (1000ms delay)", Toast.LENGTH_SHORT).show();
+                UI.postDelayed(() -> {
+                    popBackStackFlag = false;
+                    UI.rootBack(this);
+                }, 1000);
+            }));
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        UI.getUIRoot(this).popActivitySettings();
     }
 
     @Nullable
@@ -84,5 +102,21 @@ public class DeveloperFragment extends Fragment {
                 })
                 .setNegativeButton(R.string.abc_cancel, null)
                 .show();
+    }
+
+    @Override
+    public boolean popBackStack() {
+        if (!popBackStackFlag) return false;
+        Toast.makeText(context, "Attempt to popBackStack! (1000ms delayed)", Toast.LENGTH_SHORT).show();
+        UI.postDelayed(() -> {
+            popBackStackFlag = false;
+            UI.rootBack(this);
+        }, 1000);
+        return popBackStackFlag;
+    }
+
+    @Override
+    public void navigate(@NonNull Fragment fragment, boolean addToBackStack) {
+        Toast.makeText(context, "Attempt to navigate in developer fragment lol", Toast.LENGTH_SHORT).show();
     }
 }

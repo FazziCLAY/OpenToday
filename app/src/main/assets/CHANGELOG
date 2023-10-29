@@ -1,5 +1,7 @@
 TODO: changelog
 == branch: tags
+* added analog clock to options
+* added NO_TIME preset for date&time format option
 * added tags for items (no use keys currently :/)
 * added random color background for items on item creating
 * added (+) button to tabs list in top of screen

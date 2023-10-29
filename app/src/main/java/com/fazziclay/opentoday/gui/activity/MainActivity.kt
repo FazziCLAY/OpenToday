@@ -50,6 +50,7 @@ import com.fazziclay.opentoday.util.StreamUtil
 import com.fazziclay.opentoday.util.callback.CallbackImportance
 import com.fazziclay.opentoday.util.callback.Status
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.GregorianCalendar
 import java.util.Locale
 import java.util.Stack
@@ -293,6 +294,20 @@ class MainActivity : AppCompatActivity(), UIRoot {
         // Time
         dateFormat = SimpleDateFormat(settingsManager.timePattern, Locale.getDefault())
         binding.currentDateTime.text = dateFormat.format(time)
+
+        // Analog
+        if (settingsManager.isAnalogClock) {
+            val hour = currentDateCalendar.get(Calendar.HOUR)
+            val minute = currentDateCalendar.get(Calendar.MINUTE)
+            val second = currentDateCalendar.get(Calendar.SECOND)
+            val millis = currentDateCalendar.get(Calendar.MILLISECOND)
+            binding.analogClock.setTime(hour, minute, second, millis)
+            if (getCurrentActivitySettings().isClockVisible) {
+                binding.analogClock.visibility = View.VISIBLE
+            }
+        } else {
+            binding.analogClock.visibility = View.GONE
+        }
     }
 
     // Update checker
@@ -428,6 +443,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
 
         viewVisible(binding.currentDateDate, settings.isClockVisible, View.GONE)
         viewVisible(binding.currentDateTime, settings.isClockVisible, View.GONE)
+        viewVisible(binding.analogClock, settings.isClockVisible, View.GONE)
         binding.currentDateDate.isEnabled = settings.isDateClickCalendar
         binding.currentDateTime.isEnabled = settings.isDateClickCalendar
         viewVisible(binding.notifications, settings.isNotificationsVisible || Debug.DEBUG_ALWAYS_SHOW_UI_NOTIFICATIONS, View.GONE)
