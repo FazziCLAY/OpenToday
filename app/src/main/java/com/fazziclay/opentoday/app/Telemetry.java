@@ -1,5 +1,7 @@
 package com.fazziclay.opentoday.app;
 
+import static com.fazziclay.opentoday.util.InlineUtil.IPROF;
+
 import androidx.annotation.NonNull;
 
 import com.fazziclay.javaneoutil.FileUtil;
@@ -77,7 +79,11 @@ public class Telemetry {
     }
 
     public void send(LPacket lPacket) {
-        if (!isEnabled) return;
+        IPROF.push("Telemetry:send");
+        if (!isEnabled) {
+            IPROF.pop();
+            return;
+        }
         Logger.d(TAG, "send(): " + lPacket);
         if (lPacket.isDelay() && !NO_DELAY) {
             long last = getLastSend(lPacket.getClass().getName());
@@ -93,6 +99,7 @@ public class Telemetry {
                 int d2 = g.get(Calendar.DAY_OF_MONTH);
                 Logger.d(TAG, "send() d1=", d1, "d2=", d2 + " sanding-canceled: " + (d1 == d2));
                 if (d1 == d2) {
+                    IPROF.pop();
                     return;
                 }
             }
@@ -106,6 +113,7 @@ public class Telemetry {
         }
         Logger.d(TAG, "send(): wait: done");
         setLastSend(lPacket.getClass().getName());
+        IPROF.pop();
     }
 
     @NonNull

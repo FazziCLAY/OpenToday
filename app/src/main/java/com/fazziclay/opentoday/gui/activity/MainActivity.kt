@@ -26,16 +26,14 @@ import com.fazziclay.opentoday.app.CrashReportContext
 import com.fazziclay.opentoday.app.FeatureFlag
 import com.fazziclay.opentoday.app.ImportantDebugCallback
 import com.fazziclay.opentoday.app.SettingsManager
+import com.fazziclay.opentoday.app.Telemetry
 import com.fazziclay.opentoday.app.Telemetry.UiClosedLPacket
-import com.fazziclay.opentoday.app.Telemetry.UiOpenLPacket
 import com.fazziclay.opentoday.app.UpdateChecker
 import com.fazziclay.opentoday.app.items.QuickNoteReceiver
 import com.fazziclay.opentoday.databinding.ActivityMainBinding
 import com.fazziclay.opentoday.databinding.NotificationDebugappBinding
 import com.fazziclay.opentoday.databinding.NotificationUpdateAvailableBinding
 import com.fazziclay.opentoday.gui.ActivitySettings
-import com.fazziclay.opentoday.gui.EnumsRegistry
-import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.gui.UINotification
 import com.fazziclay.opentoday.gui.UIRoot
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment
@@ -61,6 +59,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
         private const val TAG = "MainActivity"
         private const val CONTAINER_ID = R.id.mainActivity_rootFragmentContainer
         private val DEFAULT_ACTIVITY_SETTINGS: ActivitySettings = ActivitySettings()
+        private val PROFILER = App.createProfiler("MainActivity")
     }
     private lateinit var binding: ActivityMainBinding
     private lateinit var app: App
@@ -76,7 +75,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
     private var debugHandler: Handler? = null
     private lateinit var debugRunnable: Runnable
     private var debugViewSize = 13
-    private var debugViewBackground: Int = 0x33000000
+    private var debugViewBackground: Int = Color.BLACK
     @SuppressLint("SetTextI18n")
     private var importantDebugCallback = ImportantDebugCallback { m ->
         if (!Debug.DEBUG_IMPORTANT_NOTIFICATIONS) return@ImportantDebugCallback Status.Builder()
@@ -97,20 +96,33 @@ class MainActivity : AppCompatActivity(), UIRoot {
 
     // Activity overrides
     override fun onCreate(savedInstanceState: Bundle?) {
+        PROFILER.push("MainActivity:onCreate")
+
+        PROFILER.push("phase0")
         val startTime = System.currentTimeMillis()
         CrashReportContext.mainActivityCreate()
         CrashReportContext.FRONT.push("MainActivity")
         Logger.d(TAG, "onCreate", nullStat(savedInstanceState))
-        if (App.DEBUG) EnumsRegistry.missingChecks()
+
+        PROFILER.swap("phase1")
         app = App.get(this)
         settingsManager = app.settingsManager
-        UI.setTheme(settingsManager.theme)
-        app.telemetry.send(UiOpenLPacket())
+        app.telemetry.send(Telemetry.UiOpenLPacket())
+
+        PROFILER.swap("inflate&set")
+
+        PROFILER.push("inflate")
         binding = ActivityMainBinding.inflate(layoutInflater)
+
+        PROFILER.swap("set")
         setContentView(binding.root)
 
+        PROFILER.pop()
+
+        PROFILER.swap("super.onCreate")
         super.onCreate(savedInstanceState)
 
+        PROFILER.swap("phase2")
         setSupportActionBar(binding.toolbar)
         supportActionBar?.hide()
         debugRunnable = Runnable {
@@ -125,15 +137,25 @@ class MainActivity : AppCompatActivity(), UIRoot {
             }
         }
         if (Debug.CUSTOM_MAINACTIVITY_BACKGROUND) binding.root.setBackgroundColor(Color.parseColor("#00ffff"))
+
+        PROFILER.swap("savedInstanceState==null actions")
         if (savedInstanceState == null) {
+            PROFILER.push("fragment begin")
+
             supportFragmentManager.beginTransaction()
                 .replace(CONTAINER_ID, MainRootFragment.create(), "MainRootFragment")
                 .commit()
+
+            PROFILER.pop()
         }
+
+        PROFILER.swap("phase3")
         setupNotifications()
         setupCurrentDate()
         if (settingsManager.isQuickNoteNotification) {
+            PROFILER.push("send_quick_note")
             QuickNoteReceiver.sendQuickNoteNotification(this)
+            PROFILER.pop()
         }
         updateDebugView()
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
@@ -161,6 +183,8 @@ class MainActivity : AppCompatActivity(), UIRoot {
                 }
             }
         })
+
+        PROFILER.swap("phase4")
         updateByActivitySettings()
         Debug.mainActivityStartupTime = System.currentTimeMillis() - startTime
         app.importantDebugCallbacks.addCallback(CallbackImportance.DEFAULT, importantDebugCallback)
@@ -190,10 +214,14 @@ class MainActivity : AppCompatActivity(), UIRoot {
             } catch (ignored: Exception) {
             }
         }
+
+        PROFILER.pop()
+        PROFILER.pop()
     }
 
     override fun onResume() {
         super.onResume()
+        Logger.i(TAG, "onResume")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val alarmManager: AlarmManager = getSystemService(AlarmManager::class.java)
             if (!alarmManager.canScheduleExactAlarms()) {
@@ -254,6 +282,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
 
     // Current Date
     private fun setupCurrentDate() {
+        PROFILER.push("setupCurrentDate")
         currentDateCalendar = GregorianCalendar()
         setCurrentDate()
         currentDateHandler = Handler(mainLooper)
@@ -275,6 +304,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
             dialog.datePicker.firstDayOfWeek = app.settingsManager.firstDayOfWeek
             dialog.show()
         })
+        PROFILER.pop()
     }
 
     private fun internalItemsTick() {
@@ -284,6 +314,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
     }
 
     private fun setCurrentDate() {
+        PROFILER.push("setCurrentDate")
         currentDateCalendar.timeInMillis = System.currentTimeMillis()
         val time = currentDateCalendar.time
 
@@ -308,10 +339,12 @@ class MainActivity : AppCompatActivity(), UIRoot {
         } else {
             binding.analogClock.visibility = View.GONE
         }
+        PROFILER.pop()
     }
 
     // Update checker
     private fun setupUpdateAvailableNotify() {
+        PROFILER.push("setupUpdateAvailableNotify")
         UpdateChecker.check(app) { available: Boolean, url: String?, name: String? ->
             runOnUiThread {
                 if (available) {
@@ -328,6 +361,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
                 }
             }
         }
+        PROFILER.pop()
     }
 
     // App is DEBUG warning notify
@@ -367,8 +401,18 @@ class MainActivity : AppCompatActivity(), UIRoot {
             binding.debugLogsSizeDown.visibility = View.VISIBLE
             binding.debugLogsSwitch.visibility = View.VISIBLE
             binding.debugLogsSwitch.setOnClickListener {
+                val IS_PROFILERS = true
+                var text = app.logs.toString()
+                if (IS_PROFILERS) {
+                    text = ""
+                    App.get().profilers.forEach {
+                        text += "\n\n" + it.getResult(-1)
+                    }
+                }
+
+
                 viewVisible(binding.debugLogsScroll, binding.debugLogsSwitch.isChecked, View.GONE)
-                binding.debugLogsText.text = ColorUtil.colorize("\n\n\n\n\n\n"+app.logs.toString(), Color.BLUE, Color.TRANSPARENT, 0, false)
+                binding.debugLogsText.text = ColorUtil.colorize("\n\n\n\n\n\n\n\n\n\n\n\n\n"+text, Color.YELLOW, Color.TRANSPARENT, 0, false)
             }
             binding.debugLogsSwitch.setOnLongClickListener {
                 toggleLogsOverlay()
@@ -384,6 +428,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
                 binding.debugLogsText.textSize = debugViewSize.toFloat()
             }
 
+            binding.debugLogsScroll.setBackgroundColor(debugViewBackground)
             binding.debugLogsSizeUp.setOnLongClickListener {
                 debugViewBackground+=0x21000000
                 binding.debugLogsScroll.setBackgroundColor(debugViewBackground)

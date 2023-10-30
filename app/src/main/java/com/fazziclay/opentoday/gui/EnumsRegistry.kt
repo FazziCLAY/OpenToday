@@ -10,6 +10,7 @@ import com.fazziclay.opentoday.app.items.item.FilterGroupItem
 import com.fazziclay.opentoday.app.items.item.ItemType
 import com.fazziclay.opentoday.app.items.item.filter.FiltersRegistry
 import com.fazziclay.opentoday.app.items.item.filter.LogicContainerItemFilter
+import com.fazziclay.opentoday.util.InlineUtil.IPROF
 
 // GUI-only
 object EnumsRegistry {
@@ -63,6 +64,7 @@ object EnumsRegistry {
     )
 
     fun missingChecks() {
+        IPROF.push("EnumsRegistry:missingChecks")
         missingCheck(LogicContainerItemFilter.LogicMode.values().toList())
         missingCheck(SettingsManager.FirstTab.values().toList())
         missingCheck(SettingsManager.ItemAction.values().toList())
@@ -72,6 +74,7 @@ object EnumsRegistry {
         missingCheck(FilterGroupItem.TickBehavior.values().toList())
         missingCheck(CycleListItem.TickBehavior.values().toList())
         missingCheck(SettingsManager.ItemAddPosition.values().toList())
+        IPROF.pop()
     }
 
     private fun missingCheck(values: List<Enum<*>>) {

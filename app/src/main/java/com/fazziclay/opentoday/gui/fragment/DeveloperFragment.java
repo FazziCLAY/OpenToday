@@ -77,6 +77,9 @@ public class DeveloperFragment extends Fragment implements NavigationHost {
         binding.icons.setOnClickListener(_ignore -> new IconSelectorDialog(context, icon -> {
             Toast.makeText(context, "icon = " + icon.getId(), Toast.LENGTH_SHORT).show();
         }).show());
+        binding.profiler.setOnClickListener((v) -> {
+            binding.debugText.setText(ColorUtil.PROFILER.getResult(-1));
+        });
     }
 
     private void showPluginsDialog() {

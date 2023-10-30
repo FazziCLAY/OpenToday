@@ -2,9 +2,13 @@ package com.fazziclay.opentoday.app;
 
 import androidx.annotation.NonNull;
 
+import com.fazziclay.opentoday.util.profiler.Profiler;
+
 import org.jetbrains.annotations.NotNull;
 
 public class OptionalField <T> {
+    private static final Profiler PROFILER = App.createProfiler("OptionalField");
+
     private final InitSupplier<T> supplier;
     private final FreeRunnable<T> freeRunnable;
     private final Validator<T> validator;
@@ -38,12 +42,18 @@ public class OptionalField <T> {
     @NonNull
     @NotNull
     public T get() {
+        PROFILER.push("get");
         if (value == null) {
+            PROFILER.push("supplier");
             value = supplier.supplier();
+            PROFILER.pop();
         }
         if (validator != null) {
+            PROFILER.push("validate");
             value = validator.validate(value);
+            PROFILER.pop();
         }
+        PROFILER.pop();
         return value;
     }
 
@@ -52,10 +62,12 @@ public class OptionalField <T> {
     }
 
     public void free() {
+        PROFILER.push("free");
         if (isSet()) {
             if (freeRunnable != null) freeRunnable.preFree(value);
         }
         value = null;
+        PROFILER.pop();
     }
 
     public interface InitSupplier<T> {
