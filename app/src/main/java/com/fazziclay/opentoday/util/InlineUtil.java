@@ -4,6 +4,9 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.util.profiler.Profiler;
+
 import org.intellij.lang.annotations.MagicConstant;
 
 import java.util.Calendar;
@@ -13,6 +16,7 @@ import java.util.UUID;
 // Utility-class
 // USE: import static com.fazziclay.opentoday.util.InlineUtil.*;
 public class InlineUtil {
+    public static final Profiler IPROF = App.createProfiler("InlineUtil_Profiler");
     /**
      * Print message to System.in stream (System.out.println(o))
      * **/
