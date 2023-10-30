@@ -36,6 +36,7 @@ import com.fazziclay.opentoday.databinding.ActivityMainBinding
 import com.fazziclay.opentoday.databinding.NotificationDebugappBinding
 import com.fazziclay.opentoday.databinding.NotificationUpdateAvailableBinding
 import com.fazziclay.opentoday.gui.ActivitySettings
+import com.fazziclay.opentoday.gui.GUILauncher
 import com.fazziclay.opentoday.gui.UINotification
 import com.fazziclay.opentoday.gui.UIRoot
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment
@@ -110,7 +111,6 @@ class MainActivity : AppCompatActivity(), UIRoot {
         PROFILER.swap("phase1")
         app = App.get(this)
         settingsManager = app.settingsManager
-        app.telemetry.send(Telemetry.UiOpenLPacket())
 
         PROFILER.swap("inflate&set")
 
@@ -140,6 +140,19 @@ class MainActivity : AppCompatActivity(), UIRoot {
             }
         }
         if (Debug.CUSTOM_MAINACTIVITY_BACKGROUND) binding.root.setBackgroundColor(Color.parseColor("#00ffff"))
+
+        if (settingsManager.isQuickNoteNotification) {
+            PROFILER.push("send_quick_note")
+            QuickNoteReceiver.sendQuickNoteNotification(this)
+            PROFILER.pop()
+        }
+
+        PROFILER.swap("wait_gui_for_back")
+        while (GUILauncher.isWaitGuiForBack()) {
+            // waiting back initialize
+        }
+        PROFILER.swap("telemetry")
+        app.telemetry.send(Telemetry.UiOpenLPacket())
 
         PROFILER.swap("savedInstanceState==null actions")
         if (savedInstanceState == null) {
@@ -186,11 +199,6 @@ class MainActivity : AppCompatActivity(), UIRoot {
         }
         setupNotifications()
         setupCurrentDate()
-        if (settingsManager.isQuickNoteNotification) {
-            PROFILER.push("send_quick_note")
-            QuickNoteReceiver.sendQuickNoteNotification(this)
-            PROFILER.pop()
-        }
         updateDebugView()
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {

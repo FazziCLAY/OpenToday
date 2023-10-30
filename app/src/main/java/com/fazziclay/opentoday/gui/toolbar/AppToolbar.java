@@ -294,7 +294,7 @@ public class AppToolbar {
             activity.startActivity(intent);
         });
         viewClick(l.resetSetup, () -> {
-            activity.getSharedPreferences(App.SHARED_NAME, Context.MODE_PRIVATE).edit().putBoolean(App.SHARED_KEY_IS_SETUP_DONE, false).apply();
+            SettingsManager.IS_FIRST_LAUNCH.set(settingsManager, true);
             activity.finish();
             activity.startActivity(new Intent(activity, SetupActivity.class));
         });

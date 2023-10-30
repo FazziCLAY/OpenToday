@@ -5,7 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import com.fazziclay.opentoday.Debug
 import com.fazziclay.opentoday.app.App
+import com.fazziclay.opentoday.app.settings.SettingsManager
 import com.fazziclay.opentoday.gui.EnumsRegistry
+import com.fazziclay.opentoday.gui.GUILauncher
 import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.util.DebugUtil
 import com.fazziclay.opentoday.util.InlineUtil.IPROF
@@ -48,16 +50,12 @@ class LauncherActivity : Activity() {
         PROFILER.push("app.get")
         val app = App.get(this)
 
-        PROFILER.swap("manually_init_all")
+        PROFILER.swap("settings")
+        val isSetupDone = !SettingsManager.IS_FIRST_LAUNCH.get(app.settingsManager)
+        val theme = SettingsManager.THEME.get(app.settingsManager).id()
 
-            PROFILER.push("settings")
-            val settingsManager = app.settingsManager
-            val theme = settingsManager.theme
-            val isSetupDone = settingsManager.isSetupDone
-            PROFILER.swap("tabsManager")
-            app.tabsManager
-
-            PROFILER.pop()
+        PROFILER.swap("gui_launcher")
+        GUILauncher.startBackInitializerThread()
 
         PROFILER.swap("theme")
         UI.setTheme(theme)

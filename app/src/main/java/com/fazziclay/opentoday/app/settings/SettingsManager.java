@@ -66,6 +66,7 @@ public class SettingsManager {
     // object
     private final HashMap<Option, Object> optionsValue = new HashMap<>();
     private final File saveFile;
+    private final SaveThread saveThread;
     public final CallbackStorage<OptionChangedCallback> callbacks = new CallbackStorage<>();
 
     protected void setOption(Option option, Object value) {
@@ -90,7 +91,9 @@ public class SettingsManager {
 
     public SettingsManager(File saveFile) {
         this.saveFile = saveFile;
+        this.saveThread = new SaveThread();
         load();
+        saveThread.start();
     }
 
     private void load() {
@@ -115,8 +118,34 @@ public class SettingsManager {
         IPROF.pop();
     }
 
-    public void save() {
-        IPROF.push("SettingsManager:save");
+    private class SaveThread extends Thread {
+        boolean requested = false;
+
+        public SaveThread() {
+            setName("SettingsManager.SaveThread");
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+                if (requested) {
+                    requested = false;
+                    directSave();
+                }
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        public void request() {
+            this.requested = true;
+        }
+    }
+
+    public void directSave() {
         try {
             JSONObject j = exportJSONSettings();
             FileUtil.setText(saveFile, j.toString());
@@ -124,6 +153,11 @@ public class SettingsManager {
             Logger.e(TAG, "save", e);
             App.exception(null, e);
         }
+    }
+
+    public void save() {
+        IPROF.push("SettingsManager:save");
+        saveThread.request();
         IPROF.pop();
     }
 

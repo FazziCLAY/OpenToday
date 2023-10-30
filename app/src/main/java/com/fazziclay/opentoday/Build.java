@@ -5,8 +5,6 @@ import androidx.annotation.NonNull;
 import com.fazziclay.opentoday.app.CustomBuildConfig;
 import com.fazziclay.opentoday.app.FeatureFlag;
 
-import org.jetbrains.annotations.Contract;
-
 import java.util.Arrays;
 
 // I im happy!
@@ -52,7 +50,8 @@ public class Build {
                 "; LogsStatus=" + LOGS_STATUS +
                 "; SecretSettings=" + IS_SECRET_SETTINGS_AVAILABLE +
                 "; ShadowCustomBuildConfig=" + IS_SHADOW_CUSTOM_BUILD_CONFIG +
-                "; InitialFeatureFlags=" + Arrays.toString(INITIAL_FEATURE_FLAGS);
+                "; InitialFeatureFlags=" + Arrays.toString(INITIAL_FEATURE_FLAGS) +
+                "; Profilers=" + PROFILERS;
     }
 
     public static boolean isProfilersEnabled() {

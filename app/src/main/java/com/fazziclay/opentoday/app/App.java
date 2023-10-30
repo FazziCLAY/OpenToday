@@ -55,7 +55,7 @@ import ru.fazziclay.opentoday.telemetry.OpenTodayTelemetry;
 
 public class App extends Application {
     // Application
-    public static final int APPLICATION_DATA_VERSION = 11;
+    public static final int APPLICATION_DATA_VERSION = 12;
     public static final String VERSION_NAME = CustomBuildConfig.VERSION_NAME;
     public static final int VERSION_CODE = CustomBuildConfig.VERSION_CODE;
     public static final long VERSION_RELEASE_TIME = CustomBuildConfig.VERSION_RELEASE_TIME;
@@ -69,7 +69,6 @@ public class App extends Application {
 
     // Shared preference
     public static final String SHARED_NAME = "main";
-    public static final String SHARED_KEY_IS_SETUP_DONE = "isSetupDone";
     public static final String SHARED_KEY_PINCODE = "app_pinCode";
     public static final String SHARED_KEY_LAST_TAB = "app_tabInclude_lastTabId";
 
@@ -107,7 +106,7 @@ public class App extends Application {
     private final OptionalField<License[]> openSourceLicenses = new OptionalField<>(this::createOpenSourceLicensesArray);
     private final OptionalField<DataFixer> dataFixer = new OptionalField<>(() -> new DataFixer(this));
     private final OptionalField<TabsManager> tabsManager = new OptionalField<>(this::preCheckTabsManager, TabsManager::destroy);
-    private final OptionalField<SettingsManager> settingsManager = new OptionalField<>(() -> new SettingsManager(new File(getExternalFilesDir(""), "settings-2.json"))); // TODO: 30.10.2023 use a settings.json file! DataFixer needed
+    private final OptionalField<SettingsManager> settingsManager = new OptionalField<>(() -> new SettingsManager(new File(getExternalFilesDir(""), "settings.json")));
     private final OptionalField<ColorHistoryManager> colorHistoryManager = new OptionalField<>(() -> new ColorHistoryManager(new File(getExternalFilesDir(""), "color_history.json"), 10));
     private final OptionalField<PinCodeManager> pinCodeManager = new OptionalField<>(() -> new PinCodeManager(this));
     private final OptionalField<SelectionManager> selectionManager = new OptionalField<>(SelectionManager::new);
@@ -164,14 +163,7 @@ public class App extends Application {
         Logger.i("App", "onLowMemory.");
         openSourceLicenses.free();
         dataFixer.free();
-        tabsManager.free();
-        settingsManager.free();
-        colorHistoryManager.free();
         pinCodeManager.free();
-        selectionManager.free();
-        telemetry.free();
-        tickThread.free();
-        beautifyColorManager.free();
 
         Debug.free();
         TimeUtil.free();
@@ -192,13 +184,8 @@ public class App extends Application {
         if (level >= TRIM_MEMORY_RUNNING_LOW) {
             openSourceLicenses.free();
             dataFixer.free();
-            colorHistoryManager.free();
-            //telemetry.free();
             pinCodeManager.free();
             Debug.free();
-            TimeUtil.free();
-            RandomUtil.free();
-            beautifyColorManager.free();
         }
     }
 
