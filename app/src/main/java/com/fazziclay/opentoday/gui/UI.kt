@@ -27,6 +27,7 @@ import com.fazziclay.opentoday.gui.callbacks.UIDebugCallback
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost
 import com.fazziclay.opentoday.util.InlineUtil
+import com.fazziclay.opentoday.util.InlineUtil.IPROF
 import com.fazziclay.opentoday.util.ResUtil
 import com.fazziclay.opentoday.util.callback.CallbackStorage
 import com.fazziclay.opentoday.util.callback.Status
@@ -84,7 +85,9 @@ object UI {
 
     @JvmStatic
     fun setTheme(i: Int) {
+        IPROF.push("UI:setTheme")
         AppCompatDelegate.setDefaultNightMode(i)
+        IPROF.pop();
     }
 
     @JvmStatic
