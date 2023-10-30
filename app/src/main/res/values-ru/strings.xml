@@ -406,4 +406,15 @@
     <string name="main_activity_allowExactAlarms">Пожалуйста разрешите отложенные будильники</string>
     <string name="main_activity_allowFullScreenIntent">Пожалуйста разрешите полноэкранные уведомления</string>
     <string name="settings_isAnalogClock">Показывать оверлей стрелочных часов</string>
+    <string name="fragment_developer_profiler">Профайлер…</string>
+    <string name="settings_analogClock_title">Стрелочные часы</string>
+    <string name="settings_analogClockSettings_size_title">Размер</string>
+    <string name="settings_analogClockSettings_transparency_title">Прозрачность</string>
+    <string name="settings_analogClockSettings_secondHandColor">Выбор цвета секундной стрелки</string>
+    <string name="settings_analogClockSettings_minuteHandColor">Выбор цвета минутной стрелки</string>
+    <string name="settings_analogClockSettings_hourHandColor">Выбор цвета часовой стрелки</string>
+    <string name="fragment_settings_analogClockSettings_handColor_reset">Сброс</string>
+    <string name="fragment_settings_analogClockSettings_handColor_second">Выберите цвет…</string>
+    <string name="fragment_settings_analogClockSettings_handColor_hour">Выберите цвет…</string>
+    <string name="fragment_settings_analogClockSettings_handColor_minute">Выберите цвет…</string>
 </resources>

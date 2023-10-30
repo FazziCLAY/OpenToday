@@ -12,7 +12,7 @@
             android:id="@+id/size_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Size"
+            android:text="@string/settings_analogClockSettings_size_title"
             android:textSize="20sp"
             />
         <SeekBar
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20sp"
             android:layout_below="@id/size"
-            android:text="Alpha"
+            android:text="@string/settings_analogClockSettings_transparency_title"
             android:textSize="20sp"
             />
         <SeekBar
@@ -42,23 +42,29 @@
 
         <Button
             android:id="@+id/secondHandColor"
+            android:layout_marginEnd="10sp"
+            android:layout_marginStart="10sp"
             android:layout_below="@id/alpha"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Seconds color" />
+            android:text="@string/settings_analogClockSettings_secondHandColor" />
 
         <Button
             android:id="@+id/minuteHandColor"
+            android:layout_marginEnd="10sp"
+            android:layout_marginStart="10sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/secondHandColor"
-            android:text="Minute color" />
+            android:text="@string/settings_analogClockSettings_minuteHandColor" />
 
         <Button
             android:id="@+id/hourHandColor"
+            android:layout_marginEnd="10sp"
+            android:layout_marginStart="10sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/minuteHandColor"
-            android:text="Hour color" />
+            android:text="@string/settings_analogClockSettings_hourHandColor" />
     </RelativeLayout>
 </ScrollView>
