@@ -25,7 +25,7 @@ import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.databinding.ActivityAlarmBinding;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
-import com.fazziclay.opentoday.gui.item.HolderDestroyer;
+import com.fazziclay.opentoday.gui.item.Destroyer;
 import com.fazziclay.opentoday.gui.item.ItemViewGenerator;
 import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
 import com.fazziclay.opentoday.gui.item.ItemsStorageDrawerBehavior;
@@ -42,7 +42,7 @@ public class AlarmActivity extends AppCompatActivity {
     private ActivityAlarmBinding binding;
     private int cancelNotifyId;
     private MediaPlayer mediaPlayer;
-    private final HolderDestroyer holderDestroy = new HolderDestroyer();
+    private final Destroyer holderDestroy = new Destroyer();
 
     @NotNull
     public static Intent createIntent(@NotNull Context context, @Nullable UUID previewItem, boolean isPreviewMode, @NotNull String title, boolean sound, int cancelNotifyId) {
