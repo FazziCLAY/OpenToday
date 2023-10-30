@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import com.fazziclay.opentoday.R;
-import com.fazziclay.opentoday.app.SettingsManager;
+import com.fazziclay.opentoday.app.settings.enums.ItemAction;
 import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.util.MinBaseAdapter;
 
@@ -25,18 +25,18 @@ import java.util.List;
 
 public class DialogSelectItemAction {
     private final Activity activity;
-    @Nullable private final SettingsManager.ItemAction selected;
+    @Nullable private final ItemAction selected;
     private final OnSelected onSelected;
     private final String message;
     private Dialog dialog;
     private final View view;
-    private List<SettingsManager.ItemAction> excludeList = new ArrayList<>();
+    private List<ItemAction> excludeList = new ArrayList<>();
 
-    public DialogSelectItemAction(Activity activity, @Nullable SettingsManager.ItemAction selected, OnSelected onSelected) {
+    public DialogSelectItemAction(Activity activity, @Nullable ItemAction selected, OnSelected onSelected) {
         this(activity, selected, onSelected, null);
     }
 
-    public DialogSelectItemAction(Activity activity, SettingsManager.ItemAction selected, OnSelected onSelected, String message) {
+    public DialogSelectItemAction(Activity activity, ItemAction selected, OnSelected onSelected, String message) {
         this.activity = activity;
         this.selected = selected;
         this.onSelected = onSelected;
@@ -60,13 +60,13 @@ public class DialogSelectItemAction {
         listView.setAdapter(new MinBaseAdapter() {
             @Override
             public int getCount() {
-                return SettingsManager.ItemAction.values().length;
+                return ItemAction.values().length;
             }
 
             @SuppressLint("SetTextI18n")
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                SettingsManager.ItemAction itemAction = SettingsManager.ItemAction.values()[position];
+                ItemAction itemAction = ItemAction.values()[position];
                 if (excludeList.contains(itemAction)) {
                     return new FrameLayout(activity);
                 }
@@ -80,13 +80,13 @@ public class DialogSelectItemAction {
             }
         });
         listView.setOnItemClickListener((parent, view, position, id) -> {
-            SettingsManager.ItemAction itemAction = SettingsManager.ItemAction.values()[position];
+            ItemAction itemAction = ItemAction.values()[position];
             DialogSelectItemAction.this.onSelected.run(itemAction);
             dialog.cancel();
         });
     }
 
-    public DialogSelectItemAction excludeFromList(SettingsManager.ItemAction... actions) {
+    public DialogSelectItemAction excludeFromList(ItemAction... actions) {
         excludeList.addAll(Arrays.asList(actions));
         return this;
     }
@@ -96,6 +96,6 @@ public class DialogSelectItemAction {
     }
 
     public interface OnSelected {
-        void run(SettingsManager.ItemAction itemAction);
+        void run(ItemAction itemAction);
     }
 }

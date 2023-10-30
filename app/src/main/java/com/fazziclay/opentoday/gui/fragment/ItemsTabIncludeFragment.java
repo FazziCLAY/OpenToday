@@ -23,7 +23,8 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.api.EventHandler;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.ImportWrapper;
-import com.fazziclay.opentoday.app.SettingsManager;
+import com.fazziclay.opentoday.app.settings.enums.FirstTab;
+import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.app.events.gui.CurrentItemsStorageContextChanged;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Unique;
@@ -86,7 +87,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         this.rootNavigationHost = UI.findFragmentInParents(this, MainRootFragment.class);
         binding = FragmentItemsTabIncludeBinding.inflate(getLayoutInflater());
 
-        if (settingsManager.getFirstTab() == SettingsManager.FirstTab.TAB_ON_CLOSING) {
+        if (settingsManager.getFirstTab() == FirstTab.TAB_ON_CLOSING) {
             currentTab = getLastTabId();
             if (currentTab == null || tabsManager.getTabById(currentTab) == null) {
                 currentTab = tabsManager.getFirstTab().getId();
@@ -94,7 +95,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
             } else {
                 currentItemsStorage = tabsManager.getTabById(currentTab);
             }
-        } else if (settingsManager.getFirstTab() == SettingsManager.FirstTab.FIRST) {
+        } else if (settingsManager.getFirstTab() == FirstTab.FIRST) {
             currentTab = tabsManager.getFirstTab().getId();
             currentItemsStorage = tabsManager.getFirstTab();
         } else {

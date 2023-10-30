@@ -27,6 +27,7 @@ import com.fazziclay.opentoday.app.items.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.tick.TickThread;
+import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.gui.activity.CrashReportActivity;
 import com.fazziclay.opentoday.plugins.gcp.GlobalChangesPlugin;
 import com.fazziclay.opentoday.util.DebugUtil;
@@ -106,11 +107,11 @@ public class App extends Application {
     private final OptionalField<License[]> openSourceLicenses = new OptionalField<>(this::createOpenSourceLicensesArray);
     private final OptionalField<DataFixer> dataFixer = new OptionalField<>(() -> new DataFixer(this));
     private final OptionalField<TabsManager> tabsManager = new OptionalField<>(this::preCheckTabsManager, TabsManager::destroy);
-    private final OptionalField<SettingsManager> settingsManager = new OptionalField<>(() -> new SettingsManager(new File(getExternalFilesDir(""), "settings.json")));
+    private final OptionalField<SettingsManager> settingsManager = new OptionalField<>(() -> new SettingsManager(new File(getExternalFilesDir(""), "settings-2.json"))); // TODO: 30.10.2023 use a settings.json file! DataFixer needed
     private final OptionalField<ColorHistoryManager> colorHistoryManager = new OptionalField<>(() -> new ColorHistoryManager(new File(getExternalFilesDir(""), "color_history.json"), 10));
     private final OptionalField<PinCodeManager> pinCodeManager = new OptionalField<>(() -> new PinCodeManager(this));
     private final OptionalField<SelectionManager> selectionManager = new OptionalField<>(SelectionManager::new);
-    private final OptionalField<Telemetry> telemetry = new OptionalField<>(() -> new Telemetry(this, getSettingsManager().isTelemetry()));
+    private final OptionalField<Telemetry> telemetry = new OptionalField<>(() -> new Telemetry(this, SettingsManager.IS_TELEMETRY.get(getSettingsManager())));
     private final OptionalField<TickThread> tickThread = new OptionalField<>(this::preCheckTickThread, TickThread::requestTerminate, this::validateTickThread);
     private final OptionalField<Translation> translation = new OptionalField<>(() -> new TranslationImpl(this::getString));
     private final OptionalField<CallbackStorage<ImportantDebugCallback>> importantDebugCallbacks = new OptionalField<>(CallbackStorage::new);
@@ -202,7 +203,7 @@ public class App extends Application {
     }
 
     public static Profiler createProfiler(@NotNull String name) {
-        return DEBUG ? addProfiler(new ProfilerImpl(name)) : Profiler.EMPTY;
+        return com.fazziclay.opentoday.Build.isProfilersEnabled() ? addProfiler(new ProfilerImpl(name)) : Profiler.EMPTY;
     }
 
     public static ProfilerImpl addProfiler(ProfilerImpl profiler) {

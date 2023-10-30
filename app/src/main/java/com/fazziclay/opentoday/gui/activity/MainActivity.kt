@@ -15,6 +15,7 @@ import android.provider.Settings
 import android.view.Menu
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -25,11 +26,12 @@ import com.fazziclay.opentoday.app.App
 import com.fazziclay.opentoday.app.CrashReportContext
 import com.fazziclay.opentoday.app.FeatureFlag
 import com.fazziclay.opentoday.app.ImportantDebugCallback
-import com.fazziclay.opentoday.app.SettingsManager
 import com.fazziclay.opentoday.app.Telemetry
 import com.fazziclay.opentoday.app.Telemetry.UiClosedLPacket
 import com.fazziclay.opentoday.app.UpdateChecker
 import com.fazziclay.opentoday.app.items.QuickNoteReceiver
+import com.fazziclay.opentoday.app.settings.Option
+import com.fazziclay.opentoday.app.settings.SettingsManager
 import com.fazziclay.opentoday.databinding.ActivityMainBinding
 import com.fazziclay.opentoday.databinding.NotificationDebugappBinding
 import com.fazziclay.opentoday.databinding.NotificationUpdateAvailableBinding
@@ -70,6 +72,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
     private lateinit var currentDateHandler: Handler
     private lateinit var currentDateRunnable: Runnable
     private lateinit var currentDateCalendar: GregorianCalendar
+    private lateinit var settingsAnalogClockCallback: SettingsManager.OptionChangedCallback
     private var activitySettingsStack: Stack<ActivitySettings> = Stack()
     private var debugView = false
     private var debugHandler: Handler? = null
@@ -150,6 +153,37 @@ class MainActivity : AppCompatActivity(), UIRoot {
         }
 
         PROFILER.swap("phase3")
+        settingsAnalogClockCallback = SettingsManager.OptionChangedCallback { option, value ->
+            if (option == SettingsManager.ANALOG_CLOCK_ENABLE) {
+                val visible: Boolean = value as Boolean
+                if (visible) {
+                    if (getCurrentActivitySettings().isClockVisible) {
+                        viewVisible(binding.analogClock, true, View.GONE)
+                    }
+                } else {
+                    viewVisible(binding.analogClock, false, View.GONE)
+                }
+
+            } else if (option == SettingsManager.ANALOG_CLOCK_SIZE) {
+                val size: Int = (value as Int).coerceAtMost(500)
+                val layoutParams = RelativeLayout.LayoutParams(size, size)
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END)
+                binding.analogClock.layoutParams = layoutParams
+
+            } else if (option == SettingsManager.ANALOG_CLOCK_TRANSPARENCY) {
+                val alpha: Float = ((value as Int) / 100f)
+                binding.analogClock.alpha = alpha
+
+            } else if (option == SettingsManager.ANALOG_CLOCK_COLOR_SECONDS) {
+                binding.analogClock.setSecondTint(value as Int)
+            } else if (option == SettingsManager.ANALOG_CLOCK_COLOR_MINUTE) {
+                binding.analogClock.setMinuteTint(value as Int)
+            } else if (option == SettingsManager.ANALOG_CLOCK_COLOR_HOUR) {
+                binding.analogClock.setHourTint(value as Int)
+            }
+
+            return@OptionChangedCallback Status.NONE
+        }
         setupNotifications()
         setupCurrentDate()
         if (settingsManager.isQuickNoteNotification) {
@@ -304,7 +338,18 @@ class MainActivity : AppCompatActivity(), UIRoot {
             dialog.datePicker.firstDayOfWeek = app.settingsManager.firstDayOfWeek
             dialog.show()
         })
+        settingsManager.callbacks.addCallback(CallbackImportance.DEFAULT, settingsAnalogClockCallback)
+        manualCallSettingAnalog(SettingsManager.ANALOG_CLOCK_ENABLE)
+        manualCallSettingAnalog(SettingsManager.ANALOG_CLOCK_TRANSPARENCY)
+        manualCallSettingAnalog(SettingsManager.ANALOG_CLOCK_SIZE)
+        manualCallSettingAnalog(SettingsManager.ANALOG_CLOCK_COLOR_SECONDS)
+        manualCallSettingAnalog(SettingsManager.ANALOG_CLOCK_COLOR_MINUTE)
+        manualCallSettingAnalog(SettingsManager.ANALOG_CLOCK_COLOR_HOUR)
         PROFILER.pop()
+    }
+
+    private fun manualCallSettingAnalog(option: Option) {
+        settingsAnalogClockCallback.run(option, option.getObject(settingsManager))
     }
 
     private fun internalItemsTick() {
@@ -327,17 +372,12 @@ class MainActivity : AppCompatActivity(), UIRoot {
         binding.currentDateTime.text = dateFormat.format(time)
 
         // Analog
-        if (settingsManager.isAnalogClock) {
+        if (SettingsManager.ANALOG_CLOCK_ENABLE.get(settingsManager) || getCurrentActivitySettings().isAnalogClockForceVisible) {
             val hour = currentDateCalendar.get(Calendar.HOUR)
             val minute = currentDateCalendar.get(Calendar.MINUTE)
             val second = currentDateCalendar.get(Calendar.SECOND)
             val millis = currentDateCalendar.get(Calendar.MILLISECOND)
             binding.analogClock.setTime(hour, minute, second, millis)
-            if (getCurrentActivitySettings().isClockVisible) {
-                binding.analogClock.visibility = View.VISIBLE
-            }
-        } else {
-            binding.analogClock.visibility = View.GONE
         }
         PROFILER.pop()
     }
@@ -401,7 +441,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
             binding.debugLogsSizeDown.visibility = View.VISIBLE
             binding.debugLogsSwitch.visibility = View.VISIBLE
             binding.debugLogsSwitch.setOnClickListener {
-                val IS_PROFILERS = true
+                val IS_PROFILERS = com.fazziclay.opentoday.Build.isProfilersEnabled()
                 var text = app.logs.toString()
                 if (IS_PROFILERS) {
                     text = ""
@@ -488,7 +528,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
 
         viewVisible(binding.currentDateDate, settings.isClockVisible, View.GONE)
         viewVisible(binding.currentDateTime, settings.isClockVisible, View.GONE)
-        viewVisible(binding.analogClock, settings.isClockVisible, View.GONE)
+        viewVisible(binding.analogClock, (settings.isClockVisible && SettingsManager.ANALOG_CLOCK_ENABLE.get(settingsManager)) || settings.isAnalogClockForceVisible, View.GONE)
         binding.currentDateDate.isEnabled = settings.isDateClickCalendar
         binding.currentDateTime.isEnabled = settings.isDateClickCalendar
         viewVisible(binding.notifications, settings.isNotificationsVisible || Debug.DEBUG_ALWAYS_SHOW_UI_NOTIFICATIONS, View.GONE)
@@ -496,6 +536,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
         val toolbarSettings = settings.toolbarSettings
         if (toolbarSettings == null) {
             supportActionBar?.hide()
+
         } else {
             supportActionBar?.show()
             if (toolbarSettings.title != null) {

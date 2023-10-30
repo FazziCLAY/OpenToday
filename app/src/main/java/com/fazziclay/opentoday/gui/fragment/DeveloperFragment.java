@@ -26,10 +26,11 @@ import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.UINotification;
 import com.fazziclay.opentoday.gui.activity.MainActivity;
 import com.fazziclay.opentoday.gui.dialog.IconSelectorDialog;
+import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.util.ColorUtil;
 
-public class DeveloperFragment extends Fragment implements NavigationHost {
+public class DeveloperFragment extends Fragment implements NavigationHost, ActivitySettingsMember {
 
     private Context context;
     private FragmentDeveloperBinding binding;
@@ -53,12 +54,6 @@ public class DeveloperFragment extends Fragment implements NavigationHost {
                 }, 1000);
             }));
         });
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        UI.getUIRoot(this).popActivitySettings();
     }
 
     @Nullable

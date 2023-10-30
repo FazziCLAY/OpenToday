@@ -21,7 +21,7 @@ import androidx.fragment.app.Fragment;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.SettingsManager;
+import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Readonly;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;

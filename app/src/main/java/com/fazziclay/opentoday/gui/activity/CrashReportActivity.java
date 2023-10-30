@@ -20,6 +20,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.fazziclay.javaneoutil.FileUtil;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.app.Telemetry;
 import com.fazziclay.opentoday.app.UpdateChecker;
 import com.fazziclay.opentoday.util.NetworkUtil;
@@ -91,7 +92,7 @@ public class CrashReportActivity extends Activity {
 
         boolean visibleSendToDeveloper = true;
         try {
-            visibleSendToDeveloper = !App.get(this).getSettingsManager().isTelemetry();
+            visibleSendToDeveloper = !SettingsManager.IS_TELEMETRY.get(App.get(this).getSettingsManager());
         } catch (Exception ignored) {}
 
         crashReportText.setText(crashString);

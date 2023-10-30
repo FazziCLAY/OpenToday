@@ -17,7 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.SettingsManager;
+import com.fazziclay.opentoday.app.settings.enums.ItemAction;
 import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
@@ -144,8 +144,8 @@ public class AlarmActivity extends AppCompatActivity {
             public ItemsStorageDrawerBehavior getItemsStorageDrawerBehavior(Item item) {
                 return new ItemsStorageDrawerBehavior() {
                     @Override
-                    public SettingsManager.ItemAction getItemOnClickAction() {
-                        return SettingsManager.ItemAction.OPEN_EDITOR;
+                    public ItemAction getItemOnClickAction() {
+                        return ItemAction.OPEN_EDITOR;
                     }
 
                     @Override
@@ -154,8 +154,8 @@ public class AlarmActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public SettingsManager.ItemAction getItemOnLeftAction() {
-                        return SettingsManager.ItemAction.OPEN_EDITOR;
+                    public ItemAction getItemOnLeftAction() {
+                        return ItemAction.OPEN_EDITOR;
                     }
 
                     @Override

@@ -21,6 +21,7 @@ import com.fazziclay.opentoday.app.items.item.filter.LogicContainerItemFilter
 import com.fazziclay.opentoday.databinding.FragmentFilterGroupItemFilterEditorBinding
 import com.fazziclay.opentoday.gui.ActivitySettings
 import com.fazziclay.opentoday.gui.UI
+import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember
 import com.fazziclay.opentoday.gui.interfaces.Destroy
 import com.fazziclay.opentoday.gui.part.DateItemFilterPartEditor
 import com.fazziclay.opentoday.gui.part.ItemStatFilterPartEditor
@@ -28,7 +29,7 @@ import com.fazziclay.opentoday.gui.part.LogicContainerItemFilterPartEditor
 import kotlinx.coroutines.Runnable
 import java.util.UUID
 
-class FilterGroupItemFilterEditorFragment : Fragment() {
+class FilterGroupItemFilterEditorFragment : Fragment(), ActivitySettingsMember {
     companion object {
         private const val KEY_FILTER_GROUP = "filterGroupItemFilterEditorFragment:filterGroupId"
         private const val KEY_ITEM = "filterGroupItemFilterEditorFragment:itemId"
@@ -122,7 +123,6 @@ class FilterGroupItemFilterEditorFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         part?.destroy()
-        UI.getUIRoot(this).popActivitySettings()
     }
 
     private fun setupView() {

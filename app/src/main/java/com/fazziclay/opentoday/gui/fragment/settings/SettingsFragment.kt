@@ -1,4 +1,4 @@
-package com.fazziclay.opentoday.gui.fragment
+package com.fazziclay.opentoday.gui.fragment.settings
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.CompoundButton
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Spinner
@@ -28,17 +29,21 @@ import com.fazziclay.opentoday.app.ImportWrapper
 import com.fazziclay.opentoday.app.PinCodeManager
 import com.fazziclay.opentoday.app.PinCodeManager.PinCodeNotValidateException
 import com.fazziclay.opentoday.app.PinCodeManager.ValidationException
-import com.fazziclay.opentoday.app.SettingsManager
-import com.fazziclay.opentoday.app.SettingsManager.FirstTab
 import com.fazziclay.opentoday.app.items.QuickNoteReceiver
 import com.fazziclay.opentoday.app.items.item.ItemType
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry
+import com.fazziclay.opentoday.app.settings.BooleanOption
+import com.fazziclay.opentoday.app.settings.SettingsManager
+import com.fazziclay.opentoday.app.settings.enums.DateAndTimePreset
+import com.fazziclay.opentoday.app.settings.enums.FirstTab
+import com.fazziclay.opentoday.app.settings.enums.ItemAddPosition
 import com.fazziclay.opentoday.databinding.ExportBinding
 import com.fazziclay.opentoday.databinding.FragmentSettingsBinding
 import com.fazziclay.opentoday.gui.ActivitySettings
 import com.fazziclay.opentoday.gui.EnumsRegistry
 import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType
+import com.fazziclay.opentoday.gui.fragment.MainRootFragment
 import com.fazziclay.opentoday.util.EnumUtil
 import com.fazziclay.opentoday.util.InlineUtil.viewClick
 import com.fazziclay.opentoday.util.Logger
@@ -62,7 +67,7 @@ class SettingsFragment : Fragment() {
 
     private lateinit var binding: FragmentSettingsBinding
     private lateinit var app: App
-    private lateinit var settingsManager: SettingsManager
+    private lateinit var sm: SettingsManager
     private lateinit var colorHistoryManager: ColorHistoryManager
     private lateinit var pinCodeManager: PinCodeManager
     private var pinCodeCallback = Runnable {}
@@ -75,7 +80,7 @@ class SettingsFragment : Fragment() {
         CrashReportContext.FRONT.push("SettingsFragment")
         Logger.d(TAG, "onCreate")
         app = App.get(requireContext())
-        settingsManager = app.settingsManager
+        sm = app.settingsManager
         colorHistoryManager = app.colorHistoryManager
         pinCodeManager = app.pinCodeManager
         UI.getUIRoot(this).pushActivitySettings { a ->
@@ -105,20 +110,20 @@ class SettingsFragment : Fragment() {
         viewClick(binding.dateAndTimeFormat, Runnable {
             val preview = TextView(requireContext())
             val spinner = Spinner(requireContext())
-            val adapter = SimpleSpinnerAdapter<SettingsManager.DateAndTimePreset>(requireContext())
+            val adapter = SimpleSpinnerAdapter<DateAndTimePreset>(requireContext())
             spinner.adapter = adapter
-            for (value in SettingsManager.DateAndTimePreset.values()) {
+            for (value in DateAndTimePreset.values()) {
                 adapter.add(value.name, value)
             }
             spinner.onItemSelectedListener = object : OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>?, view123: View?, position: Int, id: Long) {
                     val t = adapter.getItem(position)
-                    settingsManager.applyDateAndTimePreset(t)
-                    settingsManager.save()
+                    sm.applyDateAndTimePreset(t)
+                    sm.save()
 
                     val current = GregorianCalendar().time
-                    val dateFormat = SimpleDateFormat(settingsManager.datePattern, Locale.getDefault())
-                    val timeFormat = SimpleDateFormat(settingsManager.timePattern, Locale.getDefault())
+                    val dateFormat = SimpleDateFormat(sm.datePattern, Locale.getDefault())
+                    val timeFormat = SimpleDateFormat(sm.timePattern, Locale.getDefault())
 
                     val previewText = dateFormat.format(current) + "  " + timeFormat.format(current)
 
@@ -142,37 +147,18 @@ class SettingsFragment : Fragment() {
         viewClick(binding.themeTitle, Runnable { experimentalFeaturesInteract() })
 
         // QuickNote
-        binding.quickNoteCheckbox.isChecked = settingsManager.isQuickNoteNotification
+        binding.quickNoteCheckbox.isChecked = sm.isQuickNoteNotification
         viewClick(binding.quickNoteCheckbox, Runnable {
-            settingsManager.isQuickNoteNotification = binding.quickNoteCheckbox.isChecked
-            if (settingsManager.isQuickNoteNotification) {
+            sm.isQuickNoteNotification = binding.quickNoteCheckbox.isChecked
+            if (sm.isQuickNoteNotification) {
                 QuickNoteReceiver.sendQuickNoteNotification(requireContext())
             } else {
                 QuickNoteReceiver.cancelQuickNoteNotification(requireContext())
             }
-            settingsManager.save()
+            sm.save()
         })
 
-        // Parse time from quick note
-        binding.parseTimeFromQuickNote.isChecked = settingsManager.isParseTimeFromQuickNote
-        viewClick(binding.parseTimeFromQuickNote, Runnable {
-            settingsManager.isParseTimeFromQuickNote = binding.parseTimeFromQuickNote.isChecked
-            settingsManager.save()
-        })
 
-        // Minimize gray color
-        binding.minimizeGrayColor.isChecked = settingsManager.isMinimizeGrayColor
-        viewClick(binding.minimizeGrayColor, Runnable {
-            settingsManager.isMinimizeGrayColor = binding.minimizeGrayColor.isChecked
-            settingsManager.save()
-        })
-
-        // Trim item names in Editor
-        binding.trimItemNamesOnEdit.isChecked = settingsManager.isTrimItemNamesOnEdit
-        viewClick(binding.trimItemNamesOnEdit, Runnable {
-            settingsManager.isTrimItemNamesOnEdit = binding.trimItemNamesOnEdit.isChecked
-            settingsManager.save()
-        })
 
         // Lock color history
         binding.colorHistoryLocked.isChecked = colorHistoryManager.isLocked
@@ -181,14 +167,14 @@ class SettingsFragment : Fragment() {
         })
 
         // Export
-        viewClick(binding.export, Runnable { showExportDialog(requireActivity(), settingsManager, colorHistoryManager) })
+        viewClick(binding.export, Runnable { showExportDialog(requireActivity(), sm, colorHistoryManager) })
 
         // Is telemetry
-        binding.isTelemetry.isChecked = settingsManager.isTelemetry
+        binding.isTelemetry.isChecked = SettingsManager.IS_TELEMETRY.get(sm)
         viewClick(binding.isTelemetry, Runnable {
             val isTelemetry = binding.isTelemetry.isChecked
-            settingsManager.isTelemetry = isTelemetry
-            settingsManager.save()
+            SettingsManager.IS_TELEMETRY.set(sm, isTelemetry);
+            sm.save()
             app.telemetry.setEnabled(isTelemetry)
             if (isTelemetry) AlertDialog.Builder(requireContext())
                 .setTitle(R.string.setup_telemetry)
@@ -196,12 +182,12 @@ class SettingsFragment : Fragment() {
                 .setPositiveButton(R.string.abc_ok, null)
                 .show()
         })
-        binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(EnumsRegistry.nameResId(settingsManager.defaultQuickNoteType.itemType)))
+        binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(EnumsRegistry.nameResId(sm.defaultQuickNoteType.itemType)))
         viewClick(binding.defaultQuickNoteType, Runnable {
             DialogSelectItemType(context) { type: ItemType ->
-                settingsManager.defaultQuickNoteType = ItemsRegistry.REGISTRY.get(type)
-                binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(EnumsRegistry.nameResId(settingsManager.defaultQuickNoteType.itemType)))
-                settingsManager.save()
+                sm.defaultQuickNoteType = ItemsRegistry.REGISTRY.get(type)
+                binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(EnumsRegistry.nameResId(sm.defaultQuickNoteType.itemType)))
+                sm.save()
             }.show()
         })
         pinCodeCallback = Runnable { binding.pincode.text = getString(R.string.settings_pincode, if (pinCodeManager.isPinCodeSet) getString(R.string.settings_pincode_on) else getString(R.string.settings_pincode_off)) }
@@ -209,47 +195,31 @@ class SettingsFragment : Fragment() {
         viewClick(binding.pincode, Runnable { showPinCodeDialog() })
 
         // add item to top
-        binding.addItemsToTop.isChecked = settingsManager.itemAddPosition == SettingsManager.ItemAddPosition.TOP
+        binding.addItemsToTop.isChecked = sm.itemAddPosition == ItemAddPosition.TOP
         viewClick(binding.addItemsToTop, Runnable {
-            settingsManager.itemAddPosition = if (binding.addItemsToTop.isChecked) SettingsManager.ItemAddPosition.TOP else SettingsManager.ItemAddPosition.BOTTOM
-            settingsManager.save()
+            sm.itemAddPosition = if (binding.addItemsToTop.isChecked) ItemAddPosition.TOP else ItemAddPosition.BOTTOM
+            sm.save()
         })
 
-        // confirm easy-to-make changes
-        binding.confirmFastChanges.isChecked = settingsManager.isConfirmFastChanges
-        viewClick(binding.confirmFastChanges, Runnable {
-            settingsManager.isConfirmFastChanges = binding.confirmFastChanges.isChecked
-            settingsManager.save()
-        })
+        attachCheckBox(binding.parseTimeFromQuickNote, SettingsManager.QUICK_NOTE_PARSE_TIME_FROM_ITEM)
+        attachCheckBox(binding.minimizeGrayColor, SettingsManager.ITEM_MINIMIZE_GRAY_COLOR)
+        attachCheckBox(binding.trimItemNamesOnEdit, SettingsManager.ITEM_TRIM_NAMES_IN_EDITOR)
+        attachCheckBox(binding.confirmFastChanges, SettingsManager.FAST_CHANGES_CONFIRM)
+        attachCheckBox(binding.autoCloseToolbar, SettingsManager.TOOLBAR_AUTOMATICALLY_CLOSE)
+        attachCheckBox(binding.scrollToAddedItem, SettingsManager.ITEM_IS_SCROLL_TO_ADDED)
+        attachCheckBox(binding.itemInternalBackgroundFromItem, SettingsManager.ITEM_EDITOR_BACKGROUND_AS_ITEM)
+        attachCheckBox(binding.isItemBackgroundRandom, SettingsManager.ITEM_RANDOM_BACKGROUND)
+        attachCheckBox(binding.isAnalogClock, SettingsManager.ANALOG_CLOCK_ENABLE)
+        binding.analogClockOptions.setOnClickListener {
+            UI.findFragmentInParents(this, MainRootFragment::class.java)?.navigate(AnalogClockSettingsFragment(), true)
+        }
+    }
 
-        binding.autoCloseToolbar.isChecked = settingsManager.isAutoCloseToolbar
-        viewClick(binding.autoCloseToolbar, Runnable {
-            settingsManager.isAutoCloseToolbar = binding.autoCloseToolbar.isChecked
-            settingsManager.save()
-        })
-
-        binding.scrollToAddedItem.isChecked = settingsManager.isScrollToAddedItem
-        viewClick(binding.scrollToAddedItem, Runnable {
-            settingsManager.isScrollToAddedItem = binding.scrollToAddedItem.isChecked
-            settingsManager.save()
-        })
-
-        binding.itemInternalBackgroundFromItem.isChecked = settingsManager.isItemEditorBackgroundFromItem
-        viewClick(binding.itemInternalBackgroundFromItem, Runnable {
-            settingsManager.isItemEditorBackgroundFromItem = binding.itemInternalBackgroundFromItem.isChecked
-            settingsManager.save()
-        })
-
-        binding.isItemBackgroundRandom.isChecked = settingsManager.isRandomItemBackground
-        viewClick(binding.isItemBackgroundRandom, Runnable {
-            settingsManager.isRandomItemBackground = binding.isItemBackgroundRandom.isChecked
-            settingsManager.save()
-        })
-
-        binding.isAnalogClock.isChecked = settingsManager.isAnalogClock
-        viewClick(binding.isAnalogClock, Runnable {
-            settingsManager.isAnalogClock = binding.isAnalogClock.isChecked
-            settingsManager.save()
+    private fun attachCheckBox(compoundButton: CompoundButton, booleanOption: BooleanOption) {
+        compoundButton.isChecked = booleanOption.get(sm)
+        viewClick(compoundButton, Runnable {
+            booleanOption.set(sm, compoundButton.isChecked)
+            sm.save()
         })
     }
 
@@ -257,12 +227,12 @@ class SettingsFragment : Fragment() {
         val adapter = SimpleSpinnerAdapter<FirstTab>(requireContext())
         EnumUtil.addToSimpleSpinnerAdapter(requireContext(), adapter, FirstTab.values())
         binding.firstTab.adapter = adapter
-        binding.firstTab.setSelection(adapter.getValuePosition(settingsManager.firstTab))
+        binding.firstTab.setSelection(adapter.getValuePosition(sm.firstTab))
         binding.firstTab.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val t = adapter.getItem(position)
-                settingsManager.firstTab = t
-                settingsManager.save()
+                sm.firstTab = t
+                sm.save()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -275,13 +245,13 @@ class SettingsFragment : Fragment() {
                 .add(requireContext().getString(R.string.settings_theme_light), AppCompatDelegate.MODE_NIGHT_NO)
                 .add(requireContext().getString(R.string.settings_theme_night), AppCompatDelegate.MODE_NIGHT_YES)
         binding.themeSpinner.adapter = adapter
-        binding.themeSpinner.setSelection(adapter.getValuePosition(settingsManager.theme))
+        binding.themeSpinner.setSelection(adapter.getValuePosition(sm.theme))
         binding.themeSpinner.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val theme = adapter.getItem(position)
                 UI.setTheme(theme)
-                settingsManager.theme = theme
-                settingsManager.save()
+                sm.theme = theme
+                sm.save()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -294,12 +264,12 @@ class SettingsFragment : Fragment() {
                 .add(weekdays[Calendar.SUNDAY], Calendar.SUNDAY)
                 .add(weekdays[Calendar.MONDAY], Calendar.MONDAY)
         binding.firstDayOfWeekSpinner.adapter = adapter
-        binding.firstDayOfWeekSpinner.setSelection(adapter.getValuePosition(settingsManager.firstDayOfWeek))
+        binding.firstDayOfWeekSpinner.setSelection(adapter.getValuePosition(sm.firstDayOfWeek))
         binding.firstDayOfWeekSpinner.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val day = adapter.getItem(position)
-                settingsManager.firstDayOfWeek = day
-                settingsManager.save()
+                sm.firstDayOfWeek = day
+                sm.save()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}

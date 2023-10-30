@@ -414,4 +414,6 @@
     <string name="main_activity_allowExactAlarms">Please allow exact alarms!</string>
     <string name="main_activity_allowFullScreenIntent">Please allow full screen intents</string>
     <string name="settings_isAnalogClock">Show analog clock overlay</string>
+    <string name="fragment_developer_profiler">Profiler...</string>
+    <string name="settings_analogClock_title">Analog clock</string>
 </resources>

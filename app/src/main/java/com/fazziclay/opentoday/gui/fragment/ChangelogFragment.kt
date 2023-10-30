@@ -12,12 +12,13 @@ import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.databinding.FragmentChangelogBinding
 import com.fazziclay.opentoday.gui.ActivitySettings
 import com.fazziclay.opentoday.gui.UI
+import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember
 import com.fazziclay.opentoday.util.ColorUtil
 import com.fazziclay.opentoday.util.Logger
 import com.fazziclay.opentoday.util.ResUtil
 import com.fazziclay.opentoday.util.StreamUtil
 
-class ChangelogFragment : Fragment() {
+class ChangelogFragment : Fragment(), ActivitySettingsMember {
     companion object {
         fun create(): Fragment {
             return ChangelogFragment()
@@ -38,11 +39,6 @@ class ChangelogFragment : Fragment() {
                 UI.rootBack(this)
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        UI.getUIRoot(this).popActivitySettings()
     }
 
     override fun onCreateView(

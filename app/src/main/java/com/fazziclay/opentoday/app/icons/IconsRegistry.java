@@ -42,6 +42,8 @@ public class IconsRegistry {
             new Icon("shopping_basket", R.drawable.shopping_basket),
             new Icon("surgical", R.drawable.surgical),
             new Icon("taunt", R.drawable.taunt),
+            new Icon("pill_24px", R.drawable.pill_24px),
+            new Icon("tune_24px", R.drawable.tune_24px),
 
     };
     public final Icon OPENTODAY = getById("opentoday");

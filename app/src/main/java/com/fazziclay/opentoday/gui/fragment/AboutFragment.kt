@@ -14,13 +14,14 @@ import com.fazziclay.opentoday.databinding.FragmentAboutBinding
 import com.fazziclay.opentoday.gui.ActivitySettings
 import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.gui.activity.OpenSourceLicensesActivity
+import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember
 import com.fazziclay.opentoday.util.InlineUtil.viewClick
 import com.fazziclay.opentoday.util.NetworkUtil
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class AboutFragment : Fragment() {
+class AboutFragment : Fragment(), ActivitySettingsMember {
     companion object {
         private const val LINK_OPENSOURCE = "https://github.com/fazziclay/opentoday"
         private const val LINK_ISSUES = "https://github.com/fazziclay/opentoday/issues"
@@ -41,11 +42,6 @@ class AboutFragment : Fragment() {
             a.isNotificationsVisible = true
             a.toolbarSettings = ActivitySettings.ToolbarSettings.createBack(R.string.aboutapp_title) { UI.rootBack(this) }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        UI.getUIRoot(this).popActivitySettings()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

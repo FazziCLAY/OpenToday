@@ -35,7 +35,7 @@ import com.fazziclay.opentoday.app.BeautifyColorManager;
 import com.fazziclay.opentoday.app.ColorHistoryManager;
 import com.fazziclay.opentoday.app.CrashReportContext;
 import com.fazziclay.opentoday.app.ImportWrapper;
-import com.fazziclay.opentoday.app.SettingsManager;
+import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
@@ -74,6 +74,7 @@ import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.dialog.DialogItemNotificationsEditor;
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
+import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember;
 import com.fazziclay.opentoday.util.ClipboardUtil;
 import com.fazziclay.opentoday.util.ColorUtil;
 import com.fazziclay.opentoday.util.EnumUtil;
@@ -95,7 +96,7 @@ import java.util.Locale;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class ItemEditorFragment extends Fragment implements BackStackMember {
+public class ItemEditorFragment extends Fragment implements BackStackMember, ActivitySettingsMember {
     private static final int MODE_UNKNOWN = 0x00;
     private static final int MODE_CREATE = 0x02;
     private static final int MODE_EDIT = 0x04;
@@ -306,7 +307,6 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        UI.getUIRoot(this).popActivitySettings();
         CrashReportContext.FRONT.pop();
     }
 

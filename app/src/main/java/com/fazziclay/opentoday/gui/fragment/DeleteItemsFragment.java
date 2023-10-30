@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.SettingsManager;
+import com.fazziclay.opentoday.app.settings.enums.ItemAction;
 import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
@@ -24,6 +24,7 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.databinding.FragmentDeleteItemsBinding;
 import com.fazziclay.opentoday.gui.ActivitySettings;
 import com.fazziclay.opentoday.gui.UI;
+import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember;
 import com.fazziclay.opentoday.gui.item.ItemViewGenerator;
 import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
 import com.fazziclay.opentoday.gui.item.ItemViewHolder;
@@ -33,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class DeleteItemsFragment extends Fragment {
+public class DeleteItemsFragment extends Fragment implements ActivitySettingsMember {
     private static final String KEY_ITEMS_TO_DELETE = "itemsToDelete";
     private static final ItemViewGeneratorBehavior ITEM_VIEW_GENERATOR_BEHAVIOR = new DeleteViewGeneratorBehavior();
 
@@ -95,12 +96,6 @@ public class DeleteItemsFragment extends Fragment {
         });
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        UI.getUIRoot(this).popActivitySettings();
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -156,7 +151,7 @@ public class DeleteItemsFragment extends Fragment {
 
         private static final ItemsStorageDrawerBehavior ITEM_STORAGE_DRAWER_BEHAVIOR = new ItemsStorageDrawerBehavior() {
             @Override
-            public SettingsManager.ItemAction getItemOnClickAction() {
+            public ItemAction getItemOnClickAction() {
                 return null;
             }
 
@@ -166,7 +161,7 @@ public class DeleteItemsFragment extends Fragment {
             }
 
             @Override
-            public SettingsManager.ItemAction getItemOnLeftAction() {
+            public ItemAction getItemOnLeftAction() {
                 return null;
             }
 

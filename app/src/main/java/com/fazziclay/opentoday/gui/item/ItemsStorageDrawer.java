@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.CrashReportContext;
-import com.fazziclay.opentoday.app.SettingsManager;
+import com.fazziclay.opentoday.app.settings.enums.ItemAction;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.callback.SelectionCallback;
@@ -228,7 +228,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
         roughUpdateItemAt(position);
     }
 
-    private void actionItem(Item item, SettingsManager.ItemAction action) {
+    private void actionItem(Item item, ItemAction action) {
         CrashReportContext.FRONT.push("ItemsStorageDrawer.actionItem");
         switch (action) {
             case OPEN_EDITOR -> behavior.onItemOpenEditor(item);
@@ -261,11 +261,11 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
             case SHOW_ACTION_DIALOG -> {
                 new DialogSelectItemAction(activity, null, new DialogSelectItemAction.OnSelected() {
                     @Override
-                    public void run(SettingsManager.ItemAction dialogAction) {
+                    public void run(ItemAction dialogAction) {
                         actionItem(item, dialogAction);
                     }
                     // TODO: 21.10.2023 make translatable
-                }, "Click to action now").excludeFromList(SettingsManager.ItemAction.SHOW_ACTION_DIALOG).show();
+                }, "Click to action now").excludeFromList(ItemAction.SHOW_ACTION_DIALOG).show();
             }
         }
         CrashReportContext.FRONT.pop();
@@ -289,22 +289,22 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
         }
         menu.setOnMenuItemClickListener(menuItem -> {
             boolean save = false;
-            SettingsManager.ItemAction itemAction = null;
+            ItemAction itemAction = null;
             switch (menuItem.getItemId()) {
                 case R.id.delete:
-                    itemAction = SettingsManager.ItemAction.DELETE_REQUEST;
+                    itemAction = ItemAction.DELETE_REQUEST;
                     break;
 
                 case R.id.edit:
-                    itemAction = SettingsManager.ItemAction.OPEN_EDITOR;
+                    itemAction = ItemAction.OPEN_EDITOR;
                     break;
 
                 case R.id.minimize:
-                    itemAction = SettingsManager.ItemAction.MINIMIZE_REVERT;
+                    itemAction = ItemAction.MINIMIZE_REVERT;
                     break;
 
                 case R.id.selected:
-                    itemAction = SettingsManager.ItemAction.SELECT_REVERT;
+                    itemAction = ItemAction.SELECT_REVERT;
                     break;
 
                 case R.id.copy:

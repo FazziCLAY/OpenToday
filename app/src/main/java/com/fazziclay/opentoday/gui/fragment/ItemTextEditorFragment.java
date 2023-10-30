@@ -32,6 +32,7 @@ import com.fazziclay.opentoday.databinding.FragmentItemTextEditorBinding;
 import com.fazziclay.opentoday.gui.ActivitySettings;
 import com.fazziclay.opentoday.gui.ColorPicker;
 import com.fazziclay.opentoday.gui.UI;
+import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember;
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
 import com.fazziclay.opentoday.util.ColorUtil;
 import com.fazziclay.opentoday.util.MinTextWatcher;
@@ -39,7 +40,7 @@ import com.fazziclay.opentoday.util.ResUtil;
 
 import java.util.UUID;
 
-public class ItemTextEditorFragment extends Fragment implements BackStackMember {
+public class ItemTextEditorFragment extends Fragment implements BackStackMember, ActivitySettingsMember {
     public static final int EDITABLE_TYPE_TEXT = 0;
     public static final int EDITABLE_TYPE_LONG_TEXT = 1;
     public static final int EDITABLE_TYPE_AUTO = 2;
@@ -145,7 +146,6 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        UI.getUIRoot(this).popActivitySettings();
         Debug.itemTextEditor = null;
     }
 

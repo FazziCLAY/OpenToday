@@ -1,6 +1,7 @@
 package com.fazziclay.opentoday.gui.item;
 
-import com.fazziclay.opentoday.app.SettingsManager;
+import com.fazziclay.opentoday.app.settings.enums.ItemAction;
+import com.fazziclay.opentoday.app.settings.SettingsManager;
 
 public abstract class SettingsItemsStorageDrawerBehavior implements ItemsStorageDrawerBehavior {
     private final SettingsManager settingsManager;
@@ -11,7 +12,7 @@ public abstract class SettingsItemsStorageDrawerBehavior implements ItemsStorage
     }
 
     @Override
-    public SettingsManager.ItemAction getItemOnClickAction() {
+    public ItemAction getItemOnClickAction() {
         return settingsManager.getItemOnClickAction();
     }
 
@@ -21,7 +22,7 @@ public abstract class SettingsItemsStorageDrawerBehavior implements ItemsStorage
     }
 
     @Override
-    public SettingsManager.ItemAction getItemOnLeftAction() {
+    public ItemAction getItemOnLeftAction() {
         return settingsManager.getItemOnLeftAction();
     }
 }

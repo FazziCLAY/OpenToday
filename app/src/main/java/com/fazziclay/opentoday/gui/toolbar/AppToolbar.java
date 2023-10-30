@@ -37,7 +37,8 @@ import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.BeautifyColorManager;
 import com.fazziclay.opentoday.app.FeatureFlag;
 import com.fazziclay.opentoday.app.ImportWrapper;
-import com.fazziclay.opentoday.app.SettingsManager;
+import com.fazziclay.opentoday.app.settings.enums.ItemAddPosition;
+import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.app.events.gui.toolbar.AppToolbarSelectionClickEvent;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
@@ -68,7 +69,7 @@ import com.fazziclay.opentoday.gui.fragment.AboutFragment;
 import com.fazziclay.opentoday.gui.fragment.DeleteItemsFragment;
 import com.fazziclay.opentoday.gui.fragment.ImportFragment;
 import com.fazziclay.opentoday.gui.fragment.ItemEditorFragment;
-import com.fazziclay.opentoday.gui.fragment.SettingsFragment;
+import com.fazziclay.opentoday.gui.fragment.settings.SettingsFragment;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.util.ClipboardUtil;
 import com.fazziclay.opentoday.util.Logger;
@@ -561,7 +562,7 @@ public class AppToolbar {
 
         localBinding.items.setLayoutManager(new LinearLayoutManager(activity, RecyclerView.VERTICAL, false));
         localBinding.items.setAdapter(new RecyclerView.Adapter<ItemTypeViewHolder>() {
-            private int getAddItemPos(SettingsManager.ItemAddPosition fromSettings) {
+            private int getAddItemPos(ItemAddPosition fromSettings) {
                 return switch (fromSettings) {
                     case TOP -> ItemEditorFragment.VALUE_ADD_ITEM_POSITION_TOP;
                     case BOTTOM -> ItemEditorFragment.VALUE_ADD_ITEM_POSITION_BOTTOM;
