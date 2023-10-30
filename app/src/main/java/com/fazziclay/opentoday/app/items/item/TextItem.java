@@ -83,6 +83,11 @@ public class TextItem extends Item {
         }
     }
 
+    @Override
+    public ItemType getItemType() {
+        return ItemType.TEXT;
+    }
+
     @Override @Getter @NonNull public String getText() { return text; }
     @Setter public void setText(@NonNull String v) { this.text = v; }
     @Getter public int getTextColor() { return textColor; }

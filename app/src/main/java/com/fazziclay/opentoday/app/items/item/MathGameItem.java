@@ -90,6 +90,11 @@ public class MathGameItem extends TextItem {
     }
 
     @Override
+    public ItemType getItemType() {
+        return ItemType.MATH_GAME;
+    }
+
+    @Override
     public void tick(TickSession tickSession) {
         if (!tickSession.isAllowed(this)) return;
 

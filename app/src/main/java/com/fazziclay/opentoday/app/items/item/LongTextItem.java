@@ -86,6 +86,11 @@ public class LongTextItem extends TextItem {
         this.isCustomLongTextSize = copy.isCustomLongTextSize;
     }
 
+    @Override
+    public ItemType getItemType() {
+        return ItemType.LONG_TEXT;
+    }
+
     @Setter
     public void setLongTextColor(int longTextColor) {this.longTextColor = longTextColor;}
     @Getter

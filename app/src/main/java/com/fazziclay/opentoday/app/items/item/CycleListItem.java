@@ -82,6 +82,11 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
     }
 
     @Override
+    public ItemType getItemType() {
+        return ItemType.CYCLE_LIST;
+    }
+
+    @Override
     public Item getCurrentItem() {
         if (size() == 0) {
             return null;

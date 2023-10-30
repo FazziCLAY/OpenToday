@@ -130,6 +130,11 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         }
     }
 
+    @Override
+    public ItemType getItemType() {
+        return ItemType.FILTER_GROUP;
+    }
+
     @Setter public void setTickBehavior(@NonNull TickBehavior o) {this.tickBehavior = o;}
     @Getter @NonNull public TickBehavior getTickBehavior() {
         return tickBehavior;

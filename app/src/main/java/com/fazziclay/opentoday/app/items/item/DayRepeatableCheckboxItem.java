@@ -75,6 +75,11 @@ public class DayRepeatableCheckboxItem extends CheckboxItem {
     }
 
     @Override
+    public ItemType getItemType() {
+        return ItemType.CHECKBOX_DAY_REPEATABLE;
+    }
+
+    @Override
     public void setChecked(boolean s) {
         latestDayOfYear = new GregorianCalendar().get(Calendar.DAY_OF_YEAR);
         super.setChecked(s);

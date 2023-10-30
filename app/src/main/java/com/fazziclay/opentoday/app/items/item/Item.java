@@ -71,7 +71,12 @@ public abstract class Item implements Unique, Tickable {
                     .put(KEY_TAGS, TagsCodecUtil.exportTagsList(item.tags));
         }
 
-        private final Item defaultValues = new Item(){};
+        private final Item defaultValues = new Item(){
+            @Override
+            public ItemType getItemType() {
+                throw new UnsupportedOperationException("This method of this instance never executed!");
+            }
+        };
         @NonNull
         @Override
         public Item importItem(@NonNull Cherry cherry, Item item) {
@@ -123,7 +128,7 @@ public abstract class Item implements Unique, Tickable {
     @NonNull private final NotificationController notificationController = new ItemNotificationController();
 
     // Copy constructor
-    public Item(@Nullable Item copy) {
+    protected Item(@Nullable Item copy) {
         // unattached
         this.id = null;
         this.controller = null;
@@ -142,9 +147,11 @@ public abstract class Item implements Unique, Tickable {
         }
     }
 
-    public Item() {
+    protected Item() {
         this(null);
     }
+
+    public abstract ItemType getItemType();
 
     // For fast get text (method overrides by TextItem)
     public String getText() {
@@ -227,12 +234,7 @@ public abstract class Item implements Unique, Tickable {
     }
 
     public void dispatchClick() {
-        itemCallbacks.run(new CallbackStorage.RunCallbackInterface<ItemCallback>() {
-            @Override
-            public Status run(CallbackStorage<ItemCallback> callbackStorage, ItemCallback callback) {
-                return callback.click(Item.this);
-            }
-        });
+        itemCallbacks.run((callbackStorage, callback) -> callback.click(Item.this));
     }
 
     // Getters & Setters

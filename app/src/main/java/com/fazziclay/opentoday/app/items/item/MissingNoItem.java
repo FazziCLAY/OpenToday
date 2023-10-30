@@ -34,6 +34,11 @@ public class MissingNoItem extends Item {
         this.cherry = cherry;
     }
 
+    @Override
+    public ItemType getItemType() {
+        return ItemType.MISSING_NO;
+    }
+
     public MissingNoItem putException(Exception e) {
         exceptionList.add(e);
         return this;
