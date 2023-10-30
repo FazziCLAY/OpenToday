@@ -31,7 +31,7 @@ public class IconSelectorDialog {
     public void show() {
         var view = new LinearLayout(context);
         view.setOrientation(LinearLayout.VERTICAL);
-        view.setPadding(4, 2, 4, 2);
+        view.setPadding(20, 10, 10, 10);
 
         for (IconsRegistry.Icon icon : IconsRegistry.REGISTRY.getIconsList()) {
             LinearLayout l = new LinearLayout(context);
@@ -46,6 +46,7 @@ public class IconSelectorDialog {
 
             TextView t = new TextView(context);
             LinearLayout.LayoutParams tl = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            tl.setMarginStart(7);
             tl.gravity = Gravity.CENTER;
             t.setTextSize(17);
             t.setLayoutParams(tl);
