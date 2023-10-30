@@ -31,6 +31,8 @@
         android:id="@+id/userEnterNumber"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/shape"
+        android:paddingStart="2sp"
         tools:text="111"
         android:layout_toEndOf="@id/questText"
         android:textSize="20sp"

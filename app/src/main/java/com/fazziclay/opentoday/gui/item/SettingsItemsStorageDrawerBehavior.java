@@ -6,7 +6,7 @@ public abstract class SettingsItemsStorageDrawerBehavior implements ItemsStorage
     private final SettingsManager settingsManager;
 
 
-    public SettingsItemsStorageDrawerBehavior(SettingsManager settingsManager) {
+    public SettingsItemsStorageDrawerBehavior(final SettingsManager settingsManager) {
         this.settingsManager = settingsManager;
     }
 

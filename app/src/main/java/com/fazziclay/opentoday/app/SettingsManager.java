@@ -131,6 +131,10 @@ public class SettingsManager {
         this.isAnalogClock = b;
     }
 
+    public boolean isSetupDone() {
+        return true; // TODO: 30.10.2023 woo
+    }
+
     private void load() {
         if (!FileUtil.isExist(saveFile)) {
             return;

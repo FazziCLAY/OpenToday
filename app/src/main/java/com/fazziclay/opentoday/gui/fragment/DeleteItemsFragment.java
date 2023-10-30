@@ -87,9 +87,7 @@ public class DeleteItemsFragment extends Fragment {
         }
         // parse END
 
-        itemViewGenerator = ItemViewGenerator.builder(requireActivity())
-                .setPreviewMode(true)
-                .build();
+        itemViewGenerator = new ItemViewGenerator(requireActivity(), true);
 
         UI.getUIRoot(this).pushActivitySettings(a -> {
             a.setNotificationsVisible(false);

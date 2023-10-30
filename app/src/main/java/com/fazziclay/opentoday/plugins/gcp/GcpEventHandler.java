@@ -31,7 +31,7 @@ import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.databinding.ToolbarMoreSelectionBinding;
 import com.fazziclay.opentoday.gui.ColorPicker;
-import com.fazziclay.opentoday.gui.item.HolderDestroyer;
+import com.fazziclay.opentoday.gui.item.Destroyer;
 import com.fazziclay.opentoday.gui.item.ItemViewGenerator;
 import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
 import com.fazziclay.opentoday.gui.item.ItemsStorageDrawerBehavior;
@@ -180,9 +180,7 @@ public class GcpEventHandler extends EventHandler {
             var view = new LinearLayout(context);
             view.setOrientation(LinearLayout.VERTICAL);
 
-            ItemViewGenerator itemViewGenerator = ItemViewGenerator.builder(e.getActivity())
-                    .setPreviewMode(true)
-                    .build();
+            ItemViewGenerator itemViewGenerator = new ItemViewGenerator(e.getActivity(), true);
 
             ItemViewGeneratorBehavior behavior = new ItemViewGeneratorBehavior() {
                 @Override
@@ -225,7 +223,7 @@ public class GcpEventHandler extends EventHandler {
                     return true;
                 }
             };
-            HolderDestroyer destroyer = new HolderDestroyer();
+            Destroyer destroyer = new Destroyer();
             for (Item item : selectionManager.getItems()) {
                 View iv = itemViewGenerator.generate(item, view, behavior, destroyer, item1 -> {});
 

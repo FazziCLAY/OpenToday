@@ -20,6 +20,7 @@ public class PluginManager {
     }
 
     public static void disableAllPlugins() {
+        if (activePlugins.isEmpty()) return;
         for (String s : activePlugins.keySet()) {
             disablePlugin(s);
         }

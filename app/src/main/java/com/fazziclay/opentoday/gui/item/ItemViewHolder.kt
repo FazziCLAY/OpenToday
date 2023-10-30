@@ -20,7 +20,7 @@ class ItemViewHolder(context: Context) : RecyclerView.ViewHolder(FrameLayout(con
     @JvmField
     var item: Item? = null
     @JvmField
-    var destroyer: HolderDestroyer = HolderDestroyer()
+    var destroyer: Destroyer = Destroyer()
 
     init {
         layout.setPadding(PADDING_LEFT, PADDING_TOP, PADDING_RIGHT, PADDING_BOTTOM)
@@ -28,8 +28,8 @@ class ItemViewHolder(context: Context) : RecyclerView.ViewHolder(FrameLayout(con
     }
 
     fun bind(item: Item?, view: View?) {
-        this.item = item
         layout.removeAllViews()
+        this.item = item
         if (view == null) {
             layout.visibility = View.GONE
             layout.setPadding(0, 0, 0, 0)
@@ -42,12 +42,12 @@ class ItemViewHolder(context: Context) : RecyclerView.ViewHolder(FrameLayout(con
 
     fun recycle() {
         destroyer.destroy()
-        destroyer = HolderDestroyer()
+        destroyer.recycle()
         layout.removeAllViews()
         this.item = null
     }
 
     override fun toString(): String {
-        return "ItemViewHolder{${item}}"
+        return "ItemViewHolder{layout=${layout}, destroyer=${destroyer}, item=${item}}"
     }
 }

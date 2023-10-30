@@ -6,6 +6,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -172,7 +174,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
 
 
     @Nullable
-    private View generateViewForItem(Item item, HolderDestroyer destroyer) {
+    private View generateViewForItem(Item item, Destroyer destroyer) {
         boolean previewMode = this.previewMode || selectionManager.isSelected(item);
         return itemViewGenerator.generate(item, getView(), itemViewGeneratorBehavior, previewMode, destroyer, this::onItemClicked);
     }
@@ -187,6 +189,12 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
             view = itemViewWrapper.wrap(item, () -> generateViewForItem(item, holder.destroyer), holder.destroyer);
         } else {
             view = generateViewForItem(item, holder.destroyer);
+        }
+
+        if (itemViewGeneratorBehavior.isRenderMinimized(item)) {
+            final FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins(0, 0, 17, 0);
+            view.setLayoutParams(layoutParams);
         }
 
         holder.bind(item, view);
@@ -352,7 +360,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
     @FunctionalInterface
     public interface ItemViewWrapper {
         @Nullable
-        View wrap(Item item, Supplier<View> viewSupplier, HolderDestroyer destroyer);
+        View wrap(Item item, Supplier<View> viewSupplier, Destroyer destroyer);
     }
 
     public static class CreateBuilder {
