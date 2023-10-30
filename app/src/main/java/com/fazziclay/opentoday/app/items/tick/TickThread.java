@@ -12,6 +12,7 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemUtil;
 import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.util.Logger;
+import com.fazziclay.opentoday.util.profiler.Profiler;
 import com.fazziclay.opentoday.util.time.TimeUtil;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import java.util.UUID;
 
 public class TickThread extends Thread {
     private static final String TAG = "TickThread";
+    private static final Profiler PROFILER = App.createProfiler("TickThread");
     private static boolean exceptionOnceDebugFlag = true; // for once call App.exception(...)
     private static final boolean LOG = App.debug(true);
     private static final boolean LOG_ONLY_PERSONAL = true;
@@ -68,23 +70,28 @@ public class TickThread extends Thread {
 
     @Override
     public void run() {
+        PROFILER.push("run");
         enabled = true;
         while (!isInterrupted() && enabled) {
+            PROFILER.push("tick");
             long tickStart = System.currentTimeMillis();
             if (requested) {
                 try {
                     log("Processing requests: " + requests + "; all: "+requestedAll+"; personal: " + requestedPersonal);
 
+                    PROFILER.push("all");
                     if (requestedAll) {
                         recycle(false);
                         tickAll();
                     }
 
+                    PROFILER.swap("personal");
                     if (requestedPersonal) {
                         recycle(true);
                         tickPersonal();
                     }
 
+                    PROFILER.swap("save");
                     if (defaultTickSession.isSaveNeeded()) {
                         if (defaultTickSession.isImportantSaveNeeded()) {
                             tabsManager.queueSave(SaveInitiator.USER);
@@ -92,15 +99,19 @@ public class TickThread extends Thread {
                             tabsManager.queueSave(requestedPersonal ? SaveInitiator.TICK_PERSONAL : SaveInitiator.TICK);
                         }
                     }
+                    PROFILER.pop();
                 } catch (Exception e) {
+                    PROFILER.push("exceptions");
                     Logger.e(TAG, "EXCEPTION IN TICK!!!!!!!", e);
                     if (exceptionOnceDebugFlag) {
                         App.exception(null, e);
                         exceptionOnceDebugFlag = false;
                     }
+                    PROFILER.pop2();
                 }
 
                 // reset requests
+                PROFILER.push("resets");
                 personalsNoPaths.clear();
                 personalsPaths.clear();
                 requested = false;
@@ -109,9 +120,11 @@ public class TickThread extends Thread {
                 firstRequestTime = 0;
                 lastRequestTime = 0;
                 requests = 0;
+                PROFILER.pop();
             }
             long tickEnd = System.currentTimeMillis();
 
+            PROFILER.swap("sleep");
             try {
                 int sleep = (int) (1000 - (tickEnd - tickStart));
                 if (sleep <= 0) sleep = 1;
@@ -120,18 +133,23 @@ public class TickThread extends Thread {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+            PROFILER.pop();
         }
         log("Thread done.");
         interrupt();
         enabled = false;
+        PROFILER.pop();
     }
 
     private void tickAll() {
+        PROFILER.push("tickAll");
         tabsManager.tick(defaultTickSession);
         log("Tick all");
+        PROFILER.pop();
     }
 
     private void tickPersonal() {
+        PROFILER.push("tickPersonal");
         currentlyExecutingTickPersonal = true;
         if (!this.personalsNoPaths.isEmpty()) {
             List<UUID> personalsNoPaths = new ArrayList<>(this.personalsNoPaths);
@@ -163,9 +181,11 @@ public class TickThread extends Thread {
 
 
         currentlyExecutingTickPersonal = false;
+        PROFILER.pop();
     }
 
     private void recycle(boolean personal) {
+        PROFILER.push("recycle");
         log("recycle. personal="+personal);
         GregorianCalendar gregorianCalendar = new GregorianCalendar();
         GregorianCalendar noTimeCalendar = TimeUtil.noTimeCalendar(gregorianCalendar);
@@ -179,6 +199,7 @@ public class TickThread extends Thread {
         defaultTickSession.recycleSaveNeeded();
         defaultTickSession.recycleWhitelist(false);
         defaultTickSession.recycleSpecifiedTickTarget();
+        PROFILER.pop();
     }
 
 
@@ -238,7 +259,7 @@ public class TickThread extends Thread {
         int daySeconds = (int) ((gregorianCalendar.getTimeInMillis() - noTimeCalendar.getTimeInMillis()) / 1000);
 
 
-        return new TickSession(App.get(context).getItemNotificationHandler(), gregorianCalendar, noTimeCalendar, daySeconds, false);
+        return new TickSession(App.get(context).getItemNotificationHandler(), gregorianCalendar, noTimeCalendar, daySeconds, false, PROFILER);
     }
 
     public void requestTerminate() {

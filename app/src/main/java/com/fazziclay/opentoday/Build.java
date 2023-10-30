@@ -20,7 +20,7 @@ public class Build {
             FeatureFlag.TOOLBAR_DEBUG,
             FeatureFlag.ITEM_SLEEP_TIME,
             FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
-            FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION
+            FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION,
     };
 
 

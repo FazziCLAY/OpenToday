@@ -4,6 +4,7 @@ import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.ItemNotificationHandler;
 import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.util.Logger;
+import com.fazziclay.opentoday.util.profiler.Profiler;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -32,18 +33,24 @@ public class TickSession {
     private GregorianCalendar noTimeCalendar;
     private int dayTime;
     private boolean isPersonalTick;
+    private Profiler profiler;
     private boolean saveNeeded = false;
     private boolean importantSaveNeeded = false;
     private final Stack<List<TickTarget>> specifiedTickTarget = new Stack<>();
     private final List<UUID> whitelist = new ArrayList<>();
     private boolean isWhitelist = false;
 
-    public TickSession(ItemNotificationHandler itemNotificationHandler, GregorianCalendar gregorianCalendar, GregorianCalendar noTimeCalendar, int dayTime, boolean isPersonalTick) {
+    public TickSession(ItemNotificationHandler itemNotificationHandler, GregorianCalendar gregorianCalendar, GregorianCalendar noTimeCalendar, int dayTime, boolean isPersonalTick, Profiler profiler) {
         this.itemNotificationHandler = itemNotificationHandler;
         this.gregorianCalendar = gregorianCalendar;
         this.noTimeCalendar = noTimeCalendar;
         this.dayTime = dayTime;
         this.isPersonalTick = isPersonalTick;
+        this.profiler = profiler;
+    }
+
+    public Profiler getProfiler() {
+        return profiler;
     }
 
     public boolean isAllowed(Unique unique) {

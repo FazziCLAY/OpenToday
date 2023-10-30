@@ -91,6 +91,7 @@ public class SleepTimeItem extends TextItem {
     @Override
     public void tick(TickSession tickSession) {
         super.tick(tickSession);
+        profPush(tickSession, "sleep_time_update");
         elapsedTime = wakeUpTime - TimeUtil.getDaySeconds();
         if (elapsedTime <= 0) {
             elapsedTime = TimeUtil.SECONDS_IN_DAY + elapsedTime;
@@ -113,6 +114,7 @@ public class SleepTimeItem extends TextItem {
             visibleChanged();
         }
         tick++;
+        profPop(tickSession);
     }
 
     public int getElapsedTime() {

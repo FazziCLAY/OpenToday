@@ -206,8 +206,28 @@ public abstract class Item implements Unique, Tickable {
     public void tick(TickSession tickSession) {
         if (!tickSession.isAllowed(this)) return;
         Debug.tickedItems++;
-        if (tickSession.isTickTargetAllowed(TickTarget.ITEM_NOTIFICATIONS)) ItemNotificationUtil.tick(tickSession, notifications);
-        if (tickSession.isTickTargetAllowed(TickTarget.ITEM_CALLBACKS)) itemCallbacks.run((callbackStorage, callback) -> callback.tick(Item.this));
+        if (tickSession.isTickTargetAllowed(TickTarget.ITEM_NOTIFICATIONS)) {
+            profPush(tickSession, "item_notifications_tick");
+            ItemNotificationUtil.tick(tickSession, notifications);
+            profPop(tickSession);
+        }
+        if (tickSession.isTickTargetAllowed(TickTarget.ITEM_CALLBACKS)) {
+            profPush(tickSession, "callbacks");
+            itemCallbacks.run((callbackStorage, callback) -> callback.tick(Item.this));
+            profPop(tickSession);
+        }
+    }
+
+    protected void profPush(TickSession t, String s) {
+        t.getProfiler().push(s);
+    }
+
+    protected void profSwap(TickSession t, String s) {
+        t.getProfiler().swap(s);
+    }
+
+    protected void profPop(TickSession t) {
+        t.getProfiler().pop();
     }
 
     protected void regenerateId() {

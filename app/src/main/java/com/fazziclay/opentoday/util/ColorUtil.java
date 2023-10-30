@@ -111,7 +111,7 @@ public class ColorUtil {
 
         // maybe performance boost
         if (!text.contains("$[")) {
-            PROFILER.push("('$[' not contains optimization)");
+            PROFILER.push("(dollar[ not contains optimization)");
             final SpannableString span = new SpannableString(text);
             span.setSpan(new ForegroundColorSpan(defaultFgColor), 0, span.length(), Spannable.SPAN_COMPOSING);
             span.setSpan(new BackgroundColorSpan(defaultBgColor), 0, span.length(), Spanned.SPAN_COMPOSING);

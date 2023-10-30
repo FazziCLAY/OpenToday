@@ -101,10 +101,12 @@ public class MathGameItem extends TextItem {
         super.tick(tickSession);
 
         if (tickSession.isTickTargetAllowed(TickTarget.ITEM_MATH_GAME_UPDATE)) {
+            profPush(tickSession, "math_game_update");
             if (!quest.isInitialize()) {
                 generateQuest();
                 visibleChanged();
             }
+            profPop(tickSession);
         }
     }
 
