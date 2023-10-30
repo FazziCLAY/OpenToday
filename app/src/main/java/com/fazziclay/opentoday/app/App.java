@@ -1,5 +1,7 @@
 package com.fazziclay.opentoday.app;
 
+import static com.fazziclay.opentoday.util.InlineUtil.IPROF;
+
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -32,6 +34,8 @@ import com.fazziclay.opentoday.util.License;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
+import com.fazziclay.opentoday.util.profiler.Profiler;
+import com.fazziclay.opentoday.util.profiler.ProfilerImpl;
 import com.fazziclay.opentoday.util.time.TimeUtil;
 
 import org.jetbrains.annotations.NotNull;
@@ -197,6 +201,22 @@ public class App extends Application {
         }
     }
 
+    public static Profiler createProfiler(@NotNull String name) {
+        return DEBUG ? addProfiler(new ProfilerImpl(name)) : Profiler.EMPTY;
+    }
+
+    public static ProfilerImpl addProfiler(ProfilerImpl profiler) {
+        if (ProfilerImpl.PROFILERS == null) {
+            ProfilerImpl.PROFILERS = new ArrayList<>();
+        }
+        ProfilerImpl.PROFILERS.add(profiler);
+        return profiler;
+    }
+
+    public List<Profiler> getProfilers() {
+        return ProfilerImpl.PROFILERS;
+    }
+
     public boolean isPinCodeNeed() {
         return this.getPinCodeManager().isPinCodeSet();
     }
@@ -226,10 +246,11 @@ public class App extends Application {
 
 
     public void reinitPlugins() {
+        IPROF.push("reinitPlugins");
         CrashReportContext.BACK.push("App::reinitPlugins");
         CrashReportContext.BACK.push("disabling all...");
         PluginManager.disableAllPlugins();
-        for (String s : getSettingsManager().getPlugins().split(",")) {
+        for (final String s : getSettingsManager().getPlugins().split(",")) {
             CrashReportContext.BACK.swap("plugin: " + s.trim());
             if (s.trim().equals("gcp")) {
                 PluginManager.loadPlugin(
@@ -239,6 +260,7 @@ public class App extends Application {
         }
         CrashReportContext.BACK.pop();
         CrashReportContext.BACK.pop();
+        IPROF.pop();
     }
 
     /**
