@@ -1,5 +1,9 @@
 TODO: changelog
 == branch: tags
+* settings rewritten
+* optimized startup time & other performance tricks
+* added basic animations
+* startup uses multi-threading loading
 * added analog clock to options
 * added NO_TIME preset for date&time format option
 * added tags for items (no use keys currently :/)

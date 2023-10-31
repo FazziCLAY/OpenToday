@@ -40,5 +40,6 @@
 
     <attr format="color" type="color" name="itemFilterState_true" />
     <attr format="color" type="color" name="itemFilterState_false" />
+    <attr format="color" type="color" name="opentoday_icon_tint" />
 
 </resources>

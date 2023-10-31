@@ -34,6 +34,9 @@ public class IconSelectorDialog {
         view.setPadding(20, 10, 10, 10);
 
         for (IconsRegistry.Icon icon : IconsRegistry.REGISTRY.getIconsList()) {
+            if (icon == IconsRegistry.REGISTRY.NONE) {
+                continue;
+            }
             LinearLayout l = new LinearLayout(context);
             l.setOrientation(LinearLayout.HORIZONTAL);
 

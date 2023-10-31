@@ -418,9 +418,9 @@
     <string name="settings_analogClock_title">Analog clock</string>
     <string name="settings_analogClockSettings_size_title">Size</string>
     <string name="settings_analogClockSettings_transparency_title">Transparency</string>
-    <string name="settings_analogClockSettings_secondHandColor">Select seconds color</string>
-    <string name="settings_analogClockSettings_minuteHandColor">Select minute color</string>
-    <string name="settings_analogClockSettings_hourHandColor">Select hour color</string>
+    <string name="settings_analogClockSettings_secondHandColor">Seconds hand color</string>
+    <string name="settings_analogClockSettings_minuteHandColor">Minute hand color</string>
+    <string name="settings_analogClockSettings_hourHandColor">Hour hand color</string>
     <string name="fragment_settings_analogClockSettings_handColor_reset">Reset</string>
     <string name="fragment_settings_analogClockSettings_handColor_second">Select a color…</string>
     <string name="fragment_settings_analogClockSettings_handColor_hour">Select a color…</string>

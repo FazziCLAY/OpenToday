@@ -53,6 +53,7 @@
         <item name="toolbar_background">#8C000000</item>
         <item name="itemFilterState_true">#19FF00</item>
         <item name="itemFilterState_false">#FF0000</item>
+        <item name="opentoday_icon_tint">#0F0F0F</item>
     </style>
 
     <style name="Theme.OpenToday.ItemEditModule" parent="Theme.MaterialComponents.DayNight.DarkActionBar">

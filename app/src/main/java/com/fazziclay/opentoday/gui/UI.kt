@@ -23,6 +23,7 @@ import com.fazziclay.opentoday.app.FeatureFlag
 import com.fazziclay.opentoday.app.items.item.Item
 import com.fazziclay.opentoday.app.items.selection.SelectionManager
 import com.fazziclay.opentoday.app.items.tick.ItemsTickReceiver
+import com.fazziclay.opentoday.app.settings.enums.ThemeEnum
 import com.fazziclay.opentoday.gui.callbacks.UIDebugCallback
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost
@@ -88,6 +89,18 @@ object UI {
         IPROF.push("UI:setTheme")
         AppCompatDelegate.setDefaultNightMode(i)
         IPROF.pop();
+    }
+
+    @JvmStatic
+    fun setTheme(i: ThemeEnum) {
+        IPROF.push("UI:setTheme")
+        AppCompatDelegate.setDefaultNightMode(i.id())
+        IPROF.pop();
+    }
+
+    @JvmStatic
+    fun getTheme(): ThemeEnum {
+        return ThemeEnum.ofId(AppCompatDelegate.getDefaultNightMode())
     }
 
     @JvmStatic

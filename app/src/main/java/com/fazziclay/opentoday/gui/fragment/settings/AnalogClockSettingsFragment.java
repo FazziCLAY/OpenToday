@@ -23,6 +23,7 @@ import com.fazziclay.opentoday.gui.ActivitySettings;
 import com.fazziclay.opentoday.gui.ColorPicker;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember;
+import com.fazziclay.opentoday.util.MaterialButtonWithColorIndicator;
 
 public class AnalogClockSettingsFragment extends Fragment implements ActivitySettingsMember {
     private FragmentSettingsAnalogClockBinding binding;
@@ -103,8 +104,10 @@ public class AnalogClockSettingsFragment extends Fragment implements ActivitySet
         setupButtonHand(binding.hourHandColor, R.string.fragment_settings_analogClockSettings_handColor_hour, SettingsManager.ANALOG_CLOCK_COLOR_HOUR);
     }
 
-    public void setupButtonHand(View view, @StringRes int title, ColorOption option) {
-        view.setOnClickListener(v -> new ColorPicker(requireContext(), option.get(sm))
+    public void setupButtonHand(MaterialButtonWithColorIndicator view, @StringRes int title, ColorOption option) {
+        int initColor = option.get(sm);
+        view.setColor(initColor);
+        view.setOnClickListener(v -> new ColorPicker(requireContext(), initColor)
                 .setColorHistoryManager(colorHistoryManager)
                 .setting(true, true, true)
                 .setNeutralDialogButton(R.string.fragment_settings_analogClockSettings_handColor_reset, () -> {
@@ -114,6 +117,7 @@ public class AnalogClockSettingsFragment extends Fragment implements ActivitySet
                 })
                 .showDialog(title, R.string.abc_cancel, R.string.abc_ok, color -> {
                     option.set(sm, color);
+                    view.setColor(color);
                     updateButtonsTint();
                     sm.save();
                 }));

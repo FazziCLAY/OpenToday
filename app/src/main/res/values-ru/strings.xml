@@ -410,9 +410,9 @@
     <string name="settings_analogClock_title">Стрелочные часы</string>
     <string name="settings_analogClockSettings_size_title">Размер</string>
     <string name="settings_analogClockSettings_transparency_title">Прозрачность</string>
-    <string name="settings_analogClockSettings_secondHandColor">Выбор цвета секундной стрелки</string>
-    <string name="settings_analogClockSettings_minuteHandColor">Выбор цвета минутной стрелки</string>
-    <string name="settings_analogClockSettings_hourHandColor">Выбор цвета часовой стрелки</string>
+    <string name="settings_analogClockSettings_secondHandColor">Цвет секундной стрелки</string>
+    <string name="settings_analogClockSettings_minuteHandColor">Цвет минутной стрелки</string>
+    <string name="settings_analogClockSettings_hourHandColor">Цвет часовой стрелки</string>
     <string name="fragment_settings_analogClockSettings_handColor_reset">Сброс</string>
     <string name="fragment_settings_analogClockSettings_handColor_second">Выберите цвет…</string>
     <string name="fragment_settings_analogClockSettings_handColor_hour">Выберите цвет…</string>

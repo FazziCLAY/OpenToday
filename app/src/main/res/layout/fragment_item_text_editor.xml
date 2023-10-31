@@ -12,7 +12,7 @@
         android:id="@+id/addSystem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_input_add" />
+        android:src="@drawable/baseline_add_alert_24" />
 
     <ImageButton
         android:id="@+id/deleteSystem"
