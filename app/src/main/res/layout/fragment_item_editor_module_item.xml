@@ -40,41 +40,18 @@
         </LinearLayout>
     </HorizontalScrollView>
 
-    <TextView
-        android:id="@+id/backgroundColor_title"
+    <com.fazziclay.opentoday.util.opentodaybutton.MaterialButtonWithColorIndicator
+        android:id="@+id/itemBackgroundColor"
         android:layout_below="@id/buttons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/fragment_itemEditor_module_item_backgroundColor_hint" />
-
-    <RelativeLayout
-        android:id="@+id/viewBackgroundColor_edit"
-        android:layout_below="@id/backgroundColor_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:id="@+id/viewBackgroundColor_indicator"
-            android:layout_width="match_parent"
-            android:layout_height="35sp"
-            android:layout_toStartOf="@id/default_background_color"
-            android:background="@drawable/shape_color_indicator"
-            android:backgroundTint="#ff000f"
-            android:orientation="horizontal" />
-
-        <CheckBox
-            android:id="@+id/default_background_color"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:minHeight="0sp"/>
-    </RelativeLayout>
+        android:text="@string/fragment_itemEditor_module_item_backgroundColor_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 
     <TextView
         android:id="@+id/viewMinHeight_title"
         android:layout_width="match_parent"
-        android:layout_below="@id/viewBackgroundColor_edit"
+        android:layout_below="@id/itemBackgroundColor"
         android:layout_height="wrap_content"
         android:text="@string/fragment_itemEditor_module_item_minHeight_hint" />
 

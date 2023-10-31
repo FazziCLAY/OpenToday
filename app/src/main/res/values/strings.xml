@@ -128,12 +128,12 @@
     <string name="fragment_itemEditor_module_counter_step">Counter step</string>
     <string name="fragment_itemEditor_module_counter_value">Counter value</string>
     <string name="fragment_itemEditor_module_cyclelist_tickMode">Tick mode</string>
-    <string name="fragment_itemEditor_module_item_backgroundColor_dialog_apply">Apply</string>
+    <string name="fragment_itemEditor_module_item_backgroundColor_dialog_ok">OK</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_dialog_cancel">Cancel</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_dialog_random">Random</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_dialog_title">Background color</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_edit">Edit</string>
-    <string name="fragment_itemEditor_module_item_backgroundColor_hint">Background Color</string>
+    <string name="fragment_itemEditor_module_item_backgroundColor_text">Background Color</string>
     <string name="fragment_itemEditor_module_item_copyItemId">Copy item id</string>
     <string name="fragment_itemEditor_module_item_defaultBackgroundColor">Default Background Color</string>
     <string name="fragment_itemEditor_module_item_editNotifications">Edit notifications</string>
@@ -153,7 +153,7 @@
     <string name="fragment_itemEditor_module_mathGame_number1">Num 1</string>
     <string name="fragment_itemEditor_module_mathGame_number2">Num 2</string>
     <string name="fragment_itemEditor_module_text_openTextEditor">Open text editor</string>
-    <string name="fragment_itemEditor_module_text_textColor_dialog_apply">Apply</string>
+    <string name="fragment_itemEditor_module_text_textColor_dialog_ok">OK</string>
     <string name="fragment_itemEditor_module_text_textColor_dialog_cancel">Cancel</string>
     <string name="fragment_itemEditor_module_text_textColor_dialog_title">Text color</string>
     <string name="fragment_itemEditor_module_text_text_hint">Enter text…</string>
@@ -425,4 +425,8 @@
     <string name="fragment_settings_analogClockSettings_handColor_second">Select a color…</string>
     <string name="fragment_settings_analogClockSettings_handColor_hour">Select a color…</string>
     <string name="fragment_settings_analogClockSettings_handColor_minute">Select a color…</string>
+    <string name="fragment_itemEditor_module_item_backgroundColor_dialog_reset">Reset</string>
+    <string name="fragment_itemEditor_module_text_textColor_dialog_reset">Reset</string>
+    <string name="dialog_itemNotification_notificationColor">Notification color</string>
+    <string name="dialog_itemNotification_defaultColor">No use</string>
 </resources>

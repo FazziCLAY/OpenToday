@@ -121,12 +121,12 @@
     <string name="fragment_itemEditor_module_counter_step">Шаг счётчика</string>
     <string name="fragment_itemEditor_module_counter_value">Значение счётчика</string>
     <string name="fragment_itemEditor_module_cyclelist_tickMode">Поведение тика</string>
-    <string name="fragment_itemEditor_module_item_backgroundColor_dialog_apply">Применить</string>
+    <string name="fragment_itemEditor_module_item_backgroundColor_dialog_ok">OK</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_dialog_cancel">Отмена</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_dialog_random">Случайно</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_dialog_title">Фоновый цвет</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_edit">Редактировать</string>
-    <string name="fragment_itemEditor_module_item_backgroundColor_hint">Фоновый цвет</string>
+    <string name="fragment_itemEditor_module_item_backgroundColor_text">Фоновый цвет</string>
     <string name="fragment_itemEditor_module_item_copyItemId">Копировать АйДи айтема</string>
     <string name="fragment_itemEditor_module_item_defaultBackgroundColor">Фоновый цвет по умолчанию</string>
     <string name="fragment_itemEditor_module_item_editNotifications">Редактировать</string>
@@ -146,7 +146,7 @@
     <string name="fragment_itemEditor_module_mathGame_number1">Число (1)</string>
     <string name="fragment_itemEditor_module_mathGame_number2">Число (2)</string>
     <string name="fragment_itemEditor_module_text_openTextEditor">Открыть редактор текста</string>
-    <string name="fragment_itemEditor_module_text_textColor_dialog_apply">Применить</string>
+    <string name="fragment_itemEditor_module_text_textColor_dialog_ok">OK</string>
     <string name="fragment_itemEditor_module_text_textColor_dialog_cancel">Отмена</string>
     <string name="fragment_itemEditor_module_text_textColor_dialog_title">Цвет текста</string>
     <string name="fragment_itemEditor_module_text_text_hint">Введите текст…</string>

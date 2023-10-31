@@ -23,7 +23,7 @@ import com.fazziclay.opentoday.gui.ActivitySettings;
 import com.fazziclay.opentoday.gui.ColorPicker;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember;
-import com.fazziclay.opentoday.util.MaterialButtonWithColorIndicator;
+import com.fazziclay.opentoday.util.opentodaybutton.MaterialButtonWithColorIndicator;
 
 public class AnalogClockSettingsFragment extends Fragment implements ActivitySettingsMember {
     private FragmentSettingsAnalogClockBinding binding;

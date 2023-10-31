@@ -12,13 +12,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public abstract class ItemNotification implements Cloneable {
-    public static class ItemNotificationCodec extends AbstractItemNotificationCodec {
+    public static final int DEFAULT_COLOR = 0; // this is magic number
 
+
+    public static class ItemNotificationCodec extends AbstractItemNotificationCodec {
         @Override
         public Cherry exportNotification(ItemNotification itemNotification) {
             return new Cherry()
                     .put("id", itemNotification.id == null ? null : itemNotification.id.toString())
-                    .put("icon", itemNotification.icon.getId());
+                    .put("icon", itemNotification.icon.getId())
+                    .put("color", itemNotification.color);
         }
 
         @Override
@@ -29,6 +32,7 @@ public abstract class ItemNotification implements Cloneable {
                 } catch (Exception ignored) {}
             }
             notification.icon = IconsRegistry.REGISTRY.getById(cherry.optString("icon", "opentoday"));
+            notification.color = cherry.optInt("color", DEFAULT_COLOR);
             return notification;
         }
     }
@@ -37,6 +41,7 @@ public abstract class ItemNotification implements Cloneable {
     private UUID id;
     private NotificationController controller;
     @NotNull private IconsRegistry.Icon icon = IconsRegistry.REGISTRY.OPENTODAY;
+    private int color;
 
     public abstract boolean tick(TickSession tickSession);
 
@@ -96,6 +101,14 @@ public abstract class ItemNotification implements Cloneable {
     @NonNull
     public IconsRegistry.Icon getIcon() {
         return icon;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int c) {
+        this.color = c;
     }
 
     @NonNull

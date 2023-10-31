@@ -17,6 +17,7 @@ public class IconsRegistry {
             new Icon("none", R.mipmap.ic_launcher), // special icon
 
             new Icon("barefoot", R.drawable.barefoot_24px),
+            new Icon("background_replace", R.drawable.background_replace_24px),
             new Icon("baseline_account_tree", R.drawable.baseline_account_tree_24),
             new Icon("baseline_add_alert", R.drawable.baseline_add_alert_24),
             new Icon("baseline_celebration", R.drawable.baseline_celebration_24),
@@ -30,6 +31,8 @@ public class IconsRegistry {
             new Icon("bedtime", R.drawable.bedtime_24px),
             new Icon("calendar_clock", R.drawable.calendar_clock_24px),
             new Icon("calendar_today", R.drawable.calendar_today_24px),
+            new Icon("check_box_outline_blank", R.drawable.check_box_outline_blank_24px),
+            new Icon("close", R.drawable.close_24px),
             new Icon("cloudy_snowing", R.drawable.cloudy_snowing_24px),
             new Icon("delete", R.drawable.delete_24px),
             new Icon("emoji_flags", R.drawable.emoji_flags_24px),
@@ -42,6 +45,8 @@ public class IconsRegistry {
             new Icon("home_work", R.drawable.home_work_24px),
 
             new Icon("info_i", R.drawable.info_i_24px),
+            new Icon("new_label", R.drawable.new_label_24px),
+            new Icon("palette", R.drawable.palette_24px),
             new Icon("pause_presentation", R.drawable.pause_presentation_24px),
             new Icon("pill", R.drawable.pill_24px),
             new Icon("procedure", R.drawable.procedure_24px),

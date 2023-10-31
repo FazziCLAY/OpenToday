@@ -12,7 +12,7 @@
         android:id="@+id/addSystem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/baseline_add_alert_24" />
+        android:src="@drawable/new_label_24px" />
 
     <ImageButton
         android:id="@+id/deleteSystem"
@@ -27,14 +27,14 @@
         android:layout_toEndOf="@id/deleteSystem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@android:drawable/title_bar" />
+        android:src="@drawable/palette_24px" />
 
     <ImageButton
         android:id="@+id/backgroundSystem"
         android:layout_toEndOf="@id/foregroundColor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_dialog_dialer" />
+        android:src="@drawable/background_replace_24px" />
 
 
     <Button

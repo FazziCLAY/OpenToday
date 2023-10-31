@@ -6,8 +6,8 @@ import android.os.Bundle
 import com.fazziclay.opentoday.Debug
 import com.fazziclay.opentoday.app.App
 import com.fazziclay.opentoday.app.settings.SettingsManager
+import com.fazziclay.opentoday.gui.BackendInitializer
 import com.fazziclay.opentoday.gui.EnumsRegistry
-import com.fazziclay.opentoday.gui.GUILauncher
 import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.util.DebugUtil
 import com.fazziclay.opentoday.util.InlineUtil.IPROF
@@ -17,12 +17,19 @@ class LauncherActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         PROFILER.push("LauncherActivity:onCreate")
-        PROFILER.push("super.onCreate")
+
+        PROFILER.push("backend_initializer_start_thread")
+        BackendInitializer.startBackInitializerThread()
+
+        PROFILER.swap("super.onCreate")
         super.onCreate(savedInstanceState)
+
         PROFILER.swap("run")
         run()
+
         PROFILER.swap("finish")
         finish()
+
         PROFILER.pop()
         PROFILER.pop()
     }
@@ -43,7 +50,6 @@ class LauncherActivity : Activity() {
             }
 
             EnumsRegistry.missingChecks()
-
             PROFILER.pop()
         }
 
@@ -51,11 +57,15 @@ class LauncherActivity : Activity() {
         val app = App.get(this)
 
         PROFILER.swap("settings")
-        val isSetupDone = !SettingsManager.IS_FIRST_LAUNCH.get(app.settingsManager)
-        val theme = SettingsManager.THEME.get(app.settingsManager).id()
 
-        PROFILER.swap("gui_launcher")
-        GUILauncher.startBackInitializerThread()
+        PROFILER.push("wait_settings_init")
+        while (BackendInitializer.isWaitForModule(BackendInitializer.Module.SETTINGS_MANAGER)) {
+            // waiting init settings
+        }
+        PROFILER.pop()
+
+        val isSetupDone = !SettingsManager.IS_FIRST_LAUNCH.get(app.settingsManager)
+        val theme = SettingsManager.THEME.get(app.settingsManager)
 
         PROFILER.swap("theme")
         UI.setTheme(theme)

@@ -36,7 +36,8 @@ import com.fazziclay.opentoday.databinding.ActivityMainBinding
 import com.fazziclay.opentoday.databinding.NotificationDebugappBinding
 import com.fazziclay.opentoday.databinding.NotificationUpdateAvailableBinding
 import com.fazziclay.opentoday.gui.ActivitySettings
-import com.fazziclay.opentoday.gui.GUILauncher
+import com.fazziclay.opentoday.gui.BackendInitializer
+import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.gui.UINotification
 import com.fazziclay.opentoday.gui.UIRoot
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment
@@ -107,6 +108,10 @@ class MainActivity : AppCompatActivity(), UIRoot {
         CrashReportContext.mainActivityCreate()
         CrashReportContext.FRONT.push("MainActivity")
         Logger.d(TAG, "onCreate", nullStat(savedInstanceState))
+        if (savedInstanceState != null) {
+            val theme = SettingsManager.THEME.get(app.settingsManager)
+            UI.setTheme(theme)
+        }
 
         PROFILER.swap("phase1")
         app = App.get(this)
@@ -148,7 +153,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
         }
 
         PROFILER.swap("wait_gui_for_back")
-        while (GUILauncher.isWaitGuiForBack()) {
+        while (BackendInitializer.isWaitGuiForBack()) {
             // waiting back initialize
         }
         PROFILER.swap("telemetry")

@@ -25,6 +25,7 @@ import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.databinding.DialogItemNotificationBinding;
 import com.fazziclay.opentoday.databinding.DialogItemNotificationsEditorBinding;
 import com.fazziclay.opentoday.databinding.ItemNotificationBinding;
+import com.fazziclay.opentoday.gui.ColorPicker;
 import com.fazziclay.opentoday.util.MinBaseAdapter;
 import com.fazziclay.opentoday.util.MinTextWatcher;
 import com.fazziclay.opentoday.util.RandomUtil;
@@ -159,6 +160,26 @@ public class DialogItemNotificationsEditor {
 
                     l.sound.setChecked(d.isSound());
                     l.sound.setOnClickListener(i____ -> d.setSound(l.sound.isChecked()));
+
+                    if (itemNotification.getColor() == ItemNotification.DEFAULT_COLOR) {
+                        l.notificationColor.setColorSet(false);
+                    } else {
+                        l.notificationColor.setColor(itemNotification.getColor());
+                    }
+                    l.notificationColor.setOnClickListener(vvvvv123daqb -> {
+                        new ColorPicker(activity)
+                                .setting(true, true, true)
+                                .setStartColor(itemNotification.getColor())
+                                .setColorHistoryManager(App.get().getColorHistoryManager())
+                                .setNeutralDialogButton(R.string.dialog_itemNotification_defaultColor, () -> {
+                                    l.notificationColor.setColorSet(false);
+                                    itemNotification.setColor(ItemNotification.DEFAULT_COLOR);
+                                })
+                                .showDialog(R.string.dialog_itemNotification_notificationColor, R.string.abc_cancel, R.string.abc_ok, color -> {
+                                    l.notificationColor.setColor(color);
+                                    itemNotification.setColor(color);
+                                });
+                    });
 
                     var scroll = new ScrollView(activity);
                     scroll.addView(l.getRoot());

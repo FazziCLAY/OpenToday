@@ -102,6 +102,10 @@ public class ItemNotificationHandler {
                     .setSubText(dayItemNotification.getNotifySubText())
                     .setPriority(NotificationCompat.PRIORITY_MAX);
 
+            if (notification.getColor() != ItemNotification.DEFAULT_COLOR) {
+                builder.setColor(notification.getColor());
+            }
+
             if (dayItemNotification.isFullScreen()) {
                 PendingIntent pending = PendingIntent.getActivity(context,
                         RandomUtil.nextInt(),
