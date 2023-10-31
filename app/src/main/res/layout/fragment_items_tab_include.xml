@@ -15,10 +15,13 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingEnd="15sp">
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"
+                android:paddingStart="15sp"
+                android:paddingEnd="15sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:background="#00ff00"
@@ -29,6 +32,7 @@
                 android:id="@+id/addTabInlineButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:text="+"
                 android:textSize="25sp"
                 tools:ignore="HardcodedText" />
@@ -52,6 +56,8 @@
         android:minHeight="40sp"
         style="@style/Theme.OpenToday.ItemsTabInclude.Root"
         android:layout_above="@id/toolbar"
+        android:layout_marginStart="5sp"
+        android:layout_marginEnd="5sp"
         android:orientation="horizontal">
 
         <EditText
@@ -90,8 +96,8 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="5sp"
-        android:paddingRight="5sp"
+        android:paddingLeft="8sp"
+        android:paddingRight="8sp"
         android:layout_alignParentBottom="true"
         android:background="?attr/toolbar_background" />
 

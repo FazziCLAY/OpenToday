@@ -108,14 +108,14 @@ class MainActivity : AppCompatActivity(), UIRoot {
         CrashReportContext.mainActivityCreate()
         CrashReportContext.FRONT.push("MainActivity")
         Logger.d(TAG, "onCreate", nullStat(savedInstanceState))
-        if (savedInstanceState != null) {
-            val theme = SettingsManager.THEME.get(app.settingsManager)
-            UI.setTheme(theme)
-        }
 
         PROFILER.swap("phase1")
         app = App.get(this)
         settingsManager = app.settingsManager
+        if (savedInstanceState != null) {
+            val theme = SettingsManager.THEME.get(settingsManager)
+            UI.setTheme(theme)
+        }
 
         PROFILER.swap("inflate&set")
 

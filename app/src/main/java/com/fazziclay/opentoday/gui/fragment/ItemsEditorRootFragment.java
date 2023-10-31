@@ -1,7 +1,9 @@
 package com.fazziclay.opentoday.gui.fragment;
 
 import static com.fazziclay.opentoday.util.InlineUtil.nullStat;
+import static com.fazziclay.opentoday.util.InlineUtil.viewVisible;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -27,9 +29,13 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.items.tab.TabsManager;
+import com.fazziclay.opentoday.app.settings.Option;
+import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.util.Logger;
+import com.fazziclay.opentoday.util.callback.CallbackImportance;
+import com.fazziclay.opentoday.util.callback.Status;
 
 import java.util.UUID;
 
@@ -37,8 +43,20 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
     private static final int ROOT_CONTAINER_ID = R.id.changeOnLeftSwipe;
     private static final String EXTRA_TAB_ID = "items_editor_root_fragment_tabId";
     private static final String TAG = "ItemsEditorRootFragment";
+
+
+    private Context context;
     private TextView path;
     private Item current;
+    private final SettingsManager.OptionChangedCallback optionChangedCallback = new SettingsManager.OptionChangedCallback() {
+        @Override
+        public Status run(Option option, Object value) {
+            if (option == SettingsManager.ITEM_PATH_VISIBLE) {
+                viewVisible(path, (Boolean) value, View.GONE);
+            }
+            return Status.NONE;
+        }
+    };
 
     @NonNull
     public static ItemsEditorRootFragment create(@NonNull UUID tabId) {
@@ -50,16 +68,20 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
     }
 
     private TabsManager tabsManager;
+    private SettingsManager sm;
     private UUID tabId;
     private Tab tab;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.context = requireContext();
         Logger.d(TAG, "onCreate", nullStat(savedInstanceState));
 
         Bundle args = getArguments();
-        this.tabsManager = App.get(requireContext()).getTabsManager();
+        final App app = App.get(context);
+        this.tabsManager = app.getTabsManager();
+        this.sm = app.getSettingsManager();
         tabId = UUID.fromString(args.getString(EXTRA_TAB_ID));
         tab = tabsManager.getTabById(tabId);
 
@@ -83,20 +105,29 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Logger.d(TAG, "onCreateView", nullStat(savedInstanceState));
-        path = new TextView(requireContext());
+        path = new TextView(context);
+        optionChangedCallback.run(SettingsManager.ITEM_PATH_VISIBLE, SettingsManager.ITEM_PATH_VISIBLE.get(sm));
+        sm.callbacks.addCallback(CallbackImportance.DEFAULT, optionChangedCallback);
         updatePath();
 
-        FrameLayout frameLayout = new FrameLayout(requireContext());
+        FrameLayout frameLayout = new FrameLayout(context);
+        frameLayout.setPadding(0, 5, 0, 0);
         frameLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         frameLayout.setId(ROOT_CONTAINER_ID);
 
-        LinearLayout l = new LinearLayout(requireContext());
+        LinearLayout l = new LinearLayout(context);
         l.setOrientation(LinearLayout.VERTICAL);
         l.addView(path);
         l.addView(frameLayout);
         l.setBackground(getBackgroundDrawable());
 
         return l;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        sm.callbacks.removeCallback(optionChangedCallback);
     }
 
     private Drawable getBackgroundDrawable() {

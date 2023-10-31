@@ -23,6 +23,7 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.api.EventHandler;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.ImportWrapper;
+import com.fazziclay.opentoday.app.icons.IconsRegistry;
 import com.fazziclay.opentoday.app.settings.enums.FirstTab;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.app.events.gui.CurrentItemsStorageContextChanged;
@@ -44,6 +45,7 @@ import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.gui.toolbar.AppToolbar;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.QuickNote;
+import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
 import com.google.android.material.tabs.TabLayout;
@@ -262,10 +264,14 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
     private void setupTabs() {
         binding.tabs.removeAllTabs();
 
-        for (Tab tab : tabsManager.getAllTabs()) {
+        for (final Tab tab : tabsManager.getAllTabs()) {
             TabLayout.Tab tabView = binding.tabs.newTab();
             tabView.setTag(tab.getId().toString());
             tabView.setText(tab.getName());
+            IconsRegistry.Icon icon = tab.getIcon();
+            if (icon != IconsRegistry.REGISTRY.NONE) {
+                tabView.setIcon(icon.getResId());
+            }
             binding.tabs.addTab(tabView);
         }
     }

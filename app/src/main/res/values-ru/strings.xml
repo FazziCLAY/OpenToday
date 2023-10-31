@@ -243,7 +243,7 @@
     <string name="item_text_clickableUrls">Выделять ссылки</string>
     <string name="item_text_description">Простая текстовая заметка. В нем есть сам текст, а также цвет текста, следует ли его форматировать и выделять ли ссылки.</string>
     <string name="item_text_editText">Редактировать текст</string>
-    <string name="itemsStorageEmpty_details"><![CDATA[Используйте тулбар внизу что бы добавить айтемы.\nАйтемы -> Плюс(+)]]></string>
+    <string name="itemsStorageEmpty_details"><![CDATA[Используйте тулбар внизу что бы добавить айтемы.\n\$\[@bold;-#22cc22\]Айтемы -> Плюс(+)\$\[\|\|\] ]]></string>
     <string name="itemsStorageEmpty_title">Пусто</string>
     <string name="logic_container_item_filter_part_editor_name_empty"><![CDATA[<Без описания>]]></string>
     <string name="logic_container_logicMode_AND">И (&amp;&amp;)</string>
@@ -421,4 +421,6 @@
     <string name="fragment_itemEditor_module_text_textColor_dialog_reset">Сброс</string>
     <string name="dialog_itemNotification_notificationColor">Цвет уведомления</string>
     <string name="dialog_itemNotification_defaultColor">Не использовать</string>
+    <string name="settings_showItemPath">Показывать путь</string>
+    <string name="dialog_iconSelector_none">iconConsumer.accept(icon);</string>
 </resources>

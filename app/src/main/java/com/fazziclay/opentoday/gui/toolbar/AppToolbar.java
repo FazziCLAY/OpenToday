@@ -15,12 +15,15 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.InputFilter;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +40,7 @@ import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.BeautifyColorManager;
 import com.fazziclay.opentoday.app.FeatureFlag;
 import com.fazziclay.opentoday.app.ImportWrapper;
+import com.fazziclay.opentoday.app.icons.IconsRegistry;
 import com.fazziclay.opentoday.app.settings.enums.ItemAddPosition;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.app.events.gui.toolbar.AppToolbarSelectionClickEvent;
@@ -65,6 +69,7 @@ import com.fazziclay.opentoday.gui.activity.MainActivity;
 import com.fazziclay.opentoday.gui.activity.SetupActivity;
 import com.fazziclay.opentoday.gui.callbacks.UIDebugCallback;
 import com.fazziclay.opentoday.gui.dialog.DialogSelectItemAction;
+import com.fazziclay.opentoday.gui.dialog.IconSelectorDialog;
 import com.fazziclay.opentoday.gui.fragment.AboutFragment;
 import com.fazziclay.opentoday.gui.fragment.DeleteItemsFragment;
 import com.fazziclay.opentoday.gui.fragment.ImportFragment;
@@ -80,6 +85,7 @@ import com.fazziclay.opentoday.util.callback.Status;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class AppToolbar {
     private static final String TAG = "AppToolbar";
@@ -443,6 +449,12 @@ public class AppToolbar {
                 localBinding.tabsRecycleView.getAdapter().notifyItemChanged(position);
                 return Status.NONE;
             }
+
+            @Override
+            public Status onTabIconChanged(Tab tab, int position) {
+                localBinding.tabsRecycleView.getAdapter().notifyItemChanged(position);
+                return Status.NONE;
+            }
         };
         tabsManager.getOnTabsChangedCallbacks().addCallback(CallbackImportance.DEFAULT, onTabsChanged);
 
@@ -493,8 +505,23 @@ public class AppToolbar {
             }
         });
 
+        ImageButton icon = new ImageButton(activity);
+        icon.setScaleType(ImageView.ScaleType.FIT_XY);
+        var params = new LinearLayout.LayoutParams(90 + 10, 90);
+        params.gravity = Gravity.END;
+        icon.setLayoutParams(params);
+        icon.setImageResource(tab.getIcon().getResId());
+        icon.setImageTintList(tab.getIcon().isNone() ? ColorStateList.valueOf(Color.RED) : null);
+        AtomicReference<IconsRegistry.Icon> selectedIcon = new AtomicReference<>(tab.getIcon());
+        viewClick(icon, () -> new IconSelectorDialog(activity, selected -> {
+            icon.setImageResource(selected.getResId());
+            icon.setImageTintList(selected.isNone() ? ColorStateList.valueOf(Color.RED) : null);
+            selectedIcon.set(selected);
+        }).noneIsAvailable(true).show());
+
         dialogView.addView(tabNameEditText);
         dialogView.addView(disableTick);
+        dialogView.addView(icon);
 
         new AlertDialog.Builder(activity)
                 .setTitle(activity.getString(R.string.toolbar_more_tabs_edit_dialog_title, tab.getName()))
@@ -507,6 +534,7 @@ public class AppToolbar {
                         Toast.makeText(activity, R.string.tab_noEmptyName, Toast.LENGTH_SHORT).show();
                     }
                     tab.setDisableTick(disableTick.isChecked());
+                    tab.setIcon(selectedIcon.get());
                 })
                 .setNegativeButton(R.string.abc_cancel, null)
                 .setNeutralButton(R.string.toolbar_more_tabs_tab_delete, (dialog, w) -> new AlertDialog.Builder(activity)

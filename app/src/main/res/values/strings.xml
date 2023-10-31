@@ -250,7 +250,7 @@
     <string name="item_text_clickableUrls">Clickable URLs</string>
     <string name="item_text_description">A simple text note. It has the text itself, as well as the color of the text, whether to format it, and whether to highlight links.</string>
     <string name="item_text_editText">Edit text</string>
-    <string name="itemsStorageEmpty_details"><![CDATA[Use bottom toolbar for add items.\nItems -> Plus(+)]]></string>
+    <string name="itemsStorageEmpty_details"><![CDATA[Use bottom toolbar for add items.\n\$\[@bold;-#22cc22\]Items -> Plus(+)\$\[\|\|\] ]]></string>
     <string name="itemsStorageEmpty_title">Empty</string>
     <string name="logic_container_item_filter_part_editor_name_empty"><![CDATA[<No description>]]></string>
     <string name="logic_container_logicMode_AND">And (&amp;&amp;)</string>
@@ -429,4 +429,6 @@
     <string name="fragment_itemEditor_module_text_textColor_dialog_reset">Reset</string>
     <string name="dialog_itemNotification_notificationColor">Notification color</string>
     <string name="dialog_itemNotification_defaultColor">No use</string>
+    <string name="settings_showItemPath">Show current path</string>
+    <string name="dialog_iconSelector_none">None</string>
 </resources>

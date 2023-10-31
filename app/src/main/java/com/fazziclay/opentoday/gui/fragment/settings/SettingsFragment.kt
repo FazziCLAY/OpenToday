@@ -210,6 +210,7 @@ class SettingsFragment : Fragment() {
         attachCheckBox(binding.itemInternalBackgroundFromItem, SettingsManager.ITEM_EDITOR_BACKGROUND_AS_ITEM)
         attachCheckBox(binding.isItemBackgroundRandom, SettingsManager.ITEM_RANDOM_BACKGROUND)
         attachCheckBox(binding.isAnalogClock, SettingsManager.ANALOG_CLOCK_ENABLE)
+        attachCheckBox(binding.showItemPath, SettingsManager.ITEM_PATH_VISIBLE)
         binding.analogClockOptions.setOnClickListener {
             UI.findFragmentInParents(this, MainRootFragment::class.java)?.navigate(AnalogClockSettingsFragment(), true)
         }

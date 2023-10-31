@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.util.Logger;
+import com.fazziclay.opentoday.util.RandomUtil;
 
 import java.util.Arrays;
 
@@ -14,8 +15,9 @@ public class IconsRegistry {
     private final Icon[] ICONS = new Icon[]{
             new Icon("opentoday", R.mipmap.ic_launcher),
             new Icon("opentoday_beta", R.mipmap.ic_launcher_beta),
-            new Icon("none", R.mipmap.ic_launcher), // special icon
+            new Icon("none", R.drawable.close_24px), // special icon
 
+            new Icon("add", R.drawable.add_24px),
             new Icon("barefoot", R.drawable.barefoot_24px),
             new Icon("background_replace", R.drawable.background_replace_24px),
             new Icon("baseline_account_tree", R.drawable.baseline_account_tree_24),
@@ -61,9 +63,12 @@ public class IconsRegistry {
             new Icon("shopping_basket", R.drawable.shopping_basket_24px),
             new Icon("shopping_cart", R.drawable.shopping_cart_24px),
             new Icon("surgical", R.drawable.surgical_24px),
+            new Icon("swipe_left", R.drawable.swipe_left_24px),
             new Icon("syringe", R.drawable.syringe_24px),
             new Icon("taunt", R.drawable.taunt_24px),
+            new Icon("touch_app", R.drawable.touch_app_24px),
             new Icon("tune", R.drawable.tune_24px),
+            new Icon("add", R.drawable.add_24px),
 
     };
     public final Icon OPENTODAY = getById("opentoday");
@@ -79,6 +84,10 @@ public class IconsRegistry {
         Logger.i(TAG, "<init> d = " + d);
     }
 
+    public Icon randomIcon() {
+        return getIconsList()[RandomUtil.bounds(0, getIconsList().length)];
+    }
+
 
     public class Icon {
         private final String id;
@@ -89,6 +98,7 @@ public class IconsRegistry {
             this.resId = resId;
         }
 
+        @DrawableRes
         public int getResId() {
             return resId;
         }

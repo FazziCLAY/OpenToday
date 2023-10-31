@@ -126,15 +126,15 @@
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Button.OpenToday.Calendar" parent="OpenToday.Base.Toolbar.Section.Button.OpenToday">
         <item name="android:backgroundTint">#09E78E</item>
-        <item name="drawableEndCompat">@android:drawable/ic_menu_my_calendar</item>
+        <item name="icon">@drawable/calendar_clock_24px</item>
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Button.OpenToday.Settings" parent="OpenToday.Base.Toolbar.Section.Button.OpenToday">
         <item name="android:backgroundTint">#1455DE</item>
-        <item name="drawableEndCompat">@android:drawable/ic_menu_preferences</item>
+        <item name="icon">@drawable/tune_24px</item>
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Button.OpenToday.About" parent="OpenToday.Base.Toolbar.Section.Button.OpenToday">
         <item name="android:backgroundTint">#1455DE</item>
-        <item name="drawableEndCompat">@android:drawable/ic_menu_info_details</item>
+        <item name="icon">@drawable/info_i_24px</item>
     </style>
 
     <!-- Section: Selection -->

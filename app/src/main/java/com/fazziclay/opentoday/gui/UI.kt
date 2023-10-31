@@ -29,12 +29,14 @@ import com.fazziclay.opentoday.gui.fragment.MainRootFragment
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost
 import com.fazziclay.opentoday.util.InlineUtil
 import com.fazziclay.opentoday.util.InlineUtil.IPROF
+import com.fazziclay.opentoday.util.Logger
 import com.fazziclay.opentoday.util.ResUtil
 import com.fazziclay.opentoday.util.callback.CallbackStorage
 import com.fazziclay.opentoday.util.callback.Status
 import java.util.UUID
 
 object UI {
+    private const val TAG: String = "UI"
     private val debugCallbacks: CallbackStorage<UIDebugCallback> = CallbackStorage()
 
     @JvmStatic
@@ -70,8 +72,12 @@ object UI {
 
     @JvmStatic
     fun rootBack(fragment: Fragment) {
-        val host = findFragmentInParents(fragment, MainRootFragment::class.java) ?: throw RuntimeException("Fragment is not contains MainRootFragment in parents!")
-        host.popBackStack()
+        val host = findFragmentInParents(fragment, MainRootFragment::class.java)
+        if (host != null) {
+            host.popBackStack()
+        } else {
+            Logger.e(TAG, "rootBack can't be run", RuntimeException("Fragment is not contains MainRootFragment in parents!"))
+        }
     }
 
     @JvmStatic

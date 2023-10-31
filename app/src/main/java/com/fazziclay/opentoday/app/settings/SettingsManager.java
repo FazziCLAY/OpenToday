@@ -54,6 +54,7 @@ public class SettingsManager {
     public static final EnumOption<ItemAction>      ITEM_ACTION_CLICK                = registerOption(new EnumOption<>("item.action.click",                 false,  ItemAction.OPEN_EDITOR));
     public static final EnumOption<ItemAction>      ITEM_ACTION_LEFT_SWIPE           = registerOption(new EnumOption<>("item.action.left_swipe",            false,  ItemAction.MINIMIZE_REVERT));
     public static final EnumOption<ItemAddPosition>      ITEM_ADD_POSITION           = registerOption(new EnumOption<>("item.add_position",                 false,  ItemAddPosition.BOTTOM));
+    public static final BooleanOption               ITEM_PATH_VISIBLE                = registerOption(new BooleanOption("item.path_visible",                false,  true));
     public static final BooleanOption               IS_TELEMETRY                     = registerOption(new BooleanOption("telemetry.enable",                 false,  true));
     public static final EnumOption<FirstTab>        DEFAULT_FIRST_TAB                = registerOption(new EnumOption<>("first_tab",                         false,  FirstTab.TAB_ON_CLOSING));
     public static final EnumOption<DateAndTimePreset>   DATE_TIME_FORMAT             = registerOption(new EnumOption<>("date_time_format",                  false,  DateAndTimePreset.DEFAULT));

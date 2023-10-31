@@ -322,6 +322,13 @@ public class TabsManager implements ItemsRoot, Tickable {
         public ItemsRoot getRoot() {
             return TabsManager.this;
         }
+
+        @Override
+        public void iconChanged(Tab tab) {
+            onTabsChangedCallbacks.run((callbackStorage, callback) -> callback.onTabIconChanged(tab, getTabPosition(tab)));
+            TabsManager.this.internalOnTabChanged();
+            TabsManager.this.queueSave(SaveInitiator.USER);
+        }
     }
 
     // ==== Tick ====

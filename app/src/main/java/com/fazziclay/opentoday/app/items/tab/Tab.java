@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.data.Cherry;
+import com.fazziclay.opentoday.app.icons.IconsRegistry;
 import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Unique;
@@ -17,10 +18,12 @@ import java.util.UUID;
 
 public abstract class Tab implements ItemsStorage, Unique {
     private static final String TAG = "Tab";
+
     protected static class TabCodec extends AbstractTabCodec {
         private static final String KEY_ID = "id";
         private static final String KEY_NAME = "name";
         private static final String KEY_DISABLE_TICK = "disableTick";
+        private static final String KEY_ICON = "icon";
 
         @NonNull
         @Override
@@ -28,7 +31,9 @@ public abstract class Tab implements ItemsStorage, Unique {
             return new Cherry()
                     .put(KEY_NAME, tab.name)
                     .put(KEY_ID, tab.id == null ? null : tab.id.toString())
-                    .put(KEY_DISABLE_TICK, tab.disableTick);
+                    .put(KEY_DISABLE_TICK, tab.disableTick)
+                    .put(KEY_ICON, tab.icon.getId());
+
         }
 
         @NonNull
@@ -37,7 +42,7 @@ public abstract class Tab implements ItemsStorage, Unique {
             if (cherry.has(KEY_ID)) tab.id = UUID.fromString(cherry.getString(KEY_ID));
             tab.name = cherry.optString(KEY_NAME, "");
             tab.disableTick = cherry.optBoolean(KEY_DISABLE_TICK, false);
-
+            tab.icon = IconsRegistry.REGISTRY.getById(cherry.optString(KEY_ICON, IconsRegistry.REGISTRY.NONE.getId()));
             if (tab.id == null) Logger.w("Tab", "id is null while importing...");
             return tab;
         }
@@ -46,6 +51,7 @@ public abstract class Tab implements ItemsStorage, Unique {
     @RequireSave @SaveKey(key = "id") private UUID id = null;
     @RequireSave @SaveKey(key = "name") private String name = "";
     @RequireSave @SaveKey(key = "disableTick") private boolean disableTick = false;
+    @RequireSave @SaveKey(key = "icon") private IconsRegistry.Icon icon = IconsRegistry.REGISTRY.NONE;
     private TabController controller;
 
     public Tab(String name) {
@@ -110,6 +116,15 @@ public abstract class Tab implements ItemsStorage, Unique {
     public void setName(String text) {
         this.name = text;
         if (controller != null) controller.nameChanged(this);
+    }
+
+    public IconsRegistry.Icon getIcon() {
+        return icon;
+    }
+
+    public void setIcon(IconsRegistry.Icon icon) {
+        this.icon = icon;
+        if (controller != null) controller.iconChanged(this);
     }
 
     @Override

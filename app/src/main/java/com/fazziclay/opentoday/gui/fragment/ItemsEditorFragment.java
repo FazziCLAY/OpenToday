@@ -3,6 +3,8 @@ package com.fazziclay.opentoday.gui.fragment;
 import static com.fazziclay.opentoday.util.InlineUtil.nullStat;
 
 import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,6 +42,7 @@ import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
 import com.fazziclay.opentoday.gui.item.ItemsStorageDrawer;
 import com.fazziclay.opentoday.gui.item.ItemsStorageDrawerBehavior;
 import com.fazziclay.opentoday.gui.item.SettingsItemsStorageDrawerBehavior;
+import com.fazziclay.opentoday.util.ColorUtil;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
@@ -259,6 +262,7 @@ public class ItemsEditorFragment extends Fragment {
         if (none) {
             ItemsStorageEmptyBinding b = ItemsStorageEmptyBinding.inflate(getLayoutInflater());
             b.getRoot().setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            b.itemsStorageEmptyDescription.setText(ColorUtil.colorize(getString(R.string.itemsStorageEmpty_details), ResUtil.getAttrColor(requireContext(), R.attr.item_text_textColor), Color.TRANSPARENT, Typeface.NORMAL));
             layout.addView(b.getRoot());
         } else {
             layout.addView(itemsStorageDrawer.getView());

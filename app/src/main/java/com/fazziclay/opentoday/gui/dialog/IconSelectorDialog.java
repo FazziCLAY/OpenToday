@@ -22,6 +22,7 @@ public class IconSelectorDialog {
     private final Context context;
     private final Consumer<IconsRegistry.Icon> iconConsumer;
     private AlertDialog dialog;
+    private boolean noneIsAvailable;
 
     public IconSelectorDialog(Context context, Consumer<IconsRegistry.Icon> iconConsumer) {
         this.context = context;
@@ -66,16 +67,28 @@ public class IconSelectorDialog {
         var scroll = new ScrollView(context);
         scroll.addView(view);
 
-        dialog = new AlertDialog.Builder(context)
+        final var builder = new AlertDialog.Builder(context)
                 .setTitle(R.string.dialog_iconSelector_title)
                 .setView(scroll)
-                .setNegativeButton(R.string.abc_cancel, null)
-                .show();
+                .setNegativeButton(R.string.abc_cancel, null);
+
+        if (noneIsAvailable) {
+            builder.setNeutralButton(R.string.dialog_iconSelector_none, (dialogInterface, i) -> iconConsumer.accept(IconsRegistry.REGISTRY.NONE));
+        }
+
+        dialog = builder.show();
+
+
     }
 
     private void cancel() {
         if (dialog != null) {
             dialog.cancel();
         }
+    }
+
+    public IconSelectorDialog noneIsAvailable(boolean b) {
+        this.noneIsAvailable = b;
+        return this;
     }
 }

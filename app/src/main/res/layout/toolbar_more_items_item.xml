@@ -6,21 +6,30 @@
     <Button
         android:id="@+id/create"
         android:text="+"
+        android:textSize="15sp"
+        android:textStyle="bold"
         tools:ignore="HardcodedText"
+        android:layout_centerVertical="true"
         style="@style/Theme.OpenToday.Toolbar.Section.Button.Items.ItemRow.AddAndEdit" />
 
     <Button
         android:id="@+id/add"
         android:text="!"
+        android:textSize="15sp"
+        android:textStyle="bold"
         android:layout_toEndOf="@id/create"
         tools:ignore="HardcodedText"
+        android:layout_centerVertical="true"
         style="@style/Theme.OpenToday.Toolbar.Section.Button.Items.ItemRow.AddOnly" />
 
     <Button
         android:id="@+id/description"
         android:text="\?"
+        android:textSize="15sp"
+        android:textStyle="bold"
         android:layout_toEndOf="@id/add"
         tools:ignore="HardcodedText"
+        android:layout_centerVertical="true"
         style="@style/Theme.OpenToday.Toolbar.Section.Button.Items.ItemRow.Description" />
 
     <TextView
