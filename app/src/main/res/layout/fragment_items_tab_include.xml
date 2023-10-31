@@ -16,12 +16,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingEnd="15sp">
+            android:paddingEnd="15sp"
+            android:paddingStart="15sp">
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"
-                android:paddingStart="15sp"
-                android:paddingEnd="15sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:background="#00ff00"
