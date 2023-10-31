@@ -41,7 +41,7 @@ public class MaterialButtonWithColorIndicator extends OpenTodayButton<MaterialBu
         try {
             final MaterialButton button = new MaterialButton(context);
             button.setText(typedArray.getString(0));
-            button.setBackgroundTintList(ColorStateList.valueOf(typedArray.getColor(1, ResUtil.getAttrColor(context, android.R.attr.colorPrimary))));
+            button.setBackgroundTintList(ColorStateList.valueOf(typedArray.getColor(1, ResUtil.getAttrColor(context, R.attr.button_buttonWithColorIndicator))));
             button.setTextColor(typedArray.getColor(2, ResUtil.getAttrColor(context, com.google.android.material.R.attr.colorOnPrimary)));
 
 

@@ -27,23 +27,26 @@
         android:id="@+id/delete_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableTop="@android:drawable/ic_menu_delete"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_alignStart="@id/cancel_button"
-        android:text="@string/fragment_itemEditor_delete"
-        style="@style/Widget.AppCompat.Button" />
+        android:layout_alignParentBottom="true"
+        android:textColor="?attr/button_dangerActon"
+        android:drawableTint="?attr/button_dangerActon"
+        android:backgroundTint="?attr/button_dangerActon_background"
+        android:drawableTop="@drawable/delete_24px"
+        android:layout_marginEnd="6sp"
+        android:text="@string/fragment_itemEditor_delete" />
 
 
     <Button
         android:id="@+id/cancel_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableTop="@android:drawable/ic_menu_close_clear_cancel"
+        android:drawableTop="@drawable/close_24px"
         android:layout_alignParentBottom="true"
-        android:layout_toStartOf="@id/apply_button"
+        android:layout_toEndOf="@id/delete_button"
         android:text="@string/fragment_itemEditor_cancel"
-        style="@style/Widget.AppCompat.Button" />
+        android:backgroundTint="?attr/button_exitAction"
+        />
 
     <Button
         android:id="@+id/apply_button"
@@ -53,5 +56,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:text="@string/fragment_itemEditor_apply"
-        style="@style/Widget.AppCompat.Button" />
+        android:backgroundTint="?attr/button_applyAction"
+        />
 </RelativeLayout>

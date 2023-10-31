@@ -19,6 +19,8 @@
         <!-- Main Activity -->
         <item name="androidToolbar_background">#BC7EFF</item>
         <item name="main_currentDate_color">#008465</item>
+        <item name="button_settings_dateFormat_color">#14B777</item>
+
         <item name="disableBatteryOptimization_backgroundColor">#FF5F6A</item>
         <item name="disableBatteryOptimization_textColor">#000000</item>
         <item name="updateAvailable_backgroundColor">#FF5F6A</item>
@@ -54,6 +56,14 @@
         <item name="itemFilterState_true">#19FF00</item>
         <item name="itemFilterState_false">#FF0000</item>
         <item name="opentoday_icon_tint">#0F0F0F</item>
+
+        <item name="button_settings_openAdvancedSettingsOfOption">#00B0FF</item>
+        <item name="button_buttonWithColorIndicator">#3D5AFE</item>
+        <item name="button_dangerActon">#F93838</item>
+        <item name="button_dangerActon_background">#475BCB</item>
+        <item name="button_exitAction">#4358CE</item>
+        <item name="button_applyAction">#07B73F</item>
+        <item name="button_importExport">?attr/colorPrimary</item>
     </style>
 
     <style name="Theme.OpenToday.ItemEditModule" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -80,14 +90,14 @@
         <item name="android:background">@color/toolbar_section_backgroundColor</item>
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Button.File.ImportFromClipboard" parent="OpenToday.Base.Toolbar.Section.Button.File">
-        <item name="android:backgroundTint">#BA1DF4</item>
+        <item name="android:backgroundTint">#08C8B8</item>
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Button.File.Import" parent="OpenToday.Base.Toolbar.Section.Button.File">
-        <item name="android:backgroundTint">#BA1DF4</item>
+        <item name="android:backgroundTint">?attr/button_importExport</item>
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Button.File.SaveAll" parent="OpenToday.Base.Toolbar.Section.Button.File">
-        <item name="android:backgroundTint">#14DE79</item>
-        <item name="drawableEndCompat">@android:drawable/ic_menu_save</item>
+        <item name="android:backgroundTint">?attr/button_applyAction</item>
+        <item name="drawableEndCompat">@drawable/save_24px</item>
     </style>
 
     <!-- Section: Items -->

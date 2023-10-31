@@ -41,5 +41,14 @@
     <attr format="color" type="color" name="itemFilterState_true" />
     <attr format="color" type="color" name="itemFilterState_false" />
     <attr format="color" type="color" name="opentoday_icon_tint" />
+    <attr name="button_settings_openAdvancedSettingsOfOption" format="color" />
+    <attr name="button_settings_dateFormat_color" format="color" />
+    <attr name="button_buttonWithColorIndicator" format="color" />
+    <attr name="button_dangerActon" format="color" />
+    <attr name="button_exitAction" format="color" />
+    <attr name="button_applyAction" format="color" />
+    <attr name="button_dangerActon_background" format="color" />
+    <attr name="button_importExport" format="color" />
+
 
 </resources>
