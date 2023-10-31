@@ -112,8 +112,6 @@ class MainActivity : AppCompatActivity(), UIRoot {
         PROFILER.swap("phase1")
         app = App.get(this)
         settingsManager = app.settingsManager
-        val theme = SettingsManager.THEME.get(settingsManager)
-        UI.setTheme(theme)
         PROFILER.swap("inflate&set")
 
         PROFILER.push("inflate")
@@ -128,6 +126,8 @@ class MainActivity : AppCompatActivity(), UIRoot {
         super.onCreate(savedInstanceState)
 
         PROFILER.swap("phase2")
+        val theme = SettingsManager.THEME.get(settingsManager)
+        UI.setTheme(theme)
         setSupportActionBar(binding.toolbar)
         supportActionBar?.hide()
         debugRunnable = Runnable {
