@@ -417,4 +417,8 @@
     <string name="fragment_settings_analogClockSettings_handColor_second">Выберите цвет…</string>
     <string name="fragment_settings_analogClockSettings_handColor_hour">Выберите цвет…</string>
     <string name="fragment_settings_analogClockSettings_handColor_minute">Выберите цвет…</string>
+    <string name="fragment_itemEditor_module_item_backgroundColor_dialog_reset">Сброс</string>
+    <string name="fragment_itemEditor_module_text_textColor_dialog_reset">Сброс</string>
+    <string name="dialog_itemNotification_notificationColor">Цвет уведомления</string>
+    <string name="dialog_itemNotification_defaultColor">Не использовать</string>
 </resources>
