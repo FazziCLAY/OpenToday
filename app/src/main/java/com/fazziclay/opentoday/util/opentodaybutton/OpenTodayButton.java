@@ -1,15 +1,20 @@
 package com.fazziclay.opentoday.util.opentodaybutton;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.view.AbsSavedState;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+
+import com.fazziclay.opentoday.util.Logger;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class OpenTodayButton<B extends View, T extends View> extends RelativeLayout {
+    private static final String TAG = "OpenTodayButton";
     private B button;
     private T indicator;
 
@@ -58,6 +63,7 @@ public abstract class OpenTodayButton<B extends View, T extends View> extends Re
     }
 
     protected void init(@NotNull Context context, @Nullable AttributeSet attrs) {
+        Logger.d(TAG, "init() attrs="+attrs);
         initView(context, attrs);
 
         // indicator
@@ -79,5 +85,19 @@ public abstract class OpenTodayButton<B extends View, T extends View> extends Re
 
     public T getIndicator() {
         return indicator;
+    }
+
+    @androidx.annotation.Nullable
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        var v = super.onSaveInstanceState();
+        Logger.d(TAG, "onSaveInstanceState() returned v="+v + "v.s="+((AbsSavedState)v).getSuperState());
+        return v;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        Logger.d(TAG, "onRestoreInstanceState() state=" + state);
+        super.onRestoreInstanceState(state);
     }
 }

@@ -2,6 +2,7 @@ package com.fazziclay.opentoday.util.opentodaybutton;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.widget.ImageView;
@@ -11,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 
 import com.fazziclay.opentoday.R;
+import com.fazziclay.opentoday.util.ResUtil;
 import com.google.android.material.button.MaterialButton;
 
 public class MaterialButtonWithColorIndicator extends OpenTodayButton<MaterialButton, ImageView> {
@@ -35,8 +37,20 @@ public class MaterialButtonWithColorIndicator extends OpenTodayButton<MaterialBu
 
     @Override
     protected void initView(Context context, AttributeSet attrs) {
-        setButton(new MaterialButton(context, attrs));
-        setIndicator(new ImageView(context));
+        final TypedArray typedArray = context.obtainStyledAttributes(attrs, new int[]{android.R.attr.text, android.R.attr.backgroundTint, android.R.attr.textColor});
+        try {
+            final MaterialButton button = new MaterialButton(context);
+            button.setText(typedArray.getString(0));
+            button.setBackgroundTintList(ColorStateList.valueOf(typedArray.getColor(1, ResUtil.getAttrColor(context, android.R.attr.colorPrimary))));
+            button.setTextColor(typedArray.getColor(2, ResUtil.getAttrColor(context, com.google.android.material.R.attr.colorOnPrimary)));
+
+
+            setButton(button);
+            setIndicator(new ImageView(context));
+        } finally {
+            typedArray.recycle();
+        }
+
     }
 
     @Override
