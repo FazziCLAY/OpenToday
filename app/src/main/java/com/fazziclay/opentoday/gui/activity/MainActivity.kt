@@ -112,11 +112,8 @@ class MainActivity : AppCompatActivity(), UIRoot {
         PROFILER.swap("phase1")
         app = App.get(this)
         settingsManager = app.settingsManager
-        if (savedInstanceState != null) {
-            val theme = SettingsManager.THEME.get(settingsManager)
-            UI.setTheme(theme)
-        }
-
+        val theme = SettingsManager.THEME.get(settingsManager)
+        UI.setTheme(theme)
         PROFILER.swap("inflate&set")
 
         PROFILER.push("inflate")
