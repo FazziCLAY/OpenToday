@@ -1,7 +1,6 @@
 package com.fazziclay.opentoday.gui.fragment.settings;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -98,34 +97,34 @@ public class AnalogClockSettingsFragment extends Fragment implements ActivitySet
                 sm.save();
             }
         });
-        updateButtonsTint();
+        updateButtonsColorIndicator();
         setupButtonHand(binding.secondHandColor, R.string.fragment_settings_analogClockSettings_handColor_second, SettingsManager.ANALOG_CLOCK_COLOR_SECONDS);
         setupButtonHand(binding.minuteHandColor, R.string.fragment_settings_analogClockSettings_handColor_minute, SettingsManager.ANALOG_CLOCK_COLOR_MINUTE);
         setupButtonHand(binding.hourHandColor, R.string.fragment_settings_analogClockSettings_handColor_hour, SettingsManager.ANALOG_CLOCK_COLOR_HOUR);
     }
 
     public void setupButtonHand(MaterialButtonWithColorIndicator view, @StringRes int title, ColorOption option) {
-        int initColor = option.get(sm);
-        view.setColor(initColor);
-        view.setOnClickListener(v -> new ColorPicker(requireContext(), initColor)
-                .setColorHistoryManager(colorHistoryManager)
-                .setting(true, true, true)
-                .setNeutralDialogButton(R.string.fragment_settings_analogClockSettings_handColor_reset, () -> {
-                    option.def(sm);
-                    updateButtonsTint();
-                    sm.save();
-                })
-                .showDialog(title, R.string.abc_cancel, R.string.abc_ok, color -> {
-                    option.set(sm, color);
-                    view.setColor(color);
-                    updateButtonsTint();
-                    sm.save();
-                }));
+        view.setOnClickListener(v -> {
+            int initColor = option.get(sm);
+            new ColorPicker(context, initColor)
+                    .setColorHistoryManager(colorHistoryManager)
+                    .setting(true, true, true)
+                    .setNeutralDialogButton(R.string.fragment_settings_analogClockSettings_handColor_reset, () -> {
+                        option.def(sm);
+                        updateButtonsColorIndicator();
+                        sm.save();
+                    })
+                    .showDialog(title, R.string.abc_cancel, R.string.abc_ok, color -> {
+                        option.set(sm, color);
+                        updateButtonsColorIndicator();
+                        sm.save();
+                    });
+        });
     }
 
-    public void updateButtonsTint() {
-        binding.secondHandColor.setBackgroundTintList(ColorStateList.valueOf(SettingsManager.ANALOG_CLOCK_COLOR_SECONDS.get(sm)));
-        binding.minuteHandColor.setBackgroundTintList(ColorStateList.valueOf(SettingsManager.ANALOG_CLOCK_COLOR_MINUTE.get(sm)));
-        binding.hourHandColor.setBackgroundTintList(ColorStateList.valueOf(SettingsManager.ANALOG_CLOCK_COLOR_HOUR.get(sm)));
+    public void updateButtonsColorIndicator() {
+        binding.secondHandColor.setColor(SettingsManager.ANALOG_CLOCK_COLOR_SECONDS.get(sm));
+        binding.minuteHandColor.setColor(SettingsManager.ANALOG_CLOCK_COLOR_MINUTE.get(sm));
+        binding.hourHandColor.setColor(SettingsManager.ANALOG_CLOCK_COLOR_HOUR.get(sm));
     }
 }
