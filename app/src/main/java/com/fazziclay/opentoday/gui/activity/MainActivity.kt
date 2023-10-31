@@ -104,6 +104,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
         PROFILER.push("MainActivity:onCreate")
 
         PROFILER.push("phase0")
+        BackendInitializer.startBackInitializerThread()
         val startTime = System.currentTimeMillis()
         CrashReportContext.mainActivityCreate()
         CrashReportContext.FRONT.push("MainActivity")
@@ -111,6 +112,9 @@ class MainActivity : AppCompatActivity(), UIRoot {
 
         PROFILER.swap("phase1")
         app = App.get(this)
+        while (BackendInitializer.isWaitForModule(BackendInitializer.Module.SETTINGS_MANAGER)) {
+            // do nothing
+        }
         settingsManager = app.settingsManager
         PROFILER.swap("inflate&set")
 

@@ -21,7 +21,7 @@ public class BackendInitializer {
     }
 
     public static void startBackInitializerThread() {
-        if (!backInitialized) {
+        if (!backInitialized && !backInitializeInProcess) {
             backInitializeInProcess = true;
             new BackInitializerThread().start();
         }
