@@ -8,8 +8,8 @@
     <string name="abc_ok">OK</string>
     <string name="abc_opentoday" translatable="false">OpenToday</string>
     <string name="abc_pressAgainForExitWarning">Press back once more to exit.</string>
-    <string name="abc_success">Successfully</string>
-    <string name="abc_unknown" translatable="false">Unknown</string>
+    <string name="abc_success">Successfully!</string>
+    <string name="abc_unknown">Unknown</string>
     <string name="aboutapp_click_changelog">What\'s new?</string>
     <string name="aboutapp_click_issues">Bugs/Issues</string>
     <string name="aboutapp_click_licenses">OpenSource licences</string>
@@ -28,13 +28,13 @@
     <string name="crash_activity_updateAvailable">Update available!\nClick to download new version</string>
     <string name="crash_notification_big_summary" translatable="false">""</string>
     <string name="crash_notification_big_text" translatable="false">""</string>
-    <string name="crash_notification_big_title">OpenToday crashed</string>
+    <string name="crash_notification_big_title">OpenToday crashed :(</string>
     <string name="crash_notification_subtext" translatable="false">""</string>
     <string name="crash_notification_text">Click to see details</string>
     <string name="crash_notification_title">OpenToday crashed</string>
     <string name="dialog_editItemFilter_month">Month</string>
     <string name="dialog_editItemFilter_second">Second</string>
-    <string name="dialog_editItemFilter_title_currentValue" translatable="false">C</string>
+    <string name="dialog_editItemFilter_title_currentValue">C</string>
     <string name="dialog_editItemFilter_title_field">Field</string>
     <string name="dialog_editItemFilter_title_invert">Invert</string>
     <string name="dialog_editItemFilter_title_mode">Mode</string>
@@ -42,14 +42,17 @@
     <string name="dialog_editItemFilter_title_value">Value</string>
     <string name="dialog_editItemFilter_weekOfYear">Week of year</string>
     <string name="dialog_editItemFilter_year">Year</string>
+    <string name="dialog_iconSelector_none">Without icon</string>
     <string name="dialog_iconSelector_title">Select a icon…</string>
     <string name="dialog_itemNotification_apply">Apply</string>
     <string name="dialog_itemNotification_cancel">Cancel</string>
+    <string name="dialog_itemNotification_defaultColor">No use</string>
     <string name="dialog_itemNotification_dialogTitle">Edit a item notification</string>
     <string name="dialog_itemNotification_empty_description">Press (+) button for add item notification</string>
     <string name="dialog_itemNotification_empty_title">No notifications here</string>
     <string name="dialog_itemNotification_fullScreen">Is fullscreen</string>
     <string name="dialog_itemNotification_incorrectNotificationId">Incorrect notification id field</string>
+    <string name="dialog_itemNotification_notificationColor">Notification color</string>
     <string name="dialog_itemNotification_notifyid">Notification ID</string>
     <string name="dialog_itemNotification_previewViewOnly">FullScreen Preview is ViewOnly</string>
     <string name="dialog_itemNotification_sound">FullScreen Sound</string>
@@ -82,10 +85,10 @@
     <string name="filterRegistry_filterType_DATE"><![CDATA[Date&Time]]></string>
     <string name="filterRegistry_filterType_ITEM_STAT">Item stat</string>
     <string name="filterRegistry_filterType_LOGIC_CONTAINER">Container</string>
-    <string name="fragment_about_secretSettingsWarning">Hello :)\nStop clicking, please…</string>
-    <string name="fragment_deleteItems_delete_apply">DELETE!</string>
+    <string name="fragment_about_secretSettingsWarning">Don\'t spam...</string>
+    <string name="fragment_deleteItems_delete_apply">DELETE</string>
     <string name="fragment_deleteItems_delete_cancel">Cancel</string>
-    <string name="fragment_deleteItems_delete_title">Delete %s items (%s include child-items)?</string>
+    <string name="fragment_deleteItems_delete_title">Delete %s item(s)?\\n(%s include child-items)</string>
     <string name="fragment_developer_crash">Crash!</string>
     <string name="fragment_developer_featureFlags">Feature flags</string>
     <string name="fragment_developer_icons">Icons…</string>
@@ -93,6 +96,7 @@
     <string name="fragment_developer_plugins_message">Enter plugins separate by comma , \nAvailable:\n  * gcp - global changes</string>
     <string name="fragment_developer_plugins_reloadedNotification">Plugins reloaded! (-5s)</string>
     <string name="fragment_developer_plugins_title">Plugins</string>
+    <string name="fragment_developer_profiler">Profiler…</string>
     <string name="fragment_enterPincode_timeout">Try later (reopen app)</string>
     <string name="fragment_enterPincode_title">Enter pin-code</string>
     <string name="fragment_filterGroup_itemFilter_editor_error_unknownFilter">Unknown filter! This is a bug. Report to developer.\nCanonical: %s</string>
@@ -123,14 +127,15 @@
     <string name="fragment_itemEditor_delete_message">Delete this item as well as %d of its child items?</string>
     <string name="fragment_itemEditor_delete_title">Delete?</string>
     <string name="fragment_itemEditor_filterGroup_tickBehavior">Tick behavior</string>
-    <string name="fragment_itemEditor_longtext_textColor">Long text color</string>
-    <string name="fragment_itemEditor_longtext_textSize">Long text size</string>
+    <string name="fragment_itemEditor_longtext_textColor">Extended text color</string>
+    <string name="fragment_itemEditor_longtext_textSize">Extended text size</string>
     <string name="fragment_itemEditor_module_counter_step">Counter step</string>
     <string name="fragment_itemEditor_module_counter_value">Counter value</string>
     <string name="fragment_itemEditor_module_cyclelist_tickMode">Tick mode</string>
-    <string name="fragment_itemEditor_module_item_backgroundColor_dialog_ok">OK</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_dialog_cancel">Cancel</string>
+    <string name="fragment_itemEditor_module_item_backgroundColor_dialog_ok">OK</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_dialog_random">Random</string>
+    <string name="fragment_itemEditor_module_item_backgroundColor_dialog_reset">Reset</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_dialog_title">Background color</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_edit">Edit</string>
     <string name="fragment_itemEditor_module_item_backgroundColor_text">Background Color</string>
@@ -145,16 +150,17 @@
     <string name="fragment_itemEditor_module_longtext_openTextEditor">Open text editor</string>
     <string name="fragment_itemEditor_module_longtext_textColor_dialog_apply">Apply</string>
     <string name="fragment_itemEditor_module_longtext_textColor_dialog_cancel">Cancel</string>
-    <string name="fragment_itemEditor_module_longtext_textColor_dialog_title">Long-text color</string>
-    <string name="fragment_itemEditor_module_longtext_text_hint">Enter long text</string>
-    <string name="fragment_itemEditor_module_longtext_text_title">Long text</string>
+    <string name="fragment_itemEditor_module_longtext_textColor_dialog_title">Extended-text color</string>
+    <string name="fragment_itemEditor_module_longtext_text_hint">Enter extended text</string>
+    <string name="fragment_itemEditor_module_longtext_text_title">Extended text</string>
     <string name="fragment_itemEditor_module_mathGame_max">Max</string>
     <string name="fragment_itemEditor_module_mathGame_min">Min</string>
     <string name="fragment_itemEditor_module_mathGame_number1">Num 1</string>
     <string name="fragment_itemEditor_module_mathGame_number2">Num 2</string>
     <string name="fragment_itemEditor_module_text_openTextEditor">Open text editor</string>
-    <string name="fragment_itemEditor_module_text_textColor_dialog_ok">OK</string>
     <string name="fragment_itemEditor_module_text_textColor_dialog_cancel">Cancel</string>
+    <string name="fragment_itemEditor_module_text_textColor_dialog_ok">OK</string>
+    <string name="fragment_itemEditor_module_text_textColor_dialog_reset">Reset</string>
     <string name="fragment_itemEditor_module_text_textColor_dialog_title">Text color</string>
     <string name="fragment_itemEditor_module_text_text_hint">Enter text…</string>
     <string name="fragment_itemEditor_module_text_text_title">Text</string>
@@ -179,6 +185,10 @@
     <string name="fragment_itemTextEditor_toolbar_menu_previewFormatting">Preview formatting</string>
     <string name="fragment_itemTextEditor_toolbar_title_longTextItem">Edit long text</string>
     <string name="fragment_itemTextEditor_toolbar_title_textItem">Edit text</string>
+    <string name="fragment_settings_analogClockSettings_handColor_hour">Select a color…</string>
+    <string name="fragment_settings_analogClockSettings_handColor_minute">Select a color…</string>
+    <string name="fragment_settings_analogClockSettings_handColor_reset">Reset</string>
+    <string name="fragment_settings_analogClockSettings_handColor_second">Select a color…</string>
     <string name="importWrapper_errorCode_NOT_IMPORT_TEXT">This is not a OpenToday import-text.</string>
     <string name="importWrapper_errorCode_VERSION_NOT_COMPATIBLE">This import-text version not compatible with current version</string>
     <string name="importWrapper_permission_ADD_ITEMS_TO_CURRENT">Add items to current open container</string>
@@ -217,10 +227,10 @@
     <string name="item_cycleList">Cycle list</string>
     <string name="item_cycleList_description">A cyclical list. It is a container for other items. The outside shows only the current one.</string>
     <string name="item_cycleList_empty"><![CDATA[<Empty>]]></string>
-    <string name="item_cycleList_tickBehavior_all">All items</string>
-    <string name="item_cycleList_tickBehavior_current">Current</string>
-    <string name="item_cycleList_tickBehavior_notCurrent">Not current</string>
-    <string name="item_cycleList_tickBehavior_nothing">Nothing</string>
+    <string name="item_cycleList_tickBehavior_all">Tick all child-items</string>
+    <string name="item_cycleList_tickBehavior_current">Tick current</string>
+    <string name="item_cycleList_tickBehavior_notCurrent">Tick all exclude current</string>
+    <string name="item_cycleList_tickBehavior_nothing">Nothing to tick</string>
     <string name="item_dayRepeatableCheckbox">Checkbox (Everyday)</string>
     <string name="item_dayRepeatableCheckbox_description">Daily check mark. It is a child item from the Check Mark, but resets its state to the set one every day.</string>
     <string name="item_dayRepeatableCheckbox_latestRegenerate">Latest reset: %s</string>
@@ -229,14 +239,14 @@
     <string name="item_debugTickCounter_description">Debugging item.\n\nHe adds +1 to his counter every tick and triggers a save signal.</string>
     <string name="item_filterGroup">Filter group</string>
     <string name="item_filterGroup_description">A group with filters for each item inside.\nThese filters determine whether to show the internal item outside or not.</string>
-    <string name="item_filterGroup_tickBehavior_ACTIVE">Active only</string>
-    <string name="item_filterGroup_tickBehavior_ALL">All</string>
-    <string name="item_filterGroup_tickBehavior_NOTHING">Nothing</string>
-    <string name="item_filterGroup_tickBehavior_NOT_ACTIVE">Not-active only</string>
+    <string name="item_filterGroup_tickBehavior_ACTIVE">Tick active only</string>
+    <string name="item_filterGroup_tickBehavior_ALL">Tick all</string>
+    <string name="item_filterGroup_tickBehavior_NOTHING">Nothing to tick</string>
+    <string name="item_filterGroup_tickBehavior_NOT_ACTIVE">Tick not-active only</string>
     <string name="item_group">Group</string>
     <string name="item_group_description">Group. It is a container for other items. The outside shows its contents if it is not minimized.</string>
-    <string name="item_longTextItem">Long text</string>
-    <string name="item_longTextItem_description">The long text is a child item from the Text. It has additional text with the possibility of resizing.</string>
+    <string name="item_longTextItem">Extended text</string>
+    <string name="item_longTextItem_description">The Extended text is a child item from the Text. It has additional text with the possibility of resizing.</string>
     <string name="item_longtext_clickableUrls">Clickable URLs</string>
     <string name="item_mathGame">Math game</string>
     <string name="item_mathGame_description">А math game to warm up the brain.</string>
@@ -255,6 +265,8 @@
     <string name="logic_container_item_filter_part_editor_name_empty"><![CDATA[<No description>]]></string>
     <string name="logic_container_logicMode_AND">And (&amp;&amp;)</string>
     <string name="logic_container_logicMode_OR">Or (||)</string>
+    <string name="main_activity_allowExactAlarms">Please allow exact alarms!</string>
+    <string name="main_activity_allowFullScreenIntent">Please allow full screen intents</string>
     <string name="manuallyCrash_crash">Crashed</string>
     <string name="manuallyCrash_dialog_apply">CRASH!</string>
     <string name="manuallyCrash_dialog_cancel">Cancel</string>
@@ -294,6 +306,12 @@
     <string name="selectItemTypeDialog_create">Create</string>
     <string name="selectItemTypeDialog_message">Click to select</string>
     <string name="settings_addItemsToTop">Add items to top^</string>
+    <string name="settings_analogClockSettings_hourHandColor">Hour hand color</string>
+    <string name="settings_analogClockSettings_minuteHandColor">Minute hand color</string>
+    <string name="settings_analogClockSettings_secondHandColor">Seconds hand color</string>
+    <string name="settings_analogClockSettings_size_title">Size</string>
+    <string name="settings_analogClockSettings_transparency_title">Transparency</string>
+    <string name="settings_analogClock_title">Analog clock</string>
     <string name="settings_autoCloseToolbar">Auto close toolbar</string>
     <string name="settings_colorHistoryLocked">Lock color history</string>
     <string name="settings_colorHistory_title">Color history</string>
@@ -307,6 +325,7 @@
     <string name="settings_firstTab_first">First</string>
     <string name="settings_firstTab_onClosed">Last open</string>
     <string name="settings_firstTab_title">Startup tab</string>
+    <string name="settings_isAnalogClock">Show analog clock overlay</string>
     <string name="settings_isItemBackgroundRandom">Random item background</string>
     <string name="settings_isTelemetry">@string/setup_telemetry</string>
     <string name="settings_itemAddPosition_BOTTOM">Bottom</string>
@@ -336,6 +355,7 @@
     <string name="settings_pincode_title">Pin-code for app</string>
     <string name="settings_quickNote">Quick Note notification</string>
     <string name="settings_scrollToAddedItem">Scroll to added item</string>
+    <string name="settings_showItemPath">Show current path</string>
     <string name="settings_theme_light">☀ ️Light</string>
     <string name="settings_theme_night">🌙 Night</string>
     <string name="settings_theme_system">System follow</string>
@@ -411,24 +431,4 @@
     <string name="transform_not_allowed">Transformation is impossible</string>
     <string name="transform_selectTypeDialog_message" />
     <string name="transform_selectTypeDialog_title">Select result type</string>
-    <string name="main_activity_allowExactAlarms">Please allow exact alarms!</string>
-    <string name="main_activity_allowFullScreenIntent">Please allow full screen intents</string>
-    <string name="settings_isAnalogClock">Show analog clock overlay</string>
-    <string name="fragment_developer_profiler">Profiler…</string>
-    <string name="settings_analogClock_title">Analog clock</string>
-    <string name="settings_analogClockSettings_size_title">Size</string>
-    <string name="settings_analogClockSettings_transparency_title">Transparency</string>
-    <string name="settings_analogClockSettings_secondHandColor">Seconds hand color</string>
-    <string name="settings_analogClockSettings_minuteHandColor">Minute hand color</string>
-    <string name="settings_analogClockSettings_hourHandColor">Hour hand color</string>
-    <string name="fragment_settings_analogClockSettings_handColor_reset">Reset</string>
-    <string name="fragment_settings_analogClockSettings_handColor_second">Select a color…</string>
-    <string name="fragment_settings_analogClockSettings_handColor_hour">Select a color…</string>
-    <string name="fragment_settings_analogClockSettings_handColor_minute">Select a color…</string>
-    <string name="fragment_itemEditor_module_item_backgroundColor_dialog_reset">Reset</string>
-    <string name="fragment_itemEditor_module_text_textColor_dialog_reset">Reset</string>
-    <string name="dialog_itemNotification_notificationColor">Notification color</string>
-    <string name="dialog_itemNotification_defaultColor">No use</string>
-    <string name="settings_showItemPath">Show current path</string>
-    <string name="dialog_iconSelector_none">None</string>
 </resources>
