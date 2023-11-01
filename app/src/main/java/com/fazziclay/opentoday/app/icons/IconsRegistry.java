@@ -69,6 +69,8 @@ public class IconsRegistry {
             new Icon("touch_app", R.drawable.touch_app_24px),
             new Icon("tune", R.drawable.tune_24px),
             new Icon("save", R.drawable.save_24px),
+            new Icon("export_notes", R.drawable.export_notes_24px),
+            new Icon("content_copy", R.drawable.content_copy_24px),
 
     };
     public final Icon OPENTODAY = getById("opentoday");
