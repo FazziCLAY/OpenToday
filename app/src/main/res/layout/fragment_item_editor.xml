@@ -1,61 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingStart="5sp"
-    android:paddingLeft="5sp"
-    android:paddingEnd="5sp"
-    android:paddingRight="5sp"
-    android:paddingBottom="5sp">
+    android:layout_height="match_parent">
 
-    <ScrollView
+    <LinearLayout
+        android:id="@+id/modules"
+        android:paddingStart="7sp"
+        android:paddingLeft="7sp"
+        android:paddingEnd="7sp"
+        android:paddingRight="7sp"
+        android:paddingBottom="7sp"
         android:layout_width="match_parent"
-        android:layout_above="@id/apply_button"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:id="@+id/modules"
-            android:padding="5sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-
-    </ScrollView>
-
-    <Button
-        android:id="@+id/delete_button"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:textColor="?attr/button_dangerActon"
-        android:drawableTint="?attr/button_dangerActon"
-        android:backgroundTint="?attr/button_dangerActon_background"
-        android:drawableTop="@drawable/delete_24px"
-        android:layout_marginEnd="6sp"
-        android:text="@string/fragment_itemEditor_delete" />
+        android:orientation="vertical" />
 
-
-    <Button
-        android:id="@+id/cancel_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawableTop="@drawable/close_24px"
-        android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@id/delete_button"
-        android:text="@string/fragment_itemEditor_cancel"
-        android:backgroundTint="?attr/button_exitAction"
-        />
-
-    <Button
-        android:id="@+id/apply_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawableTop="@android:drawable/ic_menu_save"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:text="@string/fragment_itemEditor_apply"
-        android:backgroundTint="?attr/button_applyAction"
-        />
-</RelativeLayout>
+</ScrollView>

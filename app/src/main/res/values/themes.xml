@@ -59,7 +59,7 @@
 
         <item name="button_settings_openAdvancedSettingsOfOption">#00B0FF</item>
         <item name="button_buttonWithColorIndicator">#3D5AFE</item>
-        <item name="button_dangerActon">#F93838</item>
+        <item name="button_dangerActon">#FFFFFF</item>
         <item name="button_dangerActon_background">#475BCB</item>
         <item name="button_exitAction">#4358CE</item>
         <item name="button_applyAction">#07B73F</item>
@@ -159,7 +159,7 @@
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Button.Selection.Delete" parent="OpenToday.Base.Toolbar.Section.Button.Selection">
         <item name="android:backgroundTint">#CC1717</item>
-        <item name="drawableEndCompat">@android:drawable/ic_menu_delete</item>
+        <item name="drawableEndCompat">@drawable/delete_24px</item>
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Button.Selection.MoveHere" parent="OpenToday.Base.Toolbar.Section.Button.Selection">
         <item name="android:backgroundTint">#1494DE</item>
@@ -169,7 +169,6 @@
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Button.Selection.Edit" parent="OpenToday.Base.Toolbar.Section.Button.Selection">
         <item name="android:backgroundTint">#4A13EE</item>
-        <item name="drawableEndCompat">@android:drawable/ic_menu_edit</item>
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Text.Selection.Info" parent="OpenToday.Base.Toolbar.Section.Text.Selection">
         <item name="android:textColor">#000000</item>

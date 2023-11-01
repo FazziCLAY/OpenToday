@@ -85,10 +85,10 @@
     <string name="filterRegistry_filterType_DATE"><![CDATA[Date&Time]]></string>
     <string name="filterRegistry_filterType_ITEM_STAT">Item stat</string>
     <string name="filterRegistry_filterType_LOGIC_CONTAINER">Container</string>
-    <string name="fragment_about_secretSettingsWarning">Don\'t spam...</string>
+    <string name="fragment_about_secretSettingsWarning">Don\'t spam…</string>
     <string name="fragment_deleteItems_delete_apply">DELETE</string>
     <string name="fragment_deleteItems_delete_cancel">Cancel</string>
-    <string name="fragment_deleteItems_delete_title">Delete %s item(s)?\\n(%s include child-items)</string>
+    <string name="fragment_deleteItems_delete_title">Delete %s item(s)?tabView.view.caps\n(%s include child-items)</string>
     <string name="fragment_developer_crash">Crash!</string>
     <string name="fragment_developer_featureFlags">Feature flags</string>
     <string name="fragment_developer_icons">Icons…</string>
@@ -431,4 +431,6 @@
     <string name="transform_not_allowed">Transformation is impossible</string>
     <string name="transform_selectTypeDialog_message" />
     <string name="transform_selectTypeDialog_title">Select result type</string>
+    <string name="menu_itemEditor_deleteItem">Delete</string>
+    <string name="menu_itemEditor_saveItem">Save</string>
 </resources>

@@ -4,7 +4,7 @@
 
         <!-- Primary brand color. -->
         <item name="colorPrimary">#0B48FF</item>
-        <item name="colorPrimaryVariant">#A50026B8</item>
+        <item name="colorPrimaryVariant">#A50065B8</item>
         <item name="colorOnPrimary">#ffffff</item>
 
         <!-- Secondary brand color. -->
@@ -155,7 +155,7 @@
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Button.Selection.Delete" parent="OpenToday.Base.Toolbar.Section.Button.Selection">
         <item name="android:backgroundTint">#B31616</item>
-        <item name="drawableEndCompat">@android:drawable/ic_menu_delete</item>
+        <item name="drawableEndCompat">@drawable/delete_24px</item>
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Button.Selection.MoveHere" parent="OpenToday.Base.Toolbar.Section.Button.Selection">
         <item name="android:backgroundTint">#1378B2</item>
@@ -165,7 +165,6 @@
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Button.Selection.Edit" parent="OpenToday.Base.Toolbar.Section.Button.Selection">
         <item name="android:backgroundTint">#511AF2</item>
-        <item name="drawableEndCompat">@android:drawable/ic_menu_edit</item>
     </style>
     <style name="Theme.OpenToday.Toolbar.Section.Text.Selection.Info" parent="OpenToday.Base.Toolbar.Section.Text.Selection">
         <item name="android:textColor">#FFFFFF</item>

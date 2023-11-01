@@ -1,8 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item android:id="@+id/exportItem"
-        android:title="@string/menu_itemEditor_export" />
+        android:title="@string/menu_itemEditor_export"
+        android:icon="@drawable/export_notes_24px" />
 
     <item android:id="@+id/copyItemId"
+        android:icon="@drawable/content_copy_24px"
         android:title="@string/menu_itemEditor_copyItemId" />
+
+
+    <item android:id="@+id/deleteItem"
+        android:icon="@drawable/delete_24px"
+        app:showAsAction="ifRoom"
+        android:title="@string/menu_itemEditor_deleteItem" />
+
+
+    <item android:id="@+id/saveItem"
+        android:icon="@drawable/save_24px"
+        app:showAsAction="always"
+        android:title="@string/menu_itemEditor_saveItem" />
+
 </menu>

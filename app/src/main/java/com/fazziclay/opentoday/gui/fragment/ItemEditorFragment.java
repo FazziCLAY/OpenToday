@@ -14,14 +14,15 @@ import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.TimePicker;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -35,7 +36,6 @@ import com.fazziclay.opentoday.app.BeautifyColorManager;
 import com.fazziclay.opentoday.app.ColorHistoryManager;
 import com.fazziclay.opentoday.app.CrashReportContext;
 import com.fazziclay.opentoday.app.ImportWrapper;
-import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
@@ -48,14 +48,15 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.item.LongTextItem;
 import com.fazziclay.opentoday.app.items.item.MathGameItem;
-import com.fazziclay.opentoday.app.items.item.SleepTimeItem;
 import com.fazziclay.opentoday.app.items.item.MissingNoItem;
+import com.fazziclay.opentoday.app.items.item.SleepTimeItem;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.notification.DayItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.items.tag.ItemTag;
+import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleCheckboxBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleCounterBinding;
@@ -72,9 +73,9 @@ import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.gui.ItemTagGui;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.dialog.DialogItemNotificationsEditor;
+import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember;
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
-import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember;
 import com.fazziclay.opentoday.util.ClipboardUtil;
 import com.fazziclay.opentoday.util.ColorUtil;
 import com.fazziclay.opentoday.util.EnumUtil;
@@ -300,6 +301,20 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
                                     return true;
                                 })
                                 .setVisible(mode == MODE_EDIT);
+
+
+                        MenuItem menuItem = menu.findItem(R.id.deleteItem);
+                        menuItem.setVisible(item.isAttached());
+                        menuItem.setOnMenuItemClickListener(menuItem1 -> {
+                            deleteRequest();
+                            return true;
+                        });
+
+                        menuItem = menu.findItem(R.id.saveItem);
+                        menuItem.setOnMenuItemClickListener(menuItem1 -> {
+                            applyRequest();
+                            return true;
+                        });
                     }));
         });
     }
@@ -313,11 +328,6 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        viewClick(binding.applyButton, this::applyRequest);
-        viewClick(binding.cancelButton, this::cancelRequest);
-        viewClick(binding.deleteButton, this::deleteRequest);
-        viewVisible(binding.deleteButton, item.isAttached(), View.GONE);
-
         return binding.getRoot();
     }
 
@@ -426,7 +436,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
     }
 
     public static void deleteRequest(Context context, Item item, Runnable onDelete) {
-        new AlertDialog.Builder(context)
+        AlertDialog show = new AlertDialog.Builder(context)
                 .setTitle(R.string.fragment_itemEditor_delete_title)
                 .setMessage(context.getString(R.string.fragment_itemEditor_delete_message, item.getChildrenItemCount()))
                 .setNegativeButton(R.string.fragment_itemEditor_delete_cancel, null)
@@ -435,6 +445,8 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
                     if (onDelete != null) onDelete.run();
                 }))
                 .show();
+
+        show.setIcon(R.drawable.delete_24px);
     }
 
     private void cancel() {

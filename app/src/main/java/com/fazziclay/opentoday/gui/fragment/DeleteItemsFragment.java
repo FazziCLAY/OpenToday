@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -129,16 +131,19 @@ public class DeleteItemsFragment extends Fragment implements ActivitySettingsMem
             }
         });
 
-        binding.deleteButton.setOnClickListener(v -> new AlertDialog.Builder(requireContext())
-                .setTitle(requireActivity().getString(R.string.fragment_deleteItems_delete_title, String.valueOf(itemsToDelete.length), String.valueOf(totalToDelete)))
-                .setNegativeButton(R.string.fragment_deleteItems_delete_cancel, null)
-                .setPositiveButton(R.string.fragment_deleteItems_delete_apply, ((_dialog1, _which) -> {
-                    for (Item item : itemsToDelete) {
-                        item.delete();
-                    }
-                    UI.rootBack(this);
-                }))
-                .show());
+        binding.deleteButton.setOnClickListener(v -> {
+            AlertDialog show = new AlertDialog.Builder(requireContext())
+                    .setTitle(requireActivity().getString(R.string.fragment_deleteItems_delete_title, String.valueOf(itemsToDelete.length), String.valueOf(totalToDelete)))
+                    .setNegativeButton(R.string.fragment_deleteItems_delete_cancel, null)
+                    .setPositiveButton(R.string.fragment_deleteItems_delete_apply, ((_dialog1, _which) -> {
+                        for (Item item : itemsToDelete) {
+                            item.delete();
+                        }
+                        UI.rootBack(this);
+                    }))
+                    .show();
+            show.setIcon(R.drawable.delete_24px);
+        });
 
         binding.cancelButton.setOnClickListener(v -> UI.rootBack(this));
         return binding.getRoot();
