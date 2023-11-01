@@ -133,8 +133,15 @@
             android:text="@string/settings_addItemsToTop" />
 
         <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/scrollToAddedItem"
+            android:id="@+id/actionbarInBottom"
             android:layout_below="@id/addItemsToTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_actionbarInBottom" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/scrollToAddedItem"
+            android:layout_below="@id/actionbarInBottom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/settings_scrollToAddedItem" />

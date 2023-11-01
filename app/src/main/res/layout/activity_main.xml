@@ -9,11 +9,11 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:background="?attr/androidToolbar_background"
         android:id="@+id/toolbar"
+        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <TextView
-        android:layout_below="@id/toolbar"
         android:id="@+id/current_date_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,7 +25,6 @@
         android:textSize="20sp" />
 
     <TextView
-        android:layout_below="@id/toolbar"
         android:id="@+id/current_date_time"
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@id/current_date_date"
@@ -52,7 +51,7 @@
         android:id="@+id/mainActivity_rootFragmentContainer"
         android:layout_width="match_parent"
         android:layout_below="@id/notifications"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@id/toolbar"
         android:layout_height="match_parent" />
 
     <com.leondzn.simpleanalogclock.SimpleAnalogClock
@@ -64,6 +63,7 @@
         app:secondTint="#240101"
         app:faceDrawable="@drawable/analog_clock_background"
         android:alpha="0.65"
+        android:layout_alignTop="@id/current_date_time"
         android:layout_margin="5sp"
         android:layout_alignParentEnd="true" />
 

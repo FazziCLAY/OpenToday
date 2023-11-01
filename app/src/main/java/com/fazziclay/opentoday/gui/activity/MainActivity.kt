@@ -30,6 +30,7 @@ import com.fazziclay.opentoday.app.Telemetry
 import com.fazziclay.opentoday.app.Telemetry.UiClosedLPacket
 import com.fazziclay.opentoday.app.UpdateChecker
 import com.fazziclay.opentoday.app.items.QuickNoteReceiver
+import com.fazziclay.opentoday.app.settings.ActionBarPosition
 import com.fazziclay.opentoday.app.settings.Option
 import com.fazziclay.opentoday.app.settings.SettingsManager
 import com.fazziclay.opentoday.databinding.ActivityMainBinding
@@ -75,6 +76,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
     private lateinit var currentDateRunnable: Runnable
     private lateinit var currentDateCalendar: GregorianCalendar
     private lateinit var settingsAnalogClockCallback: SettingsManager.OptionChangedCallback
+    private lateinit var settingsActionbarCallback: SettingsManager.OptionChangedCallback
     private var activitySettingsStack: Stack<ActivitySettings> = Stack()
     private var debugView = false
     private var debugHandler: Handler? = null
@@ -132,8 +134,34 @@ class MainActivity : AppCompatActivity(), UIRoot {
         PROFILER.swap("phase2")
         val theme = SettingsManager.THEME.get(settingsManager)
         UI.setTheme(theme)
+
         setSupportActionBar(binding.toolbar)
         supportActionBar?.hide()
+        settingsActionbarCallback = SettingsManager.OptionChangedCallback { option, value ->
+            if (option == SettingsManager.ACTIONBAR_POSITION) {
+                val actionParams = (binding.toolbar.layoutParams as RelativeLayout.LayoutParams)
+                val dateParams = (binding.currentDateDate.layoutParams as RelativeLayout.LayoutParams)
+                val timeParams = (binding.currentDateTime.layoutParams as RelativeLayout.LayoutParams)
+                val containerParams = (binding.mainActivityRootFragmentContainer.layoutParams as RelativeLayout.LayoutParams)
+                val pos = value as ActionBarPosition
+                if (pos == ActionBarPosition.TOP) {
+                    actionParams.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+                    dateParams.addRule(RelativeLayout.BELOW, binding.toolbar.id)
+                    timeParams.addRule(RelativeLayout.BELOW, binding.toolbar.id)
+                    containerParams.removeRule(RelativeLayout.ABOVE)
+                } else {
+                    actionParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+                    dateParams.removeRule(RelativeLayout.BELOW)
+                    timeParams.removeRule(RelativeLayout.BELOW)
+                    containerParams.addRule(RelativeLayout.ABOVE, binding.toolbar.id)
+                }
+            }
+            return@OptionChangedCallback Status.NONE
+        }
+        settingsActionbarCallback.run(SettingsManager.ACTIONBAR_POSITION, SettingsManager.ACTIONBAR_POSITION.get(settingsManager))
+        settingsManager.callbacks.addCallback(CallbackImportance.DEFAULT, settingsActionbarCallback)
+
+
         debugRunnable = Runnable {
             binding.debugInfo.text = ColorUtil.colorize(
                 Debug.getDebugInfoText(),
@@ -324,6 +352,9 @@ class MainActivity : AppCompatActivity(), UIRoot {
         app.telemetry.send(UiClosedLPacket())
         currentDateHandler.removeCallbacks(currentDateRunnable)
         app.importantDebugCallbacks.removeCallback(importantDebugCallback)
+        settingsManager.callbacks.removeCallback(settingsAnalogClockCallback)
+        settingsManager.callbacks.removeCallback(settingsActionbarCallback)
+
         CrashReportContext.mainActivityDestroy()
         CrashReportContext.FRONT.pop()
     }
@@ -543,10 +574,13 @@ class MainActivity : AppCompatActivity(), UIRoot {
 
         Logger.i(TAG, "update activity settings: $settings")
 
-        viewVisible(binding.currentDateDate, settings.isClockVisible, View.GONE)
-        viewVisible(binding.currentDateTime, settings.isClockVisible, View.GONE)
-        var analogClockVisible = (settings.isClockVisible && SettingsManager.ANALOG_CLOCK_ENABLE.get(settingsManager)) || settings.isAnalogClockForceVisible;
-        if (settings.isAnalogClockForceHidden) analogClockVisible = false
+        val canon = settings.isShowCanonicalClock && SettingsManager.ACTIONBAR_POSITION[settingsManager] == ActionBarPosition.BOTTOM;
+        val clockVisible = settings.isClockVisible || (canon)
+        var analogClockVisible = (settings.isClockVisible && SettingsManager.ANALOG_CLOCK_ENABLE.get(settingsManager)) || settings.isAnalogClockForceVisible
+        if (settings.isAnalogClockForceHidden || canon) analogClockVisible = false
+
+        viewVisible(binding.currentDateDate, clockVisible, View.GONE)
+        viewVisible(binding.currentDateTime, clockVisible, View.GONE)
         viewVisible(binding.analogClock, analogClockVisible, View.GONE)
         binding.currentDateDate.isEnabled = settings.isDateClickCalendar
         binding.currentDateTime.isEnabled = settings.isDateClickCalendar

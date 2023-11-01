@@ -431,4 +431,6 @@
     <string name="fragment_itemNotification_title">Уведомление</string>
     <string name="fragment_itemNotification_delete_title">Удалить уведомление?</string>
     <string name="fragment_itemNotification_delete_apply">Удалить</string>
+    <string name="fragment_itemEditor_module_item_notifications_cantOpenWhileCreate">Невозможно открыть редактор уведомления потому что айтем ещё не сохранён</string>
+    <string name="settings_actionbarInBottom">Панель действий внизу экрана</string>
 </resources>

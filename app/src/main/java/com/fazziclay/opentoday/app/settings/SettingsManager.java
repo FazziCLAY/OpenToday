@@ -62,6 +62,7 @@ public class SettingsManager {
     public static final BooleanOption                IS_FIRST_LAUNCH                 = registerOption(new BooleanOption("is_first_launch",                  false,  true));
     public static final StringOption                 PLUGINS                         = registerOption(new StringOption("plugins",                           true,   "")); // empty string is default
     public static final BooleanOption                TOOLBAR_AUTOMATICALLY_CLOSE     = registerOption(new BooleanOption("toolbar.auto_close",               false,  true));
+    public static final EnumOption<ActionBarPosition>      ACTIONBAR_POSITION        = registerOption(new EnumOption<>("actionbar.position",                false,  ActionBarPosition.TOP));
 
 
     // object

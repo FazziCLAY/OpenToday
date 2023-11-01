@@ -32,6 +32,7 @@ import com.fazziclay.opentoday.app.PinCodeManager.ValidationException
 import com.fazziclay.opentoday.app.items.QuickNoteReceiver
 import com.fazziclay.opentoday.app.items.item.ItemType
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry
+import com.fazziclay.opentoday.app.settings.ActionBarPosition
 import com.fazziclay.opentoday.app.settings.BooleanOption
 import com.fazziclay.opentoday.app.settings.SettingsManager
 import com.fazziclay.opentoday.app.settings.enums.DateAndTimePreset
@@ -199,6 +200,14 @@ class SettingsFragment : Fragment() {
         viewClick(binding.addItemsToTop, Runnable {
             sm.itemAddPosition = if (binding.addItemsToTop.isChecked) ItemAddPosition.TOP else ItemAddPosition.BOTTOM
             sm.save()
+        })
+
+        // action bar position
+        binding.actionbarInBottom.isChecked = SettingsManager.ACTIONBAR_POSITION[sm] == ActionBarPosition.BOTTOM
+        viewClick(binding.actionbarInBottom, Runnable {
+            SettingsManager.ACTIONBAR_POSITION[sm] = if (binding.actionbarInBottom.isChecked) ActionBarPosition.BOTTOM else ActionBarPosition.TOP
+            sm.save()
+            UI.rootBack(this)
         })
 
         attachCheckBox(binding.parseTimeFromQuickNote, SettingsManager.QUICK_NOTE_PARSE_TIME_FROM_ITEM)

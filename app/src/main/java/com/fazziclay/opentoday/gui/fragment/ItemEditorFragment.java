@@ -282,6 +282,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
         UI.getUIRoot(this).pushActivitySettings(a -> {
             a.setNotificationsVisible(false);
             a.setClockVisible(false);
+            a.setShowCanonicalClock(true);
             a.setToolbarSettings(ActivitySettings.ToolbarSettings.createBack(EnumsRegistry.INSTANCE.nameResId(ItemsRegistry.REGISTRY.get(item.getClass()).getItemType()), this::cancelRequest)
                     .setMenu(R.menu.menu_item_editor, menu -> {
                         menu.findItem(R.id.exportItem)
@@ -617,8 +618,12 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
                     b.time.setText(TimeUtil.convertToHumanTime(d.getTime(), ConvertMode.HHMM));
                     b.notificationId.setText("#" + d.getNotificationId());
                     b.getRoot().setOnClickListener(view -> {
-                        disableStateRestoreOnEdits();
-                        navigationHost.navigate(ItemNotificationFragment.create(getArgItemId(), notification.getId()), true);
+                        if (mode == MODE_EDIT) {
+                            disableStateRestoreOnEdits();
+                            navigationHost.navigate(ItemNotificationFragment.create(getArgItemId(), notification.getId()), true);
+                        } else {
+                            Toast.makeText(requireContext(), R.string.fragment_itemEditor_module_item_notifications_cantOpenWhileCreate, Toast.LENGTH_SHORT).show();
+                        }
                     });
                 }
             }
