@@ -117,7 +117,7 @@
     <string name="fragment_itemEditor_cancel_unsaved_title">Несохранённые изменения</string>
     <string name="fragment_itemEditor_checkbox_isChecked">Выполнено</string>
     <string name="fragment_itemEditor_delete">Удалить</string>
-    <string name="fragment_itemEditor_delete_apply">Удалить!</string>
+    <string name="fragment_itemEditor_delete_apply">Удалить</string>
     <string name="fragment_itemEditor_delete_cancel">Отмена</string>
     <string name="fragment_itemEditor_delete_message">Удалить этот айтем а также %d его дочерних элементов?</string>
     <string name="fragment_itemEditor_delete_title">Удалить?</string>
@@ -426,4 +426,5 @@
     <string name="transform_selectTypeDialog_message" />
     <string name="transform_selectTypeDialog_title">Выберите тип результата</string>
     <string name="menu_itemEditor_deleteItem">Удалить</string>
+    <string name="menu_itemEditor_saveItem">Сохранить</string>
 </resources>

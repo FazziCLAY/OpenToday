@@ -82,7 +82,7 @@
         android:layout_height="wrap_content"
         android:minHeight="0sp"
         android:layout_below="@id/minimize"
-        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@id/viewMinHeight"
         android:text="@string/fragment_itemEditor_module_item_selected" />
 
     <HorizontalScrollView
