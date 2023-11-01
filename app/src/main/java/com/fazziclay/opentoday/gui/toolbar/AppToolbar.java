@@ -557,6 +557,8 @@ public class AppToolbar {
     }
 
     private class ItemTypeViewHolder extends RecyclerView.ViewHolder {
+        private boolean show;
+        private final ToolbarMoreItemsItemBinding b;
         private final TextView name;
         private final Button create;
         private final Button add;
@@ -564,15 +566,23 @@ public class AppToolbar {
 
         public ItemTypeViewHolder(ViewGroup parent) {
             super(new FrameLayout(activity));
-            ToolbarMoreItemsItemBinding b = ToolbarMoreItemsItemBinding.inflate(activity.getLayoutInflater(), parent, false);
+            b = ToolbarMoreItemsItemBinding.inflate(activity.getLayoutInflater(), parent, false);
             this.name = b.name;
             this.create = b.create;
             this.add = b.add;
             this.description = b.description;
-            ((FrameLayout) itemView).addView(b.getRoot());
+            this.show = false;
         }
 
-        public void clear() {
+        public void show() {
+            if (!show) {
+                show = true;
+                ((FrameLayout) itemView).addView(b.getRoot());
+            }
+        }
+
+        public void hide() {
+            show = false;
             ((FrameLayout) itemView).removeAllViews();
         }
     }
@@ -608,6 +618,7 @@ public class AppToolbar {
                 ItemsRegistry.ItemInfo itemInfo = ItemsRegistry.REGISTRY.getAllItems()[position];
 
                 if (itemInfo.isCompatibility(app.getFeatureFlags())) {
+                    holder.show();
                     holder.name.setText(EnumsRegistry.INSTANCE.nameResId(itemInfo.getItemType()));
                     viewClick(holder.create, () -> {
                         rootNavigationHost.navigate(ItemEditorFragment.create(ItemUtil.getId(itemsStorage), itemInfo.getClassType(), getAddItemPos(settingsManager.getItemAddPosition())), true);
@@ -627,7 +638,7 @@ public class AppToolbar {
                     });
                     viewClick(holder.description, () -> showItemDescriptionDialog(itemInfo));
                 } else {
-                    holder.clear();
+                    holder.hide();
                 }
             }
 

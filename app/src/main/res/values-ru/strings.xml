@@ -427,4 +427,8 @@
     <string name="transform_selectTypeDialog_title">Выберите тип результата</string>
     <string name="menu_itemEditor_deleteItem">Удалить</string>
     <string name="menu_itemEditor_saveItem">Сохранить</string>
+    <string name="menu_itemNotification_delete">Удалить</string>
+    <string name="fragment_itemNotification_title">Уведомление</string>
+    <string name="fragment_itemNotification_delete_title">Удалить уведомление?</string>
+    <string name="fragment_itemNotification_delete_apply">Удалить</string>
 </resources>
