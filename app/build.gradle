@@ -4,13 +4,13 @@ plugins {
 }
 
 // =====
-var isDev = true
-var beta = false
+var isDev = false
+var beta = true
 var appIdSuffix = "" // EMPTY FOR RELEASES!!!!
-var verBuild = 140
-var verName = "1.2+[patches:[fix-tick] + [special_widget] + [fixes-itemstorageviewer] + [item-sleepTime] + [notification-manager] + [tags]"
-var verBranch = "fixes-itemstorageviewer + special_widget + item-sleepTime + notification-manager (currently main)+ tags" // use "RELEASE" for releases versions
-var verReleaseTime = 1689778441 // in seconds
+var verBuild = 144
+var verName = "1.2.3"//"""1.2+[patches:[fix-tick] + [special_widget] + [fixes-itemstorageviewer] + [item-sleepTime] + [notification-manager] + [tags]"
+var verBranch = "tags"//"fixes-itemstorageviewer + special_widget + item-sleepTime + notification-manager (currently main)+ tags" // use "RELEASE" for releases versions
+var verReleaseTime = 1689778442 // in seconds
 
 android {
     compileSdk 34
@@ -51,6 +51,9 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
+    packagingOptions {
+        resources.excludes.add("META-INF/*")
+    }
     namespace 'com.fazziclay.opentoday'
 }
 
@@ -66,8 +69,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.10.0'
     implementation 'com.google.code.gson:gson:2.8.9'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.navigation:navigation-fragment:2.7.4'
-    implementation 'androidx.navigation:navigation-ui:2.7.4'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.7.4'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.7.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation project(path: ':api')

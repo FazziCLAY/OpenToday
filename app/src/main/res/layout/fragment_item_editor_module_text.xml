@@ -11,7 +11,7 @@
         android:layout_alignTop="@id/openTextEditor"
         android:layout_alignBottom="@id/openTextEditor"
         android:layout_toStartOf="@id/openTextEditor"
-        android:gravity="bottom"
+        android:gravity="center_vertical"
         android:minHeight="23sp"
         android:text="@string/fragment_itemEditor_module_text_text_title"/>
 
@@ -19,7 +19,7 @@
         android:id="@+id/openTextEditor"
         android:layout_width="48sp"
         android:layout_height="40sp"
-        android:src="@android:drawable/ic_menu_edit"
+        android:src="@drawable/edit_24px"
         android:layout_alignParentEnd="true"
         android:backgroundTint="#44000000"
         android:contentDescription="@string/fragment_itemEditor_module_text_openTextEditor" />

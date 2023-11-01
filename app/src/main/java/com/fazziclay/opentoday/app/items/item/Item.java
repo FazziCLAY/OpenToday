@@ -11,6 +11,7 @@ import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.app.items.callback.ItemCallback;
+import com.fazziclay.opentoday.app.items.notification.DayItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationCodecUtil;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationUtil;
@@ -291,6 +292,13 @@ public abstract class Item implements Unique, Tickable {
             notification.detach();
             this.notifications.remove(notification);
         }
+    }
+
+    public ItemNotification getNotificationById(UUID notifyId) {
+        for (ItemNotification notification : notifications) {
+            if (notifyId.equals(notification.getId())) return notification;
+        }
+        return null;
     }
 
     public void removeAllNotifications() {

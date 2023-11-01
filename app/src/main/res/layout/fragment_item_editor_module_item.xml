@@ -13,36 +13,24 @@
         android:layout_height="wrap_content"
         android:text="@string/fragment_itemEditor_module_item_notifications" />
 
-    <TextView
-        android:id="@+id/notifications_preview"
-        android:layout_width="match_parent"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/notifications"
         android:layout_below="@id/notifications_title"
-        android:layout_height="wrap_content" />
-
-    <HorizontalScrollView
-        android:id="@+id/buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/notifications_preview"
-        android:minHeight="0sp">
+        android:minHeight="50sp" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minHeight="0sp">
-
-            <Button
-                android:id="@+id/edit_notifications"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/fragment_itemEditor_module_item_editNotifications"
-                tools:ignore="ButtonStyle" />
-        </LinearLayout>
-    </HorizontalScrollView>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addNotification"
+        android:layout_margin="3sp"
+        android:layout_alignEnd="@id/notifications"
+        android:layout_width="wrap_content"
+        android:src="@drawable/add_24px"
+        android:layout_height="wrap_content" />
 
     <com.fazziclay.opentoday.util.opentodaybutton.MaterialButtonWithColorIndicator
         android:id="@+id/itemBackgroundColor"
-        android:layout_below="@id/buttons"
+        android:layout_below="@id/notifications"
         android:text="@string/fragment_itemEditor_module_item_backgroundColor_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

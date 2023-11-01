@@ -18,8 +18,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -29,6 +31,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
@@ -67,12 +71,12 @@ import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleItemBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleLongtextBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleMathgameBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleTextBinding;
+import com.fazziclay.opentoday.databinding.ItemEditorFragmentModuleItemNotificationBinding;
 import com.fazziclay.opentoday.gui.ActivitySettings;
 import com.fazziclay.opentoday.gui.ColorPicker;
 import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.gui.ItemTagGui;
 import com.fazziclay.opentoday.gui.UI;
-import com.fazziclay.opentoday.gui.dialog.DialogItemNotificationsEditor;
 import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember;
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
@@ -81,6 +85,7 @@ import com.fazziclay.opentoday.util.ColorUtil;
 import com.fazziclay.opentoday.util.EnumUtil;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.MinTextWatcher;
+import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 import com.fazziclay.opentoday.util.time.ConvertMode;
@@ -556,8 +561,67 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
             viewClick(binding.minimize, onEditStart);
             //
 
-            viewClick(binding.editNotifications, () -> new DialogItemNotificationsEditor(activity, item, () -> updateNotificationPreview(item, activity)).show());
-            updateNotificationPreview(item, activity);
+            viewClick(binding.addNotification, () -> {
+
+                DayItemNotification dayItemNotification = new DayItemNotification();
+                dayItemNotification.setNotificationId(RandomUtil.nextIntPositive());
+                dayItemNotification.setLatestDayOfYear(new GregorianCalendar().get(Calendar.DAY_OF_YEAR));
+                item.addNotifications(dayItemNotification);
+                item.save();
+
+                binding.notifications.getAdapter().notifyItemInserted(item.getNotifications().length);
+            });
+
+            binding.notifications.setAdapter(new RecyclerView.Adapter<NotificationHolder>() {
+                @NonNull
+                @Override
+                public NotificationHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                    return new NotificationHolder(parent);
+                }
+
+                @Override
+                public void onBindViewHolder(@NonNull NotificationHolder holder, int position) {
+                    holder.bind(item.getNotifications()[position]);
+                }
+
+                @Override
+                public int getItemCount() {
+                    return item.getNotifications().length;
+                }
+            });
+            binding.notifications.setLayoutManager(new LinearLayoutManager(requireContext()));
+        }
+
+        @Override
+        public void onResume() {
+            binding.notifications.getAdapter().notifyDataSetChanged();
+        }
+
+        class NotificationHolder extends RecyclerView.ViewHolder {
+            private final FrameLayout frameLayout;
+            private final ItemEditorFragmentModuleItemNotificationBinding b;
+
+            public NotificationHolder(ViewGroup parent) {
+                super(new FrameLayout(parent.getContext()));
+                frameLayout = ((FrameLayout) itemView);
+                frameLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                b = ItemEditorFragmentModuleItemNotificationBinding.inflate(getActivity().getLayoutInflater());
+                var params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.setMargins(3, 5, 3, 5);
+                b.getRoot().setLayoutParams(params);
+                frameLayout.addView(b.getRoot());
+            }
+
+            public void bind(ItemNotification notification) {
+                if (notification instanceof DayItemNotification d) {
+                    b.time.setText(TimeUtil.convertToHumanTime(d.getTime(), ConvertMode.HHMM));
+                    b.notificationId.setText("#" + d.getNotificationId());
+                    b.getRoot().setOnClickListener(view -> {
+                        disableStateRestoreOnEdits();
+                        navigationHost.navigate(ItemNotificationFragment.create(getArgItemId(), notification.getId()), true);
+                    });
+                }
+            }
         }
 
         private void updateTags() {
@@ -569,19 +633,6 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
                 binding.itemTagsGroup.addView(view);
             }
             binding.itemTagsGroup.addView(binding.addTag);
-        }
-
-        private void updateNotificationPreview(Item item, Activity activity) {
-            StringBuilder text = new StringBuilder();
-            boolean exists = false;
-            for (ItemNotification notification : item.getNotifications()) {
-                if (notification instanceof DayItemNotification d) {
-                    text.append(String.format("#%s - %s - %s", d.getNotificationId(), activity.getString(R.string.itemNotification_day), TimeUtil.convertToHumanTime(d.getTime(), ConvertMode.HHMM))).append("\n");
-                }
-                exists = true;
-            }
-            binding.notificationsPreview.setText(text.subSequence(0, Math.max(text.length()-1, 0)));
-            viewVisible(binding.notificationsPreview, exists, View.GONE);
         }
 
         private void updateTextColorIndicator(Activity activity) {

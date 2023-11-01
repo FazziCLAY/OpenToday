@@ -433,4 +433,8 @@
     <string name="transform_selectTypeDialog_title">Select result type</string>
     <string name="menu_itemEditor_deleteItem">Delete</string>
     <string name="menu_itemEditor_saveItem">Save</string>
+    <string name="menu_itemNotification_delete">Delete</string>
+    <string name="fragment_itemNotification_title">Notification</string>
+    <string name="fragment_itemNotification_delete_title">Delete notification?</string>
+    <string name="fragment_itemNotification_delete_apply">Delete</string>
 </resources>

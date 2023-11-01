@@ -53,8 +53,9 @@
 
         <item name="item_selectionForegroundColor">#B2EA6512</item>
         <item name="toolbar_background">#8C000000</item>
-        <item name="itemFilterState_true">#19FF00</item>
+        <item name="itemFilterState_true">#13C500</item>
         <item name="itemFilterState_false">#FF0000</item>
+        <item name="itemFilterState_iconColor">#FFFFFF</item>
         <item name="opentoday_icon_tint">#0F0F0F</item>
 
         <item name="button_settings_openAdvancedSettingsOfOption">#00B0FF</item>

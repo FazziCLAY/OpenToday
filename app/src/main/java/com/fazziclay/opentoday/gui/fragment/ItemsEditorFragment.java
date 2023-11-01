@@ -52,7 +52,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class ItemsEditorFragment extends Fragment {
-    private static final int RES_FILTER_BUTTON_IMAGE = android.R.drawable.ic_menu_manage;
+    private static final int RES_FILTER_BUTTON_IMAGE = R.drawable.filter_alt_24px;
     private static final String EXTRA_TAB_ID = "items_editor_fragment_tabId";
     private static final String EXTRA_ITEM_ID = "items_editor_fragment_itemId";
     private static final String EXTRA_PREVIEW_MODE = "items_editor_fragment_previewMode";
@@ -345,6 +345,7 @@ public class ItemsEditorFragment extends Fragment {
 
             ImageButton filter = new ImageButton(view.getContext());
             filter.setImageResource(RES_FILTER_BUTTON_IMAGE);
+            filter.setImageTintList(ColorStateList.valueOf(ResUtil.getAttrColor(requireContext(), R.attr.itemFilterState_iconColor)));
             filterGroup_setEditButtonBackground(filter, item);
             filter.setOnClickListener(v -> editFilterGroupItemFilter(filterGroupItem, item));
             layout.addView(filter);

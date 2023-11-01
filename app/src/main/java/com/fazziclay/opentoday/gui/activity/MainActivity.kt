@@ -387,6 +387,9 @@ class MainActivity : AppCompatActivity(), UIRoot {
 
         // Analog
         if (SettingsManager.ANALOG_CLOCK_ENABLE.get(settingsManager) || getCurrentActivitySettings().isAnalogClockForceVisible) {
+            if (getCurrentActivitySettings().isAnalogClockForceHidden) {
+                return
+            }
             val hour = currentDateCalendar.get(Calendar.HOUR)
             val minute = currentDateCalendar.get(Calendar.MINUTE)
             val second = currentDateCalendar.get(Calendar.SECOND)
@@ -542,7 +545,9 @@ class MainActivity : AppCompatActivity(), UIRoot {
 
         viewVisible(binding.currentDateDate, settings.isClockVisible, View.GONE)
         viewVisible(binding.currentDateTime, settings.isClockVisible, View.GONE)
-        viewVisible(binding.analogClock, (settings.isClockVisible && SettingsManager.ANALOG_CLOCK_ENABLE.get(settingsManager)) || settings.isAnalogClockForceVisible, View.GONE)
+        var analogClockVisible = (settings.isClockVisible && SettingsManager.ANALOG_CLOCK_ENABLE.get(settingsManager)) || settings.isAnalogClockForceVisible;
+        if (settings.isAnalogClockForceHidden) analogClockVisible = false
+        viewVisible(binding.analogClock, analogClockVisible, View.GONE)
         binding.currentDateDate.isEnabled = settings.isDateClickCalendar
         binding.currentDateTime.isEnabled = settings.isDateClickCalendar
         viewVisible(binding.notifications, settings.isNotificationsVisible || Debug.DEBUG_ALWAYS_SHOW_UI_NOTIFICATIONS, View.GONE)

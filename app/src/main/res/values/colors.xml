@@ -49,6 +49,7 @@
     <attr name="button_applyAction" format="color" />
     <attr name="button_dangerActon_background" format="color" />
     <attr name="button_importExport" format="color" />
+    <attr name="itemFilterState_iconColor" format="color" />
 
 
 </resources>
