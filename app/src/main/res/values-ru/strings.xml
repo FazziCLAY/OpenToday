@@ -149,6 +149,7 @@
     <string name="fragment_itemEditor_module_item_minimize">Уменьшить</string>
     <string name="fragment_itemEditor_module_item_notifications">Уведомления</string>
     <string name="fragment_itemEditor_module_item_notifications_cantOpenWhileCreate">Невозможно открыть редактор уведомления потому что айтем ещё не сохранён</string>
+    <string name="fragment_itemEditor_module_item_notifications_notFound">Здесь нету уведомлений.\nИспользуйте кнопку (+) для добавления</string>
     <string name="fragment_itemEditor_module_item_selected">Выделение</string>
     <string name="fragment_itemEditor_module_longtext_openTextEditor">Открыть редактор текста</string>
     <string name="fragment_itemEditor_module_longtext_textColor_dialog_apply">Применить</string>

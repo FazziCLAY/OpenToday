@@ -30,6 +30,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -572,6 +573,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
                 item.save();
 
                 binding.notifications.getAdapter().notifyItemInserted(item.getNotifications().length);
+                updateNotificationNotFoundText();
             });
 
             binding.notifications.setAdapter(new RecyclerView.Adapter<NotificationHolder>() {
@@ -592,11 +594,38 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
                 }
             });
             binding.notifications.setLayoutManager(new LinearLayoutManager(requireContext()));
+            new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.DOWN | ItemTouchHelper.UP, ItemTouchHelper.LEFT) {
+                @Override
+                public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                    int positionFrom = viewHolder.getAdapterPosition();
+                    int positionTo = target.getAdapterPosition();
+
+                    item.moveNotifications(positionFrom, positionTo);
+                    item.save();
+                    binding.notifications.getAdapter().notifyItemMoved(positionFrom, positionTo);
+                    return true;
+                }
+
+                @Override
+                public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                    int pos = viewHolder.getAdapterPosition();
+                    ItemNotificationFragment.showDeleteNotificationDialog(requireContext(), () -> {
+                        ItemNotification notification = item.getNotifications()[pos];
+                        item.removeNotifications(notification);
+                        item.save();
+                        binding.notifications.getAdapter().notifyItemRemoved(pos);
+                        updateNotificationNotFoundText();
+                    });
+                    binding.notifications.getAdapter().notifyItemChanged(pos);
+                }
+            }).attachToRecyclerView(binding.notifications);
+            updateNotificationNotFoundText();
         }
 
         @Override
         public void onResume() {
             binding.notifications.getAdapter().notifyDataSetChanged();
+            updateNotificationNotFoundText();
         }
 
         class NotificationHolder extends RecyclerView.ViewHolder {
@@ -628,6 +657,10 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
                     });
                 }
             }
+        }
+
+        private void updateNotificationNotFoundText() {
+            viewVisible(binding.notificationsNotFounded, !item.isNotifications(), View.GONE);
         }
 
         private void updateTags() {

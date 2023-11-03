@@ -316,6 +316,15 @@ public abstract class Item implements Unique, Tickable {
         return null;
     }
 
+    public void moveNotifications(int positionFrom, int positionTo) {
+        if (!(positionFrom >= 0 && positionTo >= 0 && positionFrom < notifications.size() && positionTo < notifications.size())) {
+            throw new IndexOutOfBoundsException("failed move notifications... from=" + positionFrom + "; to=" + positionTo);
+        }
+        ItemNotification itemNotification = notifications.get(positionFrom);
+        notifications.remove(itemNotification);
+        notifications.add(positionTo, itemNotification);
+    }
+
     public void removeAllNotifications() {
         removeNotifications(getNotifications());
     }

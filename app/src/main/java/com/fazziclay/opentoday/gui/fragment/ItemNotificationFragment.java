@@ -56,6 +56,7 @@ public class ItemNotificationFragment extends Fragment implements ActivitySettin
     private Item item;
     private DayItemNotification notification;
 
+
     private DialogItemNotificationBinding binding;
 
     @Override
@@ -96,15 +97,19 @@ public class ItemNotificationFragment extends Fragment implements ActivitySettin
     }
 
     private void deleteRequest() {
+        showDeleteNotificationDialog(context, () -> {
+            item.removeNotifications(notification);
+            item.save();
+            UI.rootBack(this);
+        });
+    }
+
+    public static void showDeleteNotificationDialog(Context context, Runnable onDelete) {
         new AlertDialog.Builder(context)
                 .setIcon(R.drawable.delete_24px)
                 .setTitle(R.string.fragment_itemNotification_delete_title)
                 .setNegativeButton(R.string.abc_cancel, null)
-                .setPositiveButton(R.string.fragment_itemNotification_delete_apply, (ign1, ign2) -> {
-                    item.removeNotifications(notification);
-                    item.save();
-                    UI.rootBack(this);
-                })
+                .setPositiveButton(R.string.fragment_itemNotification_delete_apply, (ign1, ign2) -> onDelete.run())
                 .show();
     }
 

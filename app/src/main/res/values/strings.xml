@@ -155,6 +155,7 @@
     <string name="fragment_itemEditor_module_item_minimize">Minimize</string>
     <string name="fragment_itemEditor_module_item_notifications">Notifications</string>
     <string name="fragment_itemEditor_module_item_notifications_cantOpenWhileCreate">It is not possible to open the notification editor because the item has not been saved yet</string>
+    <string name="fragment_itemEditor_module_item_notifications_notFound">No notificaitons here!\nUse (+) button to add...</string>
     <string name="fragment_itemEditor_module_item_selected">Selected</string>
     <string name="fragment_itemEditor_module_longtext_openTextEditor">Open text editor</string>
     <string name="fragment_itemEditor_module_longtext_textColor_dialog_apply">Apply</string>
