@@ -57,7 +57,7 @@ class AboutFragment : Fragment(), ActivitySettingsMember {
         binding.textVersion.text = App.VERSION_NAME
         binding.textReleaseTime.text = getReleaseTime()
         binding.textBranch.text = App.VERSION_BRANCH
-        if (!App.VERSION_BRANCH.equals("RELEASE", ignoreCase = true)) binding.textBranch.setTextColor(Color.RED)
+        if (!App.VERSION_BRANCH.equals("main", ignoreCase = true)) binding.textBranch.setTextColor(Color.RED)
         binding.textPackage.text = App.APPLICATION_ID
         viewClick(binding.aboutText, this::manuallySecretSettingsInteract)
         viewClick(binding.sourceCode, Runnable { NetworkUtil.openBrowser(requireActivity(), LINK_OPENSOURCE) })
