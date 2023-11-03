@@ -40,4 +40,15 @@
         android:paddingBottom="5sp"
         android:paddingTop="2sp" />
 
+    <ImageView
+        android:id="@+id/indicatorNotification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_margin="3sp"
+        tools:visibility="visible"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/externalEditor"
+        android:src="@drawable/notifications_24px" />
+
 </RelativeLayout>

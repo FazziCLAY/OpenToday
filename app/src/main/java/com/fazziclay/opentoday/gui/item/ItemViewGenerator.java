@@ -252,6 +252,7 @@ public class ItemViewGenerator {
 
         // Text
         applyTextItemToTextView(item, binding.title, behavior, destroyer, previewMode);
+        applyItemNotificationIndicator(item, binding.indicatorNotification, behavior, destroyer, previewMode);
         gameInterface.init();
 
         binding.keyboard.setEnabled(!previewMode);
@@ -293,7 +294,10 @@ public class ItemViewGenerator {
                                            boolean previewMode,
                                            Destroyer destroyer) {
         final ItemSleepTimeBinding binding = ItemSleepTimeBinding.inflate(this.layoutInflater, parent, false);
+
         applyTextItemToTextView(item, binding.title, behavior, destroyer, previewMode);
+        applyItemNotificationIndicator(item, binding.indicatorNotification, behavior, destroyer, previewMode);
+
         final String s = item.getSleepTextPattern()
                 .replace("$(elapsed)", TimeUtil.convertToHumanTime(item.getElapsedTime(), ConvertMode.HHMM))
                 .replace("$(elapsedToStartSleep)", TimeUtil.convertToHumanTime(item.getElapsedTimeToStartSleep(), ConvertMode.HHMM))
@@ -318,6 +322,7 @@ public class ItemViewGenerator {
         // Text
         applyTextItemToTextView(item, binding.title, behavior, destroyer, previewMode);
         applyLongTextItemToLongTextView(item, binding.longText);
+        applyItemNotificationIndicator(item, binding.indicatorNotification, behavior, destroyer, previewMode);
 
         return binding.getRoot();
     }
@@ -329,6 +334,7 @@ public class ItemViewGenerator {
 
         // Title
         applyTextItemToTextView(item, binding.title, behavior, destroyer, previewMode);
+        applyItemNotificationIndicator(item, binding.indicatorNotification, behavior, destroyer, previewMode);
 
         // Debugs
         binding.longText.setText(colorize(item.getDebugStat(), Color.WHITE));
@@ -343,6 +349,7 @@ public class ItemViewGenerator {
 
         // Text
         applyTextItemToTextView(item, binding.title, behavior, destroyer, previewMode);
+        applyItemNotificationIndicator(item, binding.indicatorNotification, behavior, destroyer, previewMode);
 
         // FilterGroup
         if (!behavior.isRenderMinimized(item)) {
@@ -382,6 +389,7 @@ public class ItemViewGenerator {
 
         // Text
         applyTextItemToTextView(item, binding.title, behavior, destroyer, previewMode);
+        applyItemNotificationIndicator(item, binding.indicatorNotification, behavior, destroyer, previewMode);
 
         // Group
         if (!behavior.isRenderMinimized(item)) {
@@ -410,6 +418,7 @@ public class ItemViewGenerator {
 
         // Title
         applyTextItemToTextView(item, binding.title, behavior, destroyer, previewMode);
+        applyItemNotificationIndicator(item, binding.indicatorNotification, behavior, destroyer, previewMode);
 
         // Counter
         viewClick(binding.up, () -> runFastChanges(behavior, R.string.item_counter_fastChanges_up, item::up));
@@ -428,6 +437,7 @@ public class ItemViewGenerator {
 
         // Text
         applyTextItemToTextView(item, binding.title, behavior, destroyer, previewMode);
+        applyItemNotificationIndicator(item, binding.indicatorNotification, behavior, destroyer, previewMode);
 
         // CycleList
         binding.next.setEnabled(!previewMode);
@@ -459,6 +469,7 @@ public class ItemViewGenerator {
 
         applyTextItemToTextView(item, binding.text, behavior, destroyer, previewMode);
         applyCheckItemToCheckBoxView(item, binding.checkbox, behavior, previewMode);
+        applyItemNotificationIndicator(item, binding.indicatorNotification, behavior, destroyer, previewMode);
 
         return binding.getRoot();
     }
@@ -469,6 +480,7 @@ public class ItemViewGenerator {
 
         applyTextItemToTextView(item, binding.text, behavior, destroyer, previewMode);
         applyCheckItemToCheckBoxView(item, binding.checkbox, behavior, previewMode);
+        applyItemNotificationIndicator(item, binding.indicatorNotification, behavior, destroyer, previewMode);
 
         return binding.getRoot();
     }
@@ -479,8 +491,13 @@ public class ItemViewGenerator {
 
         // Text
         applyTextItemToTextView(item, binding.title, behavior, destroyer, previewMode);
+        applyItemNotificationIndicator(item, binding.indicatorNotification, behavior, destroyer, previewMode);
 
         return binding.getRoot();
+    }
+
+    private void applyItemNotificationIndicator(final Item item, final View view, ItemViewGeneratorBehavior behavior, Destroyer destroyer, boolean previewMode) {
+        viewVisible(view, behavior.isRenderNotificationIndicator(item), View.GONE);
     }
 
     //

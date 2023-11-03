@@ -189,6 +189,7 @@ public class DeleteItemsFragment extends Fragment implements ActivitySettingsMem
             public void onItemDeleteRequest(Item item) {
                 // do nothing
             }
+
         };
 
         @Override
@@ -225,6 +226,11 @@ public class DeleteItemsFragment extends Fragment implements ActivitySettingsMem
         @Override
         public boolean isRenderMinimized(Item item) {
             return false;
+        }
+
+        @Override
+        public boolean isRenderNotificationIndicator(Item item) {
+            return item.isNotifications();
         }
     }
 }

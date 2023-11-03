@@ -184,6 +184,11 @@ public class AlarmActivity extends AppCompatActivity {
             public boolean isRenderMinimized(Item item) {
                 return item.isMinimize();
             }
+
+            @Override
+            public boolean isRenderNotificationIndicator(Item item) {
+                return item.isNotifications();
+            }
         };
         ItemInterface onItemClick = new ItemInterface() {
             @Override

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,73 +8,73 @@
     android:background="@drawable/shape"
     android:paddingEnd="1sp">
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="Simple Cycle list"
-            android:paddingLeft="5sp"
-            android:textSize="19sp"
-            android:textColor="?attr/item_cycleList_textColor" />
-
-        <Button
-            android:id="@+id/previous"
-            android:layout_width="40sp"
-            android:layout_height="35sp"
-            android:layout_weight="0"
-            android:gravity="center"
-            android:text="b"
-            android:textSize="11sp"
-            tools:ignore="HardcodedText" />
-
-        <Button
-            android:layout_marginStart="2sp"
-            android:id="@+id/next"
-            android:layout_width="40sp"
-            android:layout_height="35sp"
-            android:layout_weight="0"
-            android:gravity="center"
-            android:text="n"
-            android:textSize="11sp"
-            tools:ignore="HardcodedText" />
-
-        <Button
-            android:layout_marginStart="2sp"
-            android:id="@+id/externalEditor"
-            android:layout_width="53sp"
-            android:layout_height="35sp"
-            android:layout_weight="0"
-            android:gravity="center"
-            android:text="Ed"
-            android:textSize="13sp"
-            tools:ignore="HardcodedText" />
-
-    </LinearLayout>
-
-    <FrameLayout
+    <TextView
+        android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="1sp"
-        android:paddingLeft="3sp"
-        android:paddingBottom="2sp"
-        android:paddingRight="2sp">
+        android:minHeight="32sp"
+        tools:text="Simple Cycle list"
+        android:paddingLeft="5sp"
+        android:layout_toStartOf="@id/previous"
+        android:paddingEnd="4sp"
+        android:textSize="19sp"
+        android:textColor="?attr/item_cycleList_textColor" />
 
-        <TextView
-            android:id="@+id/empty"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/item_cycleList_empty" />
+    <Button
+        android:id="@+id/previous"
+        android:layout_width="40sp"
+        android:layout_height="35sp"
+        android:layout_toStartOf="@id/next"
+        android:gravity="center"
+        android:text="b"
+        android:textSize="11sp"
+        tools:ignore="HardcodedText" />
 
-        <FrameLayout
-            android:id="@+id/content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+    <Button
+        android:layout_marginStart="2sp"
+        android:id="@+id/next"
+        android:layout_width="40sp"
+        android:layout_height="35sp"
+        android:layout_toStartOf="@id/externalEditor"
+        android:gravity="center"
+        android:text="n"
+        android:textSize="11sp"
+        tools:ignore="HardcodedText" />
 
-    </FrameLayout>
-</LinearLayout>
+    <Button
+        android:layout_marginStart="2sp"
+        android:id="@+id/externalEditor"
+        android:layout_width="53sp"
+        android:layout_height="35sp"
+        android:layout_alignParentEnd="true"
+        android:gravity="center"
+        android:text="Ed"
+        android:textSize="13sp"
+        tools:ignore="HardcodedText" />
+
+
+    <TextView
+        android:layout_below="@id/title"
+        android:id="@+id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/item_cycleList_empty" />
+
+    <FrameLayout
+        android:id="@+id/content"
+        android:layout_below="@id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/indicatorNotification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_margin="1sp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/externalEditor"
+        android:src="@drawable/notifications_24px" />
+</RelativeLayout>

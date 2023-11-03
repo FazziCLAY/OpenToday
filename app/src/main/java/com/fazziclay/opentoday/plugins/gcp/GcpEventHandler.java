@@ -222,6 +222,11 @@ public class GcpEventHandler extends EventHandler {
                 public boolean isRenderMinimized(Item item) {
                     return true;
                 }
+
+                @Override
+                public boolean isRenderNotificationIndicator(Item item) {
+                    return item.isNotifications();
+                }
             };
             Destroyer destroyer = new Destroyer();
             for (Item item : selectionManager.getItems()) {

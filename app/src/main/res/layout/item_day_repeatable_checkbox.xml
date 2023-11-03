@@ -17,7 +17,7 @@
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Simple Checkbox (Day repeatable)"
+        tools:text="Simple Checkbox (Day repeatable) 1 1 1 1 1 1 "
         android:textSize="19sp"
         android:layout_toStartOf="@id/image"
         android:layout_toEndOf="@id/checkbox"
@@ -29,6 +29,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:src="@android:drawable/ic_menu_rotate"
+        android:layout_marginEnd="2sp"
+        android:src="@drawable/repeat_24px"
         android:contentDescription="@string/item_dayRepeatableCheckbox" />
+
+    <ImageView
+        android:id="@+id/indicatorNotification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_marginEnd="2sp"
+        android:layout_alignStart="@id/image"
+        android:layout_below="@id/image"
+        android:src="@drawable/notifications_24px" />
 </RelativeLayout>

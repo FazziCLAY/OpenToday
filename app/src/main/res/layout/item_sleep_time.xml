@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:backgroundTint="?attr/item_text_background_color"
@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         tools:text="Simple text"
         android:textSize="19sp"
+        android:layout_toStartOf="@id/indicatorNotification"
         android:textColor="?attr/item_text_textColor"
         android:paddingLeft="5sp" />
 
@@ -22,7 +23,18 @@
         android:layout_height="wrap_content"
         tools:text="Simple text"
         android:textSize="17sp"
+        android:layout_below="@id/title"
         android:textColor="?attr/item_text_textColor"
         android:paddingLeft="3sp" />
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/indicatorNotification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_margin="3sp"
+        tools:visibility="visible"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/notifications_24px" />
+
+</RelativeLayout>

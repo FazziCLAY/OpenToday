@@ -247,6 +247,7 @@ public abstract class Item implements Unique, Tickable {
     }
 
     protected void updateStat() {
+        stat.setNotifications(notifications.size());
         stat.tick();
     }
 
@@ -285,6 +286,8 @@ public abstract class Item implements Unique, Tickable {
             notification.attach(notificationController);
             this.notifications.add(notification);
         }
+        updateStat();
+        visibleChanged();
     }
 
     public void removeNotifications(ItemNotification... notifications) {
@@ -292,6 +295,8 @@ public abstract class Item implements Unique, Tickable {
             notification.detach();
             this.notifications.remove(notification);
         }
+        updateStat();
+        visibleChanged();
     }
 
     public ItemNotification getNotificationById(UUID notifyId) {
@@ -303,6 +308,10 @@ public abstract class Item implements Unique, Tickable {
 
     public void removeAllNotifications() {
         removeNotifications(getNotifications());
+    }
+
+    public boolean isNotifications() {
+        return !notifications.isEmpty();
     }
 
     @Getter @NonNull public ItemStat getStat() {

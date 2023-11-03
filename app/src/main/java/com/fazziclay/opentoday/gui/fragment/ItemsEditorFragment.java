@@ -212,6 +212,11 @@ public class ItemsEditorFragment extends Fragment {
             public boolean isRenderMinimized(Item item) {
                 return item.isMinimize();
             }
+
+            @Override
+            public boolean isRenderNotificationIndicator(Item item) {
+                return item.isNotifications();
+            }
         };
 
 
