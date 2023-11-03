@@ -154,6 +154,12 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember,
                                             openFormattingHelp();
                                             return true;
                                         });
+
+                                        MenuItem saveText = menu.findItem(R.id.saveText);
+                                        saveText.setOnMenuItemClickListener(menuItem -> {
+                                            applyAndClose();
+                                            return true;
+                                        });
                                     })
                     );
                 });
@@ -172,6 +178,11 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember,
     public void onDestroy() {
         super.onDestroy();
         Debug.itemTextEditor = null;
+    }
+
+    private void applyAndClose() {
+        setEditableText(binding.editText.getText().toString());
+        UI.rootBack(this);
     }
 
     // return true if block
@@ -253,10 +264,6 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember,
     }
 
     private void setupView() {
-        viewClick(binding.apply, () -> {
-            setEditableText(binding.editText.getText().toString());
-            UI.rootBack(this);
-        });
         binding.editText.setText(getEditableText());
 
         binding.editText.requestFocus();

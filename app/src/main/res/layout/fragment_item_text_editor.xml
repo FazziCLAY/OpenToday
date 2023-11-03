@@ -20,7 +20,7 @@
         android:layout_toEndOf="@id/addSystem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_menu_delete" />
+        android:src="@drawable/delete_24px" />
 
 
     <ImageButton
@@ -37,21 +37,9 @@
         android:layout_height="wrap_content"
         android:src="@drawable/background_replace_24px" />
 
-
-    <ImageButton
-        android:id="@+id/apply"
-        android:layout_marginStart="9sp"
-        android:layout_width="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:src="@drawable/save_24px"
-        android:scaleX="1.2"
-        android:scaleY="1.2"
-        android:backgroundTint="?attr/button_applyAction"
-        android:layout_height="wrap_content" />
-
     <TextView
         android:id="@+id/formattingPreview"
-        android:layout_below="@id/apply"
+        android:layout_below="@id/addSystem"
         android:layout_width="match_parent"
         android:layout_height="110sp" />
 
@@ -65,7 +53,7 @@
         android:layout_height="match_parent"
         tools:text="wergwergfwregrewggergewr\nrwettrewtwetwretrwetrwe"
         android:importantForAutofill="no"
-        android:inputType="textMultiLine|textAutoCorrect|textAutoComplete" />
+        android:inputType="textCapSentences|textMultiLine|textAutoCorrect|textAutoComplete" />
 
 
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/previewFormatting"
         android:checkable="true"
@@ -8,4 +9,9 @@
     <item
         android:id="@+id/helpFormatting"
         android:title="@string/fragment_itemTextEditor_toolbar_menu_helpFormatting" />
+
+    <item android:id="@+id/saveText"
+        android:icon="@drawable/save_24px"
+        app:showAsAction="always"
+        android:title="@string/fragment_itemTextEditor_toolbar_menu_save" />
 </menu>

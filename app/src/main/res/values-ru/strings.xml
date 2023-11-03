@@ -434,4 +434,5 @@
     <string name="fragment_itemEditor_module_item_notifications_cantOpenWhileCreate">Невозможно открыть редактор уведомления потому что айтем ещё не сохранён</string>
     <string name="settings_actionbarInBottom">Панель действий внизу экрана</string>
     <string name="abc_not_success">Провал</string>
+    <string name="fragment_itemTextEditor_toolbar_menu_save">Сохранить</string>
 </resources>

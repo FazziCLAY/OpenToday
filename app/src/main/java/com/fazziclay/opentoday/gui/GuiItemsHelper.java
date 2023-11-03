@@ -43,6 +43,9 @@ public class GuiItemsHelper {
         }
     }
 
+    /**
+     * Set random background color if SettingsManager.ITEM_RANDOM_BACKGROUND enabled
+     */
     public static void applyInitRandomColorIfNeeded(Context context, Item item, SettingsManager sm) {
         if (sm.isRandomItemBackground()) {
             item.setViewCustomBackgroundColor(true);
