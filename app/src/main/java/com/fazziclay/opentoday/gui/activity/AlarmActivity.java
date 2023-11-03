@@ -46,12 +46,14 @@ public class AlarmActivity extends AppCompatActivity {
 
     @NotNull
     public static Intent createIntent(@NotNull Context context, @Nullable UUID previewItem, boolean isPreviewMode, @NotNull String title, boolean sound, int cancelNotifyId) {
-        return new Intent(context, AlarmActivity.class)
+        Intent intent = new Intent(context, AlarmActivity.class)
                 .putExtra("previewItemId", Objects.toString(previewItem, null))
                 .putExtra("previewItemIsPreviewMode", isPreviewMode)
                 .putExtra("title", title)
                 .putExtra("sound", sound)
                 .putExtra("cancelNotifyId", cancelNotifyId);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        return intent;
     }
 
     @Override

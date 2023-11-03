@@ -115,8 +115,9 @@ public class ItemNotificationHandler {
                                 nTitle,
                                 dayItemNotification.isSound(),
                                 dayItemNotification.getNotificationId()),
-                        PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_CANCEL_CURRENT);
+                        PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
                 builder.setFullScreenIntent(pending, true);
+                builder.setCategory(NotificationCompat.CATEGORY_ALARM);
             }
             builder.setUsesChronometer(true);
             NotificationManager systemService = context.getSystemService(NotificationManager.class);

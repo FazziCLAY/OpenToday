@@ -277,7 +277,7 @@
     <string name="menuItem_transform">Трансформация</string>
     <string name="menu_itemEditor_copyItemId">Скопировать Айди</string>
     <string name="menu_itemEditor_export">Экспорт</string>
-    <string name="notificationChannel_crash_title">Ошибкочка</string>
+    <string name="notificationChannel_crash_title">Краши и вылеты</string>
     <string name="notificationChannel_items_title">Айтемы</string>
     <string name="notificationChannel_quickNote_title">Быстрая заметка</string>
     <string name="notification_ui_debugApp">Это отладочный билд! (только для разработки)\nBranch: %s</string>

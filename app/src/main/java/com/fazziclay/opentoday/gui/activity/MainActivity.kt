@@ -7,6 +7,7 @@ import android.app.NotificationManager
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -338,7 +339,9 @@ class MainActivity : AppCompatActivity(), UIRoot {
                     R.string.main_activity_allowFullScreenIntent,
                     Toast.LENGTH_LONG
                 ).show()
-                startActivity(Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT))
+                val intent = Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT)
+                intent.data = Uri.parse("package:${applicationInfo.packageName}")
+                startActivity(intent)
                 return
             }
         }

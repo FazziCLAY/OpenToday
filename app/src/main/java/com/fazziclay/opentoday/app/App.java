@@ -229,7 +229,7 @@ public class App extends Application {
     private void registryNotificationsChannels() {
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
         notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_QUCIKNOTE_CHANNEL, getString(R.string.notificationChannel_quickNote_title), NotificationManager.IMPORTANCE_HIGH));
-        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_ITEMS_CHANNEL, getString(R.string.notificationChannel_items_title), NotificationManager.IMPORTANCE_HIGH));
+        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_ITEMS_CHANNEL, getString(R.string.notificationChannel_items_title), NotificationManager.IMPORTANCE_MAX));
     }
 
 

@@ -282,7 +282,7 @@
     <string name="menuItem_transform">Transform</string>
     <string name="menu_itemEditor_copyItemId">Copy ID</string>
     <string name="menu_itemEditor_export">Export</string>
-    <string name="notificationChannel_crash_title">App Crash</string>
+    <string name="notificationChannel_crash_title">Crashes</string>
     <string name="notificationChannel_items_title">Items</string>
     <string name="notificationChannel_quickNote_title">Quick note</string>
     <string name="notification_ui_debugApp">This is debug build! (for developers only)\nBranch: %s</string>
