@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -30,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.items.callback.ItemCallback;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
@@ -61,6 +63,7 @@ import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.annotation.ForItem;
+import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
 import com.fazziclay.opentoday.util.time.ConvertMode;
 import com.fazziclay.opentoday.util.time.TimeUtil;
@@ -496,8 +499,23 @@ public class ItemViewGenerator {
         return binding.getRoot();
     }
 
-    private void applyItemNotificationIndicator(final Item item, final View view, ItemViewGeneratorBehavior behavior, Destroyer destroyer, boolean previewMode) {
+    private void applyItemNotificationIndicator(final Item item, final ImageView view, ItemViewGeneratorBehavior behavior, Destroyer destroyer, boolean previewMode) {
+        Runnable updateRunnable = () -> {
+            var color = ResUtil.getAttrColor(activity, (item.getCachedNotificationStatus() ? R.attr.item_notificationIndicator_default : R.attr.item_notificationIndicator_disabledByTickPolicy));
+            view.setImageTintList(ColorStateList.valueOf(color));
+        };
+        var itemCallback = new ItemCallback() {
+            @Override
+            public Status cachedNotificationStatusChanged(Item item, boolean isUpdateNotifications) {
+                updateRunnable.run();
+                return Status.NONE;
+            }
+        };
+        item.getItemCallbacks().addCallback(CallbackImportance.LOW, itemCallback);
+        destroyer.add(() -> item.getItemCallbacks().removeCallback(itemCallback));
+
         viewVisible(view, behavior.isRenderNotificationIndicator(item), View.GONE);
+        updateRunnable.run();
     }
 
     //

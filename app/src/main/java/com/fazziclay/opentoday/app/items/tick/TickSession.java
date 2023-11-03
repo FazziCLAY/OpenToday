@@ -3,6 +3,7 @@ package com.fazziclay.opentoday.app.items.tick;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.ItemNotificationHandler;
 import com.fazziclay.opentoday.app.items.Unique;
+import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.profiler.Profiler;
 
@@ -13,6 +14,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Stack;
 import java.util.UUID;
+import java.util.function.Function;
 
 public class TickSession {
     private static final String TAG = "TickSession";
@@ -37,6 +39,7 @@ public class TickSession {
     private boolean saveNeeded = false;
     private boolean importantSaveNeeded = false;
     private final Stack<List<TickTarget>> specifiedTickTarget = new Stack<>();
+    private final Stack<List<Item>> plannedTick = new Stack<>();
     private final List<UUID> whitelist = new ArrayList<>();
     private boolean isWhitelist = false;
 
@@ -71,10 +74,19 @@ public class TickSession {
         return specifiedTickTarget.lastElement().contains(tickTarget);
     }
 
+    public boolean isPlannedTick(Item item) {
+        if (plannedTick.isEmpty()) return false;
+        return plannedTick.lastElement().contains(item);
+    }
+
     public void runWithSpecifiedTickTargets(List<TickTarget> targets, Runnable r) {
         specifiedTickTarget.push(targets);
         r.run();
         specifiedTickTarget.pop();
+    }
+
+    public boolean isTickedWithSpecifiedTickTarget() {
+        return !specifiedTickTarget.isEmpty();
     }
 
     public GregorianCalendar getGregorianCalendar() {
@@ -169,5 +181,20 @@ public class TickSession {
                 ", specifiedTickTarget=" + specifiedTickTarget +
                 ", whitelist=" + whitelist +
                 '}';
+    }
+
+    public <T> void runWithPlannedNormalTick(List<T> list, Function<T, Item> f, Runnable o) {
+        final List<Item> i;
+        if (f == null) {
+            i = (List<Item>) new ArrayList<>(list);
+        } else {
+            i = new ArrayList<>();
+            for (final T t : list) {
+                i.add(f.apply(t));
+            }
+        }
+        plannedTick.push(i);
+        o.run();
+        plannedTick.pop();
     }
 }

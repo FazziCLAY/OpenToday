@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 
 public class FilterGroupItem extends TextItem implements ContainerItem, ItemsStorage {
     // START - Save
@@ -329,7 +330,6 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         if (!tickSession.isAllowed(this)) return;
 
         super.tick(tickSession);
-        if (tickBehavior != TickBehavior.ALL) ItemUtil.tickOnlyImportantTargets(tickSession, getAllItems());
         if (tickSession.isTickTargetAllowed(TickTarget.ITEM_FILTER_GROUP_TICK)) {
             profPush(tickSession, "filter_group_tick");
             recalculate(tickSession.getGregorianCalendar());
@@ -350,6 +350,9 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
             }
 
             profPop(tickSession);
+            if (tickBehavior != TickBehavior.ALL) {
+                tickSession.runWithPlannedNormalTick(tickList, (Function<ItemFilterWrapper, Item>) itemFilterWrapper -> itemFilterWrapper.item, () -> ItemUtil.tickOnlyImportantTargets(tickSession, getAllItems()));
+            }
             // NOTE: No use 'for-loop' (self-delete item in tick => ConcurrentModificationException)
             int i = tickList.size() - 1;
             while (i >= 0) {

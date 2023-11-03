@@ -127,12 +127,14 @@ public abstract class Item implements Unique, Tickable {
     @NonNull @SaveKey(key = "notifications") @RequireSave private List<ItemNotification> notifications = new ArrayList<>();
     @NonNull @SaveKey(key = "tags") @RequireSave private List<ItemTag> tags = new ArrayList<>();
     @NonNull private final NotificationController notificationController = new ItemNotificationController();
+    private boolean cachedNotificationStatus;
 
     // Copy constructor
     protected Item(@Nullable Item copy) {
         // unattached
         this.id = null;
         this.controller = null;
+        this.cachedNotificationStatus = true;
 
         // copy
         if (copy != null) {
@@ -217,6 +219,14 @@ public abstract class Item implements Unique, Tickable {
             itemCallbacks.run((callbackStorage, callback) -> callback.tick(Item.this));
             profPop(tickSession);
         }
+
+        profPush(tickSession, "cachedNotificationStatus");
+        boolean isUpdateNotifications = tickSession.isTickTargetAllowed(TickTarget.ITEM_NOTIFICATION_UPDATE);
+        if (isUpdateNotifications != cachedNotificationStatus && !tickSession.isPlannedTick(this)) {
+            cachedNotificationStatus = isUpdateNotifications;
+            itemCallbacks.run((callbackStorage, callback) -> callback.cachedNotificationStatusChanged(Item.this, isUpdateNotifications));
+        }
+        profPop(tickSession);
     }
 
     protected void profPush(TickSession t, String s) {
@@ -312,6 +322,10 @@ public abstract class Item implements Unique, Tickable {
 
     public boolean isNotifications() {
         return !notifications.isEmpty();
+    }
+
+    public boolean getCachedNotificationStatus() {
+        return cachedNotificationStatus;
     }
 
     @Getter @NonNull public ItemStat getStat() {

@@ -33,4 +33,8 @@ public abstract class ItemCallback implements Callback {
     public Status click(Item item) {
         return Status.NONE;
     }
+
+    public Status cachedNotificationStatusChanged(Item item, boolean isUpdateNotifications) {
+        return Status.NONE;
+    }
 }

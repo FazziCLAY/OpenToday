@@ -67,6 +67,10 @@
         <item name="button_exitAction">#243FD8</item>
         <item name="button_applyAction">#07B73F</item>
         <item name="button_importExport">?attr/colorPrimary</item>
+
+        <item name="item_notificationIndicator_default">?attr/opentoday_icon_tint</item>
+        <item name="item_notificationIndicator_disabledByTickPolicy">#E10D0D</item>
+        <item name="item_cycleList_notificationIndicatorBackgroundTint">#2E2E2E</item>
     </style>
 
 

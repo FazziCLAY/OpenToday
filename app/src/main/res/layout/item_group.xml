@@ -14,8 +14,18 @@
         android:layout_alignBaseline="@id/externalEditor"
         android:textColor="?attr/item_group_textColor"
         android:layout_width="match_parent"
-        android:layout_toStartOf="@id/externalEditor"
+        android:layout_toStartOf="@id/indicatorNotification"
         android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/indicatorNotification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_margin="3sp"
+        tools:visibility="visible"
+        android:layout_toStartOf="@id/externalEditor"
+        android:src="@drawable/notifications_24px" />
 
     <Button
         android:id="@+id/externalEditor"
@@ -40,15 +50,5 @@
         android:paddingTop="2sp"
         android:orientation="vertical" />
 
-    <ImageView
-        android:id="@+id/indicatorNotification"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_margin="3sp"
-        tools:visibility="visible"
-        android:layout_below="@id/externalEditor"
-        android:layout_alignParentEnd="true"
-        android:src="@drawable/notifications_24px" />
 
 </RelativeLayout>
