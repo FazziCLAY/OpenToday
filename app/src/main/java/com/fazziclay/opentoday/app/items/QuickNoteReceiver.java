@@ -12,9 +12,13 @@ import androidx.core.app.RemoteInput;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.items.item.Item;
+import com.fazziclay.opentoday.app.items.item.ItemType;
+import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.tab.TabsManager;
+import com.fazziclay.opentoday.gui.GuiItemsHelper;
 import com.fazziclay.opentoday.gui.fragment.ItemsTabIncludeFragment;
 import com.fazziclay.opentoday.util.RandomUtil;
 
@@ -73,8 +77,10 @@ public class QuickNoteReceiver extends BroadcastReceiver {
             }
         }
         if (rawText != null) {
-            final TextItem item = new TextItem(context.getString(R.string.quickNote_notificationPattern, rawText));
-            if (settingsManager.isParseTimeFromQuickNote()) item.addNotifications(ItemsTabIncludeFragment.QUICK_NOTE_NOTIFICATIONS_PARSE.run(rawText));
+            final Item item = GuiItemsHelper.createItem(context, settingsManager.getDefaultQuickNoteType(), context.getString(R.string.quickNote_notificationPattern, rawText), settingsManager);
+            if (settingsManager.isParseTimeFromQuickNote()) {
+                item.addNotifications(ItemsTabIncludeFragment.QUICK_NOTE_NOTIFICATIONS_PARSE.run(rawText));
+            }
             UUID itemsStorageIdForQuickNote = settingsManager.getQuickNoteNotificationItemsStorageId();
             ItemsStorage itemsStorage;
             if (itemsStorageIdForQuickNote == null) {

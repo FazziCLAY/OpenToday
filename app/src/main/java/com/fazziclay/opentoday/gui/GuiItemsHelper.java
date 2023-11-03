@@ -25,10 +25,7 @@ public class GuiItemsHelper {
      */
     public static Item createItem(Context context, ItemsRegistry.ItemInfo registryItem, String text, SettingsManager settingsManager) {
         final Item item = registryItem.create();
-        if (settingsManager.isRandomItemBackground()) {
-            item.setViewCustomBackgroundColor(true);
-            item.setViewBackgroundColor(BeautifyColorManager.randomBackgroundColor(context));
-        }
+        applyInitRandomColorIfNeeded(context, item, settingsManager);
         if (item instanceof TextItem textItem) {
             textItem.setText(text);
         }
@@ -43,6 +40,13 @@ public class GuiItemsHelper {
         switch (settingsManager.getItemAddPosition()) {
             case TOP -> itemsStorage.addItem(item, 0);
             case BOTTOM -> itemsStorage.addItem(item);
+        }
+    }
+
+    public static void applyInitRandomColorIfNeeded(Context context, Item item, SettingsManager sm) {
+        if (sm.isRandomItemBackground()) {
+            item.setViewCustomBackgroundColor(true);
+            item.setViewBackgroundColor(BeautifyColorManager.randomBackgroundColor(context));
         }
     }
 }

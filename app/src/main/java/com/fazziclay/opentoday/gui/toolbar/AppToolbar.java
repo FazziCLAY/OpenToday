@@ -64,6 +64,7 @@ import com.fazziclay.opentoday.databinding.ToolbarMoreOpentodayBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreSelectionBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreTabsBinding;
 import com.fazziclay.opentoday.gui.EnumsRegistry;
+import com.fazziclay.opentoday.gui.GuiItemsHelper;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.activity.MainActivity;
 import com.fazziclay.opentoday.gui.activity.SetupActivity;
@@ -625,16 +626,8 @@ public class AppToolbar {
                         autoClose();
                     });
                     viewClick(holder.add, () -> {
-                        final Item item = ItemsRegistry.REGISTRY.get(itemInfo.getClassType()).create();
-                        if (settingsManager.isRandomItemBackground()) {
-                            item.setViewCustomBackgroundColor(true);
-                            item.setViewBackgroundColor(BeautifyColorManager.randomBackgroundColor(app));
-                        }
-
-                        switch (settingsManager.getItemAddPosition()) {
-                            case TOP -> itemsStorage.addItem(item, 0);
-                            case BOTTOM -> itemsStorage.addItem(item);
-                        }
+                        final Item item = GuiItemsHelper.createItem(app, itemInfo, "", settingsManager);
+                        GuiItemsHelper.addItem(item, itemsStorage, settingsManager);
                     });
                     viewClick(holder.description, () -> showItemDescriptionDialog(itemInfo));
                 } else {

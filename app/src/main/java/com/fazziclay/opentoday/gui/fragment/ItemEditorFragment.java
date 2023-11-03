@@ -518,10 +518,11 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
 
             binding.viewMinHeight.setText(String.valueOf(item.getViewMinHeight()));
             temp_backgroundColor = item.getViewBackgroundColor();
+            isDefaultBackColor = !item.isViewCustomBackgroundColor();
             if (mode == MODE_CREATE && settingsManager.isRandomItemBackground()) {
                 temp_backgroundColor = initBackgroundColor;
+                isDefaultBackColor = false;
             }
-            isDefaultBackColor = !item.isViewCustomBackgroundColor();
             updateTextColorIndicator(activity);
             viewClick(binding.itemBackgroundColor, () -> new ColorPicker(activity, temp_backgroundColor)
                     .setting(true, true, true)
