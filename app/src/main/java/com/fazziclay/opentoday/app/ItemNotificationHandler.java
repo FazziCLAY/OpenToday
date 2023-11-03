@@ -119,8 +119,10 @@ public class ItemNotificationHandler {
                 builder.setFullScreenIntent(pending, true);
             }
             builder.setUsesChronometer(true);
-
-            context.getSystemService(NotificationManager.class).notify(dayItemNotification.getNotificationId(), builder.build());
+            NotificationManager systemService = context.getSystemService(NotificationManager.class);
+            if (systemService.areNotificationsEnabled()) {
+                systemService.notify(dayItemNotification.getNotificationId(), builder.build());
+            }
         }
     }
 }

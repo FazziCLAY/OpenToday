@@ -439,4 +439,5 @@
     <string name="fragment_itemNotification_delete_apply">Delete</string>
     <string name="fragment_itemEditor_module_item_notifications_cantOpenWhileCreate">It is not possible to open the notification editor because the item has not been saved yet</string>
     <string name="settings_actionbarInBottom">Action bar at the bottom of screen</string>
+    <string name="abc_not_success">Failed</string>
 </resources>

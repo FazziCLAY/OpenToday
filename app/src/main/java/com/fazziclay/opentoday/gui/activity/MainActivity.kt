@@ -19,6 +19,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts.*
 import androidx.appcompat.app.AppCompatActivity
 import com.fazziclay.opentoday.Debug
 import com.fazziclay.opentoday.R
@@ -57,6 +58,9 @@ import java.util.Calendar
 import java.util.GregorianCalendar
 import java.util.Locale
 import java.util.Stack
+
+
+
 
 @SuppressLint("NonConstantResourceId")
 class MainActivity : AppCompatActivity(), UIRoot {
@@ -293,28 +297,57 @@ class MainActivity : AppCompatActivity(), UIRoot {
 
         PROFILER.pop()
         PROFILER.pop()
+
+        val requestPermissionLauncher = registerForActivityResult(
+            RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                Toast.makeText(this, R.string.abc_success, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, R.string.abc_not_success, Toast.LENGTH_LONG).show();
+            }
+            tryCheckPermissions()
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissionLauncher.launch(
+                android.Manifest.permission.POST_NOTIFICATIONS
+            )
+        } else {
+            tryCheckPermissions()
+        }
     }
 
-    override fun onResume() {
-        super.onResume()
-        Logger.i(TAG, "onResume")
+    private fun tryCheckPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val alarmManager: AlarmManager = getSystemService(AlarmManager::class.java)
             if (!alarmManager.canScheduleExactAlarms()) {
-                Toast.makeText(this, R.string.main_activity_allowExactAlarms, Toast.LENGTH_LONG).show()
-                app.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+                Toast.makeText(this, R.string.main_activity_allowExactAlarms, Toast.LENGTH_LONG)
+                    .show()
+                startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
                 return
             }
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            val notificationManager: NotificationManager = getSystemService(NotificationManager::class.java)
+            val notificationManager: NotificationManager =
+                getSystemService(NotificationManager::class.java)
             if (!notificationManager.canUseFullScreenIntent()) {
-                Toast.makeText(this, R.string.main_activity_allowFullScreenIntent, Toast.LENGTH_LONG).show()
-                app.startActivity(Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT))
+                Toast.makeText(
+                    this,
+                    R.string.main_activity_allowFullScreenIntent,
+                    Toast.LENGTH_LONG
+                ).show()
+                startActivity(Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT))
                 return
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Logger.i(TAG, "onResume")
+        tryCheckPermissions()
     }
 
     override fun onPause() {
