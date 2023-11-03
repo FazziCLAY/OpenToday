@@ -7,9 +7,9 @@ plugins {
 var isDev = false
 var beta = true
 var appIdSuffix = "" // EMPTY FOR RELEASES!!!!
-var verBuild = 144
-var verName = "1.2.3"//"""1.2+[patches:[fix-tick] + [special_widget] + [fixes-itemstorageviewer] + [item-sleepTime] + [notification-manager] + [tags]"
-var verBranch = "tags"//"fixes-itemstorageviewer + special_widget + item-sleepTime + notification-manager (currently main)+ tags" // use "RELEASE" for releases versions
+var verBuild = 145
+var verName = "1.2 [.3]"
+var verBranch = "develop"
 var verReleaseTime = 1689778442 // in seconds
 
 android {

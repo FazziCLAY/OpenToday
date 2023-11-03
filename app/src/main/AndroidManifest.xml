@@ -14,8 +14,8 @@
     <application
         android:name="com.fazziclay.opentoday.app.App"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:icon="@mipmap/ic_launcher_beta"
+        android:roundIcon="@mipmap/ic_launcher_beta"
         android:label="@string/abc_launcherName"
         android:supportsRtl="false"
         android:theme="@style/Theme.OpenToday">
