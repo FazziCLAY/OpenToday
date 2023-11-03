@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -92,6 +91,7 @@ import com.fazziclay.opentoday.util.time.ConvertMode;
 import com.fazziclay.opentoday.util.time.HumanTimeType;
 import com.fazziclay.opentoday.util.time.TimeUtil;
 import com.google.android.material.chip.Chip;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -430,7 +430,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
             cancel();
             return;
         }
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.fragment_itemEditor_cancel_unsaved_title)
                 .setNegativeButton(R.string.fragment_itemEditor_cancel_unsaved_continue, null)
                 .setPositiveButton(R.string.fragment_itemEditor_cancel_unsaved_discard, ((dialog1, which) -> cancel()))
@@ -442,7 +442,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
     }
 
     public static void deleteRequest(Context context, Item item, Runnable onDelete) {
-        AlertDialog show = new AlertDialog.Builder(context)
+        AlertDialog show = new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.fragment_itemEditor_delete_title)
                 .setMessage(context.getString(R.string.fragment_itemEditor_delete_message, item.getChildrenItemCount()))
                 .setNegativeButton(R.string.fragment_itemEditor_delete_cancel, null)
@@ -684,19 +684,20 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
             view.setOrientation(LinearLayout.VERTICAL);
 
             var title = new EditText(getContext());
-            title.setHint("Enter tag name...");
+            title.setHint(R.string.dialog_itemTag_title_hint);
             title.setText(tag.getName());
             view.addView(title);
 
 
             var text = new EditText(getContext());
-            text.setHint("Value: (Maybe undefined)");
+            text.setHint(R.string.dialog_itemTag_value_hint);
             text.setText(tag.getValue());
             view.addView(text);
 
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
-                    .setTitle("Item tag")
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getActivity())
+                    .setTitle(R.string.dialog_itemTag_title)
+                    .setMessage(R.string.dialog_itemTag_message)
                     .setView(view)
                     .setNegativeButton(R.string.abc_cancel, null);
 
@@ -704,10 +705,10 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
             var ref = new Object() {
                 AlertDialog alertDialog = null;
             };
-            builder.setPositiveButton("Apply", (_fdfd, _tbnhgfhj) -> {
+            builder.setPositiveButton(R.string.dialog_itemTag_apply, (_fdfd, _tbnhgfhj) -> {
                 String titleText = title.getText().toString().trim();
                 if (titleText.isEmpty()) {
-                    Toast.makeText(getContext(), "Title not empty!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), R.string.dialog_itemTag_titleNotMayEmpty, Toast.LENGTH_SHORT).show();
                     UI.postDelayed(ref.alertDialog::show, 200);
                     return;
                 }

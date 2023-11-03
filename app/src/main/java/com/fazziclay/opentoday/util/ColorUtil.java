@@ -65,7 +65,11 @@ public class ColorUtil {
             if (!arg.startsWith(String.valueOf(c))) {
                 result.append(arg).append(";");
             } else {
-                result.append(c).append(val).append(";");
+                if (!val.isEmpty()) {
+                    result.append(c).append(val).append(";");
+                } else {
+                    result.append(";");
+                }
                 replaced = true;
             }
             passed.append(arg.charAt(0));

@@ -53,5 +53,8 @@
     <attr name="item_notificationIndicator_default" format="color" />
     <attr name="item_notificationIndicator_disabledByTickPolicy" format="color" />
     <attr name="item_cycleList_notificationIndicatorBackgroundTint" format="color" />
+    <attr name="itemTextEditor_style_true" format="color" />
+    <attr name="itemTextEditor_style_false" format="color" />
+    <attr name="itemTextEditor_style_reset" format="color" />
 
 </resources>

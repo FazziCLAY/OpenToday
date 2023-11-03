@@ -31,6 +31,7 @@ import com.fazziclay.opentoday.gui.item.ItemViewGenerator;
 import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
 import com.fazziclay.opentoday.gui.item.ItemViewHolder;
 import com.fazziclay.opentoday.gui.item.ItemsStorageDrawerBehavior;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,7 +133,7 @@ public class DeleteItemsFragment extends Fragment implements ActivitySettingsMem
         });
 
         binding.deleteButton.setOnClickListener(v -> {
-            AlertDialog show = new AlertDialog.Builder(requireContext())
+            AlertDialog show = new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(requireActivity().getString(R.string.fragment_deleteItems_delete_title, String.valueOf(itemsToDelete.length), String.valueOf(totalToDelete)))
                     .setNegativeButton(R.string.fragment_deleteItems_delete_cancel, null)
                     .setPositiveButton(R.string.fragment_deleteItems_delete_apply, ((_dialog1, _which) -> {

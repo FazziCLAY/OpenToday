@@ -9,37 +9,76 @@
     android:paddingBottom="10sp"
     android:orientation="vertical">
 
-    <ImageButton
-        android:id="@+id/addSystem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/new_label_24px" />
+    <RelativeLayout
+        android:id="@+id/buttonPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <ImageButton
-        android:id="@+id/deleteSystem"
-        android:layout_toEndOf="@id/addSystem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/delete_24px" />
+        <ImageButton
+            android:id="@+id/addSystem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/new_label_24px" />
+
+        <ImageButton
+            android:id="@+id/deleteSystem"
+            android:layout_toEndOf="@id/addSystem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/delete_24px" />
 
 
-    <ImageButton
-        android:id="@+id/foregroundColor"
-        android:layout_toEndOf="@id/deleteSystem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/palette_24px" />
+        <ImageButton
+            android:id="@+id/foregroundColor"
+            android:layout_toEndOf="@id/deleteSystem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/palette_24px" />
 
-    <ImageButton
-        android:id="@+id/backgroundSystem"
-        android:layout_toEndOf="@id/foregroundColor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/background_replace_24px" />
+        <ImageButton
+            android:id="@+id/backgroundSystem"
+            android:layout_toEndOf="@id/foregroundColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/background_replace_24px" />
+
+        <ImageButton
+            android:id="@+id/isBold"
+            android:layout_toEndOf="@id/backgroundSystem"
+            android:layout_width="wrap_content"
+            tools:backgroundTint="?attr/itemTextEditor_style_true"
+            android:layout_height="wrap_content"
+            android:src="@drawable/format_bold_24px" />
+
+        <ImageButton
+            android:id="@+id/isItalic"
+            android:layout_toEndOf="@id/isBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:backgroundTint="?attr/itemTextEditor_style_reset"
+            android:src="@drawable/format_italic_24px" />
+
+        <ImageButton
+            android:id="@+id/isStrikeOut"
+            android:layout_toEndOf="@id/isItalic"
+            tools:backgroundTint="?attr/itemTextEditor_style_false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/format_strikethrough_24px" />
+
+        <ImageButton
+            android:id="@+id/formatTextSize"
+            android:layout_toEndOf="@id/isStrikeOut"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/format_size_24px" />
+
+    </RelativeLayout>
+
 
     <TextView
         android:id="@+id/formattingPreview"
-        android:layout_below="@id/addSystem"
+        android:layout_below="@id/buttonPanel"
         android:layout_width="match_parent"
         android:layout_height="110sp" />
 

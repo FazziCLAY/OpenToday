@@ -5,7 +5,6 @@ import static com.fazziclay.opentoday.util.InlineUtil.viewLong;
 import static com.fazziclay.opentoday.util.InlineUtil.viewVisible;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -37,13 +36,10 @@ import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.api.EventHandler;
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.BeautifyColorManager;
 import com.fazziclay.opentoday.app.FeatureFlag;
 import com.fazziclay.opentoday.app.ImportWrapper;
-import com.fazziclay.opentoday.app.icons.IconsRegistry;
-import com.fazziclay.opentoday.app.settings.enums.ItemAddPosition;
-import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.app.events.gui.toolbar.AppToolbarSelectionClickEvent;
+import com.fazziclay.opentoday.app.icons.IconsRegistry;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
 import com.fazziclay.opentoday.app.items.callback.SelectionCallback;
@@ -55,6 +51,8 @@ import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.Debug202305RandomTab;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.items.tab.TabsManager;
+import com.fazziclay.opentoday.app.settings.SettingsManager;
+import com.fazziclay.opentoday.app.settings.enums.ItemAddPosition;
 import com.fazziclay.opentoday.databinding.ToolbarBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreDebugBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreFileBinding;
@@ -82,6 +80,7 @@ import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -468,7 +467,7 @@ public class AppToolbar {
         EditText tabNameEditText = new EditText(context);
         tabNameEditText.setHint(R.string.toolbar_more_tabs_addNew_name_hint);
         tabNameEditText.setFilters(new InputFilter.LengthFilter[]{new InputFilter.LengthFilter(TabsManager.TAB_NAME_MAX_LENGTH)});
-        new AlertDialog.Builder(context)
+        new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.toolbar_more_tabs_addNew_dialog_title)
                 .setView(tabNameEditText)
                 .setPositiveButton(R.string.toolbar_more_tabs_tab_add, (dialog, which) -> {
@@ -498,7 +497,7 @@ public class AppToolbar {
         disableTick.setChecked(tab.isDisableTick());
         viewClick(disableTick, () -> {
             if (disableTick.isChecked()) {
-                new AlertDialog.Builder(activity)
+                new MaterialAlertDialogBuilder(activity)
                         .setTitle(R.string.toolbar_more_tabs_edit_disableTick_warning_title)
                         .setMessage(R.string.toolbar_more_tabs_edit_disableTick_warning_message)
                         .setPositiveButton(R.string.abc_ok, null)
@@ -524,7 +523,7 @@ public class AppToolbar {
         dialogView.addView(disableTick);
         dialogView.addView(icon);
 
-        new AlertDialog.Builder(activity)
+        new MaterialAlertDialogBuilder(activity)
                 .setTitle(activity.getString(R.string.toolbar_more_tabs_edit_dialog_title, tab.getName()))
                 .setView(dialogView)
                 .setPositiveButton(R.string.toolbar_more_tabs_tab_apply, (dialog, which) -> {
@@ -538,7 +537,7 @@ public class AppToolbar {
                     tab.setIcon(selectedIcon.get());
                 })
                 .setNegativeButton(R.string.abc_cancel, null)
-                .setNeutralButton(R.string.toolbar_more_tabs_tab_delete, (dialog, w) -> new AlertDialog.Builder(activity)
+                .setNeutralButton(R.string.toolbar_more_tabs_tab_delete, (dialog, w) -> new MaterialAlertDialogBuilder(activity)
                         .setTitle(activity.getString(R.string.fragment_deleteItems_delete_title, String.valueOf(tab.size()), String.valueOf(tab.totalSize())))
                         .setNegativeButton(R.string.fragment_deleteItems_delete_cancel, null)
                         .setPositiveButton(R.string.fragment_deleteItems_delete_apply, ((dialog1, which) -> {
@@ -654,7 +653,7 @@ public class AppToolbar {
     }
 
     private void showItemDescriptionDialog(ItemsRegistry.ItemInfo itemInfo) {
-        new AlertDialog.Builder(activity)
+        new MaterialAlertDialogBuilder(activity)
                 .setTitle(EnumsRegistry.INSTANCE.nameResId(itemInfo.getItemType()))
                 .setMessage(EnumsRegistry.INSTANCE.itemDescriptionResId(itemInfo.getItemType()))
                 .setPositiveButton(R.string.abc_ok, null)
@@ -730,7 +729,7 @@ public class AppToolbar {
     private void showExportSelectedWithMessageDialog() {
         EditText dialogMessage = new EditText(activity);
 
-        new AlertDialog.Builder(activity)
+        new MaterialAlertDialogBuilder(activity)
                 .setTitle(R.string.toolbar_more_selection_export_setMessage_title)
                 .setView(dialogMessage)
                 .setNeutralButton(R.string.toolbar_more_selection_export_setMessage_nomsg, (ignore0, ignore1) -> exportSelected())

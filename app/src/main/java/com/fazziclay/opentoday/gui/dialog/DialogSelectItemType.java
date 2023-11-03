@@ -13,6 +13,7 @@ import com.fazziclay.opentoday.app.items.item.ItemType;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.util.EnumUtil;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class DialogSelectItemType {
     private final Context context;
@@ -80,7 +81,7 @@ public class DialogSelectItemType {
             });
         }
 
-        this.dialog = new AlertDialog.Builder(context)
+        this.dialog = new MaterialAlertDialogBuilder(context)
                 .setTitle(this.title)
                 .setMessage(this.message)
                 .setView(this.view)

@@ -174,7 +174,7 @@ class SettingsFragment : Fragment() {
         binding.isTelemetry.isChecked = SettingsManager.IS_TELEMETRY.get(sm)
         viewClick(binding.isTelemetry, Runnable {
             val isTelemetry = binding.isTelemetry.isChecked
-            SettingsManager.IS_TELEMETRY.set(sm, isTelemetry);
+            SettingsManager.IS_TELEMETRY.set(sm, isTelemetry)
             sm.save()
             app.telemetry.setEnabled(isTelemetry)
             if (isTelemetry) AlertDialog.Builder(requireContext())
@@ -189,7 +189,7 @@ class SettingsFragment : Fragment() {
                 sm.defaultQuickNoteType = ItemsRegistry.REGISTRY.get(type)
                 binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(EnumsRegistry.nameResId(sm.defaultQuickNoteType.itemType)))
                 sm.save()
-            }.show()
+            }.setTitle(getString(R.string.dialog_selectItemType_generic_title)).show()
         })
         pinCodeCallback = Runnable { binding.pincode.text = getString(R.string.settings_pincode, if (pinCodeManager.isPinCodeSet) getString(R.string.settings_pincode_on) else getString(R.string.settings_pincode_off)) }
         pinCodeCallback.run()

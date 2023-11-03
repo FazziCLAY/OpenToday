@@ -71,6 +71,10 @@
         <item name="item_notificationIndicator_default">?attr/opentoday_icon_tint</item>
         <item name="item_notificationIndicator_disabledByTickPolicy">#E10D0D</item>
         <item name="item_cycleList_notificationIndicatorBackgroundTint">#2E2E2E</item>
+
+        <item name="itemTextEditor_style_true">#21BF08</item>
+        <item name="itemTextEditor_style_false">#E91811</item>
+        <item name="itemTextEditor_style_reset">#B5A900</item>
     </style>
 
 

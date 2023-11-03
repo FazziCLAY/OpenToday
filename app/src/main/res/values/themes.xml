@@ -70,6 +70,9 @@
         <item name="item_notificationIndicator_disabledByTickPolicy">#E10D0D</item>
         <item name="item_cycleList_notificationIndicatorBackgroundTint">#D5D5D5</item>
 
+        <item name="itemTextEditor_style_true">#0CE317</item>
+        <item name="itemTextEditor_style_false">#EC0808</item>
+        <item name="itemTextEditor_style_reset">#E3D40A</item>
     </style>
 
     <style name="Theme.OpenToday.ItemEditModule" parent="Theme.MaterialComponents.DayNight.DarkActionBar">

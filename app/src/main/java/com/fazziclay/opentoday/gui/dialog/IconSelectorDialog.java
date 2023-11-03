@@ -14,6 +14,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.icons.IconsRegistry;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.function.Consumer;
 
@@ -67,7 +68,7 @@ public class IconSelectorDialog {
         var scroll = new ScrollView(context);
         scroll.addView(view);
 
-        final var builder = new AlertDialog.Builder(context)
+        final var builder = new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.dialog_iconSelector_title)
                 .setView(scroll)
                 .setNegativeButton(R.string.abc_cancel, null);

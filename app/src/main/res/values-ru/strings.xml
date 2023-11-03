@@ -4,6 +4,7 @@
     <string name="abc_coped">Скопировано!</string>
     <string name="abc_done_button">Готово!</string>
     <string name="abc_error_browserNotFound">Пожалуйста установите web-браузер</string>
+    <string name="abc_not_success">Провал</string>
     <string name="abc_ok">ОК</string>
     <string name="abc_pressAgainForExitWarning">Нажмите еще раз чтобы выйти</string>
     <string name="abc_success">Успешно!</string>
@@ -59,9 +60,15 @@
     <string name="dialog_itemNotification_title">Заголовок уведомления</string>
     <string name="dialog_itemNotification_titleFromItemText">Заголовок из текста айтема</string>
     <string name="dialog_itemNotification_vibrate">Вибрация</string>
+    <string name="dialog_itemTag_apply">ОК</string>
+    <string name="dialog_itemTag_title">Метка айтема</string>
+    <string name="dialog_itemTag_titleNotMayEmpty">Название это необходимое поле</string>
+    <string name="dialog_itemTag_title_hint">Введите название</string>
+    <string name="dialog_itemTag_value_hint">Значение (опционально)</string>
     <string name="dialog_selectItemAction_cancel">Отмена</string>
     <string name="dialog_selectItemAction_message">Нажмите что бы выбрать</string>
     <string name="dialog_selectItemAction_title">Выберите действие</string>
+    <string name="dialog_selectItemType_generic_title">Выберите тип…</string>
     <string name="dialog_selectItemType_select">Выбрать</string>
     <string name="export_allItems">Все айтемы</string>
     <string name="export_allItems_info">Экспортировать все вкладки и айтемы внутри</string>
@@ -141,6 +148,7 @@
     <string name="fragment_itemEditor_module_item_minHeight_hint">Минимальная высота</string>
     <string name="fragment_itemEditor_module_item_minimize">Уменьшить</string>
     <string name="fragment_itemEditor_module_item_notifications">Уведомления</string>
+    <string name="fragment_itemEditor_module_item_notifications_cantOpenWhileCreate">Невозможно открыть редактор уведомления потому что айтем ещё не сохранён</string>
     <string name="fragment_itemEditor_module_item_selected">Выделение</string>
     <string name="fragment_itemEditor_module_longtext_openTextEditor">Открыть редактор текста</string>
     <string name="fragment_itemEditor_module_longtext_textColor_dialog_apply">Применить</string>
@@ -161,6 +169,9 @@
     <string name="fragment_itemEditor_module_text_text_title">Текст</string>
     <string name="fragment_itemEditor_text_paragraphColorize">Поддержка форматирования</string>
     <string name="fragment_itemEditor_text_textColor">Цвет текста</string>
+    <string name="fragment_itemNotification_delete_apply">Удалить</string>
+    <string name="fragment_itemNotification_delete_title">Удалить уведомление?</string>
+    <string name="fragment_itemNotification_title">Уведомление</string>
     <string name="fragment_itemTextEditor_apply">Применить</string>
     <string name="fragment_itemTextEditor_backgroundColor_apply">Применить</string>
     <string name="fragment_itemTextEditor_backgroundColor_cancel">Отмена</string>
@@ -176,8 +187,11 @@
     <string name="fragment_itemTextEditor_foregroundColor_title">Цвет текста</string>
     <string name="fragment_itemTextEditor_formattingHelp_helpText">"$[S22]Форматирование текста…$[Sreset]\nВ любом месте текста вы можете обьявить \"систему\"\nCистема обьявляется вот так: \\$[]\nона действует на весь текст после неё, тоесть если в самом начале\nтекста написать систему, весь текст будет ей подчиняться.\n\n$[S22]# Возможности системы$[Sreset]\nВнутри квадратных скобок можно обьявлять разные значения\n\"-\" - цвет текста: \\$[-#ff0000]: $[-#ff0000]RedText$[||]\n\"=\" - цвет фона: \\$[=#ff0000]: $[=#ff0000]RedBack$[||]\n\"@\" - стиль текста: \\$[@bold]: $[@bold]BoldText$[||]\n\"S\" - размер текста: \\$[S20]: $[S20]Text$[||]\n\"||\" - сбросить всё: \\$[||]: $[||]DefaultText$[||]\n\n$[S22]# Комбинирование$[Sreset]\nВнутри одной системы вы можете написать несколько значений\nразделяя их точкой с запятой: \\$[@bold;-#ff0000;=#0000ff;S20]: $[@bold;-#ff0000;=#0000ff;S20]Example$[||]\n\nВажно, система заменяет лишь записанные в неё значения, если в начале текста стоит система изменяющяя размер на 20, а в середине система изменяющая цвет, весь текст будет размером 20. Для сброса значения стоит вместо значения написать слово reset: \\$[Sreset;-reset;@reset;=reset], но если вам нужно сбросить\nвсё, стоит использовать сокращение \\$[||]\n\n$[S22]# Example$[Sreset]\n$[-#ff0000]Hel$[-#ff00ff]lo $[-#f00fff]Worl$[=#0000ff]d.$[||] "</string>
     <string name="fragment_itemTextEditor_formattingHelp_title">Помощь…</string>
+    <string name="fragment_itemTextEditor_size_reset">Сброс</string>
+    <string name="fragment_itemTextEditor_size_title">Размеры текста</string>
     <string name="fragment_itemTextEditor_toolbar_menu_helpFormatting">Помощь форматирования</string>
     <string name="fragment_itemTextEditor_toolbar_menu_previewFormatting">Предпросмотр</string>
+    <string name="fragment_itemTextEditor_toolbar_menu_save">Сохранить</string>
     <string name="fragment_itemTextEditor_toolbar_title_longTextItem">Редактор длинного текста</string>
     <string name="fragment_itemTextEditor_toolbar_title_textItem">Редактор текста</string>
     <string name="fragment_settings_analogClockSettings_handColor_hour">Выберите цвет…</string>
@@ -276,7 +290,10 @@
     <string name="menuItem_selected">Выделенный</string>
     <string name="menuItem_transform">Трансформация</string>
     <string name="menu_itemEditor_copyItemId">Скопировать Айди</string>
+    <string name="menu_itemEditor_deleteItem">Удалить</string>
     <string name="menu_itemEditor_export">Экспорт</string>
+    <string name="menu_itemEditor_saveItem">Сохранить</string>
+    <string name="menu_itemNotification_delete">Удалить</string>
     <string name="notificationChannel_crash_title">Краши и вылеты</string>
     <string name="notificationChannel_items_title">Айтемы</string>
     <string name="notificationChannel_quickNote_title">Быстрая заметка</string>
@@ -300,6 +317,7 @@
     <string name="quickNote_notificationPattern">Быстрая заметка: %s</string>
     <string name="selectItemTypeDialog_create">Создать</string>
     <string name="selectItemTypeDialog_message">Нажмите что бы выбрать</string>
+    <string name="settings_actionbarInBottom">Панель действий внизу экрана</string>
     <string name="settings_addItemsToTop">Добавлять айтемы вверх</string>
     <string name="settings_analogClockSettings_hourHandColor">Цвет часовой стрелки</string>
     <string name="settings_analogClockSettings_minuteHandColor">Цвет минутной стрелки</string>
@@ -425,14 +443,4 @@
     <string name="transform_not_allowed">Трансформация невозможна</string>
     <string name="transform_selectTypeDialog_message" />
     <string name="transform_selectTypeDialog_title">Выберите тип результата</string>
-    <string name="menu_itemEditor_deleteItem">Удалить</string>
-    <string name="menu_itemEditor_saveItem">Сохранить</string>
-    <string name="menu_itemNotification_delete">Удалить</string>
-    <string name="fragment_itemNotification_title">Уведомление</string>
-    <string name="fragment_itemNotification_delete_title">Удалить уведомление?</string>
-    <string name="fragment_itemNotification_delete_apply">Удалить</string>
-    <string name="fragment_itemEditor_module_item_notifications_cantOpenWhileCreate">Невозможно открыть редактор уведомления потому что айтем ещё не сохранён</string>
-    <string name="settings_actionbarInBottom">Панель действий внизу экрана</string>
-    <string name="abc_not_success">Провал</string>
-    <string name="fragment_itemTextEditor_toolbar_menu_save">Сохранить</string>
 </resources>

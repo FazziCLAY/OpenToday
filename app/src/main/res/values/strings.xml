@@ -5,6 +5,7 @@
     <string name="abc_done_button">Done!</string>
     <string name="abc_error_browserNotFound">Please install web-browser</string>
     <string name="abc_launcherName" translatable="false">OpenToday</string>
+    <string name="abc_not_success">Failed</string>
     <string name="abc_ok">OK</string>
     <string name="abc_opentoday" translatable="false">OpenToday</string>
     <string name="abc_pressAgainForExitWarning">Press back once more to exit.</string>
@@ -64,9 +65,16 @@
     <string name="dialog_itemNotification_title">Notification title</string>
     <string name="dialog_itemNotification_titleFromItemText">Title from item text</string>
     <string name="dialog_itemNotification_vibrate">Vibrate</string>
+    <string name="dialog_itemTag_apply">Apply</string>
+    <string name="dialog_itemTag_message" translatable="false" />
+    <string name="dialog_itemTag_title">Item tag</string>
+    <string name="dialog_itemTag_titleNotMayEmpty">Title is required!</string>
+    <string name="dialog_itemTag_title_hint">Enter name…</string>
+    <string name="dialog_itemTag_value_hint">Value (optional)</string>
     <string name="dialog_selectItemAction_cancel">Cancel</string>
     <string name="dialog_selectItemAction_message">Click to select</string>
     <string name="dialog_selectItemAction_title">Select Action</string>
+    <string name="dialog_selectItemType_generic_title">Select item type</string>
     <string name="dialog_selectItemType_select">Select</string>
     <string name="export_allItems">All items</string>
     <string name="export_allItems_info">Export all tabs of items</string>
@@ -146,6 +154,7 @@
     <string name="fragment_itemEditor_module_item_minHeight_hint">Minimal height</string>
     <string name="fragment_itemEditor_module_item_minimize">Minimize</string>
     <string name="fragment_itemEditor_module_item_notifications">Notifications</string>
+    <string name="fragment_itemEditor_module_item_notifications_cantOpenWhileCreate">It is not possible to open the notification editor because the item has not been saved yet</string>
     <string name="fragment_itemEditor_module_item_selected">Selected</string>
     <string name="fragment_itemEditor_module_longtext_openTextEditor">Open text editor</string>
     <string name="fragment_itemEditor_module_longtext_textColor_dialog_apply">Apply</string>
@@ -166,6 +175,9 @@
     <string name="fragment_itemEditor_module_text_text_title">Text</string>
     <string name="fragment_itemEditor_text_paragraphColorize">Formatting support</string>
     <string name="fragment_itemEditor_text_textColor">Text color</string>
+    <string name="fragment_itemNotification_delete_apply">Delete</string>
+    <string name="fragment_itemNotification_delete_title">Delete notification?</string>
+    <string name="fragment_itemNotification_title">Notification</string>
     <string name="fragment_itemTextEditor_apply">apply</string>
     <string name="fragment_itemTextEditor_backgroundColor_apply">Apply</string>
     <string name="fragment_itemTextEditor_backgroundColor_cancel">Cancel</string>
@@ -181,8 +193,11 @@
     <string name="fragment_itemTextEditor_foregroundColor_title">Text color</string>
     <string name="fragment_itemTextEditor_formattingHelp_helpText">$[S22]Text formatting…$[Sreset]\nYou can declare \"system\" anywhere in the text\nThe system appears like this: \\$[]\nit acts on the entire text after it, that is, if you write a system at the very beginning\nof the text, the entire text will obey it.\n\n$[S22]# System Features $[Sreset]\nInside square brackets, you can declare different values\n\"-\" - text color: \\$[-#ff0000]: $[-#ff0000]RedText$[||]\n\"=\" - background color: \\$[=#ff0000]: $[=#ff0000]RedBack$[||]\n\"@\" - text style: \\$[@bold]: $[@bold]BoldText$[||]\n\"S\" - text size: \\$[S20]: $[S20]Text$[||]\n\"||\" - reset everything: \\$[||]: $[||] DefaultText$[||]\n\n$[S22]# Combining$[Sreset]\nInside one system, you can write several values\nseparating them with a semicolon: \\$[@bold;-#ff0000;=#0000ff;S20]: $[@bold;-#ff0000;=#0000ff;S20]Example$[||]\n\nIt is important that the system replaces only the values recorded in it, if there is a system changing the size by 20 at the beginning of the text, and a system changing the color in the middle, the entire text will be 20 in size. To reset the value, you should write the word reset instead of the value: \\$[Sreset;-reset;@reset;=reset], but if you need to reset\neverything, you should use the abbreviation \\$[||]\n\n$[S22]# Example$[Sreset]\n$[-#ff0000]Hel$[-#ff00ff]lo $[-#f00fff]Worl$[=#0000ff]d.$[||]</string>
     <string name="fragment_itemTextEditor_formattingHelp_title">Help…</string>
+    <string name="fragment_itemTextEditor_size_reset">Reset</string>
+    <string name="fragment_itemTextEditor_size_title">Text size</string>
     <string name="fragment_itemTextEditor_toolbar_menu_helpFormatting">Formatting help</string>
     <string name="fragment_itemTextEditor_toolbar_menu_previewFormatting">Preview formatting</string>
+    <string name="fragment_itemTextEditor_toolbar_menu_save">Save</string>
     <string name="fragment_itemTextEditor_toolbar_title_longTextItem">Edit long text</string>
     <string name="fragment_itemTextEditor_toolbar_title_textItem">Edit text</string>
     <string name="fragment_settings_analogClockSettings_handColor_hour">Select a color…</string>
@@ -281,7 +296,10 @@
     <string name="menuItem_selected">Selected</string>
     <string name="menuItem_transform">Transform</string>
     <string name="menu_itemEditor_copyItemId">Copy ID</string>
+    <string name="menu_itemEditor_deleteItem">Delete</string>
     <string name="menu_itemEditor_export">Export</string>
+    <string name="menu_itemEditor_saveItem">Save</string>
+    <string name="menu_itemNotification_delete">Delete</string>
     <string name="notificationChannel_crash_title">Crashes</string>
     <string name="notificationChannel_items_title">Items</string>
     <string name="notificationChannel_quickNote_title">Quick note</string>
@@ -305,6 +323,7 @@
     <string name="quickNote_notificationPattern">Quick note: %s</string>
     <string name="selectItemTypeDialog_create">Create</string>
     <string name="selectItemTypeDialog_message">Click to select</string>
+    <string name="settings_actionbarInBottom">Action bar at the bottom of screen</string>
     <string name="settings_addItemsToTop">Add items to top^</string>
     <string name="settings_analogClockSettings_hourHandColor">Hour hand color</string>
     <string name="settings_analogClockSettings_minuteHandColor">Minute hand color</string>
@@ -429,16 +448,6 @@
     <string name="toolbar_selection">Selection</string>
     <string name="toolbar_tabs">Tabs</string>
     <string name="transform_not_allowed">Transformation is impossible</string>
-    <string name="transform_selectTypeDialog_message" />
+    <string name="transform_selectTypeDialog_message" translatable="false" />
     <string name="transform_selectTypeDialog_title">Select result type</string>
-    <string name="menu_itemEditor_deleteItem">Delete</string>
-    <string name="menu_itemEditor_saveItem">Save</string>
-    <string name="menu_itemNotification_delete">Delete</string>
-    <string name="fragment_itemNotification_title">Notification</string>
-    <string name="fragment_itemNotification_delete_title">Delete notification?</string>
-    <string name="fragment_itemNotification_delete_apply">Delete</string>
-    <string name="fragment_itemEditor_module_item_notifications_cantOpenWhileCreate">It is not possible to open the notification editor because the item has not been saved yet</string>
-    <string name="settings_actionbarInBottom">Action bar at the bottom of screen</string>
-    <string name="abc_not_success">Failed</string>
-    <string name="fragment_itemTextEditor_toolbar_menu_save">Save</string>
 </resources>

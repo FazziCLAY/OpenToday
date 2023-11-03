@@ -12,12 +12,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.settings.enums.ItemAction;
 import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.util.MinBaseAdapter;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,7 +50,7 @@ public class DialogSelectItemAction {
         listView.setPadding(10, 10, 10, 10);
         this.view = listView;
 
-        dialog = new AlertDialog.Builder(activity)
+        dialog = new MaterialAlertDialogBuilder(activity)
                 .setTitle(R.string.dialog_selectItemAction_title)
                 .setMessage(message)
                 .setPositiveButton(R.string.dialog_selectItemAction_cancel, null)

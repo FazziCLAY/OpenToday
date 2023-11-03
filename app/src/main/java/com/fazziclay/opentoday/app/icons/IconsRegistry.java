@@ -17,9 +17,10 @@ public class IconsRegistry {
             new Icon("opentoday_beta", R.mipmap.ic_launcher_beta),
             new Icon("none", R.drawable.close_24px), // special icon
 
+
             new Icon("add", R.drawable.add_24px),
-            new Icon("barefoot", R.drawable.barefoot_24px),
             new Icon("background_replace", R.drawable.background_replace_24px),
+            new Icon("barefoot", R.drawable.barefoot_24px),
             new Icon("baseline_account_tree", R.drawable.baseline_account_tree_24),
             new Icon("baseline_add_alert", R.drawable.baseline_add_alert_24),
             new Icon("baseline_celebration", R.drawable.baseline_celebration_24),
@@ -36,18 +37,24 @@ public class IconsRegistry {
             new Icon("check_box_outline_blank", R.drawable.check_box_outline_blank_24px),
             new Icon("close", R.drawable.close_24px),
             new Icon("cloudy_snowing", R.drawable.cloudy_snowing_24px),
+            new Icon("content_copy", R.drawable.content_copy_24px),
             new Icon("delete", R.drawable.delete_24px),
             new Icon("emoji_flags", R.drawable.emoji_flags_24px),
             new Icon("emoji_food_beverage", R.drawable.emoji_food_beverage_24px),
             new Icon("emoji_objects", R.drawable.emoji_objects_24px),
+            new Icon("export_notes", R.drawable.export_notes_24px),
             new Icon("face_2", R.drawable.face_2_24px),
             new Icon("fluid", R.drawable.fluid_24px),
+            new Icon("format_bold", R.drawable.format_bold_24px),
+            new Icon("format_italic", R.drawable.format_italic_24px),
+            new Icon("format_size", R.drawable.format_size_24px),
+            new Icon("format_strikethrough", R.drawable.format_strikethrough_24px),
             new Icon("gastroenterology", R.drawable.gastroenterology_24px),
             new Icon("home_health", R.drawable.home_health_24px),
             new Icon("home_work", R.drawable.home_work_24px),
-
             new Icon("info_i", R.drawable.info_i_24px),
             new Icon("new_label", R.drawable.new_label_24px),
+            new Icon("notifications", R.drawable.notifications_24px),
             new Icon("palette", R.drawable.palette_24px),
             new Icon("pause_presentation", R.drawable.pause_presentation_24px),
             new Icon("pill", R.drawable.pill_24px),
@@ -55,37 +62,28 @@ public class IconsRegistry {
             new Icon("psychiatry", R.drawable.psychiatry_24px),
             new Icon("recommend", R.drawable.recommend_24px),
             new Icon("redeem", R.drawable.redeem_24px),
+            new Icon("repeat", R.drawable.repeat_24px),
             new Icon("rocket", R.drawable.rocket_24px),
             new Icon("rocket_launch", R.drawable.rocket_launch_24px),
+            new Icon("save", R.drawable.save_24px),
             new Icon("sentiment_stressed", R.drawable.sentiment_stressed_24px),
             new Icon("sentiment_very_dissatisfied", R.drawable.sentiment_very_dissatisfied_24px),
             new Icon("sentiment_worried", R.drawable.sentiment_worried_24px),
             new Icon("shopping_basket", R.drawable.shopping_basket_24px),
             new Icon("shopping_cart", R.drawable.shopping_cart_24px),
+            new Icon("store", R.drawable.store_24px),
             new Icon("surgical", R.drawable.surgical_24px),
             new Icon("swipe_left", R.drawable.swipe_left_24px),
             new Icon("syringe", R.drawable.syringe_24px),
             new Icon("taunt", R.drawable.taunt_24px),
             new Icon("touch_app", R.drawable.touch_app_24px),
             new Icon("tune", R.drawable.tune_24px),
-            new Icon("save", R.drawable.save_24px),
-            new Icon("export_notes", R.drawable.export_notes_24px),
-            new Icon("content_copy", R.drawable.content_copy_24px),
-            new Icon("notifications", R.drawable.notifications_24px),
-            new Icon("repeat", R.drawable.repeat_24px),
 
     };
     public final Icon OPENTODAY = getById("opentoday");
     public final Icon NONE = getById("none");
 
     private IconsRegistry() {
-        long l = System.currentTimeMillis();
-        Arrays.sort(ICONS, (icon1, icon2) -> {
-            if (icon2.getId().contains("opentoday")) return 1;
-            return icon1.getId().compareToIgnoreCase(icon2.getId());
-        });
-        long d = System.currentTimeMillis() - l;
-        Logger.i(TAG, "<init> d = " + d);
     }
 
     public Icon randomIcon() {
