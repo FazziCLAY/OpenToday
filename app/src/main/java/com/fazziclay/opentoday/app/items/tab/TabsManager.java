@@ -52,7 +52,7 @@ import java.util.zip.GZIPOutputStream;
 public class TabsManager implements ItemsRoot, Tickable {
     public static final int TAB_NAME_MAX_LENGTH = 35;
 
-    private static final boolean DEBUG_ITEMS_SET = false;
+    private static final boolean DEBUG_ITEMS_SET = false; // Default value is FALSE!!!!!!!!!
     private static final String TAG = "TabsManager";
 
     private boolean destroyed;
