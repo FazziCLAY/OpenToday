@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.fazziclay.opentoday.app.ColorHistoryManager;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.rarepebble.colorpicker.ColorPickerView;
 
 public class ColorPicker {
@@ -71,7 +72,7 @@ public class ColorPicker {
             dialogLayout.addView(historyHorizontal);
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+        AlertDialog.Builder builder = (colorHistoryManager == null ? new MaterialAlertDialogBuilder(context) : new AlertDialog.Builder(context))
                 .setTitle(title)
                 .setView(dialogLayout)
                 .setNegativeButton(negative, null)
