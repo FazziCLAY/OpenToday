@@ -4,7 +4,7 @@
     <string name="abc_coped">Coped!</string>
     <string name="abc_done_button">Done!</string>
     <string name="abc_error_browserNotFound">Please install web-browser</string>
-    <string name="abc_launcherName" translatable="false">OpenToday</string>
+    <string name="abc_launcherName" translatable="false">OpenToday (1.3 Pre-release 1)</string>
     <string name="abc_not_success">Failed</string>
     <string name="abc_ok">OK</string>
     <string name="abc_opentoday" translatable="false">OpenToday</string>
