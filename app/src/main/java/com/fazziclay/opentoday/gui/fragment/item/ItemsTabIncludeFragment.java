@@ -1,4 +1,4 @@
-package com.fazziclay.opentoday.gui.fragment;
+package com.fazziclay.opentoday.gui.fragment.item;
 
 import static com.fazziclay.opentoday.util.InlineUtil.nullStat;
 import static com.fazziclay.opentoday.util.InlineUtil.viewClick;
@@ -23,29 +23,29 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.api.EventHandler;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.ImportWrapper;
-import com.fazziclay.opentoday.app.icons.IconsRegistry;
-import com.fazziclay.opentoday.app.settings.enums.FirstTab;
-import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.app.events.gui.CurrentItemsStorageContextChanged;
+import com.fazziclay.opentoday.app.icons.IconsRegistry;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
-import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.items.tab.TabsManager;
+import com.fazziclay.opentoday.app.settings.SettingsManager;
+import com.fazziclay.opentoday.app.settings.enums.FirstTab;
 import com.fazziclay.opentoday.databinding.FragmentItemsTabIncludeBinding;
 import com.fazziclay.opentoday.gui.GuiItemsHelper;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType;
+import com.fazziclay.opentoday.gui.fragment.ImportFragment;
+import com.fazziclay.opentoday.gui.fragment.MainRootFragment;
 import com.fazziclay.opentoday.gui.interfaces.CurrentItemsTab;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.gui.toolbar.AppToolbar;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.QuickNote;
-import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
 import com.google.android.material.tabs.TabLayout;
@@ -55,7 +55,7 @@ import java.util.UUID;
 public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab, NavigationHost {
     private static final String TAG = "ItemsTabIncludeFragment";
 
-    public static final ItemsTabIncludeFragment.QuickNoteInterface QUICK_NOTE_NOTIFICATIONS_PARSE = QuickNote.QUICK_NOTE_NOTIFICATIONS_PARSE;
+    public static final QuickNote.QuickNoteInterface QUICK_NOTE_NOTIFICATIONS_PARSE = QuickNote.QUICK_NOTE_NOTIFICATIONS_PARSE;
     public static ItemsTabIncludeFragment create() {
         return new ItemsTabIncludeFragment();
     }
@@ -343,9 +343,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         return (ItemsEditorRootFragment) getChildFragmentManager().findFragmentByTag("f" + binding.viewPager.getCurrentItem());
     }
 
-    public interface QuickNoteInterface {
-        ItemNotification[] run(String text);
-    }
+
 
     // On UI tab selected
     private class UIOnTabSelectedListener implements TabLayout.OnTabSelectedListener {

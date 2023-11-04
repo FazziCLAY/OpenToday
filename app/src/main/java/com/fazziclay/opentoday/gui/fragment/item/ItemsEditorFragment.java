@@ -1,4 +1,4 @@
-package com.fazziclay.opentoday.gui.fragment;
+package com.fazziclay.opentoday.gui.fragment.item;
 
 import static com.fazziclay.opentoday.util.InlineUtil.nullStat;
 
@@ -37,6 +37,11 @@ import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.databinding.ItemsStorageEmptyBinding;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.activity.MainActivity;
+import com.fazziclay.opentoday.gui.fragment.DeleteItemsFragment;
+import com.fazziclay.opentoday.gui.fragment.FilterGroupItemFilterEditorFragment;
+import com.fazziclay.opentoday.gui.fragment.ItemEditorFragment;
+import com.fazziclay.opentoday.gui.fragment.ItemTextEditorFragment;
+import com.fazziclay.opentoday.gui.fragment.MainRootFragment;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
 import com.fazziclay.opentoday.gui.item.ItemsStorageDrawer;

@@ -1,4 +1,4 @@
-package com.fazziclay.opentoday.gui.fragment;
+package com.fazziclay.opentoday.gui.fragment.item;
 
 import static com.fazziclay.opentoday.util.InlineUtil.nullStat;
 import static com.fazziclay.opentoday.util.InlineUtil.viewVisible;

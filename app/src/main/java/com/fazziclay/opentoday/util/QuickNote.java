@@ -2,13 +2,13 @@ package com.fazziclay.opentoday.util;
 
 import com.fazziclay.opentoday.app.items.notification.DayItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
-import com.fazziclay.opentoday.gui.fragment.ItemsTabIncludeFragment;
+import com.fazziclay.opentoday.gui.fragment.item.ItemsTabIncludeFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class QuickNote {
-    public static final ItemsTabIncludeFragment.QuickNoteInterface QUICK_NOTE_NOTIFICATIONS_PARSE = s -> {
+    public static final QuickNoteInterface QUICK_NOTE_NOTIFICATIONS_PARSE = s -> {
         List<ItemNotification> notifys = new ArrayList<>();
         boolean parseTime = true;
         if (parseTime) {
@@ -35,4 +35,8 @@ public class QuickNote {
         }
         return notifys.toArray(new ItemNotification[0]);
     };
+
+    public interface QuickNoteInterface {
+        ItemNotification[] run(String text);
+    }
 }

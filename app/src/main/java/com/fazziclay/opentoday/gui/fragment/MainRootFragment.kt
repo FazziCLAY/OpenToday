@@ -10,6 +10,7 @@ import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.App
 import com.fazziclay.opentoday.app.CrashReportContext
 import com.fazziclay.opentoday.gui.UI.getUIRoot
+import com.fazziclay.opentoday.gui.fragment.item.ItemsTabIncludeFragment
 import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost
