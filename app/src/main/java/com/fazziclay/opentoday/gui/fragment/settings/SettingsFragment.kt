@@ -162,7 +162,15 @@ class SettingsFragment : Fragment() {
 
 
         // Lock color history
+        binding.colorHistoryEnabled.isChecked = SettingsManager.COLOR_HISTORY_ENABLED[sm]
+        viewClick(binding.colorHistoryEnabled, Runnable {
+            binding.colorHistoryLocked.isEnabled = binding.colorHistoryEnabled.isChecked
+            SettingsManager.COLOR_HISTORY_ENABLED[sm] = binding.colorHistoryEnabled.isChecked
+            sm.save()
+        })
+
         binding.colorHistoryLocked.isChecked = colorHistoryManager.isLocked
+        binding.colorHistoryLocked.isEnabled = binding.colorHistoryEnabled.isChecked
         viewClick(binding.colorHistoryLocked, Runnable {
             colorHistoryManager.isLocked = binding.colorHistoryLocked.isChecked
         })

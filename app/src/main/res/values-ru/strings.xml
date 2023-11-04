@@ -445,4 +445,5 @@
     <string name="transform_selectTypeDialog_message" />
     <string name="transform_selectTypeDialog_title">Выберите тип результата</string>
     <string name="fragment_developer_resetUpdateCheckerTimeout">Сбросить таймаут АпдейтЧекера</string>
+    <string name="settings_colorHistoryEnabled">Сохранять историю выбранных цветов</string>
 </resources>

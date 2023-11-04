@@ -452,4 +452,5 @@
     <string name="transform_selectTypeDialog_message" translatable="false" />
     <string name="transform_selectTypeDialog_title">Select result type</string>
     <string name="fragment_developer_resetUpdateCheckerTimeout">Reset UpdateChecker timeout</string>
+    <string name="settings_colorHistoryEnabled">Is save colors in color-pickers to history</string>
 </resources>

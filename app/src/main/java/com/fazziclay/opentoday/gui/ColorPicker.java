@@ -7,7 +7,9 @@ import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.ColorHistoryManager;
+import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -16,6 +18,7 @@ import com.rarepebble.colorpicker.ColorPickerView;
 public class ColorPicker {
     private final Context context;
     private int startColor;
+    private SettingsManager settingsManager;
     private ColorHistoryManager colorHistoryManager;
     private int colorHistoryMax = 5;
     private boolean showHex;
@@ -31,6 +34,7 @@ public class ColorPicker {
     public ColorPicker(Context context, int startColor) {
         this.context = context;
         this.startColor = startColor;
+        this.settingsManager = App.get(context).getSettingsManager();
     }
 
     public ColorPicker setting(boolean showHex, boolean showPreview, boolean showAlpha) {
@@ -95,7 +99,9 @@ public class ColorPicker {
     }
 
     public ColorPicker setColorHistoryManager(ColorHistoryManager colorHistoryManager) {
-        this.colorHistoryManager = colorHistoryManager;
+        if (SettingsManager.COLOR_HISTORY_ENABLED.get(settingsManager)) {
+            this.colorHistoryManager = colorHistoryManager;
+        }
         return this;
     }
 

@@ -169,10 +169,17 @@
 
 
         <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/colorHistoryLocked"
+            android:id="@+id/colorHistoryEnabled"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/itemInternalBackgroundFromItem"
+            android:text="@string/settings_colorHistoryEnabled" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/colorHistoryLocked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/colorHistoryEnabled"
             android:text="@string/settings_colorHistoryLocked" />
 
         <com.google.android.material.checkbox.MaterialCheckBox
