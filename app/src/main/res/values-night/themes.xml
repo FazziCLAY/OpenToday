@@ -227,6 +227,6 @@
         <item name="android:textColor">#FFFFFF</item>
     </style>
     <style name="Theme.OpenToday.ItemsTabInclude.Enter">
-        <item name="android:backgroundTint">#24C200</item>
+        <item name="android:backgroundTint">#0B9793</item>
     </style>
 </resources>

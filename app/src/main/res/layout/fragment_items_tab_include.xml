@@ -77,7 +77,7 @@
             style="@style/Theme.OpenToday.ItemsTabInclude.Enter"
             android:contentDescription="@string/quickNote_add"
             android:layout_alignParentEnd="true"
-            android:src="@android:drawable/ic_menu_send" />
+            android:src="@drawable/new_label_24px" />
 
     </RelativeLayout>
 
