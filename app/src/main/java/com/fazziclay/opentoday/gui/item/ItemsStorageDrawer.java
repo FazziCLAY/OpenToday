@@ -58,7 +58,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
     private final ItemInterface itemOnClick;
     private final boolean previewMode;
     private ItemViewWrapper itemViewWrapper;
-    private Handler handler;
+    private final Handler handler;
 
     // Private (available only with builder)
     private ItemsStorageDrawer(@NonNull Activity activity,
@@ -191,7 +191,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
             view = generateViewForItem(item, holder.destroyer);
         }
 
-        if (itemViewGeneratorBehavior.isRenderMinimized(item)) {
+        if (itemViewGeneratorBehavior.isRenderMinimized(item) && view != null) {
             final FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(0, 0, 17, 0);
             view.setLayoutParams(layoutParams);
