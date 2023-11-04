@@ -343,7 +343,6 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
                         }
                     }, (type -> Transform.isAllow(item, type)))
                             .setTitle(activity.getString(R.string.transform_selectTypeDialog_title))
-                            .setMessage(activity.getString(R.string.transform_selectTypeDialog_message))
                             .show();
                     break;
             }

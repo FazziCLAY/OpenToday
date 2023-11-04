@@ -185,11 +185,11 @@ class SettingsFragment : Fragment() {
         })
         binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(EnumsRegistry.nameResId(sm.defaultQuickNoteType.itemType)))
         viewClick(binding.defaultQuickNoteType, Runnable {
-            DialogSelectItemType(context) { type: ItemType ->
+            DialogSelectItemType(context, { type: ItemType ->
                 sm.defaultQuickNoteType = ItemsRegistry.REGISTRY.get(type)
                 binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(EnumsRegistry.nameResId(sm.defaultQuickNoteType.itemType)))
                 sm.save()
-            }.setTitle(getString(R.string.dialog_selectItemType_generic_title)).show()
+            }, sm.defaultQuickNoteType.itemType).setTitle(getString(R.string.dialog_selectItemType_generic_title)).show()
         })
         pinCodeCallback = Runnable { binding.pincode.text = getString(R.string.settings_pincode, if (pinCodeManager.isPinCodeSet) getString(R.string.settings_pincode_on) else getString(R.string.settings_pincode_off)) }
         pinCodeCallback.run()
