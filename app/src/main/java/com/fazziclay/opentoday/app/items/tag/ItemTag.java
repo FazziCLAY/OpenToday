@@ -65,7 +65,7 @@ public class ItemTag {
         bind = true;
     }
 
-    private enum ValueType {
+    public enum ValueType {
         NULL,
         NUMBER,
         STRING

@@ -7,11 +7,14 @@ import androidx.annotation.NonNull;
 
 import com.fazziclay.javaneoutil.FileUtil;
 import com.fazziclay.opentoday.Debug;
+import com.fazziclay.opentoday.api.EventHandler;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.CrashReportContext;
 import com.fazziclay.opentoday.app.ImportantDebugCallback;
 import com.fazziclay.opentoday.app.Translation;
 import com.fazziclay.opentoday.app.data.CherryOrchard;
+import com.fazziclay.opentoday.app.events.items.ItemsRootDestroyedEvent;
+import com.fazziclay.opentoday.app.events.items.ItemsRootInitializedEvent;
 import com.fazziclay.opentoday.app.items.ItemPath;
 import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
@@ -71,6 +74,7 @@ public class TabsManager implements ItemsRoot, Tickable {
         this.dataCompressFile = dataCompressFile;
         this.translation = translation;
         load();
+        EventHandler.call(new ItemsRootInitializedEvent(this));
     }
 
     @Nullable
@@ -285,6 +289,7 @@ public class TabsManager implements ItemsRoot, Tickable {
         }
 
         destroyed = true;
+        EventHandler.call(new ItemsRootDestroyedEvent(this));
     }
 
     private void checkDestroy() {

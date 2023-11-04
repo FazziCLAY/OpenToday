@@ -29,7 +29,7 @@ import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.tick.TickThread;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.gui.activity.CrashReportActivity;
-import com.fazziclay.opentoday.plugins.gcp.GlobalChangesPlugin;
+import com.fazziclay.opentoday.plugins.PluginsRegistry;
 import com.fazziclay.opentoday.util.DebugUtil;
 import com.fazziclay.opentoday.util.License;
 import com.fazziclay.opentoday.util.Logger;
@@ -118,6 +118,7 @@ public class App extends Application {
     private final OptionalField<ItemNotificationHandler> itemNotificationHandler = new OptionalField<>(() -> new ItemNotificationHandler(this, this));
     private final List<FeatureFlag> featureFlags = new ArrayList<>(Arrays.asList(com.fazziclay.opentoday.Build.INITIAL_FEATURE_FLAGS));
     private long appStartupTime = 0;
+    private boolean pluginsInitialized = false;
 
     /**
      * OPENTODAY APPLICATION INITIALIZE
@@ -232,23 +233,57 @@ public class App extends Application {
         notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_ITEMS_CHANNEL, getString(R.string.notificationChannel_items_title), NotificationManager.IMPORTANCE_MAX));
     }
 
-
-    public void reinitPlugins() {
+    public void tryInitPlugins() {
         IPROF.push("reinitPlugins");
         CrashReportContext.BACK.push("App::reinitPlugins");
-        CrashReportContext.BACK.push("disabling all...");
-        PluginManager.disableAllPlugins();
-        for (final String s : getSettingsManager().getPlugins().split(",")) {
-            CrashReportContext.BACK.swap("plugin: " + s.trim());
-            if (s.trim().equals("gcp")) {
-                PluginManager.loadPlugin(
-                        "fazziclay://opentoday/plugins/global_changes_plugin",
-                        new GlobalChangesPlugin());
+        if (!pluginsInitialized) {
+            CrashReportContext.BACK.push("disabling all...");
+            PluginManager.disableAllPlugins();
+            for (final String shortName : getSettingsManager().getPlugins().split(",")) {
+                CrashReportContext.BACK.swap("plugin: " + shortName.trim());
+
+                PluginsRegistry.PluginInfo pluginInfo = PluginsRegistry.REGISTRY.getByShortName(shortName);
+                try {
+                    initPlugin(pluginInfo, 0);
+
+                } catch (Exception e) {
+                    Logger.e("App", "failed init plugin: " + shortName, e);
+                }
             }
+            pluginsInitialized = true;
+            CrashReportContext.BACK.pop();
         }
         CrashReportContext.BACK.pop();
-        CrashReportContext.BACK.pop();
         IPROF.pop();
+    }
+
+    public void initPlugin(PluginsRegistry.PluginInfo pluginInfo, int i) throws Exception {
+        if (pluginInfo == null) {
+            throw new NullPointerException("pluginInfo is null");
+        }
+
+        if (PluginManager.isPluginActive(pluginInfo.getPackageId())) {
+            Logger.w("App:initPlugins", "plugin " + pluginInfo.getShortName() + " already active...");
+            return;
+        }
+
+        if (i > 10) {
+            Logger.w("App:initPlugins", "i > 10...");
+            return;
+        }
+
+        for (final String depend : pluginInfo.getDepends()) {
+            initPlugin(PluginsRegistry.REGISTRY.getByShortName(depend), i + 1);
+        }
+
+        PluginManager.loadPlugin(
+                pluginInfo.getPackageId(),
+                pluginInfo.getClazz().getConstructor().newInstance());
+    }
+
+    public void initPlugins() {
+        pluginsInitialized = false;
+        tryInitPlugins();
     }
 
     /**

@@ -123,6 +123,8 @@ class MainActivity : AppCompatActivity(), UIRoot {
             // do nothing
         }
         settingsManager = app.settingsManager
+        app.tryInitPlugins()
+
         PROFILER.swap("inflate&set")
 
         PROFILER.push("inflate")

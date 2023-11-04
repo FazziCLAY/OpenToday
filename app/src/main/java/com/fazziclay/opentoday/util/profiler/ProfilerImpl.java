@@ -39,6 +39,10 @@ public class ProfilerImpl implements Profiler {
             list = new ArrayList<>();
             currentNode.children.put(node.name, list);
         }
+        if (list == null) {
+            list = new ArrayList<>();
+            currentNode.children.put(node.name, list);
+        }
         list.add(node);
         currentNode = node;
         node.start();

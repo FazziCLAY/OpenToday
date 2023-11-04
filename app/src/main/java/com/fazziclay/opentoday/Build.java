@@ -20,7 +20,7 @@ public class Build {
             //FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
             //FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION,
     };
-    public static final boolean PROFILERS = false; // normally is FALSE (long uses profilers causes OutOfMemory)
+    public static final boolean PROFILERS = false; // normally is FALSE (long uses profilers causes crashes)
 
 
     // work code

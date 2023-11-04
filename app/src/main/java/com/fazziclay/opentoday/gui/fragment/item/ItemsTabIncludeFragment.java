@@ -190,6 +190,7 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
         Logger.d(TAG, "onDestroy");
         tabsManager.getOnTabsChangedCallbacks().removeCallback(localOnTabChanged);
         if (toolbar != null) toolbar.destroy();
+        EventHandler.call(new CurrentItemsStorageContextChanged(null));
     }
 
     @Override

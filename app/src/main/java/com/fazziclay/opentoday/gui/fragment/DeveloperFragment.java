@@ -87,7 +87,7 @@ public class DeveloperFragment extends Fragment implements NavigationHost, Activ
                 .setPositiveButton("Set+Restart", (dialogInterface, i) -> {
                     app.getSettingsManager().setPlugins(view.getText().toString());
                     app.getSettingsManager().save();
-                    app.reinitPlugins();
+                    app.initPlugins();
                     var notify = new TextView(context);
                     notify.setText(R.string.fragment_developer_plugins_reloadedNotification);
                     notify.setTextSize(20);

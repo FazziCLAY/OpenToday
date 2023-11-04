@@ -33,8 +33,25 @@ public class PluginManager {
                     eventHandler.handle(event);
                 }
             } catch (Exception e) {
-                throw new RuntimeException("Exception while process eventHandlers in \"" + s + "\"(" + plugin + ") plugin");
+                throw new PluginException("Exception while process eventHandlers in \"" + s + "\"(" + plugin + ") plugin", e, plugin);
             }
         });
+    }
+
+    public static OpenTodayPlugin getActivePlugin(String key) {
+        return activePlugins.get(key);
+    }
+
+    public static <T extends OpenTodayPlugin> T getActivePlugin(Class<T> clazz) {
+        for (OpenTodayPlugin value : activePlugins.values()) {
+            if (value.getClass() == clazz) {
+                return (T) value;
+            }
+        }
+        return null;
+    }
+
+    public static boolean isPluginActive(String key) {
+        return getActivePlugin(key) != null;
     }
 }

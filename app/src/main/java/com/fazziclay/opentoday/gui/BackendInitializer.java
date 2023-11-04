@@ -49,6 +49,7 @@ public class BackendInitializer {
             App app = App.get();
             PROFILER.pop();
 
+            init(Module.PLUGINS, app::initPlugins);
             init(Module.SETTINGS_MANAGER, app::getSettingsManager);
             init(Module.TABS_MANAGER, app::getTabsManager);
             init(Module.ITEM_NOTIFICATION_HANDLER, app::getItemNotificationHandler);
@@ -64,6 +65,7 @@ public class BackendInitializer {
     }
 
     public enum Module {
+        PLUGINS,
         TABS_MANAGER,
         SETTINGS_MANAGER,
         COLOR_HISTORY_MANAGER,

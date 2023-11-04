@@ -70,9 +70,6 @@ class LauncherActivity : Activity() {
         PROFILER.swap("theme")
         UI.setTheme(theme)
 
-        PROFILER.swap("plugins")
-        app.reinitPlugins()
-
         PROFILER.swap("launches_activities")
         if (isSetupDone) {
             startActivity(Intent(this, MainActivity::class.java))
