@@ -3,5 +3,6 @@
 
     <item
         android:id="@+id/menu_logincontainerfilter_item_delete"
+        android:icon="@drawable/delete_24px"
         android:title="@string/menuItem_delete" />
 </menu>

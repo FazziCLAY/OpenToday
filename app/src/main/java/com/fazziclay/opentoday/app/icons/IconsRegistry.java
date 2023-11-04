@@ -18,7 +18,9 @@ public class IconsRegistry {
             new Icon("none", R.drawable.close_24px), // special icon
 
 
+
             new Icon("add", R.drawable.add_24px),
+            new Icon("aspect_ratio", R.drawable.aspect_ratio_24px),
             new Icon("background_replace", R.drawable.background_replace_24px),
             new Icon("barefoot", R.drawable.barefoot_24px),
             new Icon("baseline_account_tree", R.drawable.baseline_account_tree_24),
@@ -39,6 +41,8 @@ public class IconsRegistry {
             new Icon("cloudy_snowing", R.drawable.cloudy_snowing_24px),
             new Icon("content_copy", R.drawable.content_copy_24px),
             new Icon("delete", R.drawable.delete_24px),
+            new Icon("edit", R.drawable.edit_24px),
+            new Icon("edit_note", R.drawable.edit_note_24px),
             new Icon("emoji_flags", R.drawable.emoji_flags_24px),
             new Icon("emoji_food_beverage", R.drawable.emoji_food_beverage_24px),
             new Icon("emoji_objects", R.drawable.emoji_objects_24px),
@@ -50,11 +54,14 @@ public class IconsRegistry {
             new Icon("format_size", R.drawable.format_size_24px),
             new Icon("format_strikethrough", R.drawable.format_strikethrough_24px),
             new Icon("gastroenterology", R.drawable.gastroenterology_24px),
+            new Icon("handyman", R.drawable.handyman_24px),
             new Icon("home_health", R.drawable.home_health_24px),
             new Icon("home_work", R.drawable.home_work_24px),
             new Icon("info_i", R.drawable.info_i_24px),
+            new Icon("minimize", R.drawable.minimize_24px),
             new Icon("new_label", R.drawable.new_label_24px),
             new Icon("notifications", R.drawable.notifications_24px),
+            new Icon("opacity", R.drawable.opacity_24px),
             new Icon("palette", R.drawable.palette_24px),
             new Icon("pause_presentation", R.drawable.pause_presentation_24px),
             new Icon("pill", R.drawable.pill_24px),
@@ -66,6 +73,7 @@ public class IconsRegistry {
             new Icon("rocket", R.drawable.rocket_24px),
             new Icon("rocket_launch", R.drawable.rocket_launch_24px),
             new Icon("save", R.drawable.save_24px),
+            new Icon("select", R.drawable.select_24px),
             new Icon("sentiment_stressed", R.drawable.sentiment_stressed_24px),
             new Icon("sentiment_very_dissatisfied", R.drawable.sentiment_very_dissatisfied_24px),
             new Icon("sentiment_worried", R.drawable.sentiment_worried_24px),

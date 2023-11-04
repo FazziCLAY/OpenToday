@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -14,7 +15,7 @@
             android:layout_height="wrap_content"
             android:text="@string/settings_analogClockSettings_size_title"
             android:textSize="20sp"
-            />
+            app:drawableStartCompat="@drawable/aspect_ratio_24px" />
         <SeekBar
             android:id="@+id/size"
             android:layout_width="match_parent"
@@ -30,6 +31,7 @@
             android:layout_marginTop="20sp"
             android:layout_below="@id/size"
             android:text="@string/settings_analogClockSettings_transparency_title"
+            app:drawableStartCompat="@drawable/opacity_24px"
             android:textSize="20sp"
             />
         <SeekBar
