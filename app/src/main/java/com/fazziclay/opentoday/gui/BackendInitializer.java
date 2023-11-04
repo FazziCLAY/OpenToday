@@ -2,6 +2,8 @@ package com.fazziclay.opentoday.gui;
 
 import android.util.ArraySet;
 
+import androidx.annotation.NonNull;
+
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.util.profiler.Profiler;
 
@@ -34,7 +36,7 @@ public class BackendInitializer {
             setName("BackInitializerThread");
         }
 
-        public void init(Module m, Runnable r) {
+        public void init(@NonNull Module m, @NonNull Runnable r) {
             PROFILER.push(m.name());
             r.run();
             PROFILER.swap("update_modules_set");
