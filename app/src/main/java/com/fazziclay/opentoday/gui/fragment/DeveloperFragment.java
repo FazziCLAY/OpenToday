@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.fazziclay.javaneoutil.FileUtil;
 import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
@@ -29,6 +30,8 @@ import com.fazziclay.opentoday.gui.dialog.IconSelectorDialog;
 import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.util.ColorUtil;
+
+import java.io.File;
 
 public class DeveloperFragment extends Fragment implements NavigationHost, ActivitySettingsMember {
 
@@ -74,6 +77,11 @@ public class DeveloperFragment extends Fragment implements NavigationHost, Activ
         }).show());
         binding.profiler.setOnClickListener((v) -> {
             binding.debugText.setText(ColorUtil.PROFILER.getResult(-1));
+        });
+        binding.resetUpdateCheckerTimeout.setOnClickListener(fhsfs -> {
+            File cacheFile = new File(context.getExternalCacheDir(), "latest_update_check");
+            FileUtil.delete(cacheFile);
+            Toast.makeText(context, R.string.abc_success, Toast.LENGTH_SHORT).show();
         });
     }
 

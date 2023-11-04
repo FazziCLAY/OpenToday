@@ -444,4 +444,5 @@
     <string name="transform_not_allowed">Трансформация невозможна</string>
     <string name="transform_selectTypeDialog_message" />
     <string name="transform_selectTypeDialog_title">Выберите тип результата</string>
+    <string name="fragment_developer_resetUpdateCheckerTimeout">Сбросить таймаут АпдейтЧекера</string>
 </resources>

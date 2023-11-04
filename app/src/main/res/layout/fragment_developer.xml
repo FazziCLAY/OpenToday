@@ -51,6 +51,13 @@
             android:backgroundTint="#AA2DC9E9"
             android:text="@string/fragment_developer_profiler" />
 
+        <Button
+            android:id="@+id/resetUpdateCheckerTimeout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#AA3407E7"
+            android:text="@string/fragment_developer_resetUpdateCheckerTimeout" />
+
         <TextView
             android:id="@+id/debugText"
             android:layout_width="wrap_content"

@@ -451,4 +451,5 @@
     <string name="transform_not_allowed">Transformation is impossible</string>
     <string name="transform_selectTypeDialog_message" translatable="false" />
     <string name="transform_selectTypeDialog_title">Select result type</string>
+    <string name="fragment_developer_resetUpdateCheckerTimeout">Reset UpdateChecker timeout</string>
 </resources>

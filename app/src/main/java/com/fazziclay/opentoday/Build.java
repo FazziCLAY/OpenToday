@@ -10,7 +10,7 @@ import java.util.Arrays;
 // I im happy!
 public class Build {
     // Setting this :)
-    public static final BuildDebugStatus DEBUG_STATUS = BuildDebugStatus.FALSE;
+    public static final BuildDebugStatus DEBUG_STATUS = BuildDebugStatus.AUTOMATIC;
     public static final BuildLogsStatus LOGS_STATUS = BuildLogsStatus.OFF;
     public static final boolean IS_SECRET_SETTINGS_AVAILABLE = true;
     public static final boolean IS_SHADOW_CUSTOM_BUILD_CONFIG = false; // normally is FALSE
