@@ -6,11 +6,11 @@ plugins {
 // =====
 var isDev = false        // add .dev to applicationId
 var beta = false          // add .beta to applicationId
-var appIdSuffix = ".prerelease"      // add this to applicationId (E M P T Y   F O R   R E L E A S E S)
-var verBuild = 154       // versionCode
-var verName = "1.3-pre1-beta"  // versionName...
-var verBranch = "pre-release"   // branch
-var verReleaseTime = 1699122208 // releaseTime
+var appIdSuffix = ""      // add this to applicationId (E M P T Y   F O R   R E L E A S E S)
+var verBuild = 160       // versionCode
+var verName = "1.3"  // versionName...
+var verBranch = "main"   // branch
+var verReleaseTime = 1699198506 // releaseTime
 
 android {
     compileSdk 34

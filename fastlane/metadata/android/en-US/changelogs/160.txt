@@ -1,4 +1,4 @@
-# Changelog v999 9.9.9 (2023.11.99)
+# Changelog v160 1.3 (2023.11.05)
 Innovation:
  * Notification can now come as an alarm clock (full screen)
  * When creating an item, its default background color is random (configurable)
