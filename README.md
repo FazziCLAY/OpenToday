@@ -11,7 +11,7 @@ Android application for the organization of life, pro notes and reminder.
 
 # Using
 Each tile in the app is called an Item.
-There are different types of Items, some inherit others, adding new functionality. So for example, the 'Daily checkmark'is inherited from the 'Checkmark' item.
+There are different types of Items, some inherit others, adding new functionality. So for example, the 'Daily checkmark' is inherited from the 'Checkmark' item.
 * **Text** - use it for simple text notes
 * **CheckBox** - in connection with *Group*, use it as a grocery list to the store or a to-do list for today
 * **Group** - there are no restrictions in depth! Create your own hierarchy of storing items
