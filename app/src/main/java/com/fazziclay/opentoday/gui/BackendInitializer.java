@@ -51,8 +51,8 @@ public class BackendInitializer {
             App app = App.get();
             PROFILER.pop();
 
-            init(Module.PLUGINS, app::initPlugins);
             init(Module.SETTINGS_MANAGER, app::getSettingsManager);
+            init(Module.PLUGINS, app::initPlugins);
             init(Module.TABS_MANAGER, app::getTabsManager);
             init(Module.ITEM_NOTIFICATION_HANDLER, app::getItemNotificationHandler);
             init(Module.IMPORTANT_DEBUG_CALLBACKS, app::getImportantDebugCallbacks);

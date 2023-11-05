@@ -3,6 +3,7 @@ package com.fazziclay.opentoday.gui.activity
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import com.fazziclay.opentoday.Debug
 import com.fazziclay.opentoday.app.App
 import com.fazziclay.opentoday.app.settings.SettingsManager
@@ -59,8 +60,13 @@ class LauncherActivity : Activity() {
         PROFILER.swap("settings")
 
         PROFILER.push("wait_settings_init")
+        val startWait = System.currentTimeMillis()
         while (BackendInitializer.isWaitForModule(BackendInitializer.Module.SETTINGS_MANAGER)) {
             // waiting init settings
+            if (System.currentTimeMillis() - startWait > 1000 * 10) {
+                Toast.makeText(this, "Long...", Toast.LENGTH_SHORT).show()
+                break
+            }
         }
         PROFILER.pop()
 
