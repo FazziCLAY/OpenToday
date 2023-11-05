@@ -368,7 +368,7 @@ public class App extends Application {
         App.crash(context, CrashReport.create(exception), false);
     }
 
-    private static void crash(@Nullable Context context, @NotNull final CrashReport crashReport, boolean fatal) {
+    public static void crash(@Nullable Context context, @NotNull final CrashReport crashReport, boolean fatal) {
         if (context == null) context = App.get();
         crashReport.setFatal(CrashReport.FatalEnum.fromBoolean(fatal));
 

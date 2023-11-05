@@ -5,6 +5,7 @@ import android.util.ArraySet;
 import androidx.annotation.NonNull;
 
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.CrashReport;
 import com.fazziclay.opentoday.util.profiler.Profiler;
 
 import java.util.Set;
@@ -34,14 +35,22 @@ public class BackendInitializer {
 
         public BackInitializerThread() {
             setName("BackInitializerThread");
+            setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+                App.crash(null, CrashReport.create(thread, throwable), false);
+                backInitializeInProcess = false;
+            });
         }
 
         public void init(@NonNull Module m, @NonNull Runnable r) {
-            PROFILER.push(m.name());
-            r.run();
-            PROFILER.swap("update_modules_set");
-            modulesInitialized.add(m);
-            PROFILER.pop();
+            try {
+                PROFILER.push(m.name());
+                r.run();
+                PROFILER.swap("update_modules_set");
+                modulesInitialized.add(m);
+                PROFILER.pop();
+            } catch (Exception e) {
+                throw new RuntimeException("Exception while init module " + m, e);
+            }
         }
 
         @Override
