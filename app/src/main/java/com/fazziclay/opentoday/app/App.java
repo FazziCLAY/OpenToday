@@ -1,12 +1,14 @@
 package com.fazziclay.opentoday.app;
 
-import android.app.Activity;
+import static com.fazziclay.opentoday.util.InlineUtil.IPROF;
+
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.os.Build;
+import android.os.StrictMode;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
@@ -17,6 +19,7 @@ import com.fazziclay.javaneoutil.NonNull;
 import com.fazziclay.neosocket.NeoSocket;
 import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
+import com.fazziclay.opentoday.api.PluginManager;
 import com.fazziclay.opentoday.app.datafixer.DataFixer;
 import com.fazziclay.opentoday.app.datafixer.FixResult;
 import com.fazziclay.opentoday.app.items.ItemsRoot;
@@ -24,13 +27,16 @@ import com.fazziclay.opentoday.app.items.QuickNoteReceiver;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.items.tick.TickThread;
-import com.fazziclay.opentoday.debug.TestItemViewGenerator;
+import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.gui.activity.CrashReportActivity;
+import com.fazziclay.opentoday.plugins.PluginsRegistry;
 import com.fazziclay.opentoday.util.DebugUtil;
 import com.fazziclay.opentoday.util.License;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
+import com.fazziclay.opentoday.util.profiler.Profiler;
+import com.fazziclay.opentoday.util.profiler.ProfilerImpl;
 import com.fazziclay.opentoday.util.time.TimeUtil;
 
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +47,6 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -50,7 +55,7 @@ import ru.fazziclay.opentoday.telemetry.OpenTodayTelemetry;
 
 public class App extends Application {
     // Application
-    public static final int APPLICATION_DATA_VERSION = 11;
+    public static final int APPLICATION_DATA_VERSION = 12;
     public static final String VERSION_NAME = CustomBuildConfig.VERSION_NAME;
     public static final int VERSION_CODE = CustomBuildConfig.VERSION_CODE;
     public static final long VERSION_RELEASE_TIME = CustomBuildConfig.VERSION_RELEASE_TIME;
@@ -64,24 +69,14 @@ public class App extends Application {
 
     // Shared preference
     public static final String SHARED_NAME = "main";
-    public static final String SHARED_KEY_IS_SETUP_DONE = "isSetupDone";
     public static final String SHARED_KEY_PINCODE = "app_pinCode";
     public static final String SHARED_KEY_LAST_TAB = "app_tabInclude_lastTabId";
 
     // DEBUG
-    public static final boolean SHADOW_RELEASE = false;
-    public static final boolean DEBUG = !SHADOW_RELEASE && CustomBuildConfig.DEBUG;
-    public static final boolean LOG = debug(true);
-    public static final boolean LOGS_SAVE = debug(true);
-    public static final boolean DEBUG_TICK_NOTIFICATION = debug(false);
-    public static final int DEBUG_MAIN_ACTIVITY_START_SLEEP = debug(false) ? 6000 : 0;
-    public static final int DEBUG_APP_START_SLEEP = debug(false) ? 8000 : 0;
-    public static Class<? extends Activity> DEBUG_MAIN_ACTIVITY = debug(false) ? TestItemViewGenerator.class : null;
-    public static final boolean DEBUG_TEST_EXCEPTION_ON_LAUNCH = false;
-    public static final boolean DEBUG_IMPORTANT_NOTIFICATIONS = debug(false);
-    public static final boolean DEBUG_ALWAYS_SHOW_UI_NOTIFICATIONS = debug(false);
-    public static final boolean DEBUG_LOG_ALL_IN_MAINACTIVITY = debug(false);
-    public static final boolean DEBUG_NETWORK_UTIL_SHADOWCONTENT = debug(false);
+    public static final boolean DEBUG = com.fazziclay.opentoday.Build.isDebug();
+    public static final boolean LOG = com.fazziclay.opentoday.Build.isLogs();
+    public static final boolean LOGS_SAVE = com.fazziclay.opentoday.Build.isLogsSave();
+    public static final boolean SECRET_SETTINGS_AVAILABLE = com.fazziclay.opentoday.Build.isSecretSettingAvailable();
 
     public static boolean debug(boolean b) {
         return (DEBUG && b);
@@ -115,18 +110,15 @@ public class App extends Application {
     private final OptionalField<ColorHistoryManager> colorHistoryManager = new OptionalField<>(() -> new ColorHistoryManager(new File(getExternalFilesDir(""), "color_history.json"), 10));
     private final OptionalField<PinCodeManager> pinCodeManager = new OptionalField<>(() -> new PinCodeManager(this));
     private final OptionalField<SelectionManager> selectionManager = new OptionalField<>(SelectionManager::new);
-    private final OptionalField<Telemetry> telemetry = new OptionalField<>(() -> new Telemetry(this, getSettingsManager().isTelemetry()));
+    private final OptionalField<Telemetry> telemetry = new OptionalField<>(() -> new Telemetry(this, SettingsManager.IS_TELEMETRY.get(getSettingsManager())));
     private final OptionalField<TickThread> tickThread = new OptionalField<>(this::preCheckTickThread, TickThread::requestTerminate, this::validateTickThread);
     private final OptionalField<Translation> translation = new OptionalField<>(() -> new TranslationImpl(this::getString));
     private final OptionalField<CallbackStorage<ImportantDebugCallback>> importantDebugCallbacks = new OptionalField<>(CallbackStorage::new);
-    private final List<FeatureFlag> featureFlags = new ArrayList<>(App.DEBUG ? Arrays.asList(
-            FeatureFlag.ITEM_DEBUG_TICK_COUNTER,
-            //FeatureFlag.ALWAYS_SHOW_SAVE_STATUS,
-            //FeatureFlag.DISABLE_AUTOMATIC_TICK,
-            FeatureFlag.DISABLE_DEBUG_MODE_NOTIFICATION,
-            FeatureFlag.TOOLBAR_DEBUG
-    ) : Collections.emptyList());
+    private final OptionalField<BeautifyColorManager> beautifyColorManager = new OptionalField<>(() -> new BeautifyColorManager(this));
+    private final OptionalField<ItemNotificationHandler> itemNotificationHandler = new OptionalField<>(() -> new ItemNotificationHandler(this, this));
+    private final List<FeatureFlag> featureFlags = new ArrayList<>(Arrays.asList(com.fazziclay.opentoday.Build.INITIAL_FEATURE_FLAGS));
     private long appStartupTime = 0;
+    private boolean pluginsInitialized = false;
 
     /**
      * OPENTODAY APPLICATION INITIALIZE
@@ -144,8 +136,11 @@ public class App extends Application {
             super.onCreate();
             instance = this;
             setupCrashReporter();
-            DebugUtil.sleep(DEBUG_APP_START_SLEEP);
+            DebugUtil.sleep(Debug.DEBUG_APP_START_SLEEP);
             CrashReportContext.BACK.push("App onCreate");
+            if (DEBUG) {
+                StrictMode.enableDefaults();
+            }
 
             logsFile = new File(getExternalCacheDir(), "latest.log");
             final FixResult fixResult = Logger.dur("App", "[DataFixer] fixToCurrentVersion", () -> getDataFixer().fixToCurrentVersion());
@@ -169,13 +164,7 @@ public class App extends Application {
         Logger.i("App", "onLowMemory.");
         openSourceLicenses.free();
         dataFixer.free();
-        tabsManager.free();
-        settingsManager.free();
-        colorHistoryManager.free();
         pinCodeManager.free();
-        selectionManager.free();
-        telemetry.free();
-        tickThread.free();
 
         Debug.free();
         TimeUtil.free();
@@ -196,13 +185,25 @@ public class App extends Application {
         if (level >= TRIM_MEMORY_RUNNING_LOW) {
             openSourceLicenses.free();
             dataFixer.free();
-            colorHistoryManager.free();
-            //telemetry.free();
             pinCodeManager.free();
             Debug.free();
-            TimeUtil.free();
-            RandomUtil.free();
         }
+    }
+
+    public static Profiler createProfiler(@NotNull String name) {
+        return com.fazziclay.opentoday.Build.isProfilersEnabled() ? addProfiler(new ProfilerImpl(name)) : Profiler.EMPTY;
+    }
+
+    public static ProfilerImpl addProfiler(ProfilerImpl profiler) {
+        if (ProfilerImpl.PROFILERS == null) {
+            ProfilerImpl.PROFILERS = new ArrayList<>();
+        }
+        ProfilerImpl.PROFILERS.add(profiler);
+        return profiler;
+    }
+
+    public List<Profiler> getProfilers() {
+        return ProfilerImpl.PROFILERS;
     }
 
     public boolean isPinCodeNeed() {
@@ -229,7 +230,60 @@ public class App extends Application {
     private void registryNotificationsChannels() {
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
         notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_QUCIKNOTE_CHANNEL, getString(R.string.notificationChannel_quickNote_title), NotificationManager.IMPORTANCE_HIGH));
-        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_ITEMS_CHANNEL, getString(R.string.notificationChannel_items_title), NotificationManager.IMPORTANCE_HIGH));
+        notificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_ITEMS_CHANNEL, getString(R.string.notificationChannel_items_title), NotificationManager.IMPORTANCE_MAX));
+    }
+
+    public void tryInitPlugins() {
+        IPROF.push("reinitPlugins");
+        CrashReportContext.BACK.push("App::reinitPlugins");
+        if (!pluginsInitialized) {
+            CrashReportContext.BACK.push("disabling all...");
+            PluginManager.disableAllPlugins();
+            for (final String shortName : getSettingsManager().getPlugins().split(",")) {
+                CrashReportContext.BACK.swap("plugin: " + shortName.trim());
+
+                PluginsRegistry.PluginInfo pluginInfo = PluginsRegistry.REGISTRY.getByShortName(shortName);
+                try {
+                    initPlugin(pluginInfo, 0);
+
+                } catch (Exception e) {
+                    Logger.e("App", "failed init plugin: " + shortName, e);
+                }
+            }
+            pluginsInitialized = true;
+            CrashReportContext.BACK.pop();
+        }
+        CrashReportContext.BACK.pop();
+        IPROF.pop();
+    }
+
+    public void initPlugin(PluginsRegistry.PluginInfo pluginInfo, int i) throws Exception {
+        if (pluginInfo == null) {
+            throw new NullPointerException("pluginInfo is null");
+        }
+
+        if (PluginManager.isPluginActive(pluginInfo.getPackageId())) {
+            Logger.w("App:initPlugins", "plugin " + pluginInfo.getShortName() + " already active...");
+            return;
+        }
+
+        if (i > 10) {
+            Logger.w("App:initPlugins", "i > 10...");
+            return;
+        }
+
+        for (final String depend : pluginInfo.getDepends()) {
+            initPlugin(PluginsRegistry.REGISTRY.getByShortName(depend), i + 1);
+        }
+
+        PluginManager.loadPlugin(
+                pluginInfo.getPackageId(),
+                pluginInfo.getClazz().getConstructor().newInstance());
+    }
+
+    public void initPlugins() {
+        pluginsInitialized = false;
+        tryInitPlugins();
     }
 
     /**
@@ -291,11 +345,12 @@ public class App extends Application {
     private License[] createOpenSourceLicensesArray() {
         // TODO: 19.10.2022 add v prefix to version to telemetry
         return new License[]{
-                new License("LICENSE_OpenToday", "OpenToday (this app)", "fazziclay@gmail.com\nhttps://fazziclay.github.io/opentoday"),
-                new License("LICENSE_hsv-alpha-color-picker-android", "hsv-alpha-color-picker-android", "https://github.com/martin-stone/hsv-alpha-color-picker-android"),
-                new License("LICENSE_JavaNeoUtil", "JavaNeoUtil v" + JavaNeoUtil.VERSION_NAME, "https://github.com/fazziclay/javaneoutil"),
-                new License("LICENSE_NeoSocket", "NeoSocket v" + NeoSocket.VERSION_NAME, "https://github.com/fazziclay/neosocket"),
-                new License("LICENSE_OpenTodayTelemetry", "OpenTodayTelemetry " + OpenTodayTelemetry.VERSION_NAME, getString(R.string.openSourceLicenses_telemetry_warn) + "\nhttps://github.com/fazziclay/opentodaytelemetry"),
+                new License("licenses/LICENSE_OpenToday", "OpenToday (this app)", "fazziclay@gmail.com\nhttps://fazziclay.github.io/opentoday"),
+                new License("licenses/LICENSE_hsv-alpha-color-picker-android", "hsv-alpha-color-picker-android", "https://github.com/martin-stone/hsv-alpha-color-picker-android"),
+                new License("licenses/LICENSE_JavaNeoUtil", "JavaNeoUtil v" + JavaNeoUtil.VERSION_NAME, "https://github.com/fazziclay/javaneoutil"),
+                new License("licenses/LICENSE_NeoSocket", "NeoSocket v" + NeoSocket.VERSION_NAME, "https://github.com/fazziclay/neosocket"),
+                new License("licenses/LICENSE_OpenTodayTelemetry", "OpenTodayTelemetry " + OpenTodayTelemetry.VERSION_NAME, getString(R.string.openSourceLicenses_telemetry_warn) + "\nhttps://github.com/fazziclay/opentodaytelemetry"),
+                new License("licenses/LICENSE_simple-analog-clock", "simple-analog-clock", "Analog clock\nhttps://github.com/leondzn/simple-analog-clock")
         };
     }
 
@@ -313,7 +368,7 @@ public class App extends Application {
         App.crash(context, CrashReport.create(exception), false);
     }
 
-    private static void crash(@Nullable Context context, @NotNull final CrashReport crashReport, boolean fatal) {
+    public static void crash(@Nullable Context context, @NotNull final CrashReport crashReport, boolean fatal) {
         if (context == null) context = App.get();
         crashReport.setFatal(CrashReport.FatalEnum.fromBoolean(fatal));
 
@@ -494,7 +549,15 @@ public class App extends Application {
         return getTabsManager();
     }
 
+    public BeautifyColorManager getBeautifyColorManager() {
+        return beautifyColorManager.get();
+    }
+
     public StringBuilder getLogs() {
         return logs;
+    }
+
+    public ItemNotificationHandler getItemNotificationHandler() {
+        return itemNotificationHandler.get();
     }
 }

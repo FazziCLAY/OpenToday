@@ -7,6 +7,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
         android:layout_weight="1"
+        android:paddingEnd="3sp"
+        android:paddingStart="3sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -21,7 +23,7 @@
             android:id="@+id/cancel_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableTop="@android:drawable/ic_menu_close_clear_cancel"
+            android:drawableTop="@drawable/close_24px"
             android:layout_margin="5sp"
             android:text="@string/fragment_itemEditor_cancel"
             style="@style/Widget.AppCompat.Button" />
@@ -30,7 +32,7 @@
             android:id="@+id/delete_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableTop="@android:drawable/ic_menu_delete"
+            android:drawableTop="@drawable/delete_24px"
             android:layout_margin="5sp"
             android:text="@string/fragment_itemEditor_delete"
             style="@style/Widget.AppCompat.Button" />

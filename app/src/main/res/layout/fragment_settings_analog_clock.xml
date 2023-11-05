@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="7sp">
+
+        <TextView
+            android:id="@+id/size_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_analogClockSettings_size_title"
+            android:textSize="20sp"
+            app:drawableStartCompat="@drawable/aspect_ratio_24px" />
+        <SeekBar
+            android:id="@+id/size"
+            android:layout_width="match_parent"
+            android:layout_height="50sp"
+            android:min="10"
+            android:max="500"
+            android:layout_below="@id/size_title" />
+
+        <TextView
+            android:id="@+id/alpha_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20sp"
+            android:layout_below="@id/size"
+            android:text="@string/settings_analogClockSettings_transparency_title"
+            app:drawableStartCompat="@drawable/opacity_24px"
+            android:textSize="20sp"
+            />
+        <SeekBar
+            android:id="@+id/alpha"
+            android:layout_width="match_parent"
+            android:layout_height="50sp"
+            android:max="100"
+            android:min="3"
+            android:layout_below="@id/alpha_title" />
+
+        <com.fazziclay.opentoday.util.opentodaybutton.MaterialButtonWithColorIndicator
+            android:id="@+id/secondHandColor"
+            android:layout_marginEnd="10sp"
+            android:layout_marginStart="10sp"
+            android:layout_below="@id/alpha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_analogClockSettings_secondHandColor" />
+
+        <com.fazziclay.opentoday.util.opentodaybutton.MaterialButtonWithColorIndicator
+            android:id="@+id/minuteHandColor"
+            android:layout_marginEnd="10sp"
+            android:layout_marginStart="10sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/secondHandColor"
+            android:text="@string/settings_analogClockSettings_minuteHandColor" />
+
+        <com.fazziclay.opentoday.util.opentodaybutton.MaterialButtonWithColorIndicator
+            android:id="@+id/hourHandColor"
+            android:layout_marginEnd="10sp"
+            android:layout_marginStart="10sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/minuteHandColor"
+            android:text="@string/settings_analogClockSettings_hourHandColor" />
+    </RelativeLayout>
+</ScrollView>

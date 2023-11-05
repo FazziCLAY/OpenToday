@@ -41,6 +41,16 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
     }
 
     @Override
+    public int totalSize() {
+        int c = 0;
+        for (Item item : items) {
+            c++;
+            c+= item.getChildrenItemCount();
+        }
+        return c;
+    }
+
+    @Override
     public Item getItemAt(int position) {
         return items.get(position);
     }

@@ -4,20 +4,20 @@ plugins {
 }
 
 // =====
-var isDev = true
-var beta = false
-var appIdSuffix = "" // EMPTY FOR RELEASES!!!!
-var verBuild = 140
-var verName = "1.2+[patches:[fix-tick] + [special_widget] + [fixes-itemstorageviewer] + [item-sleepTime] + [notification-manager]"
-var verBranch = "fixes-itemstorageviewer + special_widget + item-sleepTime + notification-manager (currently main)" // use "RELEASE" for releases versions
-var verReleaseTime = 1689778441 // in seconds
+var isDev = false        // add .dev to applicationId
+var beta = false          // add .beta to applicationId
+var appIdSuffix = ""      // add this to applicationId (E M P T Y   F O R   R E L E A S E S)
+var verBuild = 160       // versionCode
+var verName = "1.3"  // versionName...
+var verBranch = "main"   // branch
+var verReleaseTime = 1699198506 // releaseTime
 
 android {
-    compileSdk 33
+    compileSdk 34
     defaultConfig {
         applicationId "com.fazziclay.opentoday" + (isDev ? ".dev" : "") + (beta ? ".beta" : "") + appIdSuffix
         minSdk 26
-        targetSdk 33
+        targetSdk 34
         versionCode verBuild
         versionName verName + " (build " + verBuild + (isDev ? " dev" : "") + ")"
 
@@ -51,24 +51,27 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
+    packagingOptions {
+        resources.excludes.add("META-INF/*") // fix build errors
+    }
     namespace 'com.fazziclay.opentoday'
 }
 
 dependencies {
     // Application
-    implementation files("./libs/OpenTodayTelemetry-v2-v11.jar")
-    implementation files("./libs/NeoSocket-1.0.jar")
-    implementation files("./libs/JavaNeoUtil-1.1.jar")
-    implementation files("./libs/WarningRose-v0.4.1.jar")
-    implementation 'com.github.martin-stone:hsv-alpha-color-picker-android:3.0.1'
+    implementation files("./libs/OpenTodayTelemetry-v2-v11.jar")                     // telemetry library for OpenToday      SourceCode: https://github.com/FazziCLAY/OpenTodayTelemetry
+    implementation files("./libs/NeoSocket-1.0.jar")                                 // for network (bad library...) uses by OpenTodayTelemetry   SourceCode: https://github.com/FazziCLAY/NeoSocket
+    implementation files("./libs/JavaNeoUtil-1.1.jar")                               // java utils by FazziCLAY (uses FileUtil)    SourceCode: https://github.com/FazziCLAY/JavaNeoUtil
+    implementation files("./libs/WarningRose-v0.4.1.jar")                            // for DebugTickCounter debug rose (only for developer)    SourceCode: https://github.com/FazziCLAY/WarningRose
+    implementation 'com.github.leondzn:simple-analog-clock:1.0.1'                    // analog clock
+    implementation 'com.github.martin-stone:hsv-alpha-color-picker-android:3.0.1'    // color picker
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.9.0'
-    implementation 'com.google.code.gson:gson:2.8.9'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.navigation:navigation-fragment:2.5.3'
-    implementation 'androidx.navigation:navigation-ui:2.5.3'
+    implementation 'com.google.android.material:material:1.10.0'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.7.4'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.7.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation project(path: ':api')                     // api
 
     // Tests
     androidTestImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'

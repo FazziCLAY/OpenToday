@@ -2,21 +2,23 @@ package com.fazziclay.opentoday.gui.item;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.os.Handler;
 import android.os.Looper;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.CrashReportContext;
-import com.fazziclay.opentoday.app.SettingsManager;
+import com.fazziclay.opentoday.app.settings.enums.ItemAction;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.callback.SelectionCallback;
@@ -25,8 +27,9 @@ import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.item.Transform;
 import com.fazziclay.opentoday.app.items.selection.Selection;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
+import com.fazziclay.opentoday.gui.UI;
+import com.fazziclay.opentoday.gui.dialog.DialogSelectItemAction;
 import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType;
-import com.fazziclay.opentoday.gui.fragment.ItemEditorFragment;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
@@ -55,6 +58,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
     private final ItemInterface itemOnClick;
     private final boolean previewMode;
     private ItemViewWrapper itemViewWrapper;
+    private final Handler handler;
 
     // Private (available only with builder)
     private ItemsStorageDrawer(@NonNull Activity activity,
@@ -84,6 +88,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
         this.itemViewWrapper = itemViewWrapper;
         this.itemViewGeneratorBehavior = itemViewGeneratorBehavior;
         this.itemViewGenerator = new ItemViewGenerator(this.activity, previewMode);
+        this.handler = new Handler(Looper.getMainLooper());
     }
 
 
@@ -104,6 +109,15 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
         this.selectionManager.getOnSelectionUpdated().removeCallback(selectionCallback);
     }
 
+    @Override
+    protected void runOnUiThread(Runnable r) {
+        if (Thread.currentThread() == originalThread) {
+            r.run();
+        } else {
+            handler.post(r);
+        }
+    }
+
 
     protected void onItemClicked(Item item) {
         if (this.itemOnClick != null) {
@@ -121,14 +135,6 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
         }
     }
 
-    private void runOnUiThread(Runnable r) {
-        if (Thread.currentThread() == originalThread) {
-            r.run();
-        } else {
-            activity.runOnUiThread(r);
-        }
-    }
-
     public void setItemViewWrapper(ItemViewWrapper itemViewWrapper) {
         this.itemViewWrapper = itemViewWrapper;
     }
@@ -139,6 +145,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
         public Status onAdded(Item item, int pos) {
             runOnUiThread(() -> callWithNonNullAdapter((adapter) -> {
                 adapter.notifyItemInserted(pos);
+                adapter.notifyItemRangeChanged(adapter.getItemCount(), pos);
                 if (behavior.isScrollToAddedItem()) {
                     smoothScrollToPosition(pos);
                 }
@@ -167,7 +174,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
 
 
     @Nullable
-    private View generateViewForItem(Item item, HolderDestroyer destroyer) {
+    private View generateViewForItem(Item item, Destroyer destroyer) {
         boolean previewMode = this.previewMode || selectionManager.isSelected(item);
         return itemViewGenerator.generate(item, getView(), itemViewGeneratorBehavior, previewMode, destroyer, this::onItemClicked);
     }
@@ -182,6 +189,12 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
             view = itemViewWrapper.wrap(item, () -> generateViewForItem(item, holder.destroyer), holder.destroyer);
         } else {
             view = generateViewForItem(item, holder.destroyer);
+        }
+
+        if (itemViewGeneratorBehavior.isRenderMinimized(item) && view != null) {
+            final FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins(0, 0, 17, 0);
+            view.setLayoutParams(layoutParams);
         }
 
         holder.bind(item, view);
@@ -215,7 +228,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
         roughUpdateItemAt(position);
     }
 
-    private void actionItem(Item item, SettingsManager.ItemAction action) {
+    private void actionItem(Item item, ItemAction action) {
         CrashReportContext.FRONT.push("ItemsStorageDrawer.actionItem");
         switch (action) {
             case OPEN_EDITOR -> behavior.onItemOpenEditor(item);
@@ -245,6 +258,15 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
                 }
             }
             case DELETE_REQUEST -> behavior.onItemDeleteRequest(item);
+            case SHOW_ACTION_DIALOG -> {
+                new DialogSelectItemAction(activity, null, new DialogSelectItemAction.OnSelected() {
+                    @Override
+                    public void run(ItemAction dialogAction) {
+                        actionItem(item, dialogAction);
+                    }
+                    // TODO: 21.10.2023 make translatable
+                }, "Click to action now").excludeFromList(ItemAction.SHOW_ACTION_DIALOG).show();
+            }
         }
         CrashReportContext.FRONT.pop();
     }
@@ -267,22 +289,22 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
         }
         menu.setOnMenuItemClickListener(menuItem -> {
             boolean save = false;
-            SettingsManager.ItemAction itemAction = null;
+            ItemAction itemAction = null;
             switch (menuItem.getItemId()) {
                 case R.id.delete:
-                    itemAction = SettingsManager.ItemAction.DELETE_REQUEST;
+                    itemAction = ItemAction.DELETE_REQUEST;
                     break;
 
                 case R.id.edit:
-                    itemAction = SettingsManager.ItemAction.OPEN_EDITOR;
+                    itemAction = ItemAction.OPEN_EDITOR;
                     break;
 
                 case R.id.minimize:
-                    itemAction = SettingsManager.ItemAction.MINIMIZE_REVERT;
+                    itemAction = ItemAction.MINIMIZE_REVERT;
                     break;
 
                 case R.id.selected:
-                    itemAction = SettingsManager.ItemAction.SELECT_REVERT;
+                    itemAction = ItemAction.SELECT_REVERT;
                     break;
 
                 case R.id.copy:
@@ -312,14 +334,15 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
                         Transform.Result result = Transform.transform(item, type);
                         if (result.isAllow()) {
                             int pos = itemsStorage.getItemPosition(item);
-                            itemsStorage.addItem(result.generate(), pos + 1);
+                            Item newItem = result.generate();
+
+                            UI.postDelayed(() -> itemsStorage.addItem(newItem, pos + 1), 500);
 
                         } else {
                             Toast.makeText(activity, R.string.transform_not_allowed, Toast.LENGTH_SHORT).show();
                         }
                     }, (type -> Transform.isAllow(item, type)))
                             .setTitle(activity.getString(R.string.transform_selectTypeDialog_title))
-                            .setMessage(activity.getString(R.string.transform_selectTypeDialog_message))
                             .show();
                     break;
             }
@@ -336,7 +359,7 @@ public class ItemsStorageDrawer extends AbstractItemsStorageDrawer {
     @FunctionalInterface
     public interface ItemViewWrapper {
         @Nullable
-        View wrap(Item item, Supplier<View> viewSupplier, HolderDestroyer destroyer);
+        View wrap(Item item, Supplier<View> viewSupplier, Destroyer destroyer);
     }
 
     public static class CreateBuilder {

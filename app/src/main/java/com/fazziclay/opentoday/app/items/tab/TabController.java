@@ -14,4 +14,5 @@ public interface TabController {
     void nameChanged(@NonNull final Tab tab);
     UUID generateId();
     ItemsRoot getRoot();
+    void iconChanged(Tab tab);
 }

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:paddingEnd="3sp"
+    android:paddingStart="3sp"
+    tools:context="com.fazziclay.opentoday.gui.fragment.DeveloperFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextClock
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/plugins"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fragment_developer_plugins" />
+
+
+        <Button
+            android:id="@+id/crash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#aaaaaa00"
+            android:text="@string/fragment_developer_crash" />
+
+        <Button
+            android:id="@+id/featureFlags"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#aaa00aaa"
+            android:text="@string/fragment_developer_featureFlags" />
+
+        <Button
+            android:id="@+id/icons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#AA0AE581"
+            android:text="@string/fragment_developer_icons" />
+
+        <Button
+            android:id="@+id/profiler"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#AA2DC9E9"
+            android:text="@string/fragment_developer_profiler" />
+
+        <Button
+            android:id="@+id/resetUpdateCheckerTimeout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#AA3407E7"
+            android:text="@string/fragment_developer_resetUpdateCheckerTimeout" />
+
+        <TextView
+            android:id="@+id/debugText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</ScrollView>

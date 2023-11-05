@@ -74,7 +74,7 @@ public class CrashReport {
                  * DATA_VERSION: %_APPLICATION_DATA_VERSION_%
                  * RELEASE_TIME: %_APPLICATION_VERSION_RELEASE_TIME_%
                  * version-data: %_VERSION_DATA_%
-                 * SHADOW_RELEASE: %_SHADOW_RELEASE_%
+                 * build-report: %_BUILD_REPORT_%
                  * DEBUG: %_APPLICATION_DEBUG_%
                  * DEBUG_TICK_NOTIFICATION: %_APPLICATION_DEBUG_TICK_NOTIFICATION_%
                  * DEBUG_MAIN_ACTIVITY_START_SLEEP: %_APPLICATION_DEBUG_MAIN_ACTIVITY_START_SLEEP_%
@@ -156,11 +156,11 @@ public class CrashReport {
         text = text.replace("%_APPLICATION_DATA_VERSION_%", getText(App.APPLICATION_DATA_VERSION));
         text = text.replace("%_VERSION_DATA_%", getText(() -> App.get().versionDataPutLatestStart(App.get().getVersionData()).toString()));
         text = text.replace("%_APPLICATION_DEBUG_%", getText(App.DEBUG));
-        text = text.replace("%_APPLICATION_DEBUG_TICK_NOTIFICATION_%", getText(App.DEBUG_TICK_NOTIFICATION));
-        text = text.replace("%_APPLICATION_DEBUG_MAIN_ACTIVITY_START_SLEEP_%", getText(App.DEBUG_MAIN_ACTIVITY_START_SLEEP));
-        text = text.replace("%_APPLICATION_DEBUG_APP_START_SLEEP_%", getText(App.DEBUG_APP_START_SLEEP));
-        text = text.replace("%_APPLICATION_DEBUG_MAIN_ACTIVITY_%", getText(App.DEBUG_MAIN_ACTIVITY));
-        text = text.replace("%_DEBUG_TEST_EXCEPTION_ON_LAUNCH_%", getText(App.DEBUG_TEST_EXCEPTION_ON_LAUNCH));
+        text = text.replace("%_APPLICATION_DEBUG_TICK_NOTIFICATION_%", getText(Debug.DEBUG_TICK_NOTIFICATION));
+        text = text.replace("%_APPLICATION_DEBUG_MAIN_ACTIVITY_START_SLEEP_%", getText(Debug.DEBUG_MAIN_ACTIVITY_START_SLEEP));
+        text = text.replace("%_APPLICATION_DEBUG_APP_START_SLEEP_%", getText(Debug.DEBUG_APP_START_SLEEP));
+        text = text.replace("%_APPLICATION_DEBUG_MAIN_ACTIVITY_%", getText(Debug.DEBUG_MAIN_ACTIVITY));
+        text = text.replace("%_DEBUG_TEST_EXCEPTION_ON_LAUNCH_%", getText(Debug.DEBUG_TEST_EXCEPTION_ON_LAUNCH));
         text = text.replace("%_TIME_FORMATTED_%", getText(() -> {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss SSS", Locale.ENGLISH);
             return dateFormat.format(new Date(this.crashTimeMillis));
@@ -188,7 +188,7 @@ public class CrashReport {
         text = text.replace("%_DEVICE_DISPLAY_%", getText(Build.DISPLAY));
         text = text.replace("%_DEVICE_BOOTLOADER_%", getText(() -> Build.BOOTLOADER));
         text = text.replace("%_L_LOGS_%", getText(() -> startAllLines("| ", App.get().getLogs().toString())));
-        text = text.replace("%_SHADOW_RELEASE_%", getText(() -> !App.SHADOW_RELEASE ? "false" : "WARNING! SHADOW RELEASE IS TRUE (ENABLED)"));
+        text = text.replace("%_BUILD_REPORT_%", getText(com.fazziclay.opentoday.Build::getBuildDebugReport));
 
         return text;
     }
@@ -277,7 +277,16 @@ public class CrashReport {
                 "MathGame added in 1.1.4",
                 "CrashReportContext added in 1.1.4",
                 "Summer love OpenToday developing.. :cry:",
-                "Stretchly, thanks!"
+                "Stretchly, thanks!",
+
+                // 2023.10.22 (15:33 UTC)
+                "{no-fun}Celeste - Lena Raine",
+                "{no-fun}but, C418 - Excursions",
+                "{no-fun}r2I4I",
+                "{no-fun}r5T",
+                "{no-fun}r1N",
+                "{no-fun}r7[SPACE]",
+                "This is only tags hehe",
         };
         Random random = new Random();
         int max = comments.length;
@@ -296,6 +305,13 @@ public class CrashReport {
                     result = result + " :/";
                 }
             }
+        }
+
+        if (result.startsWith("{no-fun}")) {
+            return (random.nextInt(1000) == 753 ? "oOOoOOoOOoOOo 1000 == 753, AND " : "")+result
+                    .replace("{no-fun}", "")
+                    .replace(":)", ":(")
+                    .replace(":/", ":(");
         }
 
         if (random.nextInt(1000) == 753) {

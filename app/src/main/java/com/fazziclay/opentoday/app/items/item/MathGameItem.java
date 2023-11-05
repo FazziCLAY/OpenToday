@@ -90,16 +90,23 @@ public class MathGameItem extends TextItem {
     }
 
     @Override
+    public ItemType getItemType() {
+        return ItemType.MATH_GAME;
+    }
+
+    @Override
     public void tick(TickSession tickSession) {
         if (!tickSession.isAllowed(this)) return;
 
         super.tick(tickSession);
 
         if (tickSession.isTickTargetAllowed(TickTarget.ITEM_MATH_GAME_UPDATE)) {
+            profPush(tickSession, "math_game_update");
             if (!quest.isInitialize()) {
                 generateQuest();
                 visibleChanged();
             }
+            profPop(tickSession);
         }
     }
 

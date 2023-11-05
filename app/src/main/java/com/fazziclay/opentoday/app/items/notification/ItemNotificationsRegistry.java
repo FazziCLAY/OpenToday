@@ -4,7 +4,7 @@ public class ItemNotificationsRegistry {
     public static final ItemNotificationsRegistry REGISTRY = new ItemNotificationsRegistry();
 
     private static final ItemNotificationInfo[] NOTIFICATIONS = new ItemNotificationInfo[] {
-        new ItemNotificationInfo(DayItemNotification.class, "DayItemNotification", DayItemNotification.CODEC)
+        new ItemNotificationInfo(DayItemNotification.class, "DayItemNotification", DayItemNotification.CODEC, ItemNotificationType.DAY)
     };
 
     public ItemNotificationInfo[] getAllNotifications() {
@@ -14,12 +14,14 @@ public class ItemNotificationsRegistry {
     public static class ItemNotificationInfo {
         private final Class<? extends ItemNotification> clazz;
         private final String stringType;
-        private final ItemNotificationCodec codec;
+        private final AbstractItemNotificationCodec codec;
+        private final ItemNotificationType type;
 
-        public ItemNotificationInfo(Class<? extends ItemNotification> clazz, String v, ItemNotificationCodec codec) {
+        public ItemNotificationInfo(Class<? extends ItemNotification> clazz, String v, AbstractItemNotificationCodec codec, ItemNotificationType type) {
             this.clazz = clazz;
             this.stringType = v;
             this.codec = codec;
+            this.type = type;
         }
 
         public Class<? extends ItemNotification> getClazz() {
@@ -30,8 +32,12 @@ public class ItemNotificationsRegistry {
             return stringType;
         }
 
-        public ItemNotificationCodec getCodec() {
+        public AbstractItemNotificationCodec getCodec() {
             return codec;
+        }
+
+        public ItemNotificationType getType() {
+            return type;
         }
     }
 
@@ -47,6 +53,15 @@ public class ItemNotificationsRegistry {
     public ItemNotificationInfo getByClass(Class<? extends ItemNotification> v) {
         for (ItemNotificationInfo info : NOTIFICATIONS) {
             if (info.clazz == v) {
+                return info;
+            }
+        }
+        return null;
+    }
+
+    public ItemNotificationInfo getByType(ItemNotificationType type) {
+        for (ItemNotificationInfo info : NOTIFICATIONS) {
+            if (info.type == type) {
                 return info;
             }
         }

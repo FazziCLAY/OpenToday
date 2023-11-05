@@ -13,6 +13,14 @@
         android:layout_height="wrap_content"
         android:text="@string/crash_activity_sendToDeveloper" />
 
+    <Button
+        android:id="@+id/update_available"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:text="@string/crash_activity_updateAvailable" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">

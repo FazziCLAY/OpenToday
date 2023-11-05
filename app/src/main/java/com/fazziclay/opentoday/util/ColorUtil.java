@@ -13,12 +13,16 @@ import android.text.style.StyleSpan;
 
 import androidx.annotation.NonNull;
 
+import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.util.profiler.Profiler;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class ColorUtil {
     private static final boolean DEBUG_COLORIZE = false;
+    public static final Profiler PROFILER = App.createProfiler("ColorUtil");
 
     public static String colorToHex(int color) {
         int a = Color.alpha(color);
@@ -34,6 +38,7 @@ public class ColorUtil {
     }
     
     public static String sysReset(String sys, char c) {
+        PROFILER.push("sysReset");
         String[] args = sys.split(";");
         StringBuilder result = new StringBuilder();
         StringBuilder passed = new StringBuilder();
@@ -44,11 +49,13 @@ public class ColorUtil {
                 passed.append(arg.charAt(0));
             }
         }
+        PROFILER.pop();
         if (result.toString().isEmpty()) return "";
         return result.substring(0, result.lastIndexOf(";"));
     }
 
     public static String sysSet(String sys, char c, String val) {
+        PROFILER.push("sysSet");
         String[] args = sys.split(";");
         StringBuilder result = new StringBuilder();
         StringBuilder passed = new StringBuilder();
@@ -58,12 +65,17 @@ public class ColorUtil {
             if (!arg.startsWith(String.valueOf(c))) {
                 result.append(arg).append(";");
             } else {
-                result.append(c).append(val).append(";");
+                if (!val.isEmpty()) {
+                    result.append(c).append(val).append(";");
+                } else {
+                    result.append(";");
+                }
                 replaced = true;
             }
             passed.append(arg.charAt(0));
         }
         if (!replaced) result.append(c).append(val).append(";");
+        PROFILER.pop();
         if (result.toString().isEmpty()) return "";
         return result.substring(0, result.lastIndexOf(";"));
     }
@@ -94,10 +106,26 @@ public class ColorUtil {
      * @see SpannableString
      * **/
     public static SpannableString colorize(String text, int defaultFgColor, int defaultBgColor, int defaultStyle, boolean showSystems) {
-        if (text == null) return null;
+        PROFILER.push("colorize");
+        if (text == null) {
+            PROFILER.instant("text == null");
+            PROFILER.pop();
+            return null;
+        }
 
-        StringBuilder log = new StringBuilder();
+        // maybe performance boost
+        if (!text.contains("$[")) {
+            PROFILER.push("(dollar[ not contains optimization)");
+            final SpannableString span = new SpannableString(text);
+            span.setSpan(new ForegroundColorSpan(defaultFgColor), 0, span.length(), Spannable.SPAN_COMPOSING);
+            span.setSpan(new BackgroundColorSpan(defaultBgColor), 0, span.length(), Spanned.SPAN_COMPOSING);
+            span.setSpan(new StyleSpan(defaultStyle), 0, span.length(), Spanned.SPAN_COMPOSING);
+            PROFILER.pop2();
+            return span;
+        }
 
+        PROFILER.push("colorize_default");
+        final StringBuilder log = new StringBuilder();
         int currentForegroundSpan = defaultFgColor;
         int currentBackgroundSpan = defaultBgColor;
         int currentStyleSpan = defaultStyle;
@@ -228,12 +256,13 @@ public class ColorUtil {
             if (appendOld) oi++;
             if (appendNew) ni++;
         }
-
+        PROFILER.swap("concat result string");
         StringBuilder fullText = new StringBuilder();
         for (SpanText spanText : spanTextList) {
             fullText.append(spanText.text);
         }
 
+        PROFILER.swap("apply span");
         SpannableString spannableText = new SpannableString(fullText.toString());
         log.append("SpannableText = ").append(spannableText).append("\n");
         log.append("SpanTextList = ").append(Arrays.toString(spanTextList.toArray()));
@@ -250,6 +279,7 @@ public class ColorUtil {
             if (spanText.size > 0) spannableText.setSpan(new AbsoluteSizeSpan(spanText.size, true), start, end, Spanned.SPAN_COMPOSING);
             i++;
         }
+        PROFILER.pop2();
         return spannableText;
     }
 

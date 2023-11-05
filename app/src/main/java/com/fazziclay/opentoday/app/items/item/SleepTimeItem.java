@@ -2,6 +2,7 @@ package com.fazziclay.opentoday.app.items.item;
 
 import androidx.annotation.NonNull;
 
+import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.Translation;
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
@@ -39,6 +40,7 @@ public class SleepTimeItem extends TextItem {
 
     private int elapsedTime; // cached
     private int wakeUpForRequiredAtCurr; // cached
+    private int elapsedToStartSleep; // cached
     private long tick; // cached
 
     @NonNull
@@ -47,12 +49,19 @@ public class SleepTimeItem extends TextItem {
     }
 
 
+    public SleepTimeItem(TextItem append) {
+        super(append);
+        tick = 0;
+        elapsedTime = 0;
+        wakeUpForRequiredAtCurr = 0;
+    }
 
     public SleepTimeItem(SleepTimeItem copy) {
         super(copy);
         tick = 0;
         elapsedTime = 0;
         wakeUpForRequiredAtCurr = 0;
+        elapsedToStartSleep = 0;
 
         if (copy != null) {
             this.wakeUpTime = copy.wakeUpTime;
@@ -66,10 +75,15 @@ public class SleepTimeItem extends TextItem {
     }
 
     @Override
+    public ItemType getItemType() {
+        return ItemType.SLEEP_TIME;
+    }
+
+    @Override
     protected void regenerateId() {
         super.regenerateId();
         if (sleepTextPattern == null) {
-            sleepTextPattern = getRoot().getTranslation().get(Translation.KEY_SLEEP_TIME_ITEM_PATTERN);
+            sleepTextPattern = App.get().getTranslation().get(Translation.KEY_SLEEP_TIME_ITEM_PATTERN); // TODO: 08.10.2023 uses static App.get() is bad...
             save();
         }
     }
@@ -77,6 +91,7 @@ public class SleepTimeItem extends TextItem {
     @Override
     public void tick(TickSession tickSession) {
         super.tick(tickSession);
+        profPush(tickSession, "sleep_time_update");
         elapsedTime = wakeUpTime - TimeUtil.getDaySeconds();
         if (elapsedTime <= 0) {
             elapsedTime = TimeUtil.SECONDS_IN_DAY + elapsedTime;
@@ -87,15 +102,30 @@ public class SleepTimeItem extends TextItem {
             wakeUpForRequiredAtCurr-=TimeUtil.SECONDS_IN_DAY;
         }
 
+        elapsedToStartSleep = wakeUpTime - requiredSleepTime - TimeUtil.getDaySeconds();
+        if (elapsedToStartSleep < 0) {
+            elapsedToStartSleep += TimeUtil.SECONDS_IN_DAY;
+        }
+        if (elapsedToStartSleep < 0) {
+            elapsedToStartSleep += TimeUtil.SECONDS_IN_DAY;
+        }
+
         if (tick % 5 == 0) {
             visibleChanged();
         }
         tick++;
+        profPop(tickSession);
     }
 
     public int getElapsedTime() {
         return elapsedTime;
     }
+
+
+    public int getElapsedTimeToStartSleep() {
+        return elapsedToStartSleep;
+    }
+
 
     public void setWakeUpTime(int wakeUpTime) {
         this.wakeUpTime = wakeUpTime;

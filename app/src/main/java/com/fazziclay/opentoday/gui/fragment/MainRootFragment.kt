@@ -9,6 +9,9 @@ import androidx.fragment.app.Fragment
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.App
 import com.fazziclay.opentoday.app.CrashReportContext
+import com.fazziclay.opentoday.gui.UI.getUIRoot
+import com.fazziclay.opentoday.gui.fragment.item.ItemsTabIncludeFragment
+import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost
 import com.fazziclay.opentoday.util.InlineUtil.nullStat
@@ -73,6 +76,9 @@ class MainRootFragment : Fragment(), NavigationHost {
         CrashReportContext.setMainRootFragment("popBackStack")
         Logger.d(TAG, "popBackStack", "pop internal")
         if (childFragmentManager.backStackEntryCount > 0) {
+            if (currentFragment is ActivitySettingsMember) {
+                getUIRoot(this).popActivitySettings()
+            }
             childFragmentManager.popBackStack()
             return true
         }
@@ -83,7 +89,13 @@ class MainRootFragment : Fragment(), NavigationHost {
         CrashReportContext.setMainRootFragment("navigate addToBack=$addToBackStack fragment=$fragment")
         Logger.d(TAG, "navigate to=$fragment addToBack=$addToBackStack")
         val transaction = childFragmentManager.beginTransaction()
-                .replace(CONTAINER_ID, fragment)
+            .setCustomAnimations(
+                R.anim.slide_in,  // enter
+                R.anim.fade_out,  // exit
+                R.anim.fade_in,   // popEnter
+                R.anim.slide_out  // popExit
+            )
+            .replace(CONTAINER_ID, fragment)
         if (addToBackStack) transaction.addToBackStack(null)
         transaction.commit()
     }

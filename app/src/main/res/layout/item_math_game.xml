@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         tools:text="Simple text"
         android:textSize="19sp"
+        android:layout_toStartOf="@id/indicatorNotification"
         android:textColor="?attr/item_text_textColor"
         android:paddingLeft="5sp" />
 
@@ -31,6 +32,8 @@
         android:id="@+id/userEnterNumber"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/shape"
+        android:paddingStart="2sp"
         tools:text="111"
         android:layout_toEndOf="@id/questText"
         android:textSize="20sp"
@@ -163,5 +166,15 @@
                 android:textSize="20sp" />
         </LinearLayout>
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/indicatorNotification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_margin="3sp"
+        tools:visibility="visible"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/notifications_24px" />
 
 </RelativeLayout>

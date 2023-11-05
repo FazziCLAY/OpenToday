@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/Theme.OpenToday.Toolbar.Section.Root.Items">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/items"
+        android:layout_below="@+id/changeOnClick"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="170sp" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/changeOnLeftSwipe"
         android:text="@string/toolbar_more_items_changeOnLeftSwipe"
-        android:layout_below="@id/items"
+        app:icon="@drawable/swipe_left_24px"
+        android:layout_alignParentEnd="true"
         style="@style/Theme.OpenToday.Toolbar.Section.Button.Items.ChangeOnLeftSwipe" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/changeOnClick"
         android:text="@string/toolbar_more_items_changeOnClick"
-        android:layout_below="@id/items"
-        android:layout_toEndOf="@id/changeOnLeftSwipe"
+        android:layout_alignParentEnd="true"
+        app:icon="@drawable/touch_app_24px"
+        android:layout_below="@id/changeOnLeftSwipe"
         style="@style/Theme.OpenToday.Toolbar.Section.Button.Items.ChangeOnClick" />
 </RelativeLayout>

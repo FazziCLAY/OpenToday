@@ -22,7 +22,7 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.ColorHistoryManager;
 import com.fazziclay.opentoday.app.ImportWrapper;
-import com.fazziclay.opentoday.app.SettingsManager;
+import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
@@ -32,11 +32,12 @@ import com.fazziclay.opentoday.databinding.FragmentImportBinding;
 import com.fazziclay.opentoday.gui.ActivitySettings;
 import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.gui.UI;
+import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember;
 import com.fazziclay.opentoday.util.NetworkUtil;
 
 import java.util.UUID;
 
-public class ImportFragment extends Fragment {
+public class ImportFragment extends Fragment implements ActivitySettingsMember {
     private static final String KEY_ITEMS_STORAGE = "importFragment:itemsStorageId";
     private static final String KEY_START_TEXT = "importFragment:startImportText";
     private static final String KEY_AUTORUN = "importFragment:autoRun";
@@ -94,12 +95,6 @@ public class ImportFragment extends Fragment {
             a.setNotificationsVisible(false);
             a.setToolbarSettings(ActivitySettings.ToolbarSettings.createBack(R.string.fragment_import_title, () -> UI.rootBack(this)));
         });
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        UI.getUIRoot(this).popActivitySettings();
     }
 
     @Nullable

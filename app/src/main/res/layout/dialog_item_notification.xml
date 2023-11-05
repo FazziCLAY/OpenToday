@@ -26,6 +26,21 @@
         android:layout_height="wrap_content"
         android:text="@string/dialog_itemNotification_titleFromItemText" />
 
+    <com.fazziclay.opentoday.util.opentodaybutton.MaterialButtonWithColorIndicator
+        android:id="@+id/notificationColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_itemNotification_notificationColor" />
+
+    <ImageButton
+        android:id="@+id/icon"
+        android:scaleType="fitXY"
+        android:src="@drawable/minimize_gray_foreground"
+        android:layout_width="60sp"
+        android:layout_gravity="end"
+        android:layout_height="55sp"
+        android:contentDescription="Icon" />
+
     <EditText
         android:id="@+id/text"
         android:layout_width="match_parent"
@@ -59,19 +74,19 @@
         android:id="@+id/fullScreen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="FullScreen" />
+        android:text="@string/dialog_itemNotification_fullScreen" />
 
     <CheckBox
         android:id="@+id/previewViewOnly"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Preview item is ViewOnly" />
+        android:text="@string/dialog_itemNotification_previewViewOnly" />
 
     <CheckBox
         android:id="@+id/sound"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sound" />
+        android:text="@string/dialog_itemNotification_sound" />
 
     <Button
         android:id="@+id/test"

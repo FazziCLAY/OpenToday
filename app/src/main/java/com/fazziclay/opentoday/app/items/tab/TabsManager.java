@@ -7,11 +7,14 @@ import androidx.annotation.NonNull;
 
 import com.fazziclay.javaneoutil.FileUtil;
 import com.fazziclay.opentoday.Debug;
+import com.fazziclay.opentoday.api.EventHandler;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.CrashReportContext;
 import com.fazziclay.opentoday.app.ImportantDebugCallback;
 import com.fazziclay.opentoday.app.Translation;
 import com.fazziclay.opentoday.app.data.CherryOrchard;
+import com.fazziclay.opentoday.app.events.items.ItemsRootDestroyedEvent;
+import com.fazziclay.opentoday.app.events.items.ItemsRootInitializedEvent;
 import com.fazziclay.opentoday.app.items.ItemPath;
 import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
@@ -49,7 +52,7 @@ import java.util.zip.GZIPOutputStream;
 public class TabsManager implements ItemsRoot, Tickable {
     public static final int TAB_NAME_MAX_LENGTH = 35;
 
-    private static final boolean DEBUG_ITEMS_SET = false;
+    private static final boolean DEBUG_ITEMS_SET = false; // Default value is FALSE!!!!!!!!!
     private static final String TAG = "TabsManager";
 
     private boolean destroyed;
@@ -71,6 +74,7 @@ public class TabsManager implements ItemsRoot, Tickable {
         this.dataCompressFile = dataCompressFile;
         this.translation = translation;
         load();
+        EventHandler.call(new ItemsRootInitializedEvent(this));
     }
 
     @Nullable
@@ -285,6 +289,7 @@ public class TabsManager implements ItemsRoot, Tickable {
         }
 
         destroyed = true;
+        EventHandler.call(new ItemsRootDestroyedEvent(this));
     }
 
     private void checkDestroy() {
@@ -321,6 +326,13 @@ public class TabsManager implements ItemsRoot, Tickable {
         @Override
         public ItemsRoot getRoot() {
             return TabsManager.this;
+        }
+
+        @Override
+        public void iconChanged(Tab tab) {
+            onTabsChangedCallbacks.run((callbackStorage, callback) -> callback.onTabIconChanged(tab, getTabPosition(tab)));
+            TabsManager.this.internalOnTabChanged();
+            TabsManager.this.queueSave(SaveInitiator.USER);
         }
     }
 
@@ -504,6 +516,7 @@ public class TabsManager implements ItemsRoot, Tickable {
                 writer.write(originalData);
                 writer.flush();
                 writer.close();
+                gz.close();
             }
 
             if (debugPrintSaveStatusAlways) {
@@ -539,7 +552,7 @@ public class TabsManager implements ItemsRoot, Tickable {
         public void run() {
             while (!isInterrupted() && enabled) {
                 if (request && (requestImportance > 0 || ((System.currentTimeMillis() - firstRequestTime) > 1000 * 10))) {
-                    if (App.LOG) Logger.i(TAG, String.format("SaveThread: requestCount=%s\nfirstTime=%s\nlatestTime=%s", requestsCount, TimeUtil.getDebugDate(firstRequestTime), TimeUtil.getDebugDate(latestRequestTime)));
+                    Logger.i(TAG, String.format("SaveThread: requestCount=%s\nfirstTime=%s\nlatestTime=%s", requestsCount, TimeUtil.getDebugDate(firstRequestTime), TimeUtil.getDebugDate(latestRequestTime)));
 
                     request = false;
                     requestsCount = Debug.latestSaveRequestsCount = 0;

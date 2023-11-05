@@ -6,10 +6,29 @@ import org.jetbrains.annotations.NotNull;
 
 public class ActivitySettings implements Cloneable {
     private boolean clockVisible = true;
+    private boolean analogClockForceVisible = false;
+    private boolean analogClockForceHidden = false;
     private boolean notificationsVisible = true;
     private boolean dateClickCalendar = true;
+    private boolean showCanonicalClock = false; // show clock if ACTIONBAR_POSITION in bottom and not show analog clock
     private ToolbarSettings toolbarSettings = null;
 
+
+    public void analogClockForceVisible(boolean b) {
+        this.analogClockForceVisible = b;
+    }
+
+    public void analogClockForceHidden(boolean b) {
+        this.analogClockForceHidden = b;
+    }
+
+    public boolean isShowCanonicalClock() {
+        return showCanonicalClock;
+    }
+
+    public void setShowCanonicalClock(boolean showCanonicalClock) {
+        this.showCanonicalClock = showCanonicalClock;
+    }
 
     public ActivitySettings setClockVisible(boolean clockVisible) {
         this.clockVisible = clockVisible;
@@ -33,6 +52,14 @@ public class ActivitySettings implements Cloneable {
 
     public boolean isClockVisible() {
         return clockVisible;
+    }
+
+    public boolean isAnalogClockForceVisible() {
+        return analogClockForceVisible;
+    }
+
+    public boolean isAnalogClockForceHidden() {
+        return analogClockForceHidden;
     }
 
     public boolean isNotificationsVisible() {
@@ -67,6 +94,7 @@ public class ActivitySettings implements Cloneable {
         this.toolbarSettings = toolbarSettings;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "ActivitySettings{" +

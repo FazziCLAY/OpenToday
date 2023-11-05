@@ -5,7 +5,6 @@ import static com.fazziclay.opentoday.util.InlineUtil.viewLong;
 import static com.fazziclay.opentoday.util.InlineUtil.viewVisible;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -15,12 +14,15 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.InputFilter;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,10 +34,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
+import com.fazziclay.opentoday.api.EventHandler;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.FeatureFlag;
 import com.fazziclay.opentoday.app.ImportWrapper;
-import com.fazziclay.opentoday.app.SettingsManager;
+import com.fazziclay.opentoday.app.events.gui.toolbar.AppToolbarSelectionClickEvent;
+import com.fazziclay.opentoday.app.icons.IconsRegistry;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.callback.OnTabsChanged;
 import com.fazziclay.opentoday.app.items.callback.SelectionCallback;
@@ -47,6 +51,8 @@ import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.Debug202305RandomTab;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.items.tab.TabsManager;
+import com.fazziclay.opentoday.app.settings.SettingsManager;
+import com.fazziclay.opentoday.app.settings.enums.ItemAddPosition;
 import com.fazziclay.opentoday.databinding.ToolbarBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreDebugBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreFileBinding;
@@ -56,26 +62,30 @@ import com.fazziclay.opentoday.databinding.ToolbarMoreOpentodayBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreSelectionBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreTabsBinding;
 import com.fazziclay.opentoday.gui.EnumsRegistry;
+import com.fazziclay.opentoday.gui.GuiItemsHelper;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.activity.MainActivity;
 import com.fazziclay.opentoday.gui.activity.SetupActivity;
 import com.fazziclay.opentoday.gui.callbacks.UIDebugCallback;
 import com.fazziclay.opentoday.gui.dialog.DialogSelectItemAction;
+import com.fazziclay.opentoday.gui.dialog.IconSelectorDialog;
 import com.fazziclay.opentoday.gui.fragment.AboutFragment;
 import com.fazziclay.opentoday.gui.fragment.DeleteItemsFragment;
 import com.fazziclay.opentoday.gui.fragment.ImportFragment;
 import com.fazziclay.opentoday.gui.fragment.ItemEditorFragment;
-import com.fazziclay.opentoday.gui.fragment.SettingsFragment;
+import com.fazziclay.opentoday.gui.fragment.settings.SettingsFragment;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.util.ClipboardUtil;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class AppToolbar {
     private static final String TAG = "AppToolbar";
@@ -268,7 +278,7 @@ public class AppToolbar {
             int paddingModifier = 1;
             @Override
             public void run() {
-                color += 0x050301;
+                color = color + 55;
                 padding+= paddingModifier;
                 l.onlyTrue.setTextColor(color | 0xFF000000);
                 l.onlyTrue.setPadding(padding, 0, 0, 0);
@@ -290,7 +300,7 @@ public class AppToolbar {
             activity.startActivity(intent);
         });
         viewClick(l.resetSetup, () -> {
-            activity.getSharedPreferences(App.SHARED_NAME, Context.MODE_PRIVATE).edit().putBoolean(App.SHARED_KEY_IS_SETUP_DONE, false).apply();
+            SettingsManager.IS_FIRST_LAUNCH.set(settingsManager, true);
             activity.finish();
             activity.startActivity(new Intent(activity, SetupActivity.class));
         });
@@ -439,29 +449,37 @@ public class AppToolbar {
                 localBinding.tabsRecycleView.getAdapter().notifyItemChanged(position);
                 return Status.NONE;
             }
+
+            @Override
+            public Status onTabIconChanged(Tab tab, int position) {
+                localBinding.tabsRecycleView.getAdapter().notifyItemChanged(position);
+                return Status.NONE;
+            }
         };
         tabsManager.getOnTabsChangedCallbacks().addCallback(CallbackImportance.DEFAULT, onTabsChanged);
 
 
 
-        viewClick(localBinding.addTab, () -> {
-            EditText tabNameEditText = new EditText(activity);
-            tabNameEditText.setHint(R.string.toolbar_more_tabs_addNew_name_hint);
-            tabNameEditText.setFilters(new InputFilter.LengthFilter[]{new InputFilter.LengthFilter(TabsManager.TAB_NAME_MAX_LENGTH)});
-            new AlertDialog.Builder(activity)
-                    .setTitle(R.string.toolbar_more_tabs_addNew_dialog_title)
-                    .setView(tabNameEditText)
-                    .setPositiveButton(R.string.toolbar_more_tabs_tab_add, (dialog, which) -> {
-                        String text = tabNameEditText.getText().toString();
-                        if (!text.trim().isEmpty()) {
-                            tabsManager.createLocalTab(tabNameEditText.getText().toString());
-                        } else {
-                            Toast.makeText(activity, R.string.tab_noEmptyName, Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .setNegativeButton(R.string.abc_cancel, null)
-                    .show();
-        });
+        viewClick(localBinding.addTab, () -> showAddTabDialog(activity, tabsManager));
+    }
+
+    public static void showAddTabDialog(Context context, TabsManager tabsManager) {
+        EditText tabNameEditText = new EditText(context);
+        tabNameEditText.setHint(R.string.toolbar_more_tabs_addNew_name_hint);
+        tabNameEditText.setFilters(new InputFilter.LengthFilter[]{new InputFilter.LengthFilter(TabsManager.TAB_NAME_MAX_LENGTH)});
+        new MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.toolbar_more_tabs_addNew_dialog_title)
+                .setView(tabNameEditText)
+                .setPositiveButton(R.string.toolbar_more_tabs_tab_add, (dialog, which) -> {
+                    String text = tabNameEditText.getText().toString();
+                    if (!text.trim().isEmpty()) {
+                        tabsManager.createLocalTab(tabNameEditText.getText().toString());
+                    } else {
+                        tabsManager.createLocalTab(context.getString(R.string.tab_autoName, Long.toHexString(System.nanoTime()).substring(5)));
+                    }
+                })
+                .setNegativeButton(R.string.abc_cancel, null)
+                .show();
     }
 
     private void showEditTabDialog(final Tab tab) {
@@ -479,7 +497,7 @@ public class AppToolbar {
         disableTick.setChecked(tab.isDisableTick());
         viewClick(disableTick, () -> {
             if (disableTick.isChecked()) {
-                new AlertDialog.Builder(activity)
+                new MaterialAlertDialogBuilder(activity)
                         .setTitle(R.string.toolbar_more_tabs_edit_disableTick_warning_title)
                         .setMessage(R.string.toolbar_more_tabs_edit_disableTick_warning_message)
                         .setPositiveButton(R.string.abc_ok, null)
@@ -487,10 +505,25 @@ public class AppToolbar {
             }
         });
 
+        ImageButton icon = new ImageButton(activity);
+        icon.setScaleType(ImageView.ScaleType.FIT_XY);
+        var params = new LinearLayout.LayoutParams(90 + 10, 90);
+        params.gravity = Gravity.END;
+        icon.setLayoutParams(params);
+        icon.setImageResource(tab.getIcon().getResId());
+        icon.setImageTintList(tab.getIcon().isNone() ? ColorStateList.valueOf(Color.RED) : null);
+        AtomicReference<IconsRegistry.Icon> selectedIcon = new AtomicReference<>(tab.getIcon());
+        viewClick(icon, () -> new IconSelectorDialog(activity, selected -> {
+            icon.setImageResource(selected.getResId());
+            icon.setImageTintList(selected.isNone() ? ColorStateList.valueOf(Color.RED) : null);
+            selectedIcon.set(selected);
+        }).noneIsAvailable(true).show());
+
         dialogView.addView(tabNameEditText);
         dialogView.addView(disableTick);
+        dialogView.addView(icon);
 
-        new AlertDialog.Builder(activity)
+        new MaterialAlertDialogBuilder(activity)
                 .setTitle(activity.getString(R.string.toolbar_more_tabs_edit_dialog_title, tab.getName()))
                 .setView(dialogView)
                 .setPositiveButton(R.string.toolbar_more_tabs_tab_apply, (dialog, which) -> {
@@ -501,10 +534,11 @@ public class AppToolbar {
                         Toast.makeText(activity, R.string.tab_noEmptyName, Toast.LENGTH_SHORT).show();
                     }
                     tab.setDisableTick(disableTick.isChecked());
+                    tab.setIcon(selectedIcon.get());
                 })
                 .setNegativeButton(R.string.abc_cancel, null)
-                .setNeutralButton(R.string.toolbar_more_tabs_tab_delete, (dialog, w) -> new AlertDialog.Builder(activity)
-                        .setTitle(activity.getString(R.string.fragment_deleteItems_delete_title, String.valueOf(tab.size())))
+                .setNeutralButton(R.string.toolbar_more_tabs_tab_delete, (dialog, w) -> new MaterialAlertDialogBuilder(activity)
+                        .setTitle(activity.getString(R.string.fragment_deleteItems_delete_title, String.valueOf(tab.size()), String.valueOf(tab.totalSize())))
                         .setNegativeButton(R.string.fragment_deleteItems_delete_cancel, null)
                         .setPositiveButton(R.string.fragment_deleteItems_delete_apply, ((dialog1, which) -> {
                             if (tabsManager.isOneTabMode()) {
@@ -523,6 +557,8 @@ public class AppToolbar {
     }
 
     private class ItemTypeViewHolder extends RecyclerView.ViewHolder {
+        private boolean show;
+        private final ToolbarMoreItemsItemBinding b;
         private final TextView name;
         private final Button create;
         private final Button add;
@@ -530,15 +566,23 @@ public class AppToolbar {
 
         public ItemTypeViewHolder(ViewGroup parent) {
             super(new FrameLayout(activity));
-            ToolbarMoreItemsItemBinding b = ToolbarMoreItemsItemBinding.inflate(activity.getLayoutInflater(), parent, false);
+            b = ToolbarMoreItemsItemBinding.inflate(activity.getLayoutInflater(), parent, false);
             this.name = b.name;
             this.create = b.create;
             this.add = b.add;
             this.description = b.description;
-            ((FrameLayout) itemView).addView(b.getRoot());
+            this.show = false;
         }
 
-        public void clear() {
+        public void show() {
+            if (!show) {
+                show = true;
+                ((FrameLayout) itemView).addView(b.getRoot());
+            }
+        }
+
+        public void hide() {
+            show = false;
             ((FrameLayout) itemView).removeAllViews();
         }
     }
@@ -556,7 +600,7 @@ public class AppToolbar {
 
         localBinding.items.setLayoutManager(new LinearLayoutManager(activity, RecyclerView.VERTICAL, false));
         localBinding.items.setAdapter(new RecyclerView.Adapter<ItemTypeViewHolder>() {
-            private int getAddItemPos(SettingsManager.ItemAddPosition fromSettings) {
+            private int getAddItemPos(ItemAddPosition fromSettings) {
                 return switch (fromSettings) {
                     case TOP -> ItemEditorFragment.VALUE_ADD_ITEM_POSITION_TOP;
                     case BOTTOM -> ItemEditorFragment.VALUE_ADD_ITEM_POSITION_BOTTOM;
@@ -574,20 +618,19 @@ public class AppToolbar {
                 ItemsRegistry.ItemInfo itemInfo = ItemsRegistry.REGISTRY.getAllItems()[position];
 
                 if (itemInfo.isCompatibility(app.getFeatureFlags())) {
+                    holder.show();
                     holder.name.setText(EnumsRegistry.INSTANCE.nameResId(itemInfo.getItemType()));
                     viewClick(holder.create, () -> {
                         rootNavigationHost.navigate(ItemEditorFragment.create(ItemUtil.getId(itemsStorage), itemInfo.getClassType(), getAddItemPos(settingsManager.getItemAddPosition())), true);
                         autoClose();
                     });
                     viewClick(holder.add, () -> {
-                        switch (settingsManager.getItemAddPosition()) {
-                            case TOP -> itemsStorage.addItem(ItemsRegistry.REGISTRY.get(itemInfo.getClassType()).create(), 0);
-                            case BOTTOM -> itemsStorage.addItem(ItemsRegistry.REGISTRY.get(itemInfo.getClassType()).create());
-                        }
+                        final Item item = GuiItemsHelper.createItem(app, itemInfo, "", settingsManager);
+                        GuiItemsHelper.addItem(item, itemsStorage, settingsManager);
                     });
                     viewClick(holder.description, () -> showItemDescriptionDialog(itemInfo));
                 } else {
-                    holder.clear();
+                    holder.hide();
                 }
             }
 
@@ -610,7 +653,7 @@ public class AppToolbar {
     }
 
     private void showItemDescriptionDialog(ItemsRegistry.ItemInfo itemInfo) {
-        new AlertDialog.Builder(activity)
+        new MaterialAlertDialogBuilder(activity)
                 .setTitle(EnumsRegistry.INSTANCE.nameResId(itemInfo.getItemType()))
                 .setMessage(EnumsRegistry.INSTANCE.itemDescriptionResId(itemInfo.getItemType()))
                 .setPositiveButton(R.string.abc_ok, null)
@@ -665,6 +708,8 @@ public class AppToolbar {
         };
         selectionCallback.onSelectionChanged(selectionManager.getSelections()); // First run
         selectionManager.getOnSelectionUpdated().addCallback(CallbackImportance.MIN, selectionCallback); // Add to callbackStorage
+
+        EventHandler.call(new AppToolbarSelectionClickEvent(activity, localBinding, selectionManager));
     }
 
     private void exportSelected() {
@@ -684,7 +729,7 @@ public class AppToolbar {
     private void showExportSelectedWithMessageDialog() {
         EditText dialogMessage = new EditText(activity);
 
-        new AlertDialog.Builder(activity)
+        new MaterialAlertDialogBuilder(activity)
                 .setTitle(R.string.toolbar_more_selection_export_setMessage_title)
                 .setView(dialogMessage)
                 .setNeutralButton(R.string.toolbar_more_selection_export_setMessage_nomsg, (ignore0, ignore1) -> exportSelected())

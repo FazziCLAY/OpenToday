@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="abc_launcherName" translatable="false">OpenToday (Debug)</string>
+    <string name="abc_launcherName" translatable="false">OpenToday</string>
 </resources>

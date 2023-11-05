@@ -21,9 +21,9 @@ public class ItemNotificationUtil {
         return result;
     }
 
-    public static void tick(TickSession tickSession, List<ItemNotification> notifications, Item item) {
+    public static void tick(TickSession tickSession, List<ItemNotification> notifications) {
         for (ItemNotification notification : notifications) {
-            notification.tick(tickSession, item);
+            notification.tick(tickSession);
         }
     }
 }

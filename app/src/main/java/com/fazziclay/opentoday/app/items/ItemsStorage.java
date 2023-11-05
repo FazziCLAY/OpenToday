@@ -109,6 +109,12 @@ public interface ItemsStorage extends Tickable {
     int size();
 
     /**
+     * get items count include children item
+     * @return count of total items
+     */
+    int totalSize();
+
+    /**
      * Get OnItemStorageUpdate CallbackStorage
      * @return callbackStorage
      * @see OnItemsStorageUpdate

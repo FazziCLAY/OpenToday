@@ -4,29 +4,33 @@ import android.content.Context
 import androidx.annotation.StringRes
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.ImportWrapper
-import com.fazziclay.opentoday.app.SettingsManager
 import com.fazziclay.opentoday.app.items.item.CycleListItem
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem
 import com.fazziclay.opentoday.app.items.item.ItemType
 import com.fazziclay.opentoday.app.items.item.filter.FiltersRegistry
 import com.fazziclay.opentoday.app.items.item.filter.LogicContainerItemFilter
+import com.fazziclay.opentoday.app.settings.enums.FirstTab
+import com.fazziclay.opentoday.app.settings.enums.ItemAction
+import com.fazziclay.opentoday.app.settings.enums.ItemAddPosition
+import com.fazziclay.opentoday.util.InlineUtil.IPROF
 
 // GUI-only
 object EnumsRegistry {
     private val ENUMS = arrayOf(
         EnumInfo(LogicContainerItemFilter.LogicMode.AND,            R.string.logic_container_logicMode_AND),
         EnumInfo(LogicContainerItemFilter.LogicMode.OR,             R.string.logic_container_logicMode_OR),
-        EnumInfo(SettingsManager.FirstTab.FIRST,                    R.string.settings_firstTab_first),
-        EnumInfo(SettingsManager.FirstTab.TAB_ON_CLOSING,           R.string.settings_firstTab_onClosed),
-        EnumInfo(SettingsManager.ItemAction.OPEN_EDITOR,            R.string.itemAction_OPEN_EDITOR),
-        EnumInfo(SettingsManager.ItemAction.OPEN_TEXT_EDITOR,       R.string.itemAction_OPEN_TEXT_EDITOR),
-        EnumInfo(SettingsManager.ItemAction.SELECT_REVERT,          R.string.itemAction_SELECT_REVERT),
-        EnumInfo(SettingsManager.ItemAction.SELECT_ON,              R.string.itemAction_SELECT_ON),
-        EnumInfo(SettingsManager.ItemAction.SELECT_OFF,             R.string.itemAction_SELECT_OFF),
-        EnumInfo(SettingsManager.ItemAction.DELETE_REQUEST,         R.string.itemAction_DELETE_REQUEST),
-        EnumInfo(SettingsManager.ItemAction.MINIMIZE_REVERT,        R.string.itemAction_MINIMIZE_REVERT),
-        EnumInfo(SettingsManager.ItemAction.MINIMIZE_ON,            R.string.itemAction_MINIMIZE_ON),
-        EnumInfo(SettingsManager.ItemAction.MINIMIZE_OFF,           R.string.itemAction_MINIMIZE_OFF),
+        EnumInfo(FirstTab.FIRST,                    R.string.settings_firstTab_first),
+        EnumInfo(FirstTab.TAB_ON_CLOSING,           R.string.settings_firstTab_onClosed),
+        EnumInfo(ItemAction.OPEN_EDITOR,            R.string.itemAction_OPEN_EDITOR),
+        EnumInfo(ItemAction.OPEN_TEXT_EDITOR,       R.string.itemAction_OPEN_TEXT_EDITOR),
+        EnumInfo(ItemAction.SELECT_REVERT,          R.string.itemAction_SELECT_REVERT),
+        EnumInfo(ItemAction.SELECT_ON,              R.string.itemAction_SELECT_ON),
+        EnumInfo(ItemAction.SELECT_OFF,             R.string.itemAction_SELECT_OFF),
+        EnumInfo(ItemAction.DELETE_REQUEST,         R.string.itemAction_DELETE_REQUEST),
+        EnumInfo(ItemAction.MINIMIZE_REVERT,        R.string.itemAction_MINIMIZE_REVERT),
+        EnumInfo(ItemAction.MINIMIZE_ON,            R.string.itemAction_MINIMIZE_ON),
+        EnumInfo(ItemAction.MINIMIZE_OFF,           R.string.itemAction_MINIMIZE_OFF),
+        EnumInfo(ItemAction.SHOW_ACTION_DIALOG,     R.string.itemAction_SHOW_ACTION_DIALOG),
         EnumInfo(ImportWrapper.ErrorCode.NOT_IMPORT_TEXT,           R.string.importWrapper_errorCode_NOT_IMPORT_TEXT),
         EnumInfo(ImportWrapper.ErrorCode.VERSION_NOT_COMPATIBLE,    R.string.importWrapper_errorCode_VERSION_NOT_COMPATIBLE),
         EnumInfo(FiltersRegistry.FilterType.DATE,                   R.string.filterRegistry_filterType_DATE),
@@ -56,21 +60,23 @@ object EnumsRegistry {
         EnumInfo(CycleListItem.TickBehavior.CURRENT,        R.string.item_cycleList_tickBehavior_current),
         EnumInfo(CycleListItem.TickBehavior.NOT_CURRENT,    R.string.item_cycleList_tickBehavior_notCurrent),
 
-        EnumInfo(SettingsManager.ItemAddPosition.TOP,       R.string.settings_itemAddPosition_TOP),
-        EnumInfo(SettingsManager.ItemAddPosition.BOTTOM,    R.string.settings_itemAddPosition_BOTTOM),
+        EnumInfo(ItemAddPosition.TOP,       R.string.settings_itemAddPosition_TOP),
+        EnumInfo(ItemAddPosition.BOTTOM,    R.string.settings_itemAddPosition_BOTTOM),
 
     )
 
     fun missingChecks() {
+        IPROF.push("EnumsRegistry:missingChecks")
         missingCheck(LogicContainerItemFilter.LogicMode.values().toList())
-        missingCheck(SettingsManager.FirstTab.values().toList())
-        missingCheck(SettingsManager.ItemAction.values().toList())
+        missingCheck(FirstTab.values().toList())
+        missingCheck(ItemAction.values().toList())
         missingCheck(ImportWrapper.ErrorCode.values().toList())
         missingCheck(FiltersRegistry.FilterType.values().toList())
         missingCheck(ItemType.values().toList())
         missingCheck(FilterGroupItem.TickBehavior.values().toList())
         missingCheck(CycleListItem.TickBehavior.values().toList())
-        missingCheck(SettingsManager.ItemAddPosition.values().toList())
+        missingCheck(ItemAddPosition.values().toList())
+        IPROF.pop()
     }
 
     private fun missingCheck(values: List<Enum<*>>) {

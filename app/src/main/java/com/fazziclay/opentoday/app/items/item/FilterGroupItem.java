@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 
 public class FilterGroupItem extends TextItem implements ContainerItem, ItemsStorage {
     // START - Save
@@ -130,6 +131,11 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         }
     }
 
+    @Override
+    public ItemType getItemType() {
+        return ItemType.FILTER_GROUP;
+    }
+
     @Setter public void setTickBehavior(@NonNull TickBehavior o) {this.tickBehavior = o;}
     @Getter @NonNull public TickBehavior getTickBehavior() {
         return tickBehavior;
@@ -198,6 +204,16 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
     @Override
     public int size() {
         return items.size();
+    }
+
+    @Override
+    public int totalSize() {
+        int c = 0;
+        for (ItemFilterWrapper item : items) {
+            c++;
+            c+= item.item.getChildrenItemCount();
+        }
+        return c;
     }
 
     private void addItem(ItemFilterWrapper item) {
@@ -314,8 +330,8 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         if (!tickSession.isAllowed(this)) return;
 
         super.tick(tickSession);
-        if (tickBehavior != TickBehavior.ALL) ItemUtil.tickOnlyImportantTargets(tickSession, getAllItems());
         if (tickSession.isTickTargetAllowed(TickTarget.ITEM_FILTER_GROUP_TICK)) {
+            profPush(tickSession, "filter_group_tick");
             recalculate(tickSession.getGregorianCalendar());
             updateStat();
 
@@ -333,6 +349,10 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
                 default -> throw new RuntimeException(TAG + ": Unexpected tickBehavior: " + tickBehavior);
             }
 
+            profPop(tickSession);
+            if (tickBehavior != TickBehavior.ALL) {
+                tickSession.runWithPlannedNormalTick(tickList, (Function<ItemFilterWrapper, Item>) itemFilterWrapper -> itemFilterWrapper.item, () -> ItemUtil.tickOnlyImportantTargets(tickSession, getAllItems()));
+            }
             // NOTE: No use 'for-loop' (self-delete item in tick => ConcurrentModificationException)
             int i = tickList.size() - 1;
             while (i >= 0) {
@@ -342,9 +362,11 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
                 }
                 i--;
             }
+            profPush(tickSession, "filter_group_tick");
 
             recalculate(tickSession.getGregorianCalendar());
             updateStat();
+            profPop(tickSession);
         }
     }
 

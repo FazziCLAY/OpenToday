@@ -11,9 +11,14 @@ import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.app.items.callback.ItemCallback;
+import com.fazziclay.opentoday.app.items.notification.DayItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationCodecUtil;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationUtil;
+import com.fazziclay.opentoday.app.items.notification.NotificationController;
+import com.fazziclay.opentoday.app.items.tag.ItemTag;
+import com.fazziclay.opentoday.app.items.tag.TagsCodecUtil;
+import com.fazziclay.opentoday.app.items.tag.TagsUtil;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.TickTarget;
 import com.fazziclay.opentoday.app.items.tick.Tickable;
@@ -22,6 +27,7 @@ import com.fazziclay.opentoday.util.annotation.RequireSave;
 import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.annotation.Setter;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
+import com.fazziclay.opentoday.util.callback.Status;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -51,6 +57,8 @@ public abstract class Item implements Unique, Tickable {
         private static final String KEY_VIEW_CUSTOM_BACKGROUND_COLOR = "viewCustomBackgroundColor";
         private static final String KEY_NOTIFICATIONS = "notifications";
         private static final String KEY_MINIMIZE = "minimize";
+        private static final String KEY_TAGS = "tags";
+
         @NonNull
         @Override
         public Cherry exportItem(@NonNull Item item) {
@@ -60,10 +68,16 @@ public abstract class Item implements Unique, Tickable {
                     .put(KEY_VIEW_BACKGROUND_COLOR, item.viewBackgroundColor)
                     .put(KEY_VIEW_CUSTOM_BACKGROUND_COLOR, item.viewCustomBackgroundColor)
                     .put(KEY_MINIMIZE, item.minimize)
-                    .put(KEY_NOTIFICATIONS, ItemNotificationCodecUtil.exportNotificationList(item.notifications));
+                    .put(KEY_NOTIFICATIONS, ItemNotificationCodecUtil.exportNotificationList(item.notifications))
+                    .put(KEY_TAGS, TagsCodecUtil.exportTagsList(item.tags));
         }
 
-        private final Item defaultValues = new Item(){};
+        private final Item defaultValues = new Item(){
+            @Override
+            public ItemType getItemType() {
+                throw new UnsupportedOperationException("This method of this instance never executed!");
+            }
+        };
         @NonNull
         @Override
         public Item importItem(@NonNull Cherry cherry, Item item) {
@@ -74,6 +88,14 @@ public abstract class Item implements Unique, Tickable {
             item.viewCustomBackgroundColor = cherry.optBoolean(KEY_VIEW_CUSTOM_BACKGROUND_COLOR, defaultValues.viewCustomBackgroundColor);
             item.minimize = cherry.optBoolean(KEY_MINIMIZE, defaultValues.minimize);
             item.notifications = ItemNotificationCodecUtil.importNotificationList(cherry.optOrchard(KEY_NOTIFICATIONS));
+            for (ItemNotification notification : item.notifications) {
+                if (notification.getId() == null) {
+                    notification.attach(item.notificationController);
+                } else {
+                    notification.setController(item.notificationController);
+                }
+            }
+            item.tags = TagsCodecUtil.importTagsList(cherry.optOrchard(KEY_TAGS));
             return item;
         }
 
@@ -103,12 +125,16 @@ public abstract class Item implements Unique, Tickable {
     @SaveKey(key = "viewCustomBackgroundColor") @RequireSave private boolean viewCustomBackgroundColor = false; // юзаем ли фоновый цвет
     @SaveKey(key = "minimize") @RequireSave private boolean minimize = false;
     @NonNull @SaveKey(key = "notifications") @RequireSave private List<ItemNotification> notifications = new ArrayList<>();
+    @NonNull @SaveKey(key = "tags") @RequireSave private List<ItemTag> tags = new ArrayList<>();
+    @NonNull private final NotificationController notificationController = new ItemNotificationController();
+    private boolean cachedNotificationStatus;
 
     // Copy constructor
-    public Item(@Nullable Item copy) {
+    protected Item(@Nullable Item copy) {
         // unattached
         this.id = null;
         this.controller = null;
+        this.cachedNotificationStatus = true;
 
         // copy
         if (copy != null) {
@@ -117,12 +143,18 @@ public abstract class Item implements Unique, Tickable {
             this.viewCustomBackgroundColor = copy.viewCustomBackgroundColor;
             this.minimize = copy.minimize;
             this.notifications = ItemNotificationUtil.copy(copy.notifications);
+            for (ItemNotification notification : this.notifications) {
+                notification.attach(notificationController);
+            }
+            this.tags = TagsUtil.copy(copy.tags);
         }
     }
 
-    public Item() {
+    protected Item() {
         this(null);
     }
+
+    public abstract ItemType getItemType();
 
     // For fast get text (method overrides by TextItem)
     public String getText() {
@@ -177,8 +209,36 @@ public abstract class Item implements Unique, Tickable {
     public void tick(TickSession tickSession) {
         if (!tickSession.isAllowed(this)) return;
         Debug.tickedItems++;
-        if (tickSession.isTickTargetAllowed(TickTarget.ITEM_NOTIFICATIONS)) ItemNotificationUtil.tick(tickSession, notifications, this);
-        if (tickSession.isTickTargetAllowed(TickTarget.ITEM_CALLBACKS)) itemCallbacks.run((callbackStorage, callback) -> callback.tick(Item.this));
+        if (tickSession.isTickTargetAllowed(TickTarget.ITEM_NOTIFICATIONS)) {
+            profPush(tickSession, "item_notifications_tick");
+            ItemNotificationUtil.tick(tickSession, notifications);
+            profPop(tickSession);
+        }
+        if (tickSession.isTickTargetAllowed(TickTarget.ITEM_CALLBACKS)) {
+            profPush(tickSession, "callbacks");
+            itemCallbacks.run((callbackStorage, callback) -> callback.tick(Item.this));
+            profPop(tickSession);
+        }
+
+        profPush(tickSession, "cachedNotificationStatus");
+        boolean isUpdateNotifications = tickSession.isTickTargetAllowed(TickTarget.ITEM_NOTIFICATION_UPDATE);
+        if (isUpdateNotifications != cachedNotificationStatus && !tickSession.isPlannedTick(this)) {
+            cachedNotificationStatus = isUpdateNotifications;
+            itemCallbacks.run((callbackStorage, callback) -> callback.cachedNotificationStatusChanged(Item.this, isUpdateNotifications));
+        }
+        profPop(tickSession);
+    }
+
+    protected void profPush(TickSession t, String s) {
+        t.getProfiler().push(s);
+    }
+
+    protected void profSwap(TickSession t, String s) {
+        t.getProfiler().swap(s);
+    }
+
+    protected void profPop(TickSession t) {
+        t.getProfiler().pop();
     }
 
     protected void regenerateId() {
@@ -197,11 +257,16 @@ public abstract class Item implements Unique, Tickable {
     }
 
     protected void updateStat() {
+        stat.setNotifications(notifications.size());
         stat.tick();
     }
 
     public CallbackStorage<ItemCallback> getItemCallbacks() {
         return itemCallbacks;
+    }
+
+    public void dispatchClick() {
+        itemCallbacks.run((callbackStorage, callback) -> callback.click(Item.this));
     }
 
     // Getters & Setters
@@ -224,7 +289,53 @@ public abstract class Item implements Unique, Tickable {
     @Getter public boolean isMinimize() { return minimize; }
     @Setter public void setMinimize(boolean minimize) { this.minimize = minimize; }
 
-    @Getter @NonNull public List<ItemNotification> getNotifications() { return notifications; }
+    @Getter @NonNull public ItemNotification[] getNotifications() { return notifications.toArray(new ItemNotification[0]); }
+
+    public void addNotifications(ItemNotification... notifications) {
+        for (ItemNotification notification : notifications) {
+            notification.attach(notificationController);
+            this.notifications.add(notification);
+        }
+        updateStat();
+        visibleChanged();
+    }
+
+    public void removeNotifications(ItemNotification... notifications) {
+        for (ItemNotification notification : notifications) {
+            notification.detach();
+            this.notifications.remove(notification);
+        }
+        updateStat();
+        visibleChanged();
+    }
+
+    public ItemNotification getNotificationById(UUID notifyId) {
+        for (ItemNotification notification : notifications) {
+            if (notifyId.equals(notification.getId())) return notification;
+        }
+        return null;
+    }
+
+    public void moveNotifications(int positionFrom, int positionTo) {
+        if (!(positionFrom >= 0 && positionTo >= 0 && positionFrom < notifications.size() && positionTo < notifications.size())) {
+            throw new IndexOutOfBoundsException("failed move notifications... from=" + positionFrom + "; to=" + positionTo);
+        }
+        ItemNotification itemNotification = notifications.get(positionFrom);
+        notifications.remove(itemNotification);
+        notifications.add(positionTo, itemNotification);
+    }
+
+    public void removeAllNotifications() {
+        removeNotifications(getNotifications());
+    }
+
+    public boolean isNotifications() {
+        return !notifications.isEmpty();
+    }
+
+    public boolean getCachedNotificationStatus() {
+        return cachedNotificationStatus;
+    }
 
     @Getter @NonNull public ItemStat getStat() {
         return stat;
@@ -237,6 +348,20 @@ public abstract class Item implements Unique, Tickable {
         return null;
     }
 
+    @NonNull
+    public ItemTag[] getTags() {
+        return tags.toArray(new ItemTag[0]);
+    }
+
+    public void removeTag(ItemTag t) {
+        tags.remove(t);
+    }
+
+    public void addTag(ItemTag t) {
+        t.bind();
+        tags.add(t);
+    }
+
     @NotNull
     @Override
     public String toString() {
@@ -244,5 +369,17 @@ public abstract class Item implements Unique, Tickable {
         int max = Math.min(text.length(), 30);
         text = text.substring(0, max);
         return getClass().getSimpleName()+"@[ID:"+getId()+" HASH:"+hashCode() +" TEXT:'"+text+"']";
+    }
+
+    private class ItemNotificationController implements NotificationController {
+        @Override
+        public UUID generateId(ItemNotification notification) {
+            return UUID.randomUUID();
+        }
+
+        @Override
+        public Item getParentItem(ItemNotification itemNotification) {
+            return Item.this;
+        }
     }
 }

@@ -3,12 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    style="@style/Theme.OpenToday.Settings.Root">
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        style="@style/Theme.OpenToday.Settings.Root">
 
         <TextView
             android:id="@+id/themeTitle"
@@ -74,20 +74,55 @@
             android:text="@string/settings_dateAndTime_format"
             android:layout_width="wrap_content"
             android:layout_below="@id/firstDayOfWeek_spinner"
+            android:backgroundTint="?attr/button_settings_dateFormat_color"
             android:layout_height="wrap_content" />
+
+        <ImageButton
+            android:id="@+id/analogClockOptions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/isAnalogClock"
+            android:layout_alignTop="@id/isAnalogClock"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10sp"
+            android:backgroundTint="?attr/button_settings_openAdvancedSettingsOfOption"
+            android:src="@drawable/tune_24px" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/isAnalogClock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/date_and_time_format"
+            android:layout_marginEnd="30sp"
+            android:layout_toStartOf="@id/analogClockOptions"
+            android:text="@string/settings_isAnalogClock" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/showItemPath"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/isAnalogClock"
+            android:text="@string/settings_showItemPath" />
 
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/minimizeGrayColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/date_and_time_format"
+            android:layout_below="@id/showItemPath"
             android:text="@string/settings_minimizeGrayColor" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/isItemBackgroundRandom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/minimizeGrayColor"
+            android:text="@string/settings_isItemBackgroundRandom" />
 
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/trimItemNamesOnEdit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/minimizeGrayColor"
+            android:layout_below="@id/isItemBackgroundRandom"
             android:text="@string/settings_trimItemNamesOnEdit" />
 
         <com.google.android.material.checkbox.MaterialCheckBox
@@ -98,8 +133,15 @@
             android:text="@string/settings_addItemsToTop" />
 
         <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/scrollToAddedItem"
+            android:id="@+id/actionbarInBottom"
             android:layout_below="@id/addItemsToTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_actionbarInBottom" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/scrollToAddedItem"
+            android:layout_below="@id/actionbarInBottom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/settings_scrollToAddedItem" />
@@ -127,10 +169,17 @@
 
 
         <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/colorHistoryLocked"
+            android:id="@+id/colorHistoryEnabled"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/itemInternalBackgroundFromItem"
+            android:text="@string/settings_colorHistoryEnabled" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/colorHistoryLocked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/colorHistoryEnabled"
             android:text="@string/settings_colorHistoryLocked" />
 
         <com.google.android.material.checkbox.MaterialCheckBox
@@ -170,6 +219,7 @@
             android:text="@string/settings_export"
             android:layout_below="@id/firstTab"
             android:layout_marginTop="20sp"
+            android:backgroundTint="?attr/button_importExport"
             android:layout_height="wrap_content" />
     </RelativeLayout>
 </ScrollView>

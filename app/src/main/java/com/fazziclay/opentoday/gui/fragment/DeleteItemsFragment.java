@@ -9,13 +9,15 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.SettingsManager;
+import com.fazziclay.opentoday.app.settings.enums.ItemAction;
 import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
@@ -24,16 +26,18 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.databinding.FragmentDeleteItemsBinding;
 import com.fazziclay.opentoday.gui.ActivitySettings;
 import com.fazziclay.opentoday.gui.UI;
+import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember;
 import com.fazziclay.opentoday.gui.item.ItemViewGenerator;
 import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
 import com.fazziclay.opentoday.gui.item.ItemViewHolder;
 import com.fazziclay.opentoday.gui.item.ItemsStorageDrawerBehavior;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class DeleteItemsFragment extends Fragment {
+public class DeleteItemsFragment extends Fragment implements ActivitySettingsMember {
     private static final String KEY_ITEMS_TO_DELETE = "itemsToDelete";
     private static final ItemViewGeneratorBehavior ITEM_VIEW_GENERATOR_BEHAVIOR = new DeleteViewGeneratorBehavior();
 
@@ -66,6 +70,7 @@ public class DeleteItemsFragment extends Fragment {
     private ItemsRoot itemsRoot;
     private ItemViewGenerator itemViewGenerator;
     private Item[] itemsToDelete;
+    private int totalToDelete;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,22 +85,18 @@ public class DeleteItemsFragment extends Fragment {
             u.add(itemsRoot.getItemById(UUID.fromString(s)));
         }
         itemsToDelete = u.toArray(new Item[0]);
+        totalToDelete = 0;
+        for (Item item : itemsToDelete) {
+            totalToDelete += item.getChildrenItemCount() + 1;
+        }
         // parse END
 
-        itemViewGenerator = ItemViewGenerator.builder(requireActivity())
-                .setPreviewMode(true)
-                .build();
+        itemViewGenerator = new ItemViewGenerator(requireActivity(), true);
 
         UI.getUIRoot(this).pushActivitySettings(a -> {
             a.setNotificationsVisible(false);
-            a.setToolbarSettings(ActivitySettings.ToolbarSettings.createBack(requireActivity().getString(R.string.fragment_deleteItems_delete_title, String.valueOf(itemsToDelete.length)), () -> UI.rootBack(DeleteItemsFragment.this)));
+            a.setToolbarSettings(ActivitySettings.ToolbarSettings.createBack(requireActivity().getString(R.string.fragment_deleteItems_delete_title, String.valueOf(itemsToDelete.length), String.valueOf(totalToDelete)), () -> UI.rootBack(DeleteItemsFragment.this)));
         });
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        UI.getUIRoot(this).popActivitySettings();
     }
 
     @Nullable
@@ -131,16 +132,19 @@ public class DeleteItemsFragment extends Fragment {
             }
         });
 
-        binding.deleteButton.setOnClickListener(v -> new AlertDialog.Builder(requireContext())
-                .setTitle(requireActivity().getString(R.string.fragment_deleteItems_delete_title, String.valueOf(itemsToDelete.length)))
-                .setNegativeButton(R.string.fragment_deleteItems_delete_cancel, null)
-                .setPositiveButton(R.string.fragment_deleteItems_delete_apply, ((_dialog1, _which) -> {
-                    for (Item item : itemsToDelete) {
-                        item.delete();
-                    }
-                    UI.rootBack(this);
-                }))
-                .show());
+        binding.deleteButton.setOnClickListener(v -> {
+            AlertDialog show = new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(requireActivity().getString(R.string.fragment_deleteItems_delete_title, String.valueOf(itemsToDelete.length), String.valueOf(totalToDelete)))
+                    .setNegativeButton(R.string.fragment_deleteItems_delete_cancel, null)
+                    .setPositiveButton(R.string.fragment_deleteItems_delete_apply, ((_dialog1, _which) -> {
+                        for (Item item : itemsToDelete) {
+                            item.delete();
+                        }
+                        UI.rootBack(this);
+                    }))
+                    .show();
+            show.setIcon(R.drawable.delete_24px);
+        });
 
         binding.cancelButton.setOnClickListener(v -> UI.rootBack(this));
         return binding.getRoot();
@@ -153,7 +157,7 @@ public class DeleteItemsFragment extends Fragment {
 
         private static final ItemsStorageDrawerBehavior ITEM_STORAGE_DRAWER_BEHAVIOR = new ItemsStorageDrawerBehavior() {
             @Override
-            public SettingsManager.ItemAction getItemOnClickAction() {
+            public ItemAction getItemOnClickAction() {
                 return null;
             }
 
@@ -163,7 +167,7 @@ public class DeleteItemsFragment extends Fragment {
             }
 
             @Override
-            public SettingsManager.ItemAction getItemOnLeftAction() {
+            public ItemAction getItemOnLeftAction() {
                 return null;
             }
 
@@ -186,6 +190,7 @@ public class DeleteItemsFragment extends Fragment {
             public void onItemDeleteRequest(Item item) {
                 // do nothing
             }
+
         };
 
         @Override
@@ -222,6 +227,11 @@ public class DeleteItemsFragment extends Fragment {
         @Override
         public boolean isRenderMinimized(Item item) {
             return false;
+        }
+
+        @Override
+        public boolean isRenderNotificationIndicator(Item item) {
+            return item.isNotifications();
         }
     }
 }

@@ -131,6 +131,12 @@ public class CherryOrchard {
         }
     }
 
+    public Cherry createAndAdd() {
+        Cherry cherry = new Cherry();
+        put(cherry);
+        return cherry;
+    }
+
     public interface CherryProvider {
         void provide(int index, Cherry cherry);
     }

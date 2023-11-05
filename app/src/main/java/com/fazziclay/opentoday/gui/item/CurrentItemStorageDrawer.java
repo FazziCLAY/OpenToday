@@ -23,7 +23,7 @@ public class CurrentItemStorageDrawer {
     private final @NotNull ItemViewGeneratorBehavior itemViewGeneratorBehavior;
     private final @NotNull CurrentItemStorage currentItemStorage;
     private final @NotNull OnUpdateListener listener = new OnUpdateListener();
-    private final @NotNull HolderDestroyer holderDestroyer;
+    private final @NotNull Destroyer destroyer;
     private final @NotNull ItemInterface onItemClick;
     private @Nullable OnCurrentItemStorageUpdate userListener = null;
 
@@ -32,14 +32,14 @@ public class CurrentItemStorageDrawer {
                                     @NonNull ItemViewGenerator itemViewGenerator,
                                     @NonNull ItemViewGeneratorBehavior itemViewGeneratorBehavior,
                                     @NonNull CurrentItemStorage currentItemStorage,
-                                    @NotNull HolderDestroyer holderDestroyer,
+                                    @NotNull Destroyer destroyer,
                                     @NotNull ItemInterface onItemClick) {
         this.activity = activity;
         this.itemViewGeneratorBehavior = itemViewGeneratorBehavior;
         this.itemViewGenerator = itemViewGenerator;
         this.currentItemStorage = currentItemStorage;
         this.view = view;
-        this.holderDestroyer = holderDestroyer;
+        this.destroyer = destroyer;
         this.onItemClick = onItemClick;
     }
 
@@ -65,7 +65,7 @@ public class CurrentItemStorageDrawer {
             userListener.onCurrentChanged(currentItem);
         }
         if (currentItem != null) {
-            view.addView(itemViewGenerator.generate(currentItem, view, itemViewGeneratorBehavior, holderDestroyer, onItemClick));
+            view.addView(itemViewGenerator.generate(currentItem, view, itemViewGeneratorBehavior, destroyer, onItemClick));
             view.setOnClickListener(view -> onItemClick.run(currentItem));
         }
     }

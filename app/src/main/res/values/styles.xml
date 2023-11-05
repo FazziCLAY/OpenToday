@@ -25,8 +25,8 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">vertical</item>
         <item name="android:clickable">false</item>
-        <item name="android:paddingStart">5sp</item>
-        <item name="android:paddingEnd">5sp</item>
+        <item name="android:paddingStart">10sp</item>
+        <item name="android:paddingEnd">10sp</item>
     </style>
     <style name="OpenToday.Base.Toolbar.Section.Button">
         <item name="android:layout_width">wrap_content</item>
@@ -102,9 +102,10 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
     <style name="OpenToday.Base.About.Root">
-        <item name="android:paddingStart">5sp</item>
-        <item name="android:paddingEnd">5sp</item>
-        <item name="android:paddingBottom">5sp</item>
+        <item name="android:paddingStart">7sp</item>
+        <item name="android:paddingTop">7sp</item>
+        <item name="android:paddingEnd">7sp</item>
+        <item name="android:paddingBottom">20sp</item>
     </style>
     <style name="OpenToday.Base.About.Title" />
     <style name="OpenToday.Base.About.RowTitle" />
@@ -113,8 +114,9 @@
     <!-- Settings -->
     <style name="OpenToday.Base.Settings" />
     <style name="OpenToday.Base.Settings.Root">
-        <item name="android:paddingStart">5sp</item>
-        <item name="android:paddingEnd">5sp</item>
-        <item name="android:paddingBottom">10sp</item>
+        <item name="android:paddingStart">7sp</item>
+        <item name="android:paddingTop">5sp</item>
+        <item name="android:paddingEnd">7sp</item>
+        <item name="android:paddingBottom">20sp</item>
     </style>
 </resources>

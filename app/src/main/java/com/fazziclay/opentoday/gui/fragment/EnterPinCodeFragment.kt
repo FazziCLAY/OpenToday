@@ -11,10 +11,13 @@ import com.fazziclay.opentoday.databinding.FragmentEnterPincodeBinding
 import com.fazziclay.opentoday.databinding.NotificationTooLongPincodeBinding
 import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.gui.UINotification
+import com.fazziclay.opentoday.gui.fragment.item.ItemsTabIncludeFragment
+import com.fazziclay.opentoday.gui.fragment.settings.SettingsFragment
+import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost
 import com.fazziclay.opentoday.util.InlineUtil.viewClick
 
-class EnterPinCodeFragment : Fragment() {
+class EnterPinCodeFragment : Fragment(), ActivitySettingsMember {
     companion object {
         fun create(): EnterPinCodeFragment {
             return EnterPinCodeFragment()
@@ -39,11 +42,6 @@ class EnterPinCodeFragment : Fragment() {
             a.isClockVisible = true
             a.isDateClickCalendar = false
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        UI.getUIRoot(this).popActivitySettings()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

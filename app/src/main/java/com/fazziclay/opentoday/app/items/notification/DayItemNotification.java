@@ -1,31 +1,22 @@
 package com.fazziclay.opentoday.app.items.notification;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-
 import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
 
-import com.fazziclay.opentoday.R;
-import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.ItemNotificationHandler;
 import com.fazziclay.opentoday.app.data.Cherry;
-import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.TickTarget;
-import com.fazziclay.opentoday.gui.activity.AlarmActivity;
-import com.fazziclay.opentoday.util.ColorUtil;
-import com.fazziclay.opentoday.util.RandomUtil;
+import com.fazziclay.opentoday.util.time.TimeUtil;
 
 import java.util.Calendar;
 
-public class DayItemNotification implements ItemNotification {
-    public static final ItemNotificationCodec CODEC = new Codec();
-    private static class Codec extends ItemNotificationCodec {
+public class DayItemNotification extends ItemNotification {
+    public static final DayItemNotificationCodec CODEC = new DayItemNotificationCodec();
+    private static class DayItemNotificationCodec extends ItemNotification.ItemNotificationCodec {
         @Override
         public Cherry exportNotification(ItemNotification itemNotification) {
             DayItemNotification d = (DayItemNotification) itemNotification;
-            return new Cherry()
+            return super.exportNotification(itemNotification)
                     .put("notificationId", d.notificationId)
                     .put("notifyTitle", d.notifyTitle)
                     .put("notifyTitleFromItemText", d.notifyTitleFromItemText)
@@ -44,8 +35,10 @@ public class DayItemNotification implements ItemNotification {
         }
 
         @Override
-        public ItemNotification importNotification(Cherry cherry) {
-            DayItemNotification o = new DayItemNotification();
+        public ItemNotification importNotification(Cherry cherry, ItemNotification notification) {
+            DayItemNotification o = notification == null ? new DayItemNotification() : (DayItemNotification) notification;
+            super.importNotification(cherry, o);
+
             o.notificationId = cherry.optInt("notificationId", 543);
             o.notifyTitle = cherry.optString("notifyTitle", "");
             o.notifyTitleFromItemText = cherry.optBoolean("notifyTitleFromItemText", true);
@@ -61,6 +54,7 @@ public class DayItemNotification implements ItemNotification {
         }
     }
 
+
     private int notificationId = 0;
     private String notifyTitle;
     private boolean notifyTitleFromItemText = false;
@@ -75,27 +69,25 @@ public class DayItemNotification implements ItemNotification {
     private boolean sound = true;
 
     public DayItemNotification() {
-
-    }
-
-    public DayItemNotification(int notificationId, String notifyTitle, String notifyText, String notifySubText, int time) {
-        this.notificationId = notificationId;
-        this.notifyTitle = notifyTitle;
-        this.notifyText = notifyText;
-        this.notifySubText = notifySubText;
-        this.time = time;
+        // do nothing
     }
 
     @Override
-    public boolean tick(TickSession tickSession, Item item) {
-        if (tickSession.isTickTargetAllowed(TickTarget.ITEM_NOTIFICATION_SCHEDULE)) tickSession.setAlarmDayOfTimeInSeconds(time, item);
+    public boolean tick(TickSession tickSession) {
+        boolean isTimeToSend = tickSession.getDayTime() >= time;
+
+        if (tickSession.isTickTargetAllowed(TickTarget.ITEM_NOTIFICATION_SCHEDULE)) {
+            final long shift = isTimeToSend ? TimeUtil.SECONDS_IN_DAY : 0;
+            final long baseDayMs = tickSession.getNoTimeCalendar().getTimeInMillis() + (shift * 1000L);
+            long triggerAtMs = baseDayMs + (time * 1000L) + 599;
+            tickSession.getItemNotificationHandler().setAlarm(this, triggerAtMs);
+        }
+
         if (tickSession.isTickTargetAllowed(TickTarget.ITEM_NOTIFICATION_UPDATE)) {
             int dayOfYear = tickSession.getGregorianCalendar().get(Calendar.DAY_OF_YEAR);
             if (dayOfYear != latestDayOfYear) {
-                boolean isTimeToSend = tickSession.getDayTime() >= time;
-
                 if (isTimeToSend) {
-                    sendNotify(tickSession.getContext(), item);
+                    sendNotify(tickSession.getItemNotificationHandler());
                     latestDayOfYear = dayOfYear;
                     tickSession.saveNeeded();
                     tickSession.importantSaveNeeded();
@@ -109,30 +101,11 @@ public class DayItemNotification implements ItemNotification {
     @NonNull
     @Override
     public DayItemNotification clone() {
-        try {
-            return (DayItemNotification) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException("Clone exception", e);
-        }
+        return (DayItemNotification) super.clone();
     }
 
-    public void sendNotify(Context context, Item item) {
-        final String nTitle = notifyTitleFromItemText ? (item.isParagraphColorize() ? ColorUtil.colorizeToPlain(item.getText()) : item.getText()) : notifyTitle;
-        final String nText = notifyTextFromItemText ? (item.isParagraphColorize() ? ColorUtil.colorizeToPlain(item.getText()) : item.getText()) : notifyText;
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, App.NOTIFICATION_ITEMS_CHANNEL)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(nTitle)
-                .setContentText(nText)
-                .setSubText(notifySubText)
-                .setPriority(NotificationCompat.PRIORITY_MAX);
-
-        if (fullScreen) {
-            PendingIntent pending = PendingIntent.getActivity(context, RandomUtil.nextInt(), AlarmActivity.createIntent(context, item.getId(), isPreRenderPreviewMode, nTitle, sound), PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-            builder.setFullScreenIntent(pending, true);
-        }
-
-        context.getSystemService(NotificationManager.class).notify(this.notificationId, builder.build());
+    public void sendNotify(ItemNotificationHandler itemNotificationHandler) {
+        itemNotificationHandler.handle(getParentItem(), this);
     }
 
     public int getLatestDayOfYear() {
@@ -221,5 +194,23 @@ public class DayItemNotification implements ItemNotification {
 
     public void setFullScreen(boolean fullScreen) {
         this.fullScreen = fullScreen;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "DayItemNotification{" +
+                "notificationId=" + notificationId +
+                ", notifyTitle='" + notifyTitle + '\'' +
+                ", notifyTitleFromItemText=" + notifyTitleFromItemText +
+                ", notifyText='" + notifyText + '\'' +
+                ", notifyTextFromItemText=" + notifyTextFromItemText +
+                ", notifySubText='" + notifySubText + '\'' +
+                ", latestDayOfYear=" + latestDayOfYear +
+                ", time=" + time +
+                ", fullScreen=" + fullScreen +
+                ", isPreRenderPreviewMode=" + isPreRenderPreviewMode +
+                ", sound=" + sound +
+                "} " + super.toString();
     }
 }

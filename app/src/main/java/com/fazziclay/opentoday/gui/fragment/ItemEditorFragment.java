@@ -14,27 +14,32 @@ import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.TimePicker;
 import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
+import com.fazziclay.opentoday.app.BeautifyColorManager;
 import com.fazziclay.opentoday.app.ColorHistoryManager;
 import com.fazziclay.opentoday.app.CrashReportContext;
 import com.fazziclay.opentoday.app.ImportWrapper;
-import com.fazziclay.opentoday.app.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
@@ -47,13 +52,15 @@ import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.item.LongTextItem;
 import com.fazziclay.opentoday.app.items.item.MathGameItem;
-import com.fazziclay.opentoday.app.items.item.SleepTimeItem;
 import com.fazziclay.opentoday.app.items.item.MissingNoItem;
+import com.fazziclay.opentoday.app.items.item.SleepTimeItem;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.notification.DayItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
 import com.fazziclay.opentoday.app.items.tab.Tab;
+import com.fazziclay.opentoday.app.items.tag.ItemTag;
+import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleCheckboxBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleCounterBinding;
@@ -64,11 +71,13 @@ import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleItemBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleLongtextBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleMathgameBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleTextBinding;
+import com.fazziclay.opentoday.databinding.ItemEditorFragmentModuleItemNotificationBinding;
 import com.fazziclay.opentoday.gui.ActivitySettings;
 import com.fazziclay.opentoday.gui.ColorPicker;
 import com.fazziclay.opentoday.gui.EnumsRegistry;
+import com.fazziclay.opentoday.gui.ItemTagGui;
 import com.fazziclay.opentoday.gui.UI;
-import com.fazziclay.opentoday.gui.dialog.DialogItemNotificationsEditor;
+import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember;
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
 import com.fazziclay.opentoday.util.ClipboardUtil;
@@ -76,11 +85,14 @@ import com.fazziclay.opentoday.util.ColorUtil;
 import com.fazziclay.opentoday.util.EnumUtil;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.MinTextWatcher;
+import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.SimpleSpinnerAdapter;
 import com.fazziclay.opentoday.util.time.ConvertMode;
 import com.fazziclay.opentoday.util.time.HumanTimeType;
 import com.fazziclay.opentoday.util.time.TimeUtil;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -89,8 +101,9 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.function.Consumer;
 
-public class ItemEditorFragment extends Fragment implements BackStackMember {
+public class ItemEditorFragment extends Fragment implements BackStackMember, ActivitySettingsMember {
     private static final int MODE_UNKNOWN = 0x00;
     private static final int MODE_CREATE = 0x02;
     private static final int MODE_EDIT = 0x04;
@@ -141,6 +154,8 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     }
 
 
+
+
     private FragmentItemEditorBinding binding;
     private App app;
     private ItemsRoot itemsRoot;
@@ -156,6 +171,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     // Edit
     // Create
     private ItemsStorage itemsStorage; // for create
+    private int initBackgroundColor; // for create
 
     // Internal
     private final List<BaseEditUiModule> editModules = new ArrayList<>();
@@ -192,7 +208,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         colorHistoryManager = app.getColorHistoryManager();
         selectionManager = app.getSelectionManager();
         mode = getArguments().getInt(KEY_MODE, MODE_UNKNOWN);
-
+        
         if (mode == MODE_EDIT) {
             if (getArguments().containsKey(KEY_EDIT_TAB_ID)) {
                 Tab tab = itemsRoot.getTabById(getArgTabId());
@@ -206,6 +222,9 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             addItemPosition = getArgAddItemPosition();
             ItemsRegistry.ItemInfo itemInfo = ItemsRegistry.REGISTRY.get(getArgItemType());
             item = itemInfo.create();
+            if (settingsManager.isRandomItemBackground()) {
+                initBackgroundColor = BeautifyColorManager.randomBackgroundColor(app);
+            }
 
         } else {
             throw new RuntimeException("Unknown mode: " + mode);
@@ -264,6 +283,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         UI.getUIRoot(this).pushActivitySettings(a -> {
             a.setNotificationsVisible(false);
             a.setClockVisible(false);
+            a.setShowCanonicalClock(true);
             a.setToolbarSettings(ActivitySettings.ToolbarSettings.createBack(EnumsRegistry.INSTANCE.nameResId(ItemsRegistry.REGISTRY.get(item.getClass()).getItemType()), this::cancelRequest)
                     .setMenu(R.menu.menu_item_editor, menu -> {
                         menu.findItem(R.id.exportItem)
@@ -288,6 +308,20 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
                                     return true;
                                 })
                                 .setVisible(mode == MODE_EDIT);
+
+
+                        MenuItem menuItem = menu.findItem(R.id.deleteItem);
+                        menuItem.setVisible(item.isAttached());
+                        menuItem.setOnMenuItemClickListener(menuItem1 -> {
+                            deleteRequest();
+                            return true;
+                        });
+
+                        menuItem = menu.findItem(R.id.saveItem);
+                        menuItem.setOnMenuItemClickListener(menuItem1 -> {
+                            applyRequest();
+                            return true;
+                        });
                     }));
         });
     }
@@ -295,18 +329,12 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        UI.getUIRoot(this).popActivitySettings();
         CrashReportContext.FRONT.pop();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        viewClick(binding.applyButton, this::applyRequest);
-        viewClick(binding.cancelButton, this::cancelRequest);
-        viewClick(binding.deleteButton, this::deleteRequest);
-        viewVisible(binding.deleteButton, item.isAttached(), View.GONE);
-
         return binding.getRoot();
     }
 
@@ -334,7 +362,6 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     public String getArgItemType() {
         return getArguments().getString(KEY_CREATE_ITEM_TYPE);
     }
-
     public int getArgAddItemPosition() {
         return getArguments().getInt(KEY_ADD_ITEM_POSITION);
     }
@@ -404,7 +431,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             cancel();
             return;
         }
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.fragment_itemEditor_cancel_unsaved_title)
                 .setNegativeButton(R.string.fragment_itemEditor_cancel_unsaved_continue, null)
                 .setPositiveButton(R.string.fragment_itemEditor_cancel_unsaved_discard, ((dialog1, which) -> cancel()))
@@ -416,7 +443,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
     }
 
     public static void deleteRequest(Context context, Item item, Runnable onDelete) {
-        new AlertDialog.Builder(context)
+        AlertDialog show = new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.fragment_itemEditor_delete_title)
                 .setMessage(context.getString(R.string.fragment_itemEditor_delete_message, item.getChildrenItemCount()))
                 .setNegativeButton(R.string.fragment_itemEditor_delete_cancel, null)
@@ -425,6 +452,8 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
                     if (onDelete != null) onDelete.run();
                 }))
                 .show();
+
+        show.setIcon(R.drawable.delete_24px);
     }
 
     private void cancel() {
@@ -449,18 +478,11 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
     public abstract static class BaseEditUiModule {
         public abstract View getView();
-
         public abstract void setup(Item item, Activity activity, View view);
-
         public abstract void commit(Item item) throws Exception;
-
         public abstract void setOnStartEditListener(Runnable o);
-
-        public void notifyCreateMode() {
-        }
-
-        public void onResume() {
-        }
+        public void notifyCreateMode() {}
+        public void onResume() {}
     }
 
     public class ItemEditModule extends BaseEditUiModule {
@@ -468,6 +490,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         private Runnable onEditStart;
 
         private int temp_backgroundColor;
+        private boolean isDefaultBackColor;
 
         @Override
         public View getView() {
@@ -482,23 +505,50 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.selected.setChecked(selectionManager.isSelected(item));
             viewVisible(binding.selected, mode == MODE_EDIT, View.GONE);
 
+
+
+            // chip tags START
+            binding.addTag.setOnClickListener(view1 -> showEditTagDialog(new ItemTag("", ""), (itemTag) -> {
+                item.addTag(itemTag);
+                updateTags();
+            }));
+            updateTags();
+            // chip tags END
+
+
+
             binding.viewMinHeight.setText(String.valueOf(item.getViewMinHeight()));
-            binding.defaultBackgroundColor.setChecked(!item.isViewCustomBackgroundColor());
             temp_backgroundColor = item.getViewBackgroundColor();
+            isDefaultBackColor = !item.isViewCustomBackgroundColor();
+            if (mode == MODE_CREATE && settingsManager.isRandomItemBackground()) {
+                temp_backgroundColor = initBackgroundColor;
+                isDefaultBackColor = false;
+            }
             updateTextColorIndicator(activity);
-            viewClick(binding.viewBackgroundColorEdit, () -> new ColorPicker(activity, temp_backgroundColor)
+            viewClick(binding.itemBackgroundColor, () -> new ColorPicker(activity, temp_backgroundColor)
                     .setting(true, true, true)
                     .setColorHistoryManager(colorHistoryManager)
+                    .setNeutralDialogButton(R.string.fragment_itemEditor_module_item_backgroundColor_dialog_reset, () -> {
+                        isDefaultBackColor = true;
+                        updateTextColorIndicator(activity);
+                        onEditStart.run();
+                    })
                     .showDialog(R.string.fragment_itemEditor_module_item_backgroundColor_dialog_title,
                             R.string.fragment_itemEditor_module_item_backgroundColor_dialog_cancel,
-                            R.string.fragment_itemEditor_module_item_backgroundColor_dialog_apply,
+                            R.string.fragment_itemEditor_module_item_backgroundColor_dialog_ok,
                             (color) -> {
                                 temp_backgroundColor = color;
-                                binding.defaultBackgroundColor.setChecked(false);
+                                isDefaultBackColor = false;
                                 updateTextColorIndicator(activity);
                                 onEditStart.run();
                             }));
             binding.minimize.setChecked(item.isMinimize());
+            viewLong(binding.itemBackgroundColor, () -> {
+                temp_backgroundColor = BeautifyColorManager.randomBackgroundColor(app);
+                isDefaultBackColor = false;
+                updateTextColorIndicator(activity);
+                onEditStart.run();
+            });
 
             // On edit start
             binding.viewMinHeight.addTextChangedListener(new MinTextWatcher() {
@@ -511,32 +561,124 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
                     onEditStart.run();
                 }
             });
-            viewClick(binding.defaultBackgroundColor, () -> {
-                updateTextColorIndicator(activity);
-                onEditStart.run();
-            });
             viewClick(binding.minimize, onEditStart);
             //
 
-            viewClick(binding.editNotifications, () -> new DialogItemNotificationsEditor(activity, item, () -> updateNotificationPreview(item, activity)).show());
-            updateNotificationPreview(item, activity);
+            viewClick(binding.addNotification, () -> {
+
+                DayItemNotification dayItemNotification = new DayItemNotification();
+                dayItemNotification.setNotificationId(RandomUtil.nextIntPositive());
+                dayItemNotification.setLatestDayOfYear(new GregorianCalendar().get(Calendar.DAY_OF_YEAR));
+                item.addNotifications(dayItemNotification);
+                item.save();
+
+                binding.notifications.getAdapter().notifyItemInserted(item.getNotifications().length);
+                updateNotificationNotFoundText();
+            });
+
+            binding.notifications.setAdapter(new RecyclerView.Adapter<NotificationHolder>() {
+                @NonNull
+                @Override
+                public NotificationHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                    return new NotificationHolder(parent);
+                }
+
+                @Override
+                public void onBindViewHolder(@NonNull NotificationHolder holder, int position) {
+                    holder.bind(item.getNotifications()[position]);
+                }
+
+                @Override
+                public int getItemCount() {
+                    return item.getNotifications().length;
+                }
+            });
+            binding.notifications.setLayoutManager(new LinearLayoutManager(requireContext()));
+            new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.DOWN | ItemTouchHelper.UP, ItemTouchHelper.LEFT) {
+                @Override
+                public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                    int positionFrom = viewHolder.getAdapterPosition();
+                    int positionTo = target.getAdapterPosition();
+
+                    item.moveNotifications(positionFrom, positionTo);
+                    item.save();
+                    binding.notifications.getAdapter().notifyItemMoved(positionFrom, positionTo);
+                    return true;
+                }
+
+                @Override
+                public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                    int pos = viewHolder.getAdapterPosition();
+                    ItemNotificationFragment.showDeleteNotificationDialog(requireContext(), () -> {
+                        ItemNotification notification = item.getNotifications()[pos];
+                        item.removeNotifications(notification);
+                        item.save();
+                        binding.notifications.getAdapter().notifyItemRemoved(pos);
+                        updateNotificationNotFoundText();
+                    });
+                    binding.notifications.getAdapter().notifyItemChanged(pos);
+                }
+            }).attachToRecyclerView(binding.notifications);
+            updateNotificationNotFoundText();
         }
 
-        private void updateNotificationPreview(Item item, Activity activity) {
-            StringBuilder text = new StringBuilder();
-            for (ItemNotification notification : item.getNotifications()) {
+        @Override
+        public void onResume() {
+            binding.notifications.getAdapter().notifyDataSetChanged();
+            updateNotificationNotFoundText();
+        }
+
+        class NotificationHolder extends RecyclerView.ViewHolder {
+            private final FrameLayout frameLayout;
+            private final ItemEditorFragmentModuleItemNotificationBinding b;
+
+            public NotificationHolder(ViewGroup parent) {
+                super(new FrameLayout(parent.getContext()));
+                frameLayout = ((FrameLayout) itemView);
+                frameLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                b = ItemEditorFragmentModuleItemNotificationBinding.inflate(getActivity().getLayoutInflater());
+                var params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.setMargins(3, 5, 3, 5);
+                b.getRoot().setLayoutParams(params);
+                frameLayout.addView(b.getRoot());
+            }
+
+            public void bind(ItemNotification notification) {
                 if (notification instanceof DayItemNotification d) {
-                    text.append(String.format("#%s - %s - %s", d.getNotificationId(), activity.getString(R.string.itemNotification_day), TimeUtil.convertToHumanTime(d.getTime(), ConvertMode.HHMM))).append("\n");
+                    b.time.setText(TimeUtil.convertToHumanTime(d.getTime(), ConvertMode.HHMM));
+                    b.notificationId.setText("#" + d.getNotificationId());
+                    b.getRoot().setOnClickListener(view -> {
+                        if (mode == MODE_EDIT) {
+                            disableStateRestoreOnEdits();
+                            navigationHost.navigate(ItemNotificationFragment.create(getArgItemId(), notification.getId()), true);
+                        } else {
+                            Toast.makeText(requireContext(), R.string.fragment_itemEditor_module_item_notifications_cantOpenWhileCreate, Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
-            binding.notificationsPreview.setText(text.toString());
+        }
+
+        private void updateNotificationNotFoundText() {
+            viewVisible(binding.notificationsNotFounded, !item.isNotifications(), View.GONE);
+        }
+
+        private void updateTags() {
+            binding.itemTagsGroup.removeAllViews();
+            for (final ItemTag tag : item.getTags()) {
+                var view = new Chip(getActivity());
+                view.setText(ItemTagGui.textInChip(tag));
+                viewClick(view, () -> showEditTagDialog(tag, (editedTag) -> view.setText(ItemTagGui.textInChip(editedTag))));
+                binding.itemTagsGroup.addView(view);
+            }
+            binding.itemTagsGroup.addView(binding.addTag);
         }
 
         private void updateTextColorIndicator(Activity activity) {
-            if (binding.defaultBackgroundColor.isChecked()) {
-                binding.viewBackgroundColorIndicator.setBackgroundTintList(ColorStateList.valueOf(ResUtil.getAttrColor(activity, R.attr.item_backgroundColor)));
+            if (isDefaultBackColor) {
+                binding.itemBackgroundColor.setColor(ResUtil.getAttrColor(activity, R.attr.item_backgroundColor));
             } else {
-                binding.viewBackgroundColorIndicator.setBackgroundTintList(ColorStateList.valueOf(temp_backgroundColor));
+                binding.itemBackgroundColor.setColor(temp_backgroundColor);
             }
         }
 
@@ -548,7 +690,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
             item.setViewMinHeight(Integer.parseInt(binding.viewMinHeight.getText().toString()));
             item.setViewBackgroundColor(temp_backgroundColor);
-            item.setViewCustomBackgroundColor(!binding.defaultBackgroundColor.isChecked());
+            item.setViewCustomBackgroundColor(!isDefaultBackColor);
             item.setMinimize(binding.minimize.isChecked());
             if (binding.selected.isChecked()) {
                 if (!selectionManager.isSelected(item)) {
@@ -569,6 +711,54 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         public void setOnStartEditListener(Runnable o) {
             onEditStart = o;
         }
+
+        private void showEditTagDialog(ItemTag tag, Consumer<ItemTag> afterEdit) {
+            var view = new LinearLayout(getContext());
+            view.setOrientation(LinearLayout.VERTICAL);
+
+            var title = new EditText(getContext());
+            title.setHint(R.string.dialog_itemTag_title_hint);
+            title.setText(tag.getName());
+            view.addView(title);
+
+
+            var text = new EditText(getContext());
+            text.setHint(R.string.dialog_itemTag_value_hint);
+            text.setText(tag.getValue());
+            view.addView(text);
+
+
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getActivity())
+                    .setTitle(R.string.dialog_itemTag_title)
+                    .setMessage(R.string.dialog_itemTag_message)
+                    .setView(view)
+                    .setNegativeButton(R.string.abc_cancel, null);
+
+
+            var ref = new Object() {
+                AlertDialog alertDialog = null;
+            };
+            builder.setPositiveButton(R.string.dialog_itemTag_apply, (_fdfd, _tbnhgfhj) -> {
+                String titleText = title.getText().toString().trim();
+                if (titleText.isEmpty()) {
+                    Toast.makeText(getContext(), R.string.dialog_itemTag_titleNotMayEmpty, Toast.LENGTH_SHORT).show();
+                    UI.postDelayed(ref.alertDialog::show, 200);
+                    return;
+                }
+                tag.setName(titleText);
+                String value = text.getText().toString().trim();
+                if (value.isEmpty()) {
+                    value = null;
+                }
+                tag.setValue(value);
+                afterEdit.accept(tag);
+            });
+
+
+            ref.alertDialog = builder.create();
+            ref.alertDialog.show();
+
+        }
     }
 
     public class TextItemEditModule extends BaseEditUiModule {
@@ -577,6 +767,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
         private int temp_textColor;
         private MinTextWatcher textWatcher;
+        private boolean isDefaultTextColor;
 
         @Override
         public View getView() {
@@ -595,18 +786,22 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
                 Toast.makeText(activity, R.string.abc_coped, Toast.LENGTH_SHORT).show();
             });
             binding.text.setText(textItem.getText());
-            binding.defaultTextColor.setChecked(!textItem.isCustomTextColor());
+            isDefaultTextColor = !textItem.isCustomTextColor();
             temp_textColor = textItem.getTextColor();
             updateTextColorIndicator(activity);
-            binding.textColorEdit.setOnClickListener(v -> new ColorPicker(activity, temp_textColor)
+            binding.textColor.setOnClickListener(v -> new ColorPicker(activity, temp_textColor)
                     .setting(true, true, true)
                     .setColorHistoryManager(colorHistoryManager)
+                    .setNeutralDialogButton(R.string.fragment_itemEditor_module_text_textColor_dialog_reset, () -> {
+                        isDefaultTextColor = true;
+                        updateTextColorIndicator(activity);
+                    })
                     .showDialog(R.string.fragment_itemEditor_module_text_textColor_dialog_title,
                             R.string.fragment_itemEditor_module_text_textColor_dialog_cancel,
-                            R.string.fragment_itemEditor_module_text_textColor_dialog_apply,
+                            R.string.fragment_itemEditor_module_text_textColor_dialog_ok,
                             (color) -> {
                                 temp_textColor = color;
-                                binding.defaultTextColor.setChecked(false);
+                                isDefaultTextColor = false;
                                 updateTextColorIndicator(activity);
                                 onEditStart.run();
                             }));
@@ -625,10 +820,6 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
                     onEditStart.run();
                     viewVisible(binding.openTextEditor, false, View.INVISIBLE);
                 }
-            });
-            binding.defaultTextColor.setOnClickListener(v -> {
-                updateTextColorIndicator(activity);
-                onEditStart.run();
             });
             binding.clickableUrls.setChecked(textItem.isClickableUrls());
             binding.clickableUrls.setOnClickListener(v -> onEditStart.run());
@@ -651,10 +842,10 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         }
 
         private void updateTextColorIndicator(Activity activity) {
-            if (binding.defaultTextColor.isChecked()) {
-                binding.textColorIndicator.setBackgroundTintList(ColorStateList.valueOf(ResUtil.getAttrColor(activity, R.attr.item_textColor)));
+            if (isDefaultTextColor) {
+                binding.textColor.setColor(ResUtil.getAttrColor(activity, R.attr.item_textColor));
             } else {
-                binding.textColorIndicator.setBackgroundTintList(ColorStateList.valueOf(temp_textColor));
+                binding.textColor.setColor(temp_textColor);
             }
         }
 
@@ -668,7 +859,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             }
             textItem.setText(userInput);
             textItem.setTextColor(temp_textColor);
-            textItem.setCustomTextColor(!binding.defaultTextColor.isChecked());
+            textItem.setCustomTextColor(!isDefaultTextColor);
             textItem.setClickableUrls(binding.clickableUrls.isChecked());
             textItem.setParagraphColorize(binding.paragraphColorize.isChecked());
         }
@@ -890,8 +1081,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
                 }
 
                 @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
+                public void onNothingSelected(AdapterView<?> parent) {}
             });
         }
 
@@ -963,12 +1153,10 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
         }
 
         @Override
-        public void commit(Item item) {
-        }
+        public void commit(Item item) {}
 
         @Override
-        public void setOnStartEditListener(Runnable o) {
-        }
+        public void setOnStartEditListener(Runnable o) { }
     }
 
     private static class FilterGroupItemEditModule extends BaseEditUiModule {
@@ -992,7 +1180,6 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             binding.tickBehavior.setSelection(simpleSpinnerAdapter.getValuePosition(filterGroupItem.getTickBehavior()));
             binding.tickBehavior.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 int counter = 0;
-
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                     if (counter > 0) {
@@ -1002,8 +1189,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
                 }
 
                 @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-                }
+                public void onNothingSelected(AdapterView<?> adapterView) {}
             });
         }
 
@@ -1055,11 +1241,10 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
 
         // 4 EditText call this function at the same time when onStateRestored
         int boundsDisableCounter = 0;
-
         private void boundsChanged() {
             if (disableMathGameBoundsEdits) {
                 boundsDisableCounter++;
-                if (boundsDisableCounter >= 4) disableMathGameBoundsEdits = false;
+                if (boundsDisableCounter >= 4)disableMathGameBoundsEdits = false;
                 return;
             }
             boundsDisableCounter = 0;
@@ -1089,20 +1274,16 @@ public class ItemEditorFragment extends Fragment implements BackStackMember {
             operationChange(MathGameItem.Operation.DIVIDE, binding.primitiveDivide.isChecked());
             try {
                 this.item.setPrimitiveNumber1Min(Integer.parseInt(binding.n1min.getText().toString()));
-            } catch (Exception ignored) {
-            }
+            } catch (Exception ignored) {}
             try {
                 this.item.setPrimitiveNumber1Max(Integer.parseInt(binding.n1max.getText().toString()));
-            } catch (Exception ignored) {
-            }
+            } catch (Exception ignored) {}
             try {
                 this.item.setPrimitiveNumber2Min(Integer.parseInt(binding.n2min.getText().toString()));
-            } catch (Exception ignored) {
-            }
+            } catch (Exception ignored) {}
             try {
                 this.item.setPrimitiveNumber2Max(Integer.parseInt(binding.n2max.getText().toString()));
-            } catch (Exception ignored) {
-            }
+            } catch (Exception ignored) {}
             if (mode == MODE_EDIT) this.item.generateQuest();
         }
 

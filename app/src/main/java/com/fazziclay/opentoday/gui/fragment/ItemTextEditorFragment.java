@@ -1,6 +1,7 @@
 package com.fazziclay.opentoday.gui.fragment;
 
 import static com.fazziclay.opentoday.util.InlineUtil.viewClick;
+import static com.fazziclay.opentoday.util.InlineUtil.viewLong;
 import static com.fazziclay.opentoday.util.InlineUtil.viewVisible;
 
 import android.content.res.ColorStateList;
@@ -28,33 +29,48 @@ import com.fazziclay.opentoday.app.ColorHistoryManager;
 import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.item.LongTextItem;
 import com.fazziclay.opentoday.app.items.item.TextItem;
+import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.databinding.FragmentItemTextEditorBinding;
 import com.fazziclay.opentoday.gui.ActivitySettings;
 import com.fazziclay.opentoday.gui.ColorPicker;
 import com.fazziclay.opentoday.gui.UI;
+import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember;
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
 import com.fazziclay.opentoday.util.ColorUtil;
 import com.fazziclay.opentoday.util.MinTextWatcher;
 import com.fazziclay.opentoday.util.ResUtil;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import org.intellij.lang.annotations.MagicConstant;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Consumer;
 
-public class ItemTextEditorFragment extends Fragment implements BackStackMember {
+public class ItemTextEditorFragment extends Fragment implements BackStackMember, ActivitySettingsMember {
     public static final int EDITABLE_TYPE_TEXT = 0;
     public static final int EDITABLE_TYPE_LONG_TEXT = 1;
     public static final int EDITABLE_TYPE_AUTO = 2;
+    private static final CharSequence[] AVAILABLE_TEXT_SIZES = new CharSequence[]{
+            "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
+            "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30"
+    };
 
     private static final String KEY_ID = "ItemTextEditorFragment_itemId";
     private static final String KEY_EDITABLE_TYPE = "ItemTextEditorFragment_editableType";
     private static final String KEY_OVERRIDE_PREVIEW_BACKGROUND = "ItemTextEditorFragment_overridePreviewBackground";
     private static final String TAG = "ItemTextEditorFragment";
+    private int themeForeColor;
 
 
     public static ItemTextEditorFragment create(UUID id) {
         return create(id, EDITABLE_TYPE_AUTO, null);
     }
 
-    public static ItemTextEditorFragment create(UUID id, int editableType, @Nullable String overridePreviewBackground) {
+    public static ItemTextEditorFragment create(@NotNull UUID id,
+                                                @MagicConstant(intValues = {EDITABLE_TYPE_AUTO, EDITABLE_TYPE_TEXT, EDITABLE_TYPE_LONG_TEXT}) int editableType,
+                                                @Nullable String overridePreviewBackground) {
         ItemTextEditorFragment f = new ItemTextEditorFragment();
 
         Bundle args = new Bundle();
@@ -82,71 +98,99 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
     private String system;
     // CURRENT SYSTEM (END)
 
+
+    private ItemTextEditorFragment() {
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        App app = App.get(requireContext());
-        colorHistoryManager = app.getColorHistoryManager();
-        ItemsRoot itemsRoot = app.getItemsRoot();
+        final App app = App.get(requireContext());
+        final ItemsRoot itemsRoot = app.getItemsRoot();
+        final Bundle args = getArguments();
+        this.colorHistoryManager = app.getColorHistoryManager();
+        final SettingsManager settingsManager = app.getSettingsManager();
 
-        binding = FragmentItemTextEditorBinding.inflate(getLayoutInflater());
-        if (getArguments().containsKey(KEY_OVERRIDE_PREVIEW_BACKGROUND)) {
-            overridePreviewBackground = getArguments().getString(KEY_OVERRIDE_PREVIEW_BACKGROUND);
+        if (args.containsKey(KEY_OVERRIDE_PREVIEW_BACKGROUND)) {
+            overridePreviewBackground = args.getString(KEY_OVERRIDE_PREVIEW_BACKGROUND);
         }
 
-        UUID id = UUID.fromString(getArguments().getString(KEY_ID));
-        int editableType = getArguments().getInt(KEY_EDITABLE_TYPE);
+        final UUID id = UUID.fromString(args.getString(KEY_ID));
+        final int editableType = args.getInt(KEY_EDITABLE_TYPE);
+
         var _item = itemsRoot.getItemById(id);
         if (!(_item instanceof TextItem)) {
-            Toast.makeText(requireContext(), R.string.abc_unknown, Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), R.string.abc_unknown, Toast.LENGTH_LONG).show();
             UI.rootBack(this);
             return;
         }
         item = (TextItem) _item;
-        if (item == null) throw new RuntimeException("Item not found in ItemsRoot by provided UUID");
+        if (item == null) {
+            throw new RuntimeException("Item not found in ItemsRoot by provided UUID");
+        }
         if (editableType == EDITABLE_TYPE_AUTO || editableType == EDITABLE_TYPE_LONG_TEXT) {
             isLongText = true;
         } else if (editableType == EDITABLE_TYPE_TEXT) {
             isLongText = false;
         }
         if (!(item instanceof LongTextItem)) isLongText = false;
-        setupView();
-        UI.getUIRoot(this).pushActivitySettings(a -> {
-            a.setNotificationsVisible(false);
-            a.setClockVisible(false);
-            a.setToolbarSettings(
-                    ActivitySettings.ToolbarSettings.createBack(isLongText ? R.string.fragment_itemTextEditor_toolbar_title_longTextItem : R.string.fragment_itemTextEditor_toolbar_title_textItem, this::cancelRequest)
-                            .setMenu(R.menu.menu_item_text_editor, menu -> {
-                                MenuItem preview = previewMenuItem = menu.findItem(R.id.previewFormatting);
-                                preview.setChecked(showPreview);
-                                preview.setOnMenuItemClickListener(menuItem -> {
-                                    menuItem.setChecked(!showPreview);
-                                    setShowPreview(!showPreview);
-                                    return true;
-                                });
 
-                                MenuItem formattingHelp = menu.findItem(R.id.helpFormatting);
-                                formattingHelp.setOnMenuItemClickListener(menuItem -> {
-                                    openFormattingHelp();
-                                    return true;
-                                });
-                            })
-            );
-        });
+        themeForeColor = UI.getTheme().getRawForegroundColor();
+        if (savedInstanceState == null) {
+            setupActivitySettings();
+        }
+    }
+
+    private void setupActivitySettings() {
+        UI.getUIRoot(this)
+                .pushActivitySettings(a -> {
+                    a.setNotificationsVisible(false);
+                    a.setClockVisible(false);
+                    a.setToolbarSettings(
+                            ActivitySettings.ToolbarSettings.createBack(isLongText ? R.string.fragment_itemTextEditor_toolbar_title_longTextItem : R.string.fragment_itemTextEditor_toolbar_title_textItem, this::cancelRequest)
+                                    .setMenu(R.menu.menu_item_text_editor, menu -> {
+                                        MenuItem preview = previewMenuItem = menu.findItem(R.id.previewFormatting);
+                                        preview.setChecked(showPreview);
+                                        preview.setOnMenuItemClickListener(menuItem -> {
+                                            menuItem.setChecked(!showPreview);
+                                            setShowPreview(!showPreview);
+                                            return true;
+                                        });
+
+                                        MenuItem formattingHelp = menu.findItem(R.id.helpFormatting);
+                                        formattingHelp.setOnMenuItemClickListener(menuItem -> {
+                                            openFormattingHelp();
+                                            return true;
+                                        });
+
+                                        MenuItem saveText = menu.findItem(R.id.saveText);
+                                        saveText.setOnMenuItemClickListener(menuItem -> {
+                                            applyAndClose();
+                                            return true;
+                                        });
+                                    })
+                    );
+                });
     }
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = FragmentItemTextEditorBinding.inflate(inflater);
+        setupView();
         return binding.getRoot();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        UI.getUIRoot(this).popActivitySettings();
         Debug.itemTextEditor = null;
+    }
+
+    private void applyAndClose() {
+        setEditableText(binding.editText.getText().toString());
+        UI.rootBack(this);
     }
 
     // return true if block
@@ -177,7 +221,7 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
 
     private void openFormattingHelp() {
         TextView text = new TextView(requireContext());
-        text.setPadding(3, 2, 3, 2);
+        text.setPadding(10, 10, 10, 10);
         ScrollView scrollView = new ScrollView(requireContext());
         scrollView.addView(text);
 
@@ -188,7 +232,7 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
                 Typeface.NORMAL,
                 false));
 
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.fragment_itemTextEditor_formattingHelp_title)
                 .setView(scrollView)
                 .setPositiveButton(R.string.abc_ok, null)
@@ -228,10 +272,6 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
     }
 
     private void setupView() {
-        viewClick(binding.apply, () -> {
-            setEditableText(binding.editText.getText().toString());
-            UI.rootBack(this);
-        });
         binding.editText.setText(getEditableText());
 
         binding.editText.requestFocus();
@@ -251,7 +291,12 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
             binding.formattingPreview.setBackgroundColor(item.getViewBackgroundColor());
         }
 
-        viewClick(binding.addSystem, () -> putText(binding.editText.getSelectionStart(), "$[]"));
+        viewClick(binding.addSystem, () -> {
+            putText(binding.editText.getSelectionStart(), "$[]");
+            if (!isShowPreview()) {
+                setShowPreview(true);
+            }
+        });
         viewClick(binding.deleteSystem, this::clearCurrentSystem);
 
         viewClick(binding.foregroundColor, () -> new ColorPicker(requireContext(), getSystemColorValue("-"))
@@ -260,6 +305,8 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
                 .setColorHistoryMax(20)
                 .setNeutralDialogButton(getString(R.string.fragment_itemTextEditor_foregroundColor_reset), () -> resetSystem("-"))
                 .showDialog(R.string.fragment_itemTextEditor_foregroundColor_title, R.string.fragment_itemTextEditor_foregroundColor_cancel, R.string.fragment_itemTextEditor_foregroundColor_apply, (color) -> setSystemValue("-", ColorUtil.colorToHex(color))));
+        viewLong(binding.foregroundColor, () -> setSystemValue("-", "reset"));
+
 
         viewClick(binding.backgroundSystem, () -> new ColorPicker(requireContext(), getSystemColorValue("="))
                 .setting(true, true, true)
@@ -267,6 +314,61 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
                 .setColorHistoryMax(20)
                 .setNeutralDialogButton(getString(R.string.fragment_itemTextEditor_backgroundColor_reset), () -> resetSystem("="))
                 .showDialog(R.string.fragment_itemTextEditor_backgroundColor_title, R.string.fragment_itemTextEditor_backgroundColor_cancel, R.string.fragment_itemTextEditor_backgroundColor_apply, (color) -> setSystemValue("=", ColorUtil.colorToHex(color))));
+        viewLong(binding.backgroundSystem, () -> setSystemValue("=", "reset"));
+
+        viewClick(binding.isBold, () -> {
+            String atContent = getSystemStringValue("@", "");
+            boolean bold = atContent.contains("bold");
+            boolean italic = atContent.contains("italic");
+            boolean strikeOut = atContent.contains("~");
+            setSystemValue("@", getStyleContent(!bold, italic, strikeOut));
+        });
+
+        viewClick(binding.isItalic, () -> {
+            String atContent = getSystemStringValue("@", "");
+            boolean bold = atContent.contains("bold");
+            boolean italic = atContent.contains("italic");
+            boolean strikeOut = atContent.contains("~");
+            setSystemValue("@", getStyleContent(bold, !italic, strikeOut));
+        });
+
+        viewClick(binding.isStrikeOut, () -> {
+            String atContent = getSystemStringValue("@", "");
+            boolean bold = atContent.contains("bold");
+            boolean italic = atContent.contains("italic");
+            boolean strikeOut = atContent.contains("~");
+            setSystemValue("@", getStyleContent(bold, italic, !strikeOut));
+        });
+
+        for (View view : new View[]{binding.isItalic, binding.isStrikeOut, binding.isBold}) {
+            viewLong(view, () -> setSystemValue("@", "reset"));
+        }
+
+        viewClick(binding.formatTextSize, () -> {
+            int size;
+            try {
+                size = Integer.parseInt(getSystemStringValue("S", "-1"));
+            } catch (Exception e) {
+                size = -1;
+            }
+            new TextSizeDialog()
+                    .setReset(() -> resetSystem("S"))
+                    .setSelectedSize(size)
+                    .show((s) -> setSystemValue("S", String.valueOf(s)));
+        });
+        viewLong(binding.formatTextSize, () -> setSystemValue("S", "reset"));
+    }
+
+    private String getStyleContent(boolean bold, boolean italic, boolean strikeOut) {
+        if (bold && italic) {
+            return "bolditalic" + (strikeOut ? "~" : "");
+        } else if (bold) {
+            return "bold" + (strikeOut ? "~" : "");
+        } else if (italic) {
+            return "italic" + (strikeOut ? "~" : "");
+        } else {
+            return "" + (strikeOut ? "~" : "");
+        }
     }
 
     private void updateCurrentSystem(int start) {
@@ -308,25 +410,62 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
         viewVisible(binding.addSystem, !isSystem(), View.GONE);
         viewVisible(binding.deleteSystem, isSystem(), View.GONE);
 
-        binding.foregroundColor.setBackgroundTintList(ColorStateList.valueOf(getSystemColorValue("-")));
+        binding.foregroundColor.setImageTintList(ColorStateList.valueOf(getSystemColorValue("-")));
         viewVisible(binding.foregroundColor, isSystem(), View.GONE);
-        binding.backgroundSystem.setBackgroundTintList(ColorStateList.valueOf(getSystemColorValue("=")));
+
+        binding.backgroundSystem.setImageTintList(ColorStateList.valueOf(getSystemColorValue("=")));
         viewVisible(binding.backgroundSystem, isSystem(), View.GONE);
+
+
+        viewVisible(binding.isBold, isSystem(), View.GONE);
+        binding.isBold.setBackgroundTintList(ColorStateList.valueOf(getStyleTintColor("bold")));
+
+
+        viewVisible(binding.isItalic, isSystem(), View.GONE);
+        binding.isItalic.setBackgroundTintList(ColorStateList.valueOf(getStyleTintColor("italic")));
+
+        viewVisible(binding.isStrikeOut, isSystem(), View.GONE);
+        binding.isStrikeOut.setBackgroundTintList(ColorStateList.valueOf(getStyleTintColor("~")));
+
+        viewVisible(binding.formatTextSize, isSystem(), View.GONE);
+    }
+
+    private int getStyleTintColor(String type) {
+        var colorStyleReset = ResUtil.getAttrColor(requireContext(), R.attr.itemTextEditor_style_reset);
+        if (system != null && system.equals("||")) return colorStyleReset;
+
+        String styleValue = getSystemStringValue("@", "");
+        if (styleValue.equals("reset")) return colorStyleReset;
+
+        var colorStyleTrue = ResUtil.getAttrColor(requireContext(), R.attr.itemTextEditor_style_true);
+        var colorStyleFalse = ResUtil.getAttrColor(requireContext(), R.attr.itemTextEditor_style_false);
+
+        return styleValue.contains(type) ? colorStyleTrue : colorStyleFalse;
     }
 
     private int getSystemColorValue(String chas) {
-        if (system == null) return Color.TRANSPARENT;
+        if (system == null) return themeForeColor;
         for (String s : system.split(";")) {
             if (s.startsWith(chas) && s.length() > 1) {
                 String colorValue = s.substring(1);
                 try {
                     return Color.parseColor(colorValue);
                 } catch (Exception e) {
-                    return 0xFFFF00FF;
+                    return themeForeColor;
                 }
             }
         }
-        return Color.TRANSPARENT;
+        return themeForeColor;
+    }
+
+    private String getSystemStringValue(String chas, String def) {
+        if (system == null) return def;
+        for (String s : system.split(";")) {
+            if (s.startsWith(chas) && s.length() > 1) {
+                return s.substring(1);
+            }
+        }
+        return def;
     }
 
     private void setSystemValue(String c, String val) {
@@ -385,6 +524,10 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
         viewVisible(binding.formattingPreview, b, View.GONE);
         updatePreview();
         if (previewMenuItem != null) previewMenuItem.setChecked(b);
+    }
+
+    public boolean isShowPreview() {
+        return showPreview;
     }
 
     private boolean isSystemXExist(String anChar) {
@@ -446,5 +589,43 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember 
 
     public boolean isSystem() {
         return system != null;
+    }
+
+    private class TextSizeDialog {
+        private Runnable resetRunnable;
+        private int selectedSize = -1;
+
+        public TextSizeDialog setReset(Runnable s) {
+            this.resetRunnable = s;
+            return this;
+        }
+
+        public TextSizeDialog setSelectedSize(int selectedSize) {
+            this.selectedSize = selectedSize;
+            return this;
+        }
+
+        public void show(Consumer<Integer> applyConsumer) {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.fragment_itemTextEditor_size_title)
+                    .setSingleChoiceItems(AVAILABLE_TEXT_SIZES, Math.max(0, findElementPositionInArray(AVAILABLE_TEXT_SIZES, String.valueOf(selectedSize))), (dialogInterface, i) -> {
+                        if (i < 0) return;
+                        int selectedSize = Integer.parseInt(String.valueOf(AVAILABLE_TEXT_SIZES[i]));
+                        applyConsumer.accept(selectedSize);
+                        dialogInterface.cancel();
+                    })
+                    .setPositiveButton(R.string.abc_cancel, null)
+                    .setNegativeButton(R.string.fragment_itemTextEditor_size_reset, (dialogInterface, i) -> resetRunnable.run())
+                    .show();
+        }
+    }
+
+    private int findElementPositionInArray(Object[] array, Object element) {
+        int i = 0;
+        for (Object o : array) {
+            if (o.equals(element)) return i;
+            i++;
+        }
+        return -1;
     }
 }

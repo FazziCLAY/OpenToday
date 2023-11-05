@@ -14,7 +14,7 @@ public class UpdateChecker {
     private static final String V2_URL_LATEST_BUILD = "https://fazziclay.github.io/api/project_3/v2/latest_build";
     private static final String V2_URL_LATEST = "https://fazziclay.github.io/api/project_3/v2/latest.json";
 
-    private static final long CACHE_TIMEOUT_MILLIS = 5 * 60 * 60 * 1000; // 5 hours
+    private static final long CACHE_TIMEOUT_MILLIS = 48 * 60 * 60 * 1000; // 48 hours
     private static final String TAG = "UpdateChecker";
 
     public static void check(Context context, Result result) {
@@ -31,6 +31,7 @@ public class UpdateChecker {
         private final File cacheFile;
 
         public UpdateCheckedThread(Context context, Result result) {
+            setName("UpdateCheckerThread");
             this.result = result;
             this.cacheFile = new File(context.getExternalCacheDir(), "latest_update_check");
         }

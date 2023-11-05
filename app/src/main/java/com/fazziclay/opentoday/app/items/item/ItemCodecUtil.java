@@ -50,13 +50,18 @@ public class ItemCodecUtil {
 
     // export item (Item -> JSON)
     public static Cherry exportItem(Item item) {
-        /*IETool from itemClass*/
-        AbstractItemCodec codec = ItemsRegistry.REGISTRY.get(item.getClass()).getCodec();
-        /*Export from IETool*/Cherry cherry = codec.exportItem(item);
-        /*Put itemType to json*/
-        if (!(item instanceof MissingNoItem)) {
-            cherry.put(KEY_ITEMTYPE, ItemsRegistry.REGISTRY.get(item.getClass()).getStringType());
+        try {
+            /*IETool from itemClass*/
+            AbstractItemCodec codec = ItemsRegistry.REGISTRY.get(item.getClass()).getCodec();
+            /*Export from IETool*/
+            Cherry cherry = codec.exportItem(item);
+            /*Put itemType to json*/
+            if (!(item instanceof MissingNoItem)) {
+                cherry.put(KEY_ITEMTYPE, ItemsRegistry.REGISTRY.get(item.getClass()).getStringType());
+            }
+            return cherry;
+        } catch (Exception e) {
+            throw new RuntimeException("Exception while export item " + item, e);
         }
-        return cherry;
     }
 }

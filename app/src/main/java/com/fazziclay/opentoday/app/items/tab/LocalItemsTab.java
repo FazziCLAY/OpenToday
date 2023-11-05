@@ -116,6 +116,11 @@ public class LocalItemsTab extends Tab implements Tickable {
         return itemsStorage.size();
     }
 
+    @Override
+    public int totalSize() {
+        return itemsStorage.totalSize();
+    }
+
     @NonNull
     @Override
     public CallbackStorage<OnItemsStorageUpdate> getOnItemsStorageCallbacks() {

@@ -8,8 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.App
-import com.fazziclay.opentoday.app.SettingsManager
 import com.fazziclay.opentoday.app.Telemetry
+import com.fazziclay.opentoday.app.settings.SettingsManager
 import com.fazziclay.opentoday.databinding.ActivitySetupBinding
 import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.util.InlineUtil.viewClick
@@ -54,15 +54,16 @@ class SetupActivity : AppCompatActivity() {
     private fun done() {
         val isTelemetry = binding.setupTelemetry.isChecked
 
-        settingsManager.isTelemetry = isTelemetry
+        SettingsManager.IS_TELEMETRY.set(settingsManager, isTelemetry)
         settingsManager.save()
-        telemetry.setEnabled(isTelemetry)
+        telemetry.isEnabled = isTelemetry
         setupDone()
         startMain()
     }
 
     private fun setupDone() {
-        getSharedPreferences(App.SHARED_NAME, MODE_PRIVATE).edit().putBoolean(App.SHARED_KEY_IS_SETUP_DONE, true).apply()
+        SettingsManager.IS_FIRST_LAUNCH[settingsManager] = false
+        settingsManager.save()
     }
 
     private fun startMain() {

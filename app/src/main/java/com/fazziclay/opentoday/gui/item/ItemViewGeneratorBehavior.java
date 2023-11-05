@@ -22,4 +22,6 @@ public interface ItemViewGeneratorBehavior {
     ItemsStorageDrawerBehavior getItemsStorageDrawerBehavior(Item item);
 
     boolean isRenderMinimized(Item item);
+
+    boolean isRenderNotificationIndicator(Item item);
 }

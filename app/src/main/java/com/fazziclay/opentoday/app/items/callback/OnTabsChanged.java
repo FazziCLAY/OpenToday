@@ -35,4 +35,8 @@ public abstract class OnTabsChanged implements Callback {
     public Status onTabRenamed(Tab tab, int position) {
         return Status.NONE;
     }
+
+    public Status onTabIconChanged(Tab tab, int position) {
+        return Status.NONE;
+    }
 }

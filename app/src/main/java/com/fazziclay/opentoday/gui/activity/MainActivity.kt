@@ -1,18 +1,26 @@
 package com.fazziclay.opentoday.gui.activity
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
 import android.app.DatePickerDialog
+import android.app.NotificationManager
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.view.Menu
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts.*
 import androidx.appcompat.app.AppCompatActivity
 import com.fazziclay.opentoday.Debug
 import com.fazziclay.opentoday.R
@@ -20,16 +28,18 @@ import com.fazziclay.opentoday.app.App
 import com.fazziclay.opentoday.app.CrashReportContext
 import com.fazziclay.opentoday.app.FeatureFlag
 import com.fazziclay.opentoday.app.ImportantDebugCallback
-import com.fazziclay.opentoday.app.SettingsManager
+import com.fazziclay.opentoday.app.Telemetry
 import com.fazziclay.opentoday.app.Telemetry.UiClosedLPacket
-import com.fazziclay.opentoday.app.Telemetry.UiOpenLPacket
 import com.fazziclay.opentoday.app.UpdateChecker
 import com.fazziclay.opentoday.app.items.QuickNoteReceiver
+import com.fazziclay.opentoday.app.settings.ActionBarPosition
+import com.fazziclay.opentoday.app.settings.Option
+import com.fazziclay.opentoday.app.settings.SettingsManager
 import com.fazziclay.opentoday.databinding.ActivityMainBinding
 import com.fazziclay.opentoday.databinding.NotificationDebugappBinding
 import com.fazziclay.opentoday.databinding.NotificationUpdateAvailableBinding
 import com.fazziclay.opentoday.gui.ActivitySettings
-import com.fazziclay.opentoday.gui.EnumsRegistry
+import com.fazziclay.opentoday.gui.BackendInitializer
 import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.gui.UINotification
 import com.fazziclay.opentoday.gui.UIRoot
@@ -45,9 +55,13 @@ import com.fazziclay.opentoday.util.StreamUtil
 import com.fazziclay.opentoday.util.callback.CallbackImportance
 import com.fazziclay.opentoday.util.callback.Status
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.GregorianCalendar
 import java.util.Locale
 import java.util.Stack
+
+
+
 
 @SuppressLint("NonConstantResourceId")
 class MainActivity : AppCompatActivity(), UIRoot {
@@ -55,6 +69,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
         private const val TAG = "MainActivity"
         private const val CONTAINER_ID = R.id.mainActivity_rootFragmentContainer
         private val DEFAULT_ACTIVITY_SETTINGS: ActivitySettings = ActivitySettings()
+        private val PROFILER = App.createProfiler("MainActivity")
     }
     private lateinit var binding: ActivityMainBinding
     private lateinit var app: App
@@ -65,15 +80,17 @@ class MainActivity : AppCompatActivity(), UIRoot {
     private lateinit var currentDateHandler: Handler
     private lateinit var currentDateRunnable: Runnable
     private lateinit var currentDateCalendar: GregorianCalendar
+    private lateinit var settingsAnalogClockCallback: SettingsManager.OptionChangedCallback
+    private lateinit var settingsActionbarCallback: SettingsManager.OptionChangedCallback
     private var activitySettingsStack: Stack<ActivitySettings> = Stack()
     private var debugView = false
     private var debugHandler: Handler? = null
     private lateinit var debugRunnable: Runnable
     private var debugViewSize = 13
-    private var debugViewBackground: Int = 0x33000000
+    private var debugViewBackground: Int = Color.BLACK
     @SuppressLint("SetTextI18n")
     private var importantDebugCallback = ImportantDebugCallback { m ->
-        if (!App.DEBUG_IMPORTANT_NOTIFICATIONS) return@ImportantDebugCallback Status.Builder()
+        if (!Debug.DEBUG_IMPORTANT_NOTIFICATIONS) return@ImportantDebugCallback Status.Builder()
             .setRemoveCallback(true)
             .build()
         val text = TextView(this@MainActivity)
@@ -91,46 +108,149 @@ class MainActivity : AppCompatActivity(), UIRoot {
 
     // Activity overrides
     override fun onCreate(savedInstanceState: Bundle?) {
+        PROFILER.push("MainActivity:onCreate")
+
+        PROFILER.push("phase0")
+        BackendInitializer.startBackInitializerThread()
         val startTime = System.currentTimeMillis()
         CrashReportContext.mainActivityCreate()
         CrashReportContext.FRONT.push("MainActivity")
         Logger.d(TAG, "onCreate", nullStat(savedInstanceState))
-        if (App.DEBUG) EnumsRegistry.missingChecks()
+
+        PROFILER.swap("phase1")
         app = App.get(this)
+        while (BackendInitializer.isWaitForModule(BackendInitializer.Module.SETTINGS_MANAGER)) {
+            // do nothing
+        }
         settingsManager = app.settingsManager
-        UI.setTheme(settingsManager.theme)
-        app.telemetry.send(UiOpenLPacket())
+        app.tryInitPlugins()
+
+        PROFILER.swap("inflate&set")
+
+        PROFILER.push("inflate")
         binding = ActivityMainBinding.inflate(layoutInflater)
+
+        PROFILER.swap("set")
         setContentView(binding.root)
 
+        PROFILER.pop()
+
+        PROFILER.swap("super.onCreate")
         super.onCreate(savedInstanceState)
+
+        PROFILER.swap("phase2")
+        val theme = SettingsManager.THEME.get(settingsManager)
+        UI.setTheme(theme)
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.hide()
+        settingsActionbarCallback = SettingsManager.OptionChangedCallback { option, value ->
+            if (option == SettingsManager.ACTIONBAR_POSITION) {
+                val actionParams = (binding.toolbar.layoutParams as RelativeLayout.LayoutParams)
+                val dateParams = (binding.currentDateDate.layoutParams as RelativeLayout.LayoutParams)
+                val timeParams = (binding.currentDateTime.layoutParams as RelativeLayout.LayoutParams)
+                val containerParams = (binding.mainActivityRootFragmentContainer.layoutParams as RelativeLayout.LayoutParams)
+                val pos = value as ActionBarPosition
+                if (pos == ActionBarPosition.TOP) {
+                    actionParams.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+                    dateParams.addRule(RelativeLayout.BELOW, binding.toolbar.id)
+                    timeParams.addRule(RelativeLayout.BELOW, binding.toolbar.id)
+                    containerParams.removeRule(RelativeLayout.ABOVE)
+                } else {
+                    actionParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+                    dateParams.removeRule(RelativeLayout.BELOW)
+                    timeParams.removeRule(RelativeLayout.BELOW)
+                    containerParams.addRule(RelativeLayout.ABOVE, binding.toolbar.id)
+                }
+            }
+            return@OptionChangedCallback Status.NONE
+        }
+        settingsActionbarCallback.run(SettingsManager.ACTIONBAR_POSITION, SettingsManager.ACTIONBAR_POSITION.get(settingsManager))
+        settingsManager.callbacks.addCallback(CallbackImportance.DEFAULT, settingsActionbarCallback)
+
+
         debugRunnable = Runnable {
-            binding.debugInfo.text = ColorUtil.colorize(Debug.getDebugInfoText(), Color.WHITE, Color.TRANSPARENT, Typeface.NORMAL)
+            binding.debugInfo.text = ColorUtil.colorize(
+                Debug.getDebugInfoText(),
+                Color.WHITE,
+                Color.TRANSPARENT,
+                Typeface.NORMAL
+            )
             if (debugView && debugHandler != null) {
-                debugHandler!!.postDelayed(this.debugRunnable, 99)
+                debugHandler!!.postDelayed(this.debugRunnable, 50)
             }
         }
         if (Debug.CUSTOM_MAINACTIVITY_BACKGROUND) binding.root.setBackgroundColor(Color.parseColor("#00ffff"))
+
+        if (settingsManager.isQuickNoteNotification) {
+            PROFILER.push("send_quick_note")
+            QuickNoteReceiver.sendQuickNoteNotification(this)
+            PROFILER.pop()
+        }
+
+        PROFILER.swap("wait_gui_for_back")
+        while (BackendInitializer.isWaitGuiForBack()) {
+            // waiting back initialize
+        }
+        PROFILER.swap("telemetry")
+        app.telemetry.send(Telemetry.UiOpenLPacket())
+
+        PROFILER.swap("savedInstanceState==null actions")
         if (savedInstanceState == null) {
+            PROFILER.push("fragment begin")
+
             supportFragmentManager.beginTransaction()
-                    .replace(CONTAINER_ID, MainRootFragment.create(), "MainRootFragment")
-                    .commit()
+                .replace(CONTAINER_ID, MainRootFragment.create(), "MainRootFragment")
+                .commit()
+
+            PROFILER.pop()
+        }
+
+        PROFILER.swap("phase3")
+        settingsAnalogClockCallback = SettingsManager.OptionChangedCallback { option, value ->
+            if (option == SettingsManager.ANALOG_CLOCK_ENABLE) {
+                val visible: Boolean = value as Boolean
+                if (visible) {
+                    if (getCurrentActivitySettings().isClockVisible) {
+                        viewVisible(binding.analogClock, true, View.GONE)
+                    }
+                } else {
+                    viewVisible(binding.analogClock, false, View.GONE)
+                }
+
+            } else if (option == SettingsManager.ANALOG_CLOCK_SIZE) {
+                val size: Int = (value as Int).coerceAtMost(500)
+                val layoutParams = RelativeLayout.LayoutParams(size, size)
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END)
+                binding.analogClock.layoutParams = layoutParams
+
+            } else if (option == SettingsManager.ANALOG_CLOCK_TRANSPARENCY) {
+                val alpha: Float = ((value as Int) / 100f)
+                binding.analogClock.alpha = alpha
+
+            } else if (option == SettingsManager.ANALOG_CLOCK_COLOR_SECONDS) {
+                binding.analogClock.setSecondTint(value as Int)
+            } else if (option == SettingsManager.ANALOG_CLOCK_COLOR_MINUTE) {
+                binding.analogClock.setMinuteTint(value as Int)
+            } else if (option == SettingsManager.ANALOG_CLOCK_COLOR_HOUR) {
+                binding.analogClock.setHourTint(value as Int)
+            }
+
+            return@OptionChangedCallback Status.NONE
         }
         setupNotifications()
         setupCurrentDate()
-        if (settingsManager.isQuickNoteNotification) {
-            QuickNoteReceiver.sendQuickNoteNotification(this)
-        }
         updateDebugView()
-        onBackPressedDispatcher.addCallback(object: OnBackPressedCallback(true) {
+        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 val exit = Runnable { this@MainActivity.finish() }
                 val def = Runnable {
                     if (System.currentTimeMillis() - lastExitClick > 2000) {
-                        Toast.makeText(this@MainActivity, R.string.abc_pressAgainForExitWarning, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@MainActivity,
+                            R.string.abc_pressAgainForExitWarning,
+                            Toast.LENGTH_SHORT
+                        ).show()
                         lastExitClick = System.currentTimeMillis()
                     } else {
                         exit.run()
@@ -146,27 +266,93 @@ class MainActivity : AppCompatActivity(), UIRoot {
                 }
             }
         })
+
+        PROFILER.swap("phase4")
         updateByActivitySettings()
         Debug.mainActivityStartupTime = System.currentTimeMillis() - startTime
         app.importantDebugCallbacks.addCallback(CallbackImportance.DEFAULT, importantDebugCallback)
-        if (App.DEBUG_LOG_ALL_IN_MAINACTIVITY) {
+        if (Debug.DEBUG_LOG_ALL_IN_MAINACTIVITY) {
             Logger.i(TAG, "------------------")
-            Logger.d(TAG, "Example debug message", 10, 20, 30, Exception("Exception in debug logging"))
+            Logger.d(
+                TAG,
+                "Example debug message",
+                10,
+                20,
+                30,
+                Exception("Exception in debug logging")
+            )
             Logger.w(TAG, "Example warning message")
             Logger.e(TAG, "Example error message", Exception("Example exception for logger"))
             Logger.i(TAG, "------------------")
         }
 
         val HIDE_IMPORTANT_TODOS = true
-        if (App.DEBUG || App.SHADOW_RELEASE) {
+        if (App.DEBUG) {
             try {
                 val todo = StreamUtil.read(assets.open("IMPORTANT_TODO"))
                 if (todo.isNotEmpty() && !HIDE_IMPORTANT_TODOS) {
                     binding.importantTodo.visibility = View.VISIBLE
                     binding.importantTodo.text = todo
                 }
-            } catch (ignored: Exception) {}
+            } catch (ignored: Exception) {
+            }
         }
+
+        PROFILER.pop()
+        PROFILER.pop()
+
+        val requestPermissionLauncher = registerForActivityResult(
+            RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                Toast.makeText(this, R.string.abc_success, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, R.string.abc_not_success, Toast.LENGTH_LONG).show();
+            }
+            tryCheckPermissions()
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissionLauncher.launch(
+                android.Manifest.permission.POST_NOTIFICATIONS
+            )
+        } else {
+            tryCheckPermissions()
+        }
+    }
+
+    private fun tryCheckPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager: AlarmManager = getSystemService(AlarmManager::class.java)
+            if (!alarmManager.canScheduleExactAlarms()) {
+                Toast.makeText(this, R.string.main_activity_allowExactAlarms, Toast.LENGTH_LONG)
+                    .show()
+                startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+                return
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            val notificationManager: NotificationManager =
+                getSystemService(NotificationManager::class.java)
+            if (!notificationManager.canUseFullScreenIntent()) {
+                Toast.makeText(
+                    this,
+                    R.string.main_activity_allowFullScreenIntent,
+                    Toast.LENGTH_LONG
+                ).show()
+                val intent = Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT)
+                intent.data = Uri.parse("package:${applicationInfo.packageName}")
+                startActivity(intent)
+                return
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Logger.i(TAG, "onResume")
+        tryCheckPermissions()
     }
 
     override fun onPause() {
@@ -204,12 +390,16 @@ class MainActivity : AppCompatActivity(), UIRoot {
         app.telemetry.send(UiClosedLPacket())
         currentDateHandler.removeCallbacks(currentDateRunnable)
         app.importantDebugCallbacks.removeCallback(importantDebugCallback)
+        settingsManager.callbacks.removeCallback(settingsAnalogClockCallback)
+        settingsManager.callbacks.removeCallback(settingsActionbarCallback)
+
         CrashReportContext.mainActivityDestroy()
         CrashReportContext.FRONT.pop()
     }
 
     // Current Date
     private fun setupCurrentDate() {
+        PROFILER.push("setupCurrentDate")
         currentDateCalendar = GregorianCalendar()
         setCurrentDate()
         currentDateHandler = Handler(mainLooper)
@@ -231,6 +421,18 @@ class MainActivity : AppCompatActivity(), UIRoot {
             dialog.datePicker.firstDayOfWeek = app.settingsManager.firstDayOfWeek
             dialog.show()
         })
+        settingsManager.callbacks.addCallback(CallbackImportance.DEFAULT, settingsAnalogClockCallback)
+        manualCallSettingAnalog(SettingsManager.ANALOG_CLOCK_ENABLE)
+        manualCallSettingAnalog(SettingsManager.ANALOG_CLOCK_TRANSPARENCY)
+        manualCallSettingAnalog(SettingsManager.ANALOG_CLOCK_SIZE)
+        manualCallSettingAnalog(SettingsManager.ANALOG_CLOCK_COLOR_SECONDS)
+        manualCallSettingAnalog(SettingsManager.ANALOG_CLOCK_COLOR_MINUTE)
+        manualCallSettingAnalog(SettingsManager.ANALOG_CLOCK_COLOR_HOUR)
+        PROFILER.pop()
+    }
+
+    private fun manualCallSettingAnalog(option: Option) {
+        settingsAnalogClockCallback.run(option, option.getObject(settingsManager))
     }
 
     private fun internalItemsTick() {
@@ -240,6 +442,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
     }
 
     private fun setCurrentDate() {
+        PROFILER.push("setCurrentDate")
         currentDateCalendar.timeInMillis = System.currentTimeMillis()
         val time = currentDateCalendar.time
 
@@ -250,10 +453,24 @@ class MainActivity : AppCompatActivity(), UIRoot {
         // Time
         dateFormat = SimpleDateFormat(settingsManager.timePattern, Locale.getDefault())
         binding.currentDateTime.text = dateFormat.format(time)
+
+        // Analog
+        if (SettingsManager.ANALOG_CLOCK_ENABLE.get(settingsManager) || getCurrentActivitySettings().isAnalogClockForceVisible) {
+            if (getCurrentActivitySettings().isAnalogClockForceHidden) {
+                return
+            }
+            val hour = currentDateCalendar.get(Calendar.HOUR)
+            val minute = currentDateCalendar.get(Calendar.MINUTE)
+            val second = currentDateCalendar.get(Calendar.SECOND)
+            val millis = currentDateCalendar.get(Calendar.MILLISECOND)
+            binding.analogClock.setTime(hour, minute, second, millis)
+        }
+        PROFILER.pop()
     }
 
     // Update checker
     private fun setupUpdateAvailableNotify() {
+        PROFILER.push("setupUpdateAvailableNotify")
         UpdateChecker.check(app) { available: Boolean, url: String?, name: String? ->
             runOnUiThread {
                 if (available) {
@@ -270,6 +487,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
                 }
             }
         }
+        PROFILER.pop()
     }
 
     // App is DEBUG warning notify
@@ -309,8 +527,18 @@ class MainActivity : AppCompatActivity(), UIRoot {
             binding.debugLogsSizeDown.visibility = View.VISIBLE
             binding.debugLogsSwitch.visibility = View.VISIBLE
             binding.debugLogsSwitch.setOnClickListener {
+                val IS_PROFILERS = com.fazziclay.opentoday.Build.isProfilersEnabled()
+                var text = app.logs.toString()
+                if (IS_PROFILERS) {
+                    text = ""
+                    App.get().profilers.forEach {
+                        text += "\n\n" + it.getResult(-1)
+                    }
+                }
+
+
                 viewVisible(binding.debugLogsScroll, binding.debugLogsSwitch.isChecked, View.GONE)
-                binding.debugLogsText.text = ColorUtil.colorize("\n\n\n\n\n\n"+app.logs.toString(), Color.BLUE, Color.TRANSPARENT, 0, false)
+                binding.debugLogsText.text = ColorUtil.colorize("\n\n\n\n\n\n\n\n\n\n\n\n\n"+text, Color.YELLOW, Color.TRANSPARENT, 0, false)
             }
             binding.debugLogsSwitch.setOnLongClickListener {
                 toggleLogsOverlay()
@@ -326,6 +554,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
                 binding.debugLogsText.textSize = debugViewSize.toFloat()
             }
 
+            binding.debugLogsScroll.setBackgroundColor(debugViewBackground)
             binding.debugLogsSizeUp.setOnLongClickListener {
                 debugViewBackground+=0x21000000
                 binding.debugLogsScroll.setBackgroundColor(debugViewBackground)
@@ -383,15 +612,22 @@ class MainActivity : AppCompatActivity(), UIRoot {
 
         Logger.i(TAG, "update activity settings: $settings")
 
-        viewVisible(binding.currentDateDate, settings.isClockVisible, View.GONE)
-        viewVisible(binding.currentDateTime, settings.isClockVisible, View.GONE)
+        val canon = settings.isShowCanonicalClock && SettingsManager.ACTIONBAR_POSITION[settingsManager] == ActionBarPosition.BOTTOM;
+        val clockVisible = settings.isClockVisible || (canon)
+        var analogClockVisible = (settings.isClockVisible && SettingsManager.ANALOG_CLOCK_ENABLE.get(settingsManager)) || settings.isAnalogClockForceVisible
+        if (settings.isAnalogClockForceHidden || canon) analogClockVisible = false
+
+        viewVisible(binding.currentDateDate, clockVisible, View.GONE)
+        viewVisible(binding.currentDateTime, clockVisible, View.GONE)
+        viewVisible(binding.analogClock, analogClockVisible, View.GONE)
         binding.currentDateDate.isEnabled = settings.isDateClickCalendar
         binding.currentDateTime.isEnabled = settings.isDateClickCalendar
-        viewVisible(binding.notifications, settings.isNotificationsVisible || App.DEBUG_ALWAYS_SHOW_UI_NOTIFICATIONS, View.GONE)
+        viewVisible(binding.notifications, settings.isNotificationsVisible || Debug.DEBUG_ALWAYS_SHOW_UI_NOTIFICATIONS, View.GONE)
 
         val toolbarSettings = settings.toolbarSettings
         if (toolbarSettings == null) {
             supportActionBar?.hide()
+
         } else {
             supportActionBar?.show()
             if (toolbarSettings.title != null) {
@@ -411,6 +647,7 @@ class MainActivity : AppCompatActivity(), UIRoot {
 
                 }, 25)
             } else if (binding.toolbar.menu != null) {
+                binding.toolbar.menu.clear()
                 binding.toolbar.menu.close()
                 Logger.d(TAG, "toolbar closed...")
             }

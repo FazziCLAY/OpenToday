@@ -17,6 +17,9 @@ import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 import com.fazziclay.opentoday.util.callback.Status;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 public class CycleListItem extends TextItem implements ContainerItem, ItemsStorage, CurrentItemStorage {
@@ -82,6 +85,11 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
     }
 
     @Override
+    public ItemType getItemType() {
+        return ItemType.CYCLE_LIST;
+    }
+
+    @Override
     public Item getCurrentItem() {
         if (size() == 0) {
             return null;
@@ -128,17 +136,30 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
     public void tick(TickSession tickSession) {
         if (!tickSession.isAllowed(this)) return;
         super.tick(tickSession);
-        if (tickBehavior != TickBehavior.ALL) ItemUtil.tickOnlyImportantTargets(tickSession, getAllItems());
+        final List<Item> planned = new ArrayList<>();
         if (tickBehavior == TickBehavior.ALL) {
-            itemsCycleStorage.tick(tickSession);
+            planned.addAll(Arrays.asList(getAllItems()));
+
         } else if (tickBehavior == TickBehavior.CURRENT) {
             Item c = getCurrentItem();
-            if (c != null && tickSession.isAllowed(c)) c.tick(tickSession);
+            if (c != null && tickSession.isAllowed(c)) {
+                planned.add(c);
+            }
         } else if (tickBehavior == TickBehavior.NOT_CURRENT) {
             Item c = getCurrentItem();
             for (Item item : getAllItems()) {
-                if (item != c && tickSession.isAllowed(item)) item.tick(tickSession);
+                if (item != c && tickSession.isAllowed(item)) {
+                    planned.add(item);
+                }
             }
+        }
+
+        if (tickBehavior != TickBehavior.ALL) {
+            tickSession.runWithPlannedNormalTick(planned, null, () -> ItemUtil.tickOnlyImportantTargets(tickSession, getAllItems()));
+        }
+
+        for (Item item : planned) {
+            item.tick(tickSession);
         }
     }
 
@@ -190,6 +211,11 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
     @Override
     public int size() {
         return itemsCycleStorage.size();
+    }
+
+    @Override
+    public int totalSize() {
+        return itemsCycleStorage.totalSize();
     }
 
     @Override

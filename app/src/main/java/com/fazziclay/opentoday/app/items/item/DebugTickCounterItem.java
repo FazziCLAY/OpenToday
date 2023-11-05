@@ -49,6 +49,7 @@ public class DebugTickCounterItem extends TextItem {
     }
 
     @SaveKey(key = "counter") @RequireSave private int counter;
+    private long plannedCounter;
     private String debugStat = "";
     private Rose rose;
 
@@ -76,6 +77,11 @@ public class DebugTickCounterItem extends TextItem {
     }
 
     @Override
+    public ItemType getItemType() {
+        return ItemType.DEBUG_TICK_COUNTER;
+    }
+
+    @Override
     public void tick(TickSession tickSession) {
         if (!tickSession.isAllowed(this)) {
             debugStat = "tickSession not allowed tick me.";
@@ -89,6 +95,9 @@ public class DebugTickCounterItem extends TextItem {
 
         } else {
             counter++;
+            if (tickSession.isPlannedTick(this)) {
+                plannedCounter++;
+            }
             final List<String> targets = new ArrayList<>();
             for (TickTarget value : TickTarget.values()) {
                 boolean allow = tickSession.isTickTargetAllowed(value);
@@ -103,10 +112,11 @@ public class DebugTickCounterItem extends TextItem {
                             === Debug tick counter ===
                             ID: %s
                             $[-#ffff00;S16]Counter: $[-#00aaff] %s$[||]
+                            $[-#ffff00;S14]PlannedCounter: $[-#00aaff] %s$[||]
                             $[-#f0f0f0]Allowed targets: %s$[||]
                             $[-#00ffff]Whitelist(%s): %s$[||]
                             $[-$fff00f]PathToMe: %s$[||]
-                            """, getId(), counter, targets, tickSession._isWhitelist(), tickSession._getWhitelist(),
+                            """, getId(), counter, plannedCounter, targets, tickSession._isWhitelist(), tickSession._getWhitelist(),
                     Arrays.toString(ItemUtil.getPathToItem(this)));
         }
 

@@ -14,13 +14,14 @@ import com.fazziclay.opentoday.databinding.FragmentAboutBinding
 import com.fazziclay.opentoday.gui.ActivitySettings
 import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.gui.activity.OpenSourceLicensesActivity
+import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember
 import com.fazziclay.opentoday.util.InlineUtil.viewClick
 import com.fazziclay.opentoday.util.NetworkUtil
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class AboutFragment : Fragment() {
+class AboutFragment : Fragment(), ActivitySettingsMember {
     companion object {
         private const val LINK_OPENSOURCE = "https://github.com/fazziclay/opentoday"
         private const val LINK_ISSUES = "https://github.com/fazziclay/opentoday/issues"
@@ -38,14 +39,9 @@ class AboutFragment : Fragment() {
         super.onCreate(savedInstanceState)
         UI.getUIRoot(this).pushActivitySettings { a ->
             a.isClockVisible = false
-            a.isNotificationsVisible = false
+            a.isNotificationsVisible = true
             a.toolbarSettings = ActivitySettings.ToolbarSettings.createBack(R.string.aboutapp_title) { UI.rootBack(this) }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        UI.getUIRoot(this).popActivitySettings()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -61,9 +57,9 @@ class AboutFragment : Fragment() {
         binding.textVersion.text = App.VERSION_NAME
         binding.textReleaseTime.text = getReleaseTime()
         binding.textBranch.text = App.VERSION_BRANCH
-        if (!App.VERSION_BRANCH.equals("RELEASE", ignoreCase = true)) binding.textBranch.setTextColor(Color.RED)
+        if (!App.VERSION_BRANCH.equals("main", ignoreCase = true)) binding.textBranch.setTextColor(Color.RED)
         binding.textPackage.text = App.APPLICATION_ID
-        viewClick(binding.aboutText, this::manuallyCrashInteract)
+        viewClick(binding.aboutText, this::manuallySecretSettingsInteract)
         viewClick(binding.sourceCode, Runnable { NetworkUtil.openBrowser(requireActivity(), LINK_OPENSOURCE) })
         viewClick(binding.issues, Runnable { NetworkUtil.openBrowser(requireActivity(), LINK_ISSUES) })
         viewClick(binding.licenses, Runnable { requireActivity().startActivity(OpenSourceLicensesActivity.createLaunchIntent(requireContext())) })
@@ -75,15 +71,19 @@ class AboutFragment : Fragment() {
         return SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault()).format(Date(App.VERSION_RELEASE_TIME * 1000))
     }
 
-    private fun manuallyCrashInteract() {
+    private fun manuallySecretSettingsInteract() {
+        if (!App.SECRET_SETTINGS_AVAILABLE) {
+            return
+        }
+
         if (System.currentTimeMillis() - easterEggLastClick < 1000) {
             easterEggCounter++
             if (easterEggCounter == 3) {
-                Toast.makeText(requireContext(), R.string.manuallyCrash_7tap, Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), R.string.fragment_about_secretSettingsWarning, Toast.LENGTH_SHORT).show()
             }
             if (easterEggCounter >= 10) {
                 easterEggCounter = 0
-                UI.Debug.showCrashWithMessageDialog(requireContext(), "Crash by AboutFragment easterEgg :) %s")
+                UI.findFragmentInParents(this, MainRootFragment::class.java)?.navigate(DeveloperFragment(), true)
             }
         } else {
             easterEggCounter = 0

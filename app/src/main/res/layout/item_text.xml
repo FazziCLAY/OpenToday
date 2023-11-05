@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:backgroundTint="?attr/item_text_background_color"
     android:background="@drawable/shape">
+    <!-- maybe add icons to any item (Item.getIcon()..........)
+    <ImageView
+        android:id="@+id/icon"
+        android:paddingStart="1sp"
+        android:paddingTop="1sp"
+        android:paddingBottom="1sp"
+        android:layout_width="24sp"
+        android:layout_height="24sp"
+        android:src="@drawable/baseline_thumb_up_24" />
+        -->
 
     <TextView
         android:id="@+id/title"
@@ -14,6 +24,18 @@
         android:textSize="19sp"
         android:textColor="?attr/item_text_textColor"
         android:layout_marginLeft="5sp"
+        android:layout_toStartOf="@id/indicatorNotification"
         android:layout_marginRight="5sp" />
+    <!--android:layout_toRightOf="@id/icon"-->
 
-</FrameLayout>
+    <ImageView
+        android:id="@+id/indicatorNotification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_margin="3sp"
+        tools:visibility="visible"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/notifications_24px" />
+
+</RelativeLayout>

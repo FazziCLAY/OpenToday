@@ -155,7 +155,114 @@ public class DataFixer {
             isUpdated = true;
         }
 
+        if (dataVersion == 11) {
+            log("v11 -> v12", "Fixing settings");
+            fix11versionTo12();
+            dataVersion = 12;
+            isUpdated = true;
+        }
+
         return dataVersion;
+    }
+
+    private void fix11versionTo12() {
+        final String TAG = "v11 -> v12";
+        // DO NOT EDIT
+        try {
+            File file = new File(context.getExternalFilesDir(""), "settings.json");
+            JSONObject old = new JSONObject(FileUtil.getText(file));
+            JSONObject nev = new JSONObject();
+
+            if (old.has("theme")) {
+                String val = old.getString("theme");
+                if (val.equals("night")) {
+                    nev.put("theme", "NIGHT");
+                } else if (val.equals("light")) {
+                    nev.put("theme", "LIGHT");
+                } else {
+                    nev.put("theme", "AUTO");
+                }
+            }
+
+            if (old.has("firstDayOfWeek")) {
+                String val = old.getString("firstDayOfWeek");
+                if (val.equals("saturday")) {
+                    nev.put("first_day_of_week", "SATURDAY");
+                } else if (val.equals("monday")) {
+                    nev.put("first_day_of_week", "MONDAY");
+                }
+            }
+
+            if (old.has("quickNote")) {
+                nev.put("quick_note.notification.enable", old.getBoolean("quickNote"));
+            }
+
+            if (old.has("parseTimeFromQuickNote")) {
+                nev.put("quick_note.parse_time_from_item", old.getBoolean("parseTimeFromQuickNote"));
+            }
+
+            if (old.has("isMinimizeGrayColor")) {
+                nev.put("item.minimize.gray_color", old.getBoolean("isMinimizeGrayColor"));
+            }
+
+            if (old.has("trimItemNamesOnEdit")) {
+                nev.put("item.editor.trim_names", old.getBoolean("trimItemNamesOnEdit"));
+            }
+
+            if (old.has("itemOnClickAction")) {
+                nev.put("item.action.click", old.getString("itemOnClickAction"));
+            }
+
+            if (old.has("itemOnLeftAction")) {
+                nev.put("item.action.left_swipe", old.getString("itemOnLeftAction"));
+            }
+
+            if (old.has("isTelemetry")) {
+                nev.put("telemetry.enable", old.getBoolean("isTelemetry"));
+            }
+
+            if (old.has("defaultQuickNoteType")) {
+                String defaultQuickNoteType = old.getString("defaultQuickNoteType");
+                String c = switch (defaultQuickNoteType) {
+                    case "CheckboxItem" -> "CHECKBOX";
+                    case "GroupItem" -> "GROUP";
+                    case "FilterGroupItem" -> "FILTER_GROUP";
+                    case "LongTextItem" -> "LONG_TEXT";
+                    case "DayRepeatableCheckboxItem" -> "CHECKBOX_DAY_REPEATABLE";
+                    default -> "TEXT";
+                };
+                nev.put("quick_note.item_type", c);
+            }
+
+            if (old.has("firstTab")) {
+                nev.put("first_tab", old.getString("firstTab"));
+            }
+
+            if (old.has("itemAddPosition")) {
+                nev.put("item.add_position", old.getString("itemAddPosition"));
+            }
+
+            if (old.has("confirmFastChanges")) {
+                nev.put("fast_changes.confirm", old.getBoolean("confirmFastChanges"));
+            }
+
+            if (old.has("isAutoCloseToolbar")) {
+                nev.put("toolbar.auto_close", old.getBoolean("isAutoCloseToolbar"));
+            }
+
+            if (old.has("isScrollToAddedItem")) {
+                nev.put("item.is_scroll_to_added", old.getBoolean("isScrollToAddedItem"));
+            }
+
+            if (old.has("isItemEditorBackgroundFromItem")) {
+                nev.put("item.use_container_editor_background_from_item", old.getBoolean("isItemEditorBackgroundFromItem"));
+            }
+
+
+            FileUtil.setText(file, nev.toString());
+        } catch (Exception e) {
+            log(TAG, "exception: " + e);
+        }
     }
 
     private void fix8versionTo9() {
@@ -378,6 +485,11 @@ public class DataFixer {
             from = 11;
         }
 
+        if (from == 11) {
+            // nothing to fix
+            from = 12;
+        }
+
         return result;
     }
 
@@ -399,6 +511,11 @@ public class DataFixer {
         if (from == 10) {
             // nothing to fix
             from = 11;
+        }
+
+        if (from == 11) {
+            // nothing to fix
+            from = 12;
         }
         return result;
     }

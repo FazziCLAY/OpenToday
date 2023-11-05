@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.os.Handler
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -22,16 +23,20 @@ import com.fazziclay.opentoday.app.FeatureFlag
 import com.fazziclay.opentoday.app.items.item.Item
 import com.fazziclay.opentoday.app.items.selection.SelectionManager
 import com.fazziclay.opentoday.app.items.tick.ItemsTickReceiver
+import com.fazziclay.opentoday.app.settings.enums.ThemeEnum
 import com.fazziclay.opentoday.gui.callbacks.UIDebugCallback
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost
 import com.fazziclay.opentoday.util.InlineUtil
+import com.fazziclay.opentoday.util.InlineUtil.IPROF
+import com.fazziclay.opentoday.util.Logger
 import com.fazziclay.opentoday.util.ResUtil
 import com.fazziclay.opentoday.util.callback.CallbackStorage
 import com.fazziclay.opentoday.util.callback.Status
 import java.util.UUID
 
 object UI {
+    private const val TAG: String = "UI"
     private val debugCallbacks: CallbackStorage<UIDebugCallback> = CallbackStorage()
 
     @JvmStatic
@@ -67,8 +72,12 @@ object UI {
 
     @JvmStatic
     fun rootBack(fragment: Fragment) {
-        val host = findFragmentInParents(fragment, MainRootFragment::class.java) ?: throw RuntimeException("Fragment is not contains MainRootFragment in parents!")
-        host.popBackStack()
+        val host = findFragmentInParents(fragment, MainRootFragment::class.java)
+        if (host != null) {
+            host.popBackStack()
+        } else {
+            Logger.e(TAG, "rootBack can't be run", RuntimeException("Fragment is not contains MainRootFragment in parents!"))
+        }
     }
 
     @JvmStatic
@@ -83,7 +92,21 @@ object UI {
 
     @JvmStatic
     fun setTheme(i: Int) {
+        IPROF.push("UI:setTheme")
         AppCompatDelegate.setDefaultNightMode(i)
+        IPROF.pop();
+    }
+
+    @JvmStatic
+    fun setTheme(i: ThemeEnum) {
+        IPROF.push("UI:setTheme")
+        AppCompatDelegate.setDefaultNightMode(i.id())
+        IPROF.pop();
+    }
+
+    @JvmStatic
+    fun getTheme(): ThemeEnum {
+        return ThemeEnum.ofId(AppCompatDelegate.getDefaultNightMode())
     }
 
     @JvmStatic
@@ -100,6 +123,11 @@ object UI {
         ) else {
             return null
         }
+    }
+
+    @JvmStatic
+    fun postDelayed(runnable: Runnable, long: Long): Unit {
+        Handler().postDelayed(runnable, long)
     }
 
     object Debug {

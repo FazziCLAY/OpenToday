@@ -40,5 +40,21 @@
 
     <attr format="color" type="color" name="itemFilterState_true" />
     <attr format="color" type="color" name="itemFilterState_false" />
+    <attr format="color" type="color" name="opentoday_icon_tint" />
+    <attr name="button_settings_openAdvancedSettingsOfOption" format="color" />
+    <attr name="button_settings_dateFormat_color" format="color" />
+    <attr name="button_buttonWithColorIndicator" format="color" />
+    <attr name="button_dangerActon" format="color" />
+    <attr name="button_exitAction" format="color" />
+    <attr name="button_applyAction" format="color" />
+    <attr name="button_dangerActon_background" format="color" />
+    <attr name="button_importExport" format="color" />
+    <attr name="itemFilterState_iconColor" format="color" />
+    <attr name="item_notificationIndicator_default" format="color" />
+    <attr name="item_notificationIndicator_disabledByTickPolicy" format="color" />
+    <attr name="item_cycleList_notificationIndicatorBackgroundTint" format="color" />
+    <attr name="itemTextEditor_style_true" format="color" />
+    <attr name="itemTextEditor_style_false" format="color" />
+    <attr name="itemTextEditor_style_reset" format="color" />
 
 </resources>

@@ -20,7 +20,7 @@
         android:id="@+id/openLongTextEditor"
         android:layout_width="48sp"
         android:layout_height="40sp"
-        android:src="@android:drawable/ic_menu_edit"
+        android:src="@drawable/edit_24px"
         android:layout_alignParentEnd="true"
         android:backgroundTint="#44000000"
         android:contentDescription="@string/fragment_itemEditor_module_longtext_openTextEditor" />

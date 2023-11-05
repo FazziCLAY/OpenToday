@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/Theme.OpenToday.Toolbar.Section.Root.OpenToday">
 
     <LinearLayout
@@ -7,7 +8,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/calendar"
             android:text="@string/toolbar_more_opentoday_calendar"
             style="@style/Theme.OpenToday.Toolbar.Section.Button.OpenToday.Calendar" />
@@ -18,14 +19,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/settings"
             android:text="@string/toolbar_more_opentoday_settings"
             style="@style/Theme.OpenToday.Toolbar.Section.Button.OpenToday.Settings" />
-
-        <Button
-            android:id="@+id/about"
-            android:text="@string/toolbar_more_opentoday_about"
-            style="@style/Theme.OpenToday.Toolbar.Section.Button.OpenToday.About" />
     </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/about"
+        android:text="@string/toolbar_more_opentoday_about"
+        style="@style/Theme.OpenToday.Toolbar.Section.Button.OpenToday.About" />
 </LinearLayout>
