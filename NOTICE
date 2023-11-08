@@ -1,0 +1,8 @@
+If you want to create and distribute
+a fork of this application, you must
+position your product with
+a different name ("OpenToday-fork" is a bad choice)
+and also have a different android applicationId
+from the original.
+
+Also consider the contents of the LICENSE file
