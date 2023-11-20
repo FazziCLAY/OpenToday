@@ -1,49 +1,10 @@
 # Changelog v160 1.3 (2023.11.05)
-Innovation:
  * Notification can now come as an alarm clock (full screen)
  * When creating an item, its default background color is random (configurable)
  * The analog clock can be enabled in the settings
- * Tags have been added to items, now you can label them! (not used anywhere yet)
- * To date&time format added NO_TIME presets
  * The text editor can now edit bold, italic, strikeout and font size
- * Added icons
- * If the item has notifications, it will have the corresponding icon on it
-
-Gui Improvements:
  * Animations added
  * Item text editor now automatically show keyboard
- * After closing the toolbar, the focus is set to QuickNote
- * When deleting, child elements are now counted
  * An (+) button has been added to the list of tabs
- * Item margins increased
- * When the item is clamped inside the group, a specific item is now moved, and not the whole group
- * Inside DeleteItemsFragment, now all items are rendered not minimized
  * More material style
- * Uses new icons
- * The color selection button has been changed
-
-Code Improvements:
- * SettingsManager rewritten
- * Startup performance improved: uses multi-threaded loading (BackendInitializer.java)
- * Added minimal plugins support
- * Basic logic of "ItemsStorageDrawer" moved to new parent "AbstractItemsStorageDrawer"
- * Drag&Drop re-order(and maybe swipes...) now available in child items
- * Notifications can now have a custom icon and color
- * ColorUtil.colorize now fast if received plain text
-
-Fixes:
- * Fixes memory-leaks in ItemsEditorFragment if item instance of FilterItemGroup (related with edit-filter buttons)
- * Fixes memory-leaks in CycleListItem while rendering
- * [GUI] Drag&Drop re-order now not reset while item updated.
- * [GUI] With a large update of Items Storage, ItemsStorageDrawer did not have time to process it and caused a crash.
-
-Other:
- * DATA_VERSION is 12
- * DataFixer 10->11: nothing; 11->12: fix settings
- * Target to android 34
- * Secret item: SleepTime - automatically counts sleep time (still in development)
- * Secret item: MissingNo - it turns into an item, the import of which failed, it still contains the parent's information, and when re-importing the error will try to be eliminated.
- * ItemsStorage: added "getItemAt(int)" method.
- * ItemsStorage: added "totalCount()" method.
- * [GUI] "main" instead of "RELEASE" is now default branch in AboutFragment
- * Added profiler: in releases it disabled.
+ and more...
