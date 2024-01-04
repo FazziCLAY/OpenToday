@@ -1,3 +1,23 @@
+# Public archive
+> **This project is no longer in development.**
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+
+
+
 # OpenToday
 Language: **[English | [Русский](https://github.com/FazziCLAY/OpenToday/blob/main/docs/README_RU.md)]**
 
