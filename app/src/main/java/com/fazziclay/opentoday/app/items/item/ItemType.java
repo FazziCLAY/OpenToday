@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Deprecated
 public enum ItemType {
     MISSING_NO,
     TEXT,
@@ -16,7 +17,8 @@ public enum ItemType {
     GROUP(TEXT),
     FILTER_GROUP(TEXT),
     MATH_GAME(TEXT),
-    SLEEP_TIME(TEXT);
+    SLEEP_TIME(TEXT),
+    COUNTDOWN_CHECKMARK(TEXT, CHECKBOX);
 
     private final List<ItemType> parents = new ArrayList<>();
 

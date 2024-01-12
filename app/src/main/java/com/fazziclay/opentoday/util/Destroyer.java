@@ -1,4 +1,4 @@
-package com.fazziclay.opentoday.gui.item;
+package com.fazziclay.opentoday.util;
 
 import com.fazziclay.opentoday.util.Logger;
 

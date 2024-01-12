@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.fazziclay.opentoday.app.items.item.Item
+import com.fazziclay.opentoday.util.Destroyer
 
 class ItemViewHolder(context: Context) : RecyclerView.ViewHolder(FrameLayout(context)) {
     companion object {
@@ -20,7 +21,8 @@ class ItemViewHolder(context: Context) : RecyclerView.ViewHolder(FrameLayout(con
     @JvmField
     var item: Item? = null
     @JvmField
-    var destroyer: Destroyer = Destroyer()
+    var destroyer: Destroyer =
+        Destroyer()
 
     init {
         layout.setPadding(PADDING_LEFT, PADDING_TOP, PADDING_RIGHT, PADDING_BOTTOM)

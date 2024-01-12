@@ -43,7 +43,7 @@ public class ItemCodecUtil {
             AbstractItemCodec codec = ItemsRegistry.REGISTRY.get(itemClass).getCodec();
             return codec.importItem(cherry, null);
         } catch (Exception e) {
-            return ((MissingNoItem)ItemsRegistry.REGISTRY.get(ItemType.MISSING_NO).getCodec().importItem(cherry, null))
+            return ((MissingNoItem)MissingNoItem.CODEC.importItem(cherry, null))
                     .putException(e);
         }
     }

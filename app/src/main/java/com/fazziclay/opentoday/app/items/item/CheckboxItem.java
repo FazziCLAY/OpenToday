@@ -63,11 +63,6 @@ public class CheckboxItem extends TextItem {
     }
 
     @Override
-    public ItemType getItemType() {
-        return ItemType.CHECKBOX;
-    }
-
-    @Override
     protected void updateStat() {
         super.updateStat();
         getStat().setChecked(isChecked());

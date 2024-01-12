@@ -25,7 +25,7 @@ import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.databinding.ActivityAlarmBinding;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
-import com.fazziclay.opentoday.gui.item.Destroyer;
+import com.fazziclay.opentoday.util.Destroyer;
 import com.fazziclay.opentoday.gui.item.ItemViewGenerator;
 import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
 import com.fazziclay.opentoday.gui.item.ItemsStorageDrawerBehavior;

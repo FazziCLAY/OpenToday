@@ -58,11 +58,6 @@ public class CounterItem extends TextItem {
         this.step = copy.step;
     }
 
-    @Override
-    public ItemType getItemType() {
-        return ItemType.COUNTER;
-    }
-
     public void up() {
         counter = counter + step;
         visibleChanged();

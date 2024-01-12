@@ -88,12 +88,6 @@ public class MathGameItem extends TextItem {
         this.quest = new BaseQuest();
         this.primitiveAllowedOperations.add("+");
     }
-
-    @Override
-    public ItemType getItemType() {
-        return ItemType.MATH_GAME;
-    }
-
     @Override
     public void tick(TickSession tickSession) {
         if (!tickSession.isAllowed(this)) return;

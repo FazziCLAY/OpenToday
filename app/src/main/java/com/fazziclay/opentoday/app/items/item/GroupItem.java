@@ -69,11 +69,6 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
     }
 
     @Override
-    public ItemType getItemType() {
-        return ItemType.GROUP;
-    }
-
-    @Override
     public void tick(TickSession tickSession) {
         if (!tickSession.isAllowed(this)) return;
 

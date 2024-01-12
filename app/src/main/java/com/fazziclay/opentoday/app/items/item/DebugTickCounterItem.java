@@ -77,11 +77,6 @@ public class DebugTickCounterItem extends TextItem {
     }
 
     @Override
-    public ItemType getItemType() {
-        return ItemType.DEBUG_TICK_COUNTER;
-    }
-
-    @Override
     public void tick(TickSession tickSession) {
         if (!tickSession.isAllowed(this)) {
             debugStat = "tickSession not allowed tick me.";

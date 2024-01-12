@@ -75,11 +75,6 @@ public class SleepTimeItem extends TextItem {
     }
 
     @Override
-    public ItemType getItemType() {
-        return ItemType.SLEEP_TIME;
-    }
-
-    @Override
     protected void regenerateId() {
         super.regenerateId();
         if (sleepTextPattern == null) {

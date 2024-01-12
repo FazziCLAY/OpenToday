@@ -72,12 +72,7 @@ public abstract class Item implements Unique, Tickable {
                     .put(KEY_TAGS, TagsCodecUtil.exportTagsList(item.tags));
         }
 
-        private final Item defaultValues = new Item(){
-            @Override
-            public ItemType getItemType() {
-                throw new UnsupportedOperationException("This method of this instance never executed!");
-            }
-        };
+        private final Item defaultValues = new Item(){};
         @NonNull
         @Override
         public Item importItem(@NonNull Cherry cherry, Item item) {
@@ -154,7 +149,13 @@ public abstract class Item implements Unique, Tickable {
         this(null);
     }
 
-    public abstract ItemType getItemType();
+    public ItemType getItemType() {
+        var reg = ItemsRegistry.REGISTRY.get(this.getClass());
+        if (reg == null) {
+            throw new RuntimeException("Item class=" + this.getClass() + " is not registered in ItemsRegistry!");
+        }
+        return reg.getItemType();
+    }
 
     // For fast get text (method overrides by TextItem)
     public String getText() {

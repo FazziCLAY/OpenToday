@@ -18,13 +18,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
-import com.fazziclay.javaneoutil.ArrayUtil;
 import com.fazziclay.opentoday.api.Event;
 import com.fazziclay.opentoday.api.EventExceptionEvent;
 import com.fazziclay.opentoday.api.EventHandler;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.BeautifyColorManager;
-import com.fazziclay.opentoday.app.events.gui.CurrentItemsStorageContextChanged;
 import com.fazziclay.opentoday.app.events.gui.toolbar.AppToolbarSelectionClickEvent;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
@@ -41,15 +39,13 @@ import com.fazziclay.opentoday.app.items.tag.ItemTag;
 import com.fazziclay.opentoday.databinding.ToolbarMoreSelectionBinding;
 import com.fazziclay.opentoday.gui.ColorPicker;
 import com.fazziclay.opentoday.gui.GuiItemsHelper;
-import com.fazziclay.opentoday.gui.item.Destroyer;
+import com.fazziclay.opentoday.util.Destroyer;
 import com.fazziclay.opentoday.gui.item.ItemViewGenerator;
 import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
 import com.fazziclay.opentoday.gui.item.ItemsStorageDrawerBehavior;
 import com.fazziclay.opentoday.util.MinBaseAdapter;
-import com.fazziclay.opentoday.util.QuickNote;
 import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.profiler.Profiler;
-import com.fazziclay.opentoday.util.time.TimeUtil;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
