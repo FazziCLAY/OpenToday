@@ -29,12 +29,12 @@ public class ColorPicker {
 
     public ColorPicker(Context context) {
         this.context = context;
+        this.settingsManager = App.get(context).getSettingsManager();
     }
 
     public ColorPicker(Context context, int startColor) {
-        this.context = context;
+        this(context);
         this.startColor = startColor;
-        this.settingsManager = App.get(context).getSettingsManager();
     }
 
     public ColorPicker setting(boolean showHex, boolean showPreview, boolean showAlpha) {
