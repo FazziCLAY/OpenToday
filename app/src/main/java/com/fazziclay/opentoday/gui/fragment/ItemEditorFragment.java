@@ -1449,7 +1449,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
             CountDownCheckmarkItem countDown = (CountDownCheckmarkItem) item;
 
             try {
-                int step = adapter.getItem(binding.stepSpinner.getSelectedItemPosition());
+                int step = adapter.getItem(binding.stepSpinner.getSelectedItemPosition()) * 1000;
                 if (step <= 0) {
                     step = Integer.parseInt(binding.stepEdittext.getText().toString());
                 }
