@@ -16,7 +16,6 @@ import androidx.core.app.NotificationCompat;
 import com.fazziclay.javaneoutil.FileUtil;
 import com.fazziclay.javaneoutil.JavaNeoUtil;
 import com.fazziclay.javaneoutil.NonNull;
-import com.fazziclay.neosocket.NeoSocket;
 import com.fazziclay.opentoday.Debug;
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.api.PluginManager;
@@ -51,7 +50,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-import ru.fazziclay.opentoday.telemetry.OpenTodayTelemetry;
 
 public class App extends Application {
     // Application
@@ -313,7 +311,7 @@ public class App extends Application {
         try {
             return new JSONObject()
                     .put("product", "OpenToday")
-                    .put("developer", "FazziCLAY ( https://fazziclay.github.io )")
+                    .put("developer", "BetterBrainMemory Team")
                     .put("licence", "GNU GPLv3")
                     .put("data_version", APPLICATION_DATA_VERSION)
                     .put("application_version", VERSION_CODE)
@@ -345,11 +343,9 @@ public class App extends Application {
     private License[] createOpenSourceLicensesArray() {
         // TODO: 19.10.2022 add v prefix to version to telemetry
         return new License[]{
-                new License("licenses/LICENSE_OpenToday", "OpenToday (this app)", "fazziclay@gmail.com\nhttps://fazziclay.github.io/opentoday"),
+                new License("licenses/LICENSE_OpenToday", "OpenToday (this app)", ""),
                 new License("licenses/LICENSE_hsv-alpha-color-picker-android", "hsv-alpha-color-picker-android", "https://github.com/martin-stone/hsv-alpha-color-picker-android"),
                 new License("licenses/LICENSE_JavaNeoUtil", "JavaNeoUtil v" + JavaNeoUtil.VERSION_NAME, "https://github.com/fazziclay/javaneoutil"),
-                new License("licenses/LICENSE_NeoSocket", "NeoSocket v" + NeoSocket.VERSION_NAME, "https://github.com/fazziclay/neosocket"),
-                new License("licenses/LICENSE_OpenTodayTelemetry", "OpenTodayTelemetry " + OpenTodayTelemetry.VERSION_NAME, getString(R.string.openSourceLicenses_telemetry_warn) + "\nhttps://github.com/fazziclay/opentodaytelemetry"),
                 new License("licenses/LICENSE_simple-analog-clock", "simple-analog-clock", "Analog clock\nhttps://github.com/leondzn/simple-analog-clock")
         };
     }

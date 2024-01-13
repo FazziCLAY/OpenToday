@@ -11,8 +11,8 @@ import org.json.JSONObject;
 import java.io.File;
 
 public class UpdateChecker {
-    private static final String V2_URL_LATEST_BUILD = "https://fazziclay.github.io/api/project_3/v2/latest_build";
-    private static final String V2_URL_LATEST = "https://fazziclay.github.io/api/project_3/v2/latest.json";
+    private static final String URL_LATEST_BUILD = "https://betterbrainmemory.github.io/api/project_1/v1/latest_build";
+    private static final String URL_LATEST = "https://betterbrainmemory.github.io/api/project_1/v1/latest.json";
 
     private static final long CACHE_TIMEOUT_MILLIS = 48 * 60 * 60 * 1000; // 48 hours
     private static final String TAG = "UpdateChecker";
@@ -58,12 +58,12 @@ public class UpdateChecker {
             }
 
             try {
-                String stringLatestBuild = NetworkUtil.parseTextPage(V2_URL_LATEST_BUILD);
+                String stringLatestBuild = NetworkUtil.parseTextPage(URL_LATEST_BUILD);
                 int latestBuild = Integer.parseInt(stringLatestBuild);
                 Logger.d(TAG, "latest_build (remote) = " + latestBuild);
 
                 if (App.VERSION_CODE < latestBuild) {
-                    String latestJsonString = NetworkUtil.parseTextPage(V2_URL_LATEST);
+                    String latestJsonString = NetworkUtil.parseTextPage(URL_LATEST);
                     JSONObject latestJson = new JSONObject(latestJsonString);
                     Logger.d(TAG, "latest.json (remote) = " + latestJsonString);
 
