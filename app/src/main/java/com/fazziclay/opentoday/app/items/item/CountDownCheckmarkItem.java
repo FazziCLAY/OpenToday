@@ -102,13 +102,14 @@ public class CountDownCheckmarkItem extends CheckboxItem {
 
     @Override
     public void setChecked(boolean s) {
-        super.setChecked(s);
         if (s) {
             checkedTime = TickSession.getLatestGregorianCalendar().getTimeInMillis();
             displayCache = String.valueOf(availableSteps);
         } else {
             checkedTime = 0;
         }
+        // before sets checkedTime because this may call instant tick for this checkboxItem
+        super.setChecked(s);
     }
 
     public long getStep() {
