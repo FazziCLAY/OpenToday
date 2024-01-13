@@ -66,7 +66,7 @@
 
             <TextView
                 android:id="@+id/text_package"
-                tools:text="ru.fazziclay.opentoday.dev"
+                tools:text="com.example.opentoday.dev"
                 style="@style/Theme.OpenToday.About.RowValue" />
         </LinearLayout>
 
@@ -128,7 +128,7 @@
 
             <TextView
                 android:id="@+id/text_developer"
-                android:text="FazziCLAY\nhttps://fazziclay.github.io"
+                android:text="BetterBrainMemory Team"
                 android:paddingBottom="10sp"
                 android:autoLink="all"
                 style="@style/Theme.OpenToday.About.RowValue"

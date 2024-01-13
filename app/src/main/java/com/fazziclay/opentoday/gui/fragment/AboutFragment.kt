@@ -23,8 +23,8 @@ import java.util.Locale
 
 class AboutFragment : Fragment(), ActivitySettingsMember {
     companion object {
-        private const val LINK_OPENSOURCE = "https://github.com/fazziclay/opentoday"
-        private const val LINK_ISSUES = "https://github.com/fazziclay/opentoday/issues"
+        private const val LINK_OPENSOURCE = "https://github.com/betterbrainmemory/opentoday"
+        private const val LINK_ISSUES = "https://github.com/betterbrainmemory/opentoday/issues"
         @JvmStatic
         fun create(): Fragment {
             return AboutFragment()
