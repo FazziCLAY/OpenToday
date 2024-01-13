@@ -1,5 +1,7 @@
 package com.fazziclay.opentoday.gui.fragment;
 
+import static com.fazziclay.opentoday.util.InlineUtil.viewClick;
+
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -29,6 +31,7 @@ import com.fazziclay.opentoday.gui.ColorPicker;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.dialog.IconSelectorDialog;
 import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember;
+import com.fazziclay.opentoday.util.ClipboardUtil;
 import com.fazziclay.opentoday.util.MinTextWatcher;
 import com.fazziclay.opentoday.util.time.ConvertMode;
 import com.fazziclay.opentoday.util.time.HumanTimeType;
@@ -86,6 +89,12 @@ public class ItemNotificationFragment extends Fragment implements ActivitySettin
                     MenuItem item1 = menu.findItem(R.id.notificationDelete);
                     item1.setOnMenuItemClickListener(menuItem -> {
                         deleteRequest();
+                        return true;
+                    });
+
+                    MenuItem item2 = menu.findItem(R.id.copyNotificationId);
+                    item2.setOnMenuItemClickListener(menuItem -> {
+                        ClipboardUtil.selectText(context, R.string.menu_notification_copyNotificationId, String.valueOf(notification.getId()));
                         return true;
                     });
                 }
@@ -220,5 +229,8 @@ public class ItemNotificationFragment extends Fragment implements ActivitySettin
                         notification.setColor(color);
                     });
         });
+
+
+        viewClick(binding.resetSentFlag, () -> notification.setLatestDayOfYear(0));
     }
 }

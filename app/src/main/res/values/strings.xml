@@ -460,4 +460,6 @@
     <string name="fragment_itemEditor_module_countdownCheckbox_step_hint">Enter step...</string>
     <string name="fragment_itemEditor_module_countdownCheckbox_availableStep_title">TODO: Available steps</string>
     <string name="fragment_itemEditor_module_countdownCheckbox_availableStep_hint">TODO: availableStep hint</string>
+    <string name="dialog_itemNotification_resetSentFlag">Reset sent status</string>
+    <string name="menu_notification_copyNotificationId">Copy Notify ID</string>
 </resources>

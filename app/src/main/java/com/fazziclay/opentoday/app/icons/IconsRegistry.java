@@ -13,7 +13,7 @@ public class IconsRegistry {
     public static final IconsRegistry REGISTRY = new IconsRegistry();
 
     private final Icon[] ICONS = new Icon[]{
-            new Icon("opentoday", R.mipmap.ic_launcher),
+            new Icon("opentoday", R.drawable.opentoday_icon),
             new Icon("opentoday_beta", R.mipmap.ic_launcher_beta),
             new Icon("none", R.drawable.close_24px), // special icon
 

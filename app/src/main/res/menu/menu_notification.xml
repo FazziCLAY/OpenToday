@@ -4,4 +4,7 @@
     <item android:id="@+id/notificationDelete" app:showAsAction="ifRoom"
         android:icon="@drawable/delete_24px"
         android:title="@string/menu_itemNotification_delete" />
+
+    <item android:id="@+id/copyNotificationId"
+        android:title="@string/menu_notification_copyNotificationId" />
 </menu>
