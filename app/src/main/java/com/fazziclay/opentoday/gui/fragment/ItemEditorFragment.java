@@ -43,6 +43,7 @@ import com.fazziclay.opentoday.app.ImportWrapper;
 import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
+import com.fazziclay.opentoday.app.items.item.CountDownCheckmarkItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem;
@@ -63,6 +64,7 @@ import com.fazziclay.opentoday.app.items.tag.ItemTag;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleCheckboxBinding;
+import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleCountdownCheckmarkBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleCounterBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleCyclelistBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleDayrepeatablecheckboxBinding;
@@ -101,6 +103,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public class ItemEditorFragment extends Fragment implements BackStackMember, ActivitySettingsMember {
@@ -278,6 +281,9 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
             textView.setText(text.toString());
 
             binding.modules.addView(textView);
+        }
+        if (item instanceof CountDownCheckmarkItem) {
+            binding.modules.addView(addEditModule(new CountDownCheckmarkItemEditModule()));
         }
 
         UI.getUIRoot(this).pushActivitySettings(a -> {
@@ -1382,5 +1388,92 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
         public void setOnStartEditListener(Runnable o) {
         }
 
+    }
+
+    private class CountDownCheckmarkItemEditModule extends BaseEditUiModule {
+        private Runnable edit;
+        private FragmentItemEditorModuleCountdownCheckmarkBinding binding;
+        private AtomicBoolean firstSelectStepSpinner = new AtomicBoolean(true);
+        private SimpleSpinnerAdapter<Integer> adapter;
+
+        @Override
+        public View getView() {
+            return binding.getRoot();
+        }
+
+        @Override
+        public void setup(Item item, Activity activity, View view) {
+            CountDownCheckmarkItem countDown = (CountDownCheckmarkItem) item;
+            binding = FragmentItemEditorModuleCountdownCheckmarkBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
+
+            binding.roundToDays.setChecked(countDown.isRoundToDays());
+            viewClick(binding.roundToDays, this::edited);
+
+            binding.stepEdittext.setText(String.valueOf(countDown.getStep()));
+            binding.availableStep.setText(String.valueOf(countDown.getAvailableSteps()));
+
+
+            // TODO: 13.01.2024 make translatable
+            adapter = new SimpleSpinnerAdapter<Integer>(activity)
+                    .add("<custom time>", -1)
+                    .add("1 second", 1)
+                    .add("1 minute", TimeUtil.SECONDS_IN_MINUTE)
+                    .add("1 hour", TimeUtil.SECONDS_IN_HOUR)
+                    .add("12 hours", 12 * TimeUtil.SECONDS_IN_HOUR)
+                    .add("1 day", TimeUtil.SECONDS_IN_DAY)
+                    .add("1 week", TimeUtil.SECONDS_IN_WEEK);
+
+
+            binding.stepSpinner.setAdapter(adapter);
+            binding.stepSpinner.setSelection(Math.max(0, adapter.getValuePosition((int) countDown.getStep() / 1000)));
+            binding.stepSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    boolean isCustom = i == 0;
+                    viewVisible(binding.stepEdittext, isCustom, View.GONE);
+
+                    if (firstSelectStepSpinner.get()) {
+                        firstSelectStepSpinner.set(false);
+                        return;
+                    }
+                    edited();
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {}
+            });
+        }
+
+        @Override
+        public void commit(Item item) throws Exception {
+            CountDownCheckmarkItem countDown = (CountDownCheckmarkItem) item;
+
+            try {
+                int step = adapter.getItem(binding.stepSpinner.getSelectedItemPosition());
+                if (step <= 0) {
+                    step = Integer.parseInt(binding.stepEdittext.getText().toString());
+                }
+                int availableSteps = Integer.parseInt(binding.availableStep.getText().toString());
+
+
+                countDown.setStep(step);
+                countDown.setAvailableSteps(availableSteps);
+            } catch (Exception e) {
+                throw new UserException("TODO: step is error... enter valid number"); // TODO: 12.01.2024 make translatable
+            }
+
+            countDown.setRoundToDays(binding.roundToDays.isChecked());
+        }
+
+        private void edited() {
+            if (edit != null) {
+                edit.run();
+            }
+        }
+
+        @Override
+        public void setOnStartEditListener(Runnable o) {
+            edit = o;
+        }
     }
 }

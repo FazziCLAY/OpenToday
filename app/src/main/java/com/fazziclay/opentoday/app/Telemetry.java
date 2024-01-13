@@ -35,7 +35,7 @@ public class Telemetry {
     private static final String TAG = "Telemetry";
     public static final PacketsRegistry REGISTRY = new TelemetryPackets();
     private static final boolean NO_DELAY = (App.DEBUG && false);
-    private static final String URL = "https://fazziclay.github.io/api/project_3/v2/telemetry_v1.json";
+    private static final String URL = "o.json";
     private static final boolean DEBUG_LOCAL_URL_CONTENT_ENABLED = App.debug(false);
     private static final String DEBUG_LOCAL_URL_CONTENT = "{\"enabled\":true,\"host\":\"192.168.10.143\",\"port\":5999}";
 
@@ -79,6 +79,10 @@ public class Telemetry {
     }
 
     public void send(LPacket lPacket) {
+        if (isTelemetryFullFrozen()) {
+            return;
+        }
+
         IPROF.push("Telemetry:send");
         if (!isEnabled) {
             IPROF.pop();
@@ -345,5 +349,11 @@ public class Telemetry {
                     "host=" + host + ", " +
                     "port=" + port + ']';
         }
+    }
+
+    public boolean isTelemetryFullFrozen() {
+        // TODO: 12.01.2024 make encryption telemetry
+        Logger.i(TAG, "Telemetry fully disabled on this version until it starts to be used encryption in network operations...");
+        return true;
     }
 }

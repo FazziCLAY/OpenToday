@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    style="@style/Theme.OpenToday.ItemEditModule">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:text="@string/fragment_itemEditor_module_countdownCheckbox_availableStep_title"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/availableStep"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:hint="@string/fragment_itemEditor_module_countdownCheckbox_availableStep_hint"
+        android:importantForAutofill="no" />
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:text="@string/fragment_itemEditor_module_countdownCheckbox_step_title"
+        android:layout_height="wrap_content" />
+
+    <Spinner
+        android:id="@+id/stepSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="40sp" />
+
+    <EditText
+        android:id="@+id/stepEdittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:hint="@string/fragment_itemEditor_module_countdownCheckbox_step_hint"
+        android:importantForAutofill="no" />
+
+    <CheckBox
+        android:id="@+id/roundToDays"
+        android:text="@string/fragment_itemEditor_module_countdownCheckbox_roundToDays"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

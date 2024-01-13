@@ -161,6 +161,11 @@ public class Cherry {
         return json.optInt(key, def);
     }
 
+    public long optLong(String key, long def) {
+        return json.optLong(key, def);
+    }
+
+
     public CherryOrchard optOrchard(String key) {
         JSONArray jsonArray = json.optJSONArray(key);
         if (jsonArray == null) jsonArray = new JSONArray();

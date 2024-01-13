@@ -32,6 +32,7 @@
 
         <item name="item_text_background_color">#803D3D3D</item>
         <item name="item_text_textColor">#2B2B2B</item>
+        <item name="item_countdown_checkmark_countdownColor">#22FF00</item>
 
         <item name="item_checkbox_backgroundColor">#803D3D3D</item>
         <item name="item_checkbox_textColor">#2B2B2B</item>

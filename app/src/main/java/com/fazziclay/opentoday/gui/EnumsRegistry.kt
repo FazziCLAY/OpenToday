@@ -49,6 +49,7 @@ object EnumsRegistry {
         EnumInfo(ItemType.MATH_GAME,                     R.string.item_mathGame).setItemDescription(R.string.item_mathGame_description),
         EnumInfo(ItemType.SLEEP_TIME,                    R.string.item_sleepTime).setItemDescription(R.string.item_sleepTime_description),
         EnumInfo(ItemType.MISSING_NO,                    R.string.item_missingNo).setItemDescription(R.string.item_missingNo_description),
+        EnumInfo(ItemType.COUNTDOWN_CHECKMARK,           R.string.item_countdownCheckmark).setItemDescription(R.string.item_countdownCheckmark_description),
 
         EnumInfo(FilterGroupItem.TickBehavior.ALL,           R.string.item_filterGroup_tickBehavior_ALL),
         EnumInfo(FilterGroupItem.TickBehavior.NOTHING,       R.string.item_filterGroup_tickBehavior_NOTHING),

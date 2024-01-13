@@ -109,4 +109,11 @@ public class TimeUtil {
                 gregorianCalendar.get(Calendar.MONTH),
                 gregorianCalendar.get(Calendar.DAY_OF_MONTH));
     }
+
+    public static long noTimeUnixTimestamp(long timestamp) {
+        var c = new GregorianCalendar();
+        c.setTimeInMillis(timestamp);
+
+        return noTimeCalendar(c).getTimeInMillis();
+    }
 }

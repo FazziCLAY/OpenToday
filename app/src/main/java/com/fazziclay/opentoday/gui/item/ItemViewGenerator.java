@@ -33,6 +33,7 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.items.callback.ItemCallback;
 import com.fazziclay.opentoday.app.items.item.CheckboxItem;
+import com.fazziclay.opentoday.app.items.item.CountDownCheckmarkItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem;
@@ -47,6 +48,7 @@ import com.fazziclay.opentoday.app.items.item.MathGameItem;
 import com.fazziclay.opentoday.app.items.item.SleepTimeItem;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.databinding.ItemCheckboxBinding;
+import com.fazziclay.opentoday.databinding.ItemCountdownCheckmarkBinding;
 import com.fazziclay.opentoday.databinding.ItemCounterBinding;
 import com.fazziclay.opentoday.databinding.ItemCycleListBinding;
 import com.fazziclay.opentoday.databinding.ItemDayRepeatableCheckboxBinding;
@@ -59,12 +61,14 @@ import com.fazziclay.opentoday.databinding.ItemTextBinding;
 import com.fazziclay.opentoday.gui.interfaces.ItemInterface;
 import com.fazziclay.opentoday.util.ColorUtil;
 import com.fazziclay.opentoday.util.DebugUtil;
+import com.fazziclay.opentoday.util.Destroyer;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.ResUtil;
 import com.fazziclay.opentoday.util.annotation.ForItem;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
+import com.fazziclay.opentoday.util.opentodaybutton.MaterialButtonWithColorIndicator;
 import com.fazziclay.opentoday.util.time.ConvertMode;
 import com.fazziclay.opentoday.util.time.TimeUtil;
 
@@ -121,6 +125,7 @@ public class ItemViewGenerator {
             case FILTER_GROUP -> generateFilterGroupItemView((FilterGroupItem) item, parent, behavior, previewMode, destroyer, onItemClick);
             case MATH_GAME -> generateMathGameItemView((MathGameItem) item, parent, behavior, previewMode, destroyer);
             case SLEEP_TIME -> generateSleepTimeItemView((SleepTimeItem) item, parent, behavior, previewMode, destroyer);
+            case COUNTDOWN_CHECKMARK -> generateCountdownCheckmarkItemView((CountDownCheckmarkItem) item, parent, behavior, previewMode, destroyer);
             default -> {
                 final UnsupportedOperationException exception = new UnsupportedOperationException(TAG + " can't generate view because itemType=" + type + " currently not supported... Check " + TAG + " for fix this!");
                 Logger.e(TAG, "Unexpected item type to generate view. (wait 3000ms in DebugUtil.sleep())", exception);
@@ -149,6 +154,36 @@ public class ItemViewGenerator {
         });
 
         return resultView;
+    }
+
+    @ForItem(k = ItemType.COUNTDOWN_CHECKMARK)
+    private View generateCountdownCheckmarkItemView(CountDownCheckmarkItem item, ViewGroup parent, ItemViewGeneratorBehavior behavior, boolean previewMode, Destroyer destroyer) {
+        final ItemCountdownCheckmarkBinding binding = ItemCountdownCheckmarkBinding.inflate(layoutInflater, parent, false);
+
+        applyTextItemToTextView(item, binding.text, behavior, destroyer, previewMode);
+        applyItemNotificationIndicator(item, binding.indicatorNotification, behavior, destroyer, previewMode);
+
+        // custom applyCheckBox
+        {
+            CheckBox view = binding.checkbox;
+            view.setChecked(item.isChecked());
+            view.setEnabled(!previewMode);
+            viewClick(view, () -> {
+                boolean to = view.isChecked();
+                view.setChecked(!to);
+                runFastChanges(behavior, to ? R.string.item_checkbox_fastChanges_checked : R.string.item_checkbox_fastChanges_unchecked, () -> {
+                    view.setChecked(to);
+                    item.setChecked(to);
+                    item.visibleChanged();
+                    item.save();
+                });
+            });
+        }
+
+        viewVisible(binding.countdown, item.isChecked(), View.GONE);
+        binding.countdown.setText(item.getCountDownDisplay());
+
+        return binding.getRoot();
     }
 
 
