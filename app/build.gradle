@@ -4,13 +4,13 @@ plugins {
 }
 
 // =====
-var isDev = true        // add .dev to applicationId
+var isDev = false        // add .dev to applicationId
 var beta = false          // add .beta to applicationId
 var appIdSuffix = ""      // add this to applicationId (E M P T Y   F O R   R E L E A S E S)
-var verBuild = 161       // versionCode
-var verName = "1.3.[1]"  // versionName...
-var verBranch = "unknown"   // branch
-var verReleaseTime = 1699198506 // releaseTime
+var verBuild = 200       // versionCode
+var verName = "1.5"  // versionName...
+var verBranch = "dev-release"   // branch
+var verReleaseTime = 1705177797 // releaseTime
 
 android {
     compileSdk 34
