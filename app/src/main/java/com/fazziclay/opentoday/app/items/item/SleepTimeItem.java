@@ -33,6 +33,17 @@ public class SleepTimeItem extends TextItem {
             return sleepTimeItem;
         }
     }
+    public static final ItemFactory<SleepTimeItem> FACTORY = new ItemFactory<>() {
+        @Override
+        public SleepTimeItem create() {
+            return createEmpty();
+        }
+
+        @Override
+        public SleepTimeItem copy(Item item) {
+            return new SleepTimeItem((SleepTimeItem) item);
+        }
+    };
 
     private int wakeUpTime;
     private int requiredSleepTime;

@@ -7,7 +7,6 @@ import android.util.ArraySet;
 
 import com.fazziclay.javaneoutil.FileUtil;
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.items.item.ItemType;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.settings.enums.DateAndTimePreset;
 import com.fazziclay.opentoday.app.settings.enums.FirstDayOfWeek;
@@ -15,6 +14,7 @@ import com.fazziclay.opentoday.app.settings.enums.FirstTab;
 import com.fazziclay.opentoday.app.settings.enums.ItemAction;
 import com.fazziclay.opentoday.app.settings.enums.ItemAddPosition;
 import com.fazziclay.opentoday.app.settings.enums.ThemeEnum;
+import com.fazziclay.opentoday.util.Identifier;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.annotation.Getter;
 import com.fazziclay.opentoday.util.annotation.Setter;
@@ -45,7 +45,7 @@ public class SettingsManager {
     public static final ColorOption                 ANALOG_CLOCK_COLOR_HOUR          = registerOption(new ColorOption("analog_clock.color.hour",          true,  Color.BLACK));
     public static final BooleanOption               QUICK_NOTE_NOTIFICATION_ENABLE   = registerOption(new BooleanOption("quick_note.notification.enable",   false,  true));
     public static final BooleanOption               QUICK_NOTE_PARSE_TIME_FROM_ITEM  = registerOption(new BooleanOption("quick_note.parse_time_from_item",  false,  true));
-    public static final EnumOption<ItemType>        QUICK_NOTE_ITEM_TYPE             = registerOption(new EnumOption<>("quick_note.item_type",              false,  ItemType.CHECKBOX));
+    public static final StringOption                QUICK_NOTE_ITEM_TYPE             = registerOption(new StringOption("quick_note.item_type",              false,  "base:item/checkmark"));
     public static final BooleanOption               ITEM_MINIMIZE_GRAY_COLOR         = registerOption(new BooleanOption("item.minimize.gray_color",         false,  true));
     public static final BooleanOption               ITEM_TRIM_NAMES_IN_EDITOR        = registerOption(new BooleanOption("item.editor.trim_names",           false,  true));
     public static final BooleanOption               ITEM_RANDOM_BACKGROUND           = registerOption(new BooleanOption("item.random_background_on_create", false,  true));
@@ -288,12 +288,16 @@ public class SettingsManager {
 
     @Getter
     public ItemsRegistry.ItemInfo getDefaultQuickNoteType() {
-        return ItemsRegistry.REGISTRY.get(QUICK_NOTE_ITEM_TYPE.get(this));
+        try {
+            return ItemsRegistry.REGISTRY.get(Identifier.of(QUICK_NOTE_ITEM_TYPE.get(this)));
+        } catch (Exception e) {
+            return ItemsRegistry.REGISTRY.get(Identifier.of("base:item/missing_no"));
+        }
     }
 
     @Setter
     public void setDefaultQuickNoteType(ItemsRegistry.ItemInfo defaultQuickNoteType) {
-        QUICK_NOTE_ITEM_TYPE.set(this, defaultQuickNoteType.getItemType());
+        QUICK_NOTE_ITEM_TYPE.set(this, defaultQuickNoteType.getIdentifier().string());
     }
 
     @Getter

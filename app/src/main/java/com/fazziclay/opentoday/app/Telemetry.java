@@ -4,7 +4,7 @@ import java.util.UUID;
 
 
 /**
- * Telemetry disabled because not using encryption
+ * Telemetry disabled because it not using encryption
  */
 public class Telemetry {
     public Telemetry(App app, boolean isEnabled) {

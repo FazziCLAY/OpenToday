@@ -40,6 +40,18 @@ public class DayRepeatableCheckboxItem extends CheckboxItem {
         }
     }
     // END - Save
+    public static final ItemFactory<DayRepeatableCheckboxItem> FACTORY = new ItemFactory<>() {
+        @Override
+        public DayRepeatableCheckboxItem create() {
+            return createEmpty();
+        }
+
+        @Override
+        public DayRepeatableCheckboxItem copy(Item item) {
+            return new DayRepeatableCheckboxItem((DayRepeatableCheckboxItem) item);
+        }
+    };
+
 
     @NonNull
     public static DayRepeatableCheckboxItem createEmpty() {

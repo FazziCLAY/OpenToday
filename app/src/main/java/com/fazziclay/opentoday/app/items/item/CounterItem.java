@@ -33,6 +33,17 @@ public class CounterItem extends TextItem {
         }
     }
     // END - Save
+    public static final ItemFactory<CounterItem> FACTORY = new ItemFactory<>() {
+        @Override
+        public CounterItem create() {
+            return createEmpty();
+        }
+
+        @Override
+        public CounterItem copy(Item item) {
+            return new CounterItem((CounterItem) item);
+        }
+    };
 
     @NonNull
     public static CounterItem createEmpty() {

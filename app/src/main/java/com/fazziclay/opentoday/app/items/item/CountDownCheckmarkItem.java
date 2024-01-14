@@ -39,6 +39,17 @@ public class CountDownCheckmarkItem extends CheckboxItem {
         }
     }
     // END - Save
+    public static final ItemFactory<CountDownCheckmarkItem> FACTORY = new ItemFactory<>() {
+        @Override
+        public CountDownCheckmarkItem create() {
+            return createEmpty();
+        }
+
+        @Override
+        public CountDownCheckmarkItem copy(Item item) {
+            return new CountDownCheckmarkItem((CountDownCheckmarkItem) item);
+        }
+    };
 
     private long checkedTime;
     private long step = TimeUtil.SECONDS_IN_DAY * 1000;

@@ -1,11 +1,14 @@
 package com.fazziclay.opentoday.gui;
 
 import android.util.ArraySet;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.CrashReport;
+import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
+import com.fazziclay.opentoday.util.StreamUtil;
 import com.fazziclay.opentoday.util.profiler.Profiler;
 
 import java.util.Set;
@@ -60,6 +63,13 @@ public class BackendInitializer {
             App app = App.get();
             PROFILER.pop();
 
+            init(Module.REGISTRIES, () -> {
+                try {
+                    ItemsRegistry.REGISTRY.loadRegistryFromJson(StreamUtil.read(App.get().getAssets().open("base/items.json")));
+                } catch (Exception e) {
+                    Log.e("ItemsReg", "err <init>", e);
+                }
+            });
             init(Module.SETTINGS_MANAGER, app::getSettingsManager);
             init(Module.PLUGINS, app::initPlugins);
             init(Module.TABS_MANAGER, app::getTabsManager);
@@ -76,6 +86,7 @@ public class BackendInitializer {
     }
 
     public enum Module {
+        REGISTRIES,
         PLUGINS,
         TABS_MANAGER,
         SETTINGS_MANAGER,

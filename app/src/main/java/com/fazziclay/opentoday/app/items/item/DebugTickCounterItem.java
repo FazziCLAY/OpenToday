@@ -42,6 +42,17 @@ public class DebugTickCounterItem extends TextItem {
         }
     }
     // END - Save
+    public static final ItemFactory<DebugTickCounterItem> FACTORY = new ItemFactory<>() {
+        @Override
+        public DebugTickCounterItem create() {
+            return createEmpty();
+        }
+
+        @Override
+        public DebugTickCounterItem copy(Item item) {
+            return new DebugTickCounterItem((DebugTickCounterItem) item);
+        }
+    };
 
     @NonNull
     public static DebugTickCounterItem createEmpty() {

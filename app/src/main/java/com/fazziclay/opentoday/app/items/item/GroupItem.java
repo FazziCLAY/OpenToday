@@ -35,6 +35,17 @@ public class GroupItem extends TextItem implements ContainerItem, ItemsStorage {
         }
     }
     // END - Save
+    public static final ItemFactory<GroupItem> FACTORY = new ItemFactory<>() {
+        @Override
+        public GroupItem create() {
+            return createEmpty();
+        }
+
+        @Override
+        public GroupItem copy(Item item) {
+            return new GroupItem((GroupItem) item);
+        }
+    };
 
     @NonNull
     public static GroupItem createEmpty() {

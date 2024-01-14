@@ -50,6 +50,17 @@ public class MathGameItem extends TextItem {
             return mathGameItem;
         }
     }
+    public static final ItemFactory<MathGameItem> FACTORY = new ItemFactory<>() {
+        @Override
+        public MathGameItem create() {
+            return createEmpty();
+        }
+
+        @Override
+        public MathGameItem copy(Item item) {
+            return new MathGameItem((MathGameItem) item);
+        }
+    };
 
     @RequireSave @SaveKey(key = "primitiveNumber1Min") private int primitiveNumber1Min = 0;
     @RequireSave @SaveKey(key = "primitiveNumber1Max") private int primitiveNumber1Max = 100;

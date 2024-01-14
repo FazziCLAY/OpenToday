@@ -4,12 +4,12 @@ plugins {
 }
 
 // =====
-var isDev = false        // add .dev to applicationId
+var isDev = true        // add .dev to applicationId
 var beta = false          // add .beta to applicationId
 var appIdSuffix = ""      // add this to applicationId (E M P T Y   F O R   R E L E A S E S)
-var verBuild = 200       // versionCode
-var verName = "1.5"  // versionName...
-var verBranch = "dev-release"   // branch
+var verBuild = 201       // versionCode
+var verName = "1.5.[1]"  // versionName...
+var verBranch = "dev"   // branch
 var verReleaseTime = 1705177797 // releaseTime
 
 android {

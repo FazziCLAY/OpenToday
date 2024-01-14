@@ -53,7 +53,7 @@ import java.util.UUID;
 
 public class App extends Application {
     // Application
-    public static final int APPLICATION_DATA_VERSION = 12;
+    public static final int APPLICATION_DATA_VERSION = 20; // 13-19 unused.
     public static final String VERSION_NAME = CustomBuildConfig.VERSION_NAME;
     public static final int VERSION_CODE = CustomBuildConfig.VERSION_CODE;
     public static final long VERSION_RELEASE_TIME = CustomBuildConfig.VERSION_RELEASE_TIME;
@@ -137,7 +137,7 @@ public class App extends Application {
             DebugUtil.sleep(Debug.DEBUG_APP_START_SLEEP);
             CrashReportContext.BACK.push("App onCreate");
             if (DEBUG) {
-                StrictMode.enableDefaults();
+                //StrictMode.enableDefaults();
             }
 
             logsFile = new File(getExternalCacheDir(), "latest.log");

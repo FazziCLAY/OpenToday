@@ -34,6 +34,18 @@ public class CheckboxItem extends TextItem {
     }
     // END - Save
 
+    public static final ItemFactory<CheckboxItem> FACTORY = new ItemFactory<>() {
+        @Override
+        public CheckboxItem create() {
+            return createEmpty();
+        }
+
+        @Override
+        public CheckboxItem copy(Item item) {
+            return new CheckboxItem((CheckboxItem) item);
+        }
+    };
+
     @NonNull
     public static CheckboxItem createEmpty() {
         return new CheckboxItem("", false);

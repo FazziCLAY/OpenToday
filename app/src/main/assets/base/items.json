@@ -1,0 +1,101 @@
+{
+  "format_version": 1,
+  "items": [
+    {
+      "id": "base:item/text",
+      "item_type": "TEXT",
+      "class": "com.fazziclay.opentoday.app.items.item.TextItem",
+      "codec": "com.fazziclay.opentoday.app.items.item.TextItem.CODEC",
+      "factory": "com.fazziclay.opentoday.app.items.item.TextItem.FACTORY"
+    },
+    {
+      "id": "base:item/extended_text",
+      "item_type": "LONG_TEXT",
+      "class": "com.fazziclay.opentoday.app.items.item.LongTextItem",
+      "codec": "com.fazziclay.opentoday.app.items.item.LongTextItem.CODEC",
+      "factory": "com.fazziclay.opentoday.app.items.item.LongTextItem.FACTORY"
+    },
+    {
+      "id": "base:item/checkmark",
+      "item_type": "CHECKBOX",
+      "class": "com.fazziclay.opentoday.app.items.item.CheckboxItem",
+      "codec": "com.fazziclay.opentoday.app.items.item.CheckboxItem.CODEC",
+      "factory": "com.fazziclay.opentoday.app.items.item.CheckboxItem.FACTORY",
+      "inherits": ["base:item/text"]
+    },
+    {
+      "id": "base:item/checkmark_day_repeatable",
+      "item_type": "CHECKBOX_DAY_REPEATABLE",
+      "class": "com.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem",
+      "codec": "com.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem.CODEC",
+      "factory": "com.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem.FACTORY",
+      "inherits": ["base:item/text", "base:item/checkmark"]
+    },
+    {
+      "id": "base:item/checkmark_with_countdown",
+      "item_type": "COUNTDOWN_CHECKMARK",
+      "class": "com.fazziclay.opentoday.app.items.item.CountDownCheckmarkItem",
+      "codec": "com.fazziclay.opentoday.app.items.item.CountDownCheckmarkItem.CODEC",
+      "factory": "com.fazziclay.opentoday.app.items.item.CountDownCheckmarkItem.FACTORY",
+      "inherits": ["base:item/text", "base:item/checkmark"]
+    },
+    {
+      "id": "base:item/debug_tick_counter",
+      "item_type": "DEBUG_TICK_COUNTER",
+      "class": "com.fazziclay.opentoday.app.items.item.DebugTickCounterItem",
+      "codec": "com.fazziclay.opentoday.app.items.item.DebugTickCounterItem.CODEC",
+      "factory": "com.fazziclay.opentoday.app.items.item.DebugTickCounterItem.FACTORY",
+      "inherits": ["base:item/text"],
+      "required_feature_flag": "ITEM_DEBUG_TICK_COUNTER"
+    },
+    {
+      "id": "base:item/counter",
+      "item_type": "COUNTER",
+      "class": "com.fazziclay.opentoday.app.items.item.CounterItem",
+      "codec": "com.fazziclay.opentoday.app.items.item.CounterItem.CODEC",
+      "factory": "com.fazziclay.opentoday.app.items.item.CounterItem.FACTORY",
+      "inherits": ["base:item/text"]
+    },
+    {
+      "id": "base:item/cycle_group",
+      "item_type": "CYCLE_LIST",
+      "class": "com.fazziclay.opentoday.app.items.item.CycleListItem",
+      "codec": "com.fazziclay.opentoday.app.items.item.CycleListItem.CODEC",
+      "factory": "com.fazziclay.opentoday.app.items.item.CycleListItem.FACTORY",
+      "inherits": ["base:item/text"]
+    },
+    {
+      "id": "base:item/filter_group",
+      "item_type": "FILTER_GROUP",
+      "class": "com.fazziclay.opentoday.app.items.item.FilterGroupItem",
+      "codec": "com.fazziclay.opentoday.app.items.item.FilterGroupItem.CODEC",
+      "factory": "com.fazziclay.opentoday.app.items.item.FilterGroupItem.FACTORY",
+      "inherits": ["base:item/text"]
+    },
+    {
+      "id": "base:item/group",
+      "item_type": "GROUP",
+      "class": "com.fazziclay.opentoday.app.items.item.GroupItem",
+      "codec": "com.fazziclay.opentoday.app.items.item.GroupItem.CODEC",
+      "factory": "com.fazziclay.opentoday.app.items.item.GroupItem.FACTORY",
+      "inherits": ["base:item/text"]
+    },
+    {
+      "id": "base:item/math_game",
+      "item_type": "MATH_GAME",
+      "class": "com.fazziclay.opentoday.app.items.item.MathGameItem",
+      "codec": "com.fazziclay.opentoday.app.items.item.MathGameItem.CODEC",
+      "factory": "com.fazziclay.opentoday.app.items.item.MathGameItem.FACTORY",
+      "inherits": ["base:item/text"]
+    },
+    {
+      "id": "base:item/sleep_time",
+      "item_type": "SLEEP_TIME",
+      "class": "com.fazziclay.opentoday.app.items.item.SleepTimeItem",
+      "codec": "com.fazziclay.opentoday.app.items.item.SleepTimeItem.CODEC",
+      "factory": "com.fazziclay.opentoday.app.items.item.SleepTimeItem.FACTORY",
+      "inherits": ["base:item/text"],
+      "required_feature_flag": "ITEM_SLEEP_TIME"
+    }
+  ]
+}

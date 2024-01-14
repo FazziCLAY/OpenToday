@@ -43,6 +43,17 @@ public class LongTextItem extends TextItem {
         }
     }
     // END - Save
+    public static final ItemFactory<LongTextItem> FACTORY = new ItemFactory<>() {
+        @Override
+        public LongTextItem create() {
+            return createEmpty();
+        }
+
+        @Override
+        public LongTextItem copy(Item item) {
+            return new LongTextItem((LongTextItem) item);
+        }
+    };
 
     private static final String DEFAULT_LONG_TEXT_COLOR = "#00dd00";
 

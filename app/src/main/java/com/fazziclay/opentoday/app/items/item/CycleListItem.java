@@ -49,6 +49,17 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
         }
     }
     // END - Save
+    public static final ItemFactory<CycleListItem> FACTORY = new ItemFactory<>() {
+        @Override
+        public CycleListItem create() {
+            return createEmpty();
+        }
+
+        @Override
+        public CycleListItem copy(Item item) {
+            return new CycleListItem((CycleListItem) item);
+        }
+    };
 
     @NonNull
     public static CycleListItem createEmpty() {

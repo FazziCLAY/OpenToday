@@ -79,6 +79,17 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         }
     }
     // END - Save
+    public static final ItemFactory<FilterGroupItem> FACTORY = new ItemFactory<>() {
+        @Override
+        public FilterGroupItem create() {
+            return createEmpty();
+        }
+
+        @Override
+        public FilterGroupItem copy(Item item) {
+            return new FilterGroupItem((FilterGroupItem) item);
+        }
+    };
 
     @NonNull
     public static FilterGroupItem createEmpty() {

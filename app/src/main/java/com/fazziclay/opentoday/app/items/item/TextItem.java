@@ -45,6 +45,17 @@ public class TextItem extends Item {
         }
     }
     // END - Save
+    public final static ItemFactory<TextItem> FACTORY = new ItemFactory<>() {
+        @Override
+        public TextItem create() {
+            return createEmpty();
+        }
+
+        @Override
+        public TextItem copy(Item item) {
+            return new TextItem((TextItem) item);
+        }
+    };
 
     @NonNull
     public static TextItem createEmpty() {
