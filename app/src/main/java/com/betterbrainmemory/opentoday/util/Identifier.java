@@ -9,15 +9,15 @@ public final class Identifier {
     private final String namespace;
 
     @NotNull
-    private final String name;
+    private final String path;
 
 
-    private Identifier(@NonNull String namespace, @NonNull String name) {
-        if (namespace.isBlank() || namespace.isEmpty() || name.isBlank() || namespace.isEmpty()) {
+    private Identifier(@NonNull String namespace, @NonNull String path) {
+        if (namespace.isBlank() || namespace.isEmpty() || path.isBlank() || namespace.isEmpty()) {
             throw new RuntimeException("Identifier can't be empty values!");
         }
         this.namespace = namespace;
-        this.name = name;
+        this.path = path;
     }
 
     @NonNull
@@ -35,7 +35,7 @@ public final class Identifier {
     @NonNull
     @Override
     public String toString() {
-        return namespace + ":" + name;
+        return namespace + ":" + path;
     }
 
     @Override
@@ -46,13 +46,13 @@ public final class Identifier {
         Identifier that = (Identifier) o;
 
         if (!namespace.equals(that.namespace)) return false;
-        return name.equals(that.name);
+        return path.equals(that.path);
     }
 
     @Override
     public int hashCode() {
         int result = namespace.hashCode();
-        result = 31 * result + name.hashCode();
+        result = 31 * result + path.hashCode();
         return result;
     }
 }
