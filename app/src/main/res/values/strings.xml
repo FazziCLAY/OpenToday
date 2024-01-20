@@ -453,13 +453,13 @@
     <string name="transform_selectTypeDialog_title">Select result type</string>
     <string name="fragment_developer_resetUpdateCheckerTimeout">Reset UpdateChecker timeout</string>
     <string name="settings_colorHistoryEnabled">Is save colors in color-pickers to history</string>
-    <string name="item_countdownCheckmark">TODO: Checkmark with countdown...</string>
-    <string name="item_countdownCheckmark_description">TODO: Checkmark with countdown description</string>
-    <string name="fragment_itemEditor_module_countdownCheckbox_roundToDays">Todo: ROUND TO DAYS</string>
-    <string name="fragment_itemEditor_module_countdownCheckbox_step_title">TODO: Step</string>
-    <string name="fragment_itemEditor_module_countdownCheckbox_step_hint">Enter step...</string>
-    <string name="fragment_itemEditor_module_countdownCheckbox_availableStep_title">TODO: Available steps</string>
-    <string name="fragment_itemEditor_module_countdownCheckbox_availableStep_hint">TODO: availableStep hint</string>
+    <string name="item_countdownCheckmark">Checkmark with countdown</string>
+    <string name="item_countdownCheckmark_description" translatable="false">-</string>
+    <string name="fragment_itemEditor_module_countdownCheckbox_roundToDays">Round to days</string>
+    <string name="fragment_itemEditor_module_countdownCheckbox_step_title">Step size</string>
+    <string name="fragment_itemEditor_module_countdownCheckbox_step_hint">Enter step size...</string>
+    <string name="fragment_itemEditor_module_countdownCheckbox_availableStep_title">Steps</string>
+    <string name="fragment_itemEditor_module_countdownCheckbox_availableStep_hint">Enter steps...</string>
     <string name="dialog_itemNotification_resetSentFlag">Reset sent status</string>
     <string name="menu_notification_copyNotificationId">Copy Notify ID</string>
     <string name="dialog_itemTag_delete">Delete</string>

@@ -106,6 +106,6 @@ public class BackendInitializer {
         ITEM_NOTIFICATION_HANDLER,
         IMPORTANT_DEBUG_CALLBACKS,
         PIN_CODE_MANAGER,
-        SELECTION_MANAGER;
+        SELECTION_MANAGER
     }
 }

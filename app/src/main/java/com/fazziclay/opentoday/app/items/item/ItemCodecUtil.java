@@ -37,11 +37,9 @@ public class ItemCodecUtil {
     // import item (JSON -> Item)
     public static Item importItem(Cherry cherry) {
         try {
-            /*get itemType form json*/String itemType = cherry.getString(KEY_ITEMTYPE);
-            // TODO: 14.01.2024 gjhklt6
-            /*get class by itemType*/Class<? extends Item> itemClass = ItemsRegistry.REGISTRY.getByKey(itemType).getClassType();
-            /*get IETool by class*/
-            AbstractItemCodec codec = ItemsRegistry.REGISTRY.getByKey(itemClass).getCodec();
+            String itemType = cherry.getString(KEY_ITEMTYPE);
+            var itemInfo = ItemsRegistry.REGISTRY.getByKey(itemType);
+            AbstractItemCodec codec = itemInfo.getCodec();
             return codec.importItem(cherry, null);
         } catch (Exception e) {
             return ((MissingNoItem)MissingNoItem.CODEC.importItem(cherry, null))
@@ -53,14 +51,8 @@ public class ItemCodecUtil {
     public static Cherry exportItem(Item item) {
         try {
             ItemsRegistry.ItemInfo itemInfo = ItemsRegistry.REGISTRY.getByKey(item.getClass());
-
-            // TODO: 14.01.2024
-
-            /*IETool from itemClass*/
             AbstractItemCodec codec = itemInfo.getCodec();
-            /*Export from IETool*/
             Cherry cherry = codec.exportItem(item);
-            /*Put itemType to json*/
             if (!(item instanceof MissingNoItem)) {
                 cherry.put(KEY_ITEMTYPE, itemInfo.getIdentifier().string());
             }

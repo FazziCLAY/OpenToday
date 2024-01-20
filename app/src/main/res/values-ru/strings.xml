@@ -446,4 +446,13 @@
     <string name="transform_selectTypeDialog_title">Выберите тип результата</string>
     <string name="fragment_developer_resetUpdateCheckerTimeout">Сбросить таймаут АпдейтЧекера</string>
     <string name="settings_colorHistoryEnabled">Сохранять историю выбранных цветов</string>
+    <string name="item_countdownCheckmark">Галочка с отчётом</string>
+    <string name="fragment_itemEditor_module_countdownCheckbox_roundToDays">Округлять до дней</string>
+    <string name="fragment_itemEditor_module_countdownCheckbox_step_title">Размер шага</string>
+    <string name="fragment_itemEditor_module_countdownCheckbox_step_hint">Введите размер шага...</string>
+    <string name="fragment_itemEditor_module_countdownCheckbox_availableStep_title">Шагов</string>
+    <string name="fragment_itemEditor_module_countdownCheckbox_availableStep_hint">Введите кол-во шагов</string>
+    <string name="dialog_itemNotification_resetSentFlag">Сброс статсуса отправки</string>
+    <string name="menu_notification_copyNotificationId">Копировать ID уведомления</string>
+    <string name="dialog_itemTag_delete">Удалить</string>
 </resources>
