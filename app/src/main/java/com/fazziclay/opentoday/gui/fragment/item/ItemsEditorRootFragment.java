@@ -26,13 +26,12 @@ import com.fazziclay.opentoday.app.items.ItemPath;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Readonly;
 import com.fazziclay.opentoday.app.items.item.Item;
-import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.tab.Tab;
 import com.fazziclay.opentoday.app.items.tab.TabsManager;
 import com.fazziclay.opentoday.app.settings.Option;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
-import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
+import com.fazziclay.opentoday.gui.item.registry.ItemsGuiRegistry;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.Status;
@@ -141,7 +140,7 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
         StringBuilder s = new StringBuilder(PATH_SEPARATOR);
         for (Object section : itemPath.getSections()) {
             if (section instanceof Item item) {
-                String sect = EnumsRegistry.INSTANCE.name(ItemsRegistry.REGISTRY.get(item.getClass()).getItemType(), requireContext());
+                String sect = ItemsGuiRegistry.REGISTRY.nameOf(context, item);
                 s.append(sect).append(PATH_SEPARATOR);
             }
         }
@@ -166,7 +165,7 @@ public class ItemsEditorRootFragment extends Fragment implements NavigationHost 
         Item item = tab.getItemById(itemId);
         if (item != null) {
             backStackName = item.getText().split("\n")[0];
-            if (backStackName.isEmpty()) backStackName = getString(EnumsRegistry.INSTANCE.nameResId(ItemsRegistry.REGISTRY.get(item.getClass()).getItemType()));
+            if (backStackName.isEmpty()) backStackName = ItemsGuiRegistry.REGISTRY.nameOf(context, item);
             updateItemStorageContext((ItemsStorage) item);
         }
 

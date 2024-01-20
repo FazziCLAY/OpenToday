@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemCodecUtil {
-    private static final String KEY_ITEMTYPE = "itemType";
+    private static final String KEY_ITEMTYPE = "item_type";
 
     @NonNull
     public static CherryOrchard exportItemList(@NonNull List<Item> items) {
@@ -38,9 +38,10 @@ public class ItemCodecUtil {
     public static Item importItem(Cherry cherry) {
         try {
             /*get itemType form json*/String itemType = cherry.getString(KEY_ITEMTYPE);
-            /*get class by itemType*/Class<? extends Item> itemClass = ItemsRegistry.REGISTRY.get(itemType).getClassType();
+            // TODO: 14.01.2024 gjhklt6
+            /*get class by itemType*/Class<? extends Item> itemClass = ItemsRegistry.REGISTRY.getByKey(itemType).getClassType();
             /*get IETool by class*/
-            AbstractItemCodec codec = ItemsRegistry.REGISTRY.get(itemClass).getCodec();
+            AbstractItemCodec codec = ItemsRegistry.REGISTRY.getByKey(itemClass).getCodec();
             return codec.importItem(cherry, null);
         } catch (Exception e) {
             return ((MissingNoItem)MissingNoItem.CODEC.importItem(cherry, null))
@@ -51,13 +52,17 @@ public class ItemCodecUtil {
     // export item (Item -> JSON)
     public static Cherry exportItem(Item item) {
         try {
+            ItemsRegistry.ItemInfo itemInfo = ItemsRegistry.REGISTRY.getByKey(item.getClass());
+
+            // TODO: 14.01.2024
+
             /*IETool from itemClass*/
-            AbstractItemCodec codec = ItemsRegistry.REGISTRY.get(item.getClass()).getCodec();
+            AbstractItemCodec codec = itemInfo.getCodec();
             /*Export from IETool*/
             Cherry cherry = codec.exportItem(item);
             /*Put itemType to json*/
             if (!(item instanceof MissingNoItem)) {
-                cherry.put(KEY_ITEMTYPE, ItemsRegistry.REGISTRY.get(item.getClass()).getStringType());
+                cherry.put(KEY_ITEMTYPE, itemInfo.getIdentifier().string());
             }
             return cherry;
         } catch (Exception e) {

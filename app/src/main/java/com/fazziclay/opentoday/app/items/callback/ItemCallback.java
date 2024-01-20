@@ -1,5 +1,6 @@
 package com.fazziclay.opentoday.app.items.callback;
 
+import com.fazziclay.opentoday.app.items.item.CountDownCheckmarkItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.util.callback.Callback;
 import com.fazziclay.opentoday.util.callback.Status;
@@ -35,6 +36,10 @@ public abstract class ItemCallback implements Callback {
     }
 
     public Status cachedNotificationStatusChanged(Item item, boolean isUpdateNotifications) {
+        return Status.NONE;
+    }
+
+    public Status countDownCheckmarkStopped(CountDownCheckmarkItem item, boolean changedTo) {
         return Status.NONE;
     }
 }

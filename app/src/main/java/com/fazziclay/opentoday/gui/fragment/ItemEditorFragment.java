@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
@@ -47,12 +48,12 @@ import com.fazziclay.opentoday.app.items.item.CountDownCheckmarkItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.DayRepeatableCheckboxItem;
-import com.fazziclay.opentoday.app.items.item.DebugTickCounterItem;
+import com.fazziclay.opentoday.debug.DebugTickCounterItem;
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
-import com.fazziclay.opentoday.app.items.item.LongTextItem;
-import com.fazziclay.opentoday.app.items.item.MathGameItem;
+import com.fazziclay.opentoday.app.items.item.ExtendedTextItem;
+import com.fazziclay.opentoday.fun.mathgame.MathGameItem;
 import com.fazziclay.opentoday.app.items.item.MissingNoItem;
 import com.fazziclay.opentoday.app.items.item.SleepTimeItem;
 import com.fazziclay.opentoday.app.items.item.TextItem;
@@ -74,14 +75,15 @@ import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleLongtextBindi
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleMathgameBinding;
 import com.fazziclay.opentoday.databinding.FragmentItemEditorModuleTextBinding;
 import com.fazziclay.opentoday.databinding.ItemEditorFragmentModuleItemNotificationBinding;
+import com.fazziclay.opentoday.fun.mathgame.Operation;
 import com.fazziclay.opentoday.gui.ActivitySettings;
 import com.fazziclay.opentoday.gui.ColorPicker;
-import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.gui.ItemTagGui;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.interfaces.ActivitySettingsMember;
 import com.fazziclay.opentoday.gui.interfaces.BackStackMember;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
+import com.fazziclay.opentoday.gui.item.registry.ItemsGuiRegistry;
 import com.fazziclay.opentoday.util.ClipboardUtil;
 import com.fazziclay.opentoday.util.ColorUtil;
 import com.fazziclay.opentoday.util.EnumUtil;
@@ -126,7 +128,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
 
         a.putInt(KEY_MODE, MODE_CREATE);
         a.putString(KEY_CREATE_ITEM_STORAGE_ID, itemStorageId.toString());
-        a.putString(KEY_CREATE_ITEM_TYPE, ItemsRegistry.REGISTRY.get(itemType).getStringType());
+        a.putString(KEY_CREATE_ITEM_TYPE, ItemsRegistry.REGISTRY.getByKey(itemType).getIdentifier().string());
         a.putInt(KEY_ADD_ITEM_POSITION, addItemPosition);
 
         result.setArguments(a);
@@ -223,7 +225,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
         } else if (mode == MODE_CREATE) {
             itemsStorage = itemsRoot.getItemsStorageById(getArgItemStorageId());
             addItemPosition = getArgAddItemPosition();
-            ItemsRegistry.ItemInfo itemInfo = ItemsRegistry.REGISTRY.get(getArgItemType());
+            ItemsRegistry.ItemInfo itemInfo = ItemsRegistry.REGISTRY.getByKey(getArgItemType());
             item = itemInfo.create();
             if (settingsManager.isRandomItemBackground()) {
                 initBackgroundColor = BeautifyColorManager.randomBackgroundColor(app);
@@ -245,7 +247,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
         if (item instanceof TextItem) {
             binding.modules.addView(addEditModule(new TextItemEditModule()));
         }
-        if (item instanceof LongTextItem) {
+        if (item instanceof ExtendedTextItem) {
             binding.modules.addView(addEditModule(new LongTextItemEditModule()));
         }
         if (item instanceof CheckboxItem) {
@@ -290,7 +292,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
             a.setNotificationsVisible(false);
             a.setClockVisible(false);
             a.setShowCanonicalClock(true);
-            a.setToolbarSettings(ActivitySettings.ToolbarSettings.createBack(EnumsRegistry.INSTANCE.nameResId(ItemsRegistry.REGISTRY.get(item.getClass()).getItemType()), this::cancelRequest)
+            a.setToolbarSettings(ActivitySettings.ToolbarSettings.createBack(ItemsGuiRegistry.REGISTRY.nameOf(requireContext(), item), this::cancelRequest)
                     .setMenu(R.menu.menu_item_editor, menu -> {
                         menu.findItem(R.id.exportItem)
                                 .setOnMenuItemClickListener(menuItem -> {
@@ -736,7 +738,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
 
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getActivity())
                     .setTitle(R.string.dialog_itemTag_title)
-                    .setMessage(R.string.dialog_itemTag_message)
+                    //.setMessage(R.string.dialog_itemTag_message)
                     .setView(view)
                     .setNegativeButton(R.string.abc_cancel, null);
 
@@ -758,6 +760,11 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
                 }
                 tag.setValue(value);
                 afterEdit.accept(tag);
+            });
+
+            builder.setNeutralButton(R.string.dialog_itemTag_delete, (dialogInterface, i) -> {
+                item.removeTag(tag);
+                updateTags();
             });
 
 
@@ -812,7 +819,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
                                 onEditStart.run();
                             }));
 
-            binding.paragraphColorize.setChecked(textItem.isParagraphColorize());
+            binding.paragraphColorize.setChecked(textItem.isFormatting());
             binding.paragraphColorize.setOnClickListener(v -> onEditStart.run());
 
             // On edit start
@@ -867,7 +874,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
             textItem.setTextColor(temp_textColor);
             textItem.setCustomTextColor(!isDefaultTextColor);
             textItem.setClickableUrls(binding.clickableUrls.isChecked());
-            textItem.setParagraphColorize(binding.paragraphColorize.isChecked());
+            textItem.setFormatting(binding.paragraphColorize.isChecked());
         }
 
         @Override
@@ -890,18 +897,18 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
 
         @Override
         public void setup(Item item, Activity activity, View view) {
-            LongTextItem longTextItem = (LongTextItem) item;
+            ExtendedTextItem extendedTextItem = (ExtendedTextItem) item;
             binding = FragmentItemEditorModuleLongtextBinding.inflate(activity.getLayoutInflater(), (ViewGroup) view, false);
 
             // equip
             viewLong(binding.titleOfText, () -> {
                 ClipboardManager clipboardManager = activity.getSystemService(ClipboardManager.class);
-                clipboardManager.setPrimaryClip(ClipData.newPlainText("Item long text", ((LongTextItem) item).getLongText()));
+                clipboardManager.setPrimaryClip(ClipData.newPlainText("Item long text", ((ExtendedTextItem) item).getAddictionText()));
                 Toast.makeText(activity, R.string.abc_coped, Toast.LENGTH_SHORT).show();
             });
-            binding.longText.setText(longTextItem.getLongText());
-            binding.defaultLongTextColor.setChecked(!longTextItem.isCustomLongTextColor());
-            temp_textColor = longTextItem.getLongTextColor();
+            binding.longText.setText(extendedTextItem.getAddictionText());
+            binding.defaultLongTextColor.setChecked(!extendedTextItem.isCustomAddictionTextColor());
+            temp_textColor = extendedTextItem.getAddictionTextColor();
             updateTextColorIndicator(activity);
             binding.longTextColorEdit.setOnClickListener(v -> new ColorPicker(activity, temp_textColor)
                     .setting(true, true, true)
@@ -916,7 +923,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
                                 onEditStart.run();
                             }));
 
-            binding.longClickableUrls.setChecked(longTextItem.isLongTextClickableUrls());
+            binding.longClickableUrls.setChecked(extendedTextItem.isAddictionTextClickableUrls());
 
             // On edit start
             binding.longText.addTextChangedListener(textWatcher = new MinTextWatcher() {
@@ -936,10 +943,10 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
             });
             binding.longClickableUrls.setOnClickListener(v -> onEditStart.run());
 
-            binding.defaultSize.setChecked(!longTextItem.isCustomLongTextSize());
+            binding.defaultSize.setChecked(!extendedTextItem.isCustomAddictionTextSize());
             binding.size.setMax(30);
             binding.size.setMin(1);
-            binding.size.setProgress(longTextItem.getLongTextSize());
+            binding.size.setProgress(extendedTextItem.getAddictionTextSize());
             //
 
             viewVisible(binding.openLongTextEditor, mode == MODE_EDIT, View.INVISIBLE);
@@ -953,7 +960,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
         @Override
         public void onResume() {
             if (updateLongTextItemOnResume) {
-                MinTextWatcher.runAtDisabled(binding.longText, textWatcher, () -> binding.longText.setText(((LongTextItem) item).getLongText()));
+                MinTextWatcher.runAtDisabled(binding.longText, textWatcher, () -> binding.longText.setText(((ExtendedTextItem) item).getAddictionText()));
                 updateLongTextItemOnResume = false;
             }
         }
@@ -968,18 +975,18 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
 
         @Override
         public void commit(Item item) {
-            LongTextItem longTextItem = (LongTextItem) item;
+            ExtendedTextItem extendedTextItem = (ExtendedTextItem) item;
 
             String userInput = binding.longText.getText().toString();
             if (settingsManager.isTrimItemNamesOnEdit()) {
                 userInput = userInput.trim();
             }
-            longTextItem.setLongText(userInput);
-            longTextItem.setLongTextSize(binding.size.getProgress());
-            longTextItem.setLongTextColor(temp_textColor);
-            longTextItem.setCustomLongTextColor(!binding.defaultLongTextColor.isChecked());
-            longTextItem.setCustomLongTextSize(!binding.defaultSize.isChecked());
-            longTextItem.setLongTextClickableUrls(binding.longClickableUrls.isChecked());
+            extendedTextItem.setAddictionText(userInput);
+            extendedTextItem.setAddictionTextSize(binding.size.getProgress());
+            extendedTextItem.setAddictionTextColor(temp_textColor);
+            extendedTextItem.setCustomAddictionTextColor(!binding.defaultLongTextColor.isChecked());
+            extendedTextItem.setCustomAddictionTextSize(!binding.defaultSize.isChecked());
+            extendedTextItem.setAddictionTextClickableUrls(binding.longClickableUrls.isChecked());
         }
 
         @Override
@@ -1232,10 +1239,10 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
             viewClick(binding.primitiveMultiply, this::editStart);
             viewClick(binding.primitiveDivide, this::editStart);
 
-            binding.primitiveAdd.setChecked(mathGameItem.isOperationEnabled(MathGameItem.Operation.PLUS));
-            binding.primitiveSubtract.setChecked(mathGameItem.isOperationEnabled(MathGameItem.Operation.SUBTRACT));
-            binding.primitiveMultiply.setChecked(mathGameItem.isOperationEnabled(MathGameItem.Operation.MULTIPLY));
-            binding.primitiveDivide.setChecked(mathGameItem.isOperationEnabled(MathGameItem.Operation.DIVIDE));
+            binding.primitiveAdd.setChecked(mathGameItem.isOperationEnabled(Operation.ADD));
+            binding.primitiveSubtract.setChecked(mathGameItem.isOperationEnabled(Operation.SUBTRACT));
+            binding.primitiveMultiply.setChecked(mathGameItem.isOperationEnabled(Operation.MULTIPLY));
+            binding.primitiveDivide.setChecked(mathGameItem.isOperationEnabled(Operation.DIVIDE));
 
             binding.n1min.setText(String.valueOf(this.item.getPrimitiveNumber1Min()));
             binding.n1max.setText(String.valueOf(this.item.getPrimitiveNumber1Max()));
@@ -1257,7 +1264,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
             editStart();
         }
 
-        private void operationChange(MathGameItem.Operation o, boolean b) {
+        private void operationChange(Operation o, boolean b) {
             item.setOperationEnabled(o, b);
             editStart();
         }
@@ -1274,10 +1281,10 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
         @Override
         public void commit(Item item) {
             this.item = (MathGameItem) item;
-            operationChange(MathGameItem.Operation.PLUS, binding.primitiveAdd.isChecked());
-            operationChange(MathGameItem.Operation.SUBTRACT, binding.primitiveSubtract.isChecked());
-            operationChange(MathGameItem.Operation.MULTIPLY, binding.primitiveMultiply.isChecked());
-            operationChange(MathGameItem.Operation.DIVIDE, binding.primitiveDivide.isChecked());
+            operationChange(Operation.ADD, binding.primitiveAdd.isChecked());
+            operationChange(Operation.SUBTRACT, binding.primitiveSubtract.isChecked());
+            operationChange(Operation.MULTIPLY, binding.primitiveMultiply.isChecked());
+            operationChange(Operation.DIVIDE, binding.primitiveDivide.isChecked());
             try {
                 this.item.setPrimitiveNumber1Min(Integer.parseInt(binding.n1min.getText().toString()));
             } catch (Exception ignored) {}
@@ -1366,13 +1373,13 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
             layout.addView(pattern);
 
             this.wakeUpTime = new TimePicker(activity);
-            wakeUpTime.setMinute(TimeUtil.getHumanValue(sleepTimeItem.getWakeUpTime(), HumanTimeType.MINUTE_OF_HOUR));
-            wakeUpTime.setHour(TimeUtil.getHumanValue(sleepTimeItem.getWakeUpTime(), HumanTimeType.HOUR));
+            wakeUpTime.setMinute(TimeUtil.getHumanValue(sleepTimeItem.getWakeup(), HumanTimeType.MINUTE_OF_HOUR));
+            wakeUpTime.setHour(TimeUtil.getHumanValue(sleepTimeItem.getWakeup(), HumanTimeType.HOUR));
             layout.addView(wakeUpTime);
 
             this.requiredSleepTime = new TimePicker(activity);
-            requiredSleepTime.setMinute(TimeUtil.getHumanValue(sleepTimeItem.getRequiredSleepTime(), HumanTimeType.MINUTE_OF_HOUR));
-            requiredSleepTime.setHour(TimeUtil.getHumanValue(sleepTimeItem.getRequiredSleepTime(), HumanTimeType.HOUR));
+            requiredSleepTime.setMinute(TimeUtil.getHumanValue(sleepTimeItem.getDuration(), HumanTimeType.MINUTE_OF_HOUR));
+            requiredSleepTime.setHour(TimeUtil.getHumanValue(sleepTimeItem.getDuration(), HumanTimeType.HOUR));
             layout.addView(requiredSleepTime);
         }
 
@@ -1380,8 +1387,8 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
         public void commit(Item item) throws Exception {
             SleepTimeItem sleepTimeItem = (SleepTimeItem) item;
             sleepTimeItem.setSleepTextPattern(pattern.getText().toString());
-            sleepTimeItem.setWakeUpTime(wakeUpTime.getMinute() * TimeUtil.SECONDS_IN_MINUTE + wakeUpTime.getHour() * TimeUtil.SECONDS_IN_HOUR);
-            sleepTimeItem.setRequiredSleepTime(requiredSleepTime.getMinute() * TimeUtil.SECONDS_IN_MINUTE + requiredSleepTime.getHour() * TimeUtil.SECONDS_IN_HOUR);
+            sleepTimeItem.setWakeup(wakeUpTime.getMinute() * TimeUtil.SECONDS_IN_MINUTE + wakeUpTime.getHour() * TimeUtil.SECONDS_IN_HOUR);
+            sleepTimeItem.setDuration(requiredSleepTime.getMinute() * TimeUtil.SECONDS_IN_MINUTE + requiredSleepTime.getHour() * TimeUtil.SECONDS_IN_HOUR);
         }
 
         @Override
@@ -1409,8 +1416,8 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
             binding.roundToDays.setChecked(countDown.isRoundToDays());
             viewClick(binding.roundToDays, this::edited);
 
-            binding.stepEdittext.setText(String.valueOf(countDown.getStep()));
-            binding.availableStep.setText(String.valueOf(countDown.getAvailableSteps()));
+            binding.stepEdittext.setText(String.valueOf(countDown.getStepSize()));
+            binding.availableStep.setText(String.valueOf(countDown.getSteps()));
 
 
             // TODO: 13.01.2024 make translatable
@@ -1425,7 +1432,7 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
 
 
             binding.stepSpinner.setAdapter(adapter);
-            binding.stepSpinner.setSelection(Math.max(0, adapter.getValuePosition((int) countDown.getStep() / 1000)));
+            binding.stepSpinner.setSelection(Math.max(0, adapter.getValuePosition((int) countDown.getStepSize() / 1000)));
             binding.stepSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -1456,8 +1463,8 @@ public class ItemEditorFragment extends Fragment implements BackStackMember, Act
                 int availableSteps = Integer.parseInt(binding.availableStep.getText().toString());
 
 
-                countDown.setStep(step);
-                countDown.setAvailableSteps(availableSteps);
+                countDown.setStepSize(step);
+                countDown.setSteps(availableSteps);
             } catch (Exception e) {
                 throw new UserException("TODO: step is error... enter valid number"); // TODO: 12.01.2024 make translatable
             }

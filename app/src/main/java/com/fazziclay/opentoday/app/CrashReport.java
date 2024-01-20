@@ -287,6 +287,14 @@ public class CrashReport {
                 "{no-fun}r1N",
                 "{no-fun}r7[SPACE]",
                 "This is only tags hehe",
+
+                // 2024.01.20
+                "ownership: FazziCLAY -> BetterBrainMemory",
+                "Price? hehe",
+                "New icon! (for humans)",
+                "GnuGPL is best license",
+                "yes, i also lovely minecraft!",
+                "Delete oldest comments? "
         };
         Random random = new Random();
         int max = comments.length;

@@ -1,65 +1,25 @@
 package com.fazziclay.opentoday.app.items.item;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.util.annotation.Getter;
-import com.fazziclay.opentoday.util.annotation.RequireSave;
-import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.annotation.Setter;
 
 public class CounterItem extends TextItem {
-    // START - Save
     public final static CounterItemCodec CODEC = new CounterItemCodec();
-    public static class CounterItemCodec extends TextItemCodec {
-        @NonNull
-        @Override
-        public Cherry exportItem(@NonNull Item item) {
-            CounterItem counterItem = (CounterItem) item;
-            return super.exportItem(item)
-                    .put("counter", counterItem.counter)
-                    .put("step", counterItem.step);
-        }
+    public static final ItemFactory<CounterItem> FACTORY = new CounterItemFactory();
 
-        private final CounterItem defaultValues = new CounterItem();
-        @NonNull
-        @Override
-        public Item importItem(@NonNull Cherry cherry, Item item) {
-            CounterItem counterItem = item != null ? (CounterItem) item : new CounterItem();
-            super.importItem(cherry, counterItem);
-            counterItem.counter = cherry.optDouble("counter", defaultValues.counter);
-            counterItem.step = cherry.optDouble("step", defaultValues.step);
-            return counterItem;
-        }
-    }
-    // END - Save
-    public static final ItemFactory<CounterItem> FACTORY = new ItemFactory<>() {
-        @Override
-        public CounterItem create() {
-            return createEmpty();
-        }
 
-        @Override
-        public CounterItem copy(Item item) {
-            return new CounterItem((CounterItem) item);
-        }
-    };
+    private double counter = 0;
+    private double step = 1;
 
-    @NonNull
-    public static CounterItem createEmpty() {
-        return new CounterItem("");
+    public CounterItem() {
+        super();
     }
 
-    @SaveKey(key = "counter") @RequireSave private double counter = 0;
-    @SaveKey(key = "step") @RequireSave private double step = 1;
-
-    protected CounterItem() {}
-
-    public CounterItem(String text) {
-        super(text);
-    }
-
-    public CounterItem(TextItem textItem) {
+    public CounterItem(@Nullable TextItem textItem) {
         super(textItem);
     }
 
@@ -69,14 +29,14 @@ public class CounterItem extends TextItem {
         this.step = copy.step;
     }
 
-    public void up() {
-        counter = counter + step;
+    public void increase() {
+        counter += step;
         visibleChanged();
         save();
     }
 
-    public void down() {
-        counter = counter - step;
+    public void decrease() {
+        counter -= step;
         visibleChanged();
         save();
     }
@@ -85,4 +45,53 @@ public class CounterItem extends TextItem {
     @Getter public double getStep() { return step; }
     @Setter public void setCounter(double counter) { this.counter = counter; }
     @Setter public void setStep(double step) { this.step = step; }
+
+
+
+    // Import - Export - Factory
+    public static class CounterItemCodec extends TextItemCodec {
+        private static final String KEY_COUNTER_VALUE = "counter_value";
+        private static final String KEY_COUNTER_STEP = "counter_step";
+
+        @NonNull
+        @Override
+        public Cherry exportItem(@NonNull Item item) {
+            CounterItem counterItem = (CounterItem) item;
+            return super.exportItem(item)
+                    .put(KEY_COUNTER_VALUE, counterItem.counter)
+                    .put(KEY_COUNTER_STEP, counterItem.step);
+        }
+
+        private final CounterItem DEFAULT_VALUES = new CounterItem();
+        @NonNull
+        @Override
+        public Item importItem(@NonNull Cherry cherry, Item item) {
+            CounterItem counterItem = fallback(item, CounterItem::new);
+            super.importItem(cherry, counterItem);
+
+            counterItem.counter = cherry.optDouble(KEY_COUNTER_VALUE, DEFAULT_VALUES.counter);
+            counterItem.step = cherry.optDouble(KEY_COUNTER_STEP, DEFAULT_VALUES.step);
+            return counterItem;
+        }
+    }
+
+    private static class CounterItemFactory implements ItemFactory<CounterItem> {
+        @Override
+        public CounterItem create() {
+            return new CounterItem();
+        }
+
+        @Override
+        public CounterItem copy(Item item) {
+            return new CounterItem((CounterItem) item);
+        }
+
+        @Override
+        public Transform.Result transform(Item from) {
+            if (from instanceof TextItem textItem) {
+                return Transform.Result.allow(() -> new CounterItem(textItem));
+            }
+            return Transform.Result.NOT_ALLOW;
+        }
+    }
 }

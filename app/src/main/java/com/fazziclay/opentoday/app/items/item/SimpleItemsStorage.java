@@ -139,16 +139,16 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
 
             if (check1.getId() == null) {
                 check1.regenerateId();
-                Logger.d(TAG, "importData: check1 id is null! regenerated.");
+                Logger.w(TAG, "importData: check1 id is null! regenerated.");
             }
             for (Item check2 : allImportItems) {
                 if (check2.getId() == null) {
                     check2.regenerateId();
-                    Logger.d(TAG, "importData: check2 id is null! regenerated.");
+                    Logger.w(TAG, "importData: check2 id is null! regenerated.");
                 }
                 if (check1.getId().equals(check2.getId()) && check1 != check2) {
                     check2.regenerateId();
-                    Logger.d(TAG, "importData: check1.id equals check2.id && check1 != check2. id regenerated.");
+                    Logger.w(TAG, "importData: check1.id equals check2.id && check1 != check2. id regenerated.");
                 }
             }
         }
@@ -157,7 +157,7 @@ public abstract class SimpleItemsStorage implements ItemsStorage {
             ItemUtil.throwIsAttached(item);
             if (item.getId() == null) {
                 item.regenerateId();
-                Logger.d(TAG, "importData: item.id is null. regenerated.");
+                Logger.w(TAG, "importData: item.id is null. regenerated.");
             }
             item.setController(itemController);
             this.items.add(item);

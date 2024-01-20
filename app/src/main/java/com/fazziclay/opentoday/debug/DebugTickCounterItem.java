@@ -1,8 +1,13 @@
-package com.fazziclay.opentoday.app.items.item;
+package com.fazziclay.opentoday.debug;
 
 import androidx.annotation.NonNull;
 
 import com.fazziclay.opentoday.app.data.Cherry;
+import com.fazziclay.opentoday.app.items.item.Item;
+import com.fazziclay.opentoday.app.items.item.ItemFactory;
+import com.fazziclay.opentoday.app.items.item.ItemUtil;
+import com.fazziclay.opentoday.app.items.item.TextItem;
+import com.fazziclay.opentoday.app.items.item.Transform;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.TickTarget;
 import com.fazziclay.opentoday.util.annotation.Getter;
@@ -16,43 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DebugTickCounterItem extends TextItem {
-    // START - Save
     public final static DebugTickCounterItemCodec CODEC = new DebugTickCounterItemCodec();
-    public static class DebugTickCounterItemCodec extends TextItemCodec {
-        @NonNull
-        @Override
-        public Cherry exportItem(@NonNull Item item) {
-            DebugTickCounterItem debugTickCounterItem = (DebugTickCounterItem) item;
-            return super.exportItem(debugTickCounterItem)
-                    .put("counter", debugTickCounterItem.counter)
-                    .put("debug_isRoseEnabled", debugTickCounterItem.rose != null);
-        }
-
-        private final DebugTickCounterItem defaultValues = new DebugTickCounterItem();
-        @NonNull
-        @Override
-        public Item importItem(@NonNull Cherry cherry, Item item) {
-            DebugTickCounterItem debugTickCounterItem = item != null ? (DebugTickCounterItem) item : new DebugTickCounterItem();
-            super.importItem(cherry, debugTickCounterItem);
-            debugTickCounterItem.counter = cherry.optInt("counter", defaultValues.counter);
-            if (cherry.optBoolean("debug_isRoseEnabled", false)) {
-                debugTickCounterItem.rose = _createRose();
-            }
-            return debugTickCounterItem;
-        }
-    }
-    // END - Save
-    public static final ItemFactory<DebugTickCounterItem> FACTORY = new ItemFactory<>() {
-        @Override
-        public DebugTickCounterItem create() {
-            return createEmpty();
-        }
-
-        @Override
-        public DebugTickCounterItem copy(Item item) {
-            return new DebugTickCounterItem((DebugTickCounterItem) item);
-        }
-    };
+    public static final ItemFactory<DebugTickCounterItem> FACTORY = new DebugTickCounterItemFactory();
 
     @NonNull
     public static DebugTickCounterItem createEmpty() {
@@ -64,7 +34,7 @@ public class DebugTickCounterItem extends TextItem {
     private String debugStat = "";
     private Rose rose;
 
-    protected DebugTickCounterItem() {
+    public DebugTickCounterItem() {
         super();
     }
 
@@ -155,5 +125,49 @@ public class DebugTickCounterItem extends TextItem {
 
     private static Rose _createRose() {
         return new Rose(WarningRose.TEN_CLASS_START, WarningRose.EGE_PREPARE_END_MILLIS, System::currentTimeMillis);
+    }
+
+
+
+    // Import - Export - Factory
+    public static class DebugTickCounterItemCodec extends TextItemCodec {
+        @NonNull
+        @Override
+        public Cherry exportItem(@NonNull Item item) {
+            DebugTickCounterItem debugTickCounterItem = (DebugTickCounterItem) item;
+            return super.exportItem(debugTickCounterItem)
+                    .put("counter", debugTickCounterItem.counter)
+                    .put("debug_isRoseEnabled", debugTickCounterItem.rose != null);
+        }
+
+        private final DebugTickCounterItem defaultValues = new DebugTickCounterItem();
+        @NonNull
+        @Override
+        public Item importItem(@NonNull Cherry cherry, Item item) {
+            DebugTickCounterItem debugTickCounterItem = item != null ? (DebugTickCounterItem) item : new DebugTickCounterItem();
+            super.importItem(cherry, debugTickCounterItem);
+            debugTickCounterItem.counter = cherry.optInt("counter", defaultValues.counter);
+            if (cherry.optBoolean("debug_isRoseEnabled", false)) {
+                debugTickCounterItem.rose = _createRose();
+            }
+            return debugTickCounterItem;
+        }
+    }
+
+    private static class DebugTickCounterItemFactory implements ItemFactory<DebugTickCounterItem> {
+        @Override
+        public DebugTickCounterItem create() {
+            return createEmpty();
+        }
+
+        @Override
+        public DebugTickCounterItem copy(Item item) {
+            return new DebugTickCounterItem((DebugTickCounterItem) item);
+        }
+
+        @Override
+        public Transform.Result transform(Item from) {
+            return Transform.Result.NOT_ALLOW;
+        }
     }
 }

@@ -61,7 +61,6 @@ import com.fazziclay.opentoday.databinding.ToolbarMoreItemsItemBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreOpentodayBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreSelectionBinding;
 import com.fazziclay.opentoday.databinding.ToolbarMoreTabsBinding;
-import com.fazziclay.opentoday.gui.EnumsRegistry;
 import com.fazziclay.opentoday.gui.GuiItemsHelper;
 import com.fazziclay.opentoday.gui.UI;
 import com.fazziclay.opentoday.gui.activity.MainActivity;
@@ -75,6 +74,7 @@ import com.fazziclay.opentoday.gui.fragment.ImportFragment;
 import com.fazziclay.opentoday.gui.fragment.ItemEditorFragment;
 import com.fazziclay.opentoday.gui.fragment.settings.SettingsFragment;
 import com.fazziclay.opentoday.gui.interfaces.NavigationHost;
+import com.fazziclay.opentoday.gui.item.registry.ItemsGuiRegistry;
 import com.fazziclay.opentoday.util.ClipboardUtil;
 import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.ResUtil;
@@ -619,7 +619,7 @@ public class AppToolbar {
 
                 if (itemInfo.isCompatibility(app.getFeatureFlags())) {
                     holder.show();
-                    holder.name.setText(EnumsRegistry.INSTANCE.nameResId(itemInfo.getItemType()));
+                    holder.name.setText(ItemsGuiRegistry.REGISTRY.nameOf(activity, itemInfo));
                     viewClick(holder.create, () -> {
                         rootNavigationHost.navigate(ItemEditorFragment.create(ItemUtil.getId(itemsStorage), itemInfo.getClassType(), getAddItemPos(settingsManager.getItemAddPosition())), true);
                         autoClose();
@@ -654,8 +654,8 @@ public class AppToolbar {
 
     private void showItemDescriptionDialog(ItemsRegistry.ItemInfo itemInfo) {
         new MaterialAlertDialogBuilder(activity)
-                .setTitle(EnumsRegistry.INSTANCE.nameResId(itemInfo.getItemType()))
-                .setMessage(EnumsRegistry.INSTANCE.itemDescriptionResId(itemInfo.getItemType()))
+                .setTitle(ItemsGuiRegistry.REGISTRY.nameOf(activity, itemInfo))
+                .setMessage(ItemsGuiRegistry.REGISTRY.descriptionOf(activity, itemInfo))
                 .setPositiveButton(R.string.abc_ok, null)
                 .show();
     }

@@ -289,9 +289,11 @@ public class SettingsManager {
     @Getter
     public ItemsRegistry.ItemInfo getDefaultQuickNoteType() {
         try {
-            return ItemsRegistry.REGISTRY.get(Identifier.of(QUICK_NOTE_ITEM_TYPE.get(this)));
+            ItemsRegistry.ItemInfo itemInfo = ItemsRegistry.REGISTRY.getByKey(Identifier.of(QUICK_NOTE_ITEM_TYPE.get(this)));
+            if (itemInfo == null) return ItemsRegistry.REGISTRY.getByKey(Identifier.of("base:item/checkmark"));
+            return itemInfo;
         } catch (Exception e) {
-            return ItemsRegistry.REGISTRY.get(Identifier.of("base:item/missing_no"));
+            return ItemsRegistry.REGISTRY.getByKey(Identifier.of("base:item/missing_no"));
         }
     }
 

@@ -17,7 +17,6 @@ import com.fazziclay.opentoday.app.items.item.CheckboxItem;
 import com.fazziclay.opentoday.app.items.item.CounterItem;
 import com.fazziclay.opentoday.app.items.item.CycleListItem;
 import com.fazziclay.opentoday.app.items.item.Item;
-import com.fazziclay.opentoday.app.items.item.ItemType;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.item.SimpleItemsStorage;
 import com.fazziclay.opentoday.app.items.item.TextItem;
@@ -32,10 +31,7 @@ import com.fazziclay.opentoday.util.callback.Status;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.UUID;
-import java.util.function.ToIntFunction;
 
 public class Debug202305RandomTab extends Tab implements Tickable, Readonly {
     public static final TabCodec CODEC = new TabCodec() {
@@ -88,7 +84,7 @@ public class Debug202305RandomTab extends Tab implements Tickable, Readonly {
         for (String s1 : s) {
             if (s1.startsWith("//")) continue;
             s1 = s1.split(";")[0];
-            TextItem item = (TextItem) ItemsRegistry.REGISTRY.get(ItemType.TEXT).create();
+            TextItem item = new TextItem("");
             try {
                 int c = Color.parseColor(s1);
                 item.setViewCustomBackgroundColor(true);
@@ -185,7 +181,7 @@ public class Debug202305RandomTab extends Tab implements Tickable, Readonly {
     private void tick_genColors(TickSession tickSession) {
         if (flag) {
             color = RandomUtil.nextInt() | 0xFF000000;
-            Item item = ItemsRegistry.REGISTRY.get(ItemType.values()[RandomUtil.nextInt(ItemType.values().length)]).create();
+            Item item = ItemsRegistry.REGISTRY.debugCreateRandomIdem();
             if (item instanceof TextItem textItem) {
                 textItem.setViewCustomBackgroundColor(true);
                 textItem.setViewBackgroundColor(color);
@@ -195,11 +191,11 @@ public class Debug202305RandomTab extends Tab implements Tickable, Readonly {
             itemsStorage.addItem(item);
         }
         if (!flag) {
-            Item item = ItemsRegistry.REGISTRY.get(ItemType.values()[RandomUtil.nextInt(ItemType.values().length)]).create();
+            Item item = ItemsRegistry.REGISTRY.debugCreateRandomIdem();
             if (item instanceof TextItem textItem) {
                 textItem.setViewCustomBackgroundColor(true);
                 textItem.setViewBackgroundColor(color);
-                textItem.setParagraphColorize(true);
+                textItem.setFormatting(true);
                 textItem.setText("$[-#ffffff]White text!  $[-#000000] Black text $[-#ff00ff]" + ColorUtil.colorToHex(color));
             }
             item.getItemCallbacks().addCallback(CallbackImportance.DEFAULT, itemCallback);
@@ -215,7 +211,7 @@ public class Debug202305RandomTab extends Tab implements Tickable, Readonly {
         if (mode == 0) {
             itemsStorage.deleteItem(itemsStorage.getAllItems()[RandomUtil.nextInt(itemsStorage.size())]);
         } else {
-            Item item = ItemsRegistry.REGISTRY.get(ItemType.values()[RandomUtil.nextInt(ItemType.values().length)]).create();
+            Item item = ItemsRegistry.REGISTRY.debugCreateRandomIdem();
             item.setViewBackgroundColor(RandomUtil.nextInt());
             item.setViewCustomBackgroundColor(true);
             item.setMinimize(RandomUtil.nextBoolean());

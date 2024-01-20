@@ -32,6 +32,10 @@ public class ColorUtil {
         return "#" + byteToHex(a) + byteToHex(r) + byteToHex(g) + byteToHex(b);
     }
 
+    public static int hexToColor(String hex) {
+        return Color.parseColor(hex);
+    }
+
     private static String byteToHex(int value) {
         String hex = "00".concat(Integer.toHexString(value));
         return hex.substring(hex.length()-2);

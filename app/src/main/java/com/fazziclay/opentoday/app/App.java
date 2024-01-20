@@ -238,6 +238,9 @@ public class App extends Application {
             CrashReportContext.BACK.push("disabling all...");
             PluginManager.disableAllPlugins();
             for (final String shortName : getSettingsManager().getPlugins().split(",")) {
+                if (shortName.trim().isEmpty()) {
+                    continue;
+                }
                 CrashReportContext.BACK.swap("plugin: " + shortName.trim());
 
                 PluginsRegistry.PluginInfo pluginInfo = PluginsRegistry.REGISTRY.getByShortName(shortName);

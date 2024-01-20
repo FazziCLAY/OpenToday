@@ -1,59 +1,22 @@
 package com.fazziclay.opentoday.app.items.item;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.util.annotation.Getter;
-import com.fazziclay.opentoday.util.annotation.RequireSave;
-import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.annotation.Setter;
 
 public class CheckboxItem extends TextItem {
-    // START - Save
-    public final static CheckboxItemCodec CODEC = new CheckboxItemCodec();
-    public static class CheckboxItemCodec extends TextItemCodec {
-        @NonNull
-        @Override
-        public Cherry exportItem(@NonNull Item item) {
-            CheckboxItem checkboxItem = (CheckboxItem) item;
-            return super.exportItem(checkboxItem)
-                    .put("checked", checkboxItem.checked);
-        }
+    private static final String TAG = "CheckboxItem";
+    public static final CheckboxItemCodec CODEC = new CheckboxItemCodec();
+    public static final ItemFactory<CheckboxItem> FACTORY = new CheckboxItemFactory();
 
-        private final CheckboxItem defaultValues = new CheckboxItem();
-        @NonNull
-        @Override
-        public Item importItem(@NonNull Cherry cherry, Item item) {
-            CheckboxItem checkboxItem = item != null ? (CheckboxItem) item : new CheckboxItem();
-            super.importItem(cherry, checkboxItem);
-            checkboxItem.checked = cherry.optBoolean("checked", defaultValues.checked);
-            checkboxItem.getStat().setChecked(checkboxItem.checked);
-            return checkboxItem;
-        }
-    }
-    // END - Save
 
-    public static final ItemFactory<CheckboxItem> FACTORY = new ItemFactory<>() {
-        @Override
-        public CheckboxItem create() {
-            return createEmpty();
-        }
+    private boolean checked;
 
-        @Override
-        public CheckboxItem copy(Item item) {
-            return new CheckboxItem((CheckboxItem) item);
-        }
-    };
-
-    @NonNull
-    public static CheckboxItem createEmpty() {
-        return new CheckboxItem("", false);
-    }
-
-    @SaveKey(key = "checked") @RequireSave private boolean checked;
-
-    protected CheckboxItem() {
+    public CheckboxItem() {
         super();
     }
 
@@ -69,9 +32,11 @@ public class CheckboxItem extends TextItem {
     }
 
     // Copy
-    public CheckboxItem(CheckboxItem copy) {
+    public CheckboxItem(@Nullable CheckboxItem copy) {
         super(copy);
-        this.checked = copy.checked;
+        if (copy != null) {
+            this.checked = copy.checked;
+        }
     }
 
     @Override
@@ -86,9 +51,59 @@ public class CheckboxItem extends TextItem {
         updateStat();
 
         // TODO: 13.06.2023 fix this crunch.
-        // instantly tick in setChecked for moment-filtergroup-reload
-        if (isAttached() && ItemUtil.isTypeContainsInParents(this, ItemType.FILTER_GROUP)) {
+        // instantly tick in setChecked for instantly-filtergroup-reload
+        if (isAttached() && ItemUtil.isTypeContainsInParents(this, FilterGroupItem.class)) {
             App.get().getTickThread().instantlyCheckboxTick(this);
+        }
+    }
+
+
+
+    // Import - Export - Factory
+    public static class CheckboxItemCodec extends TextItemCodec {
+        private static final String KEY_CHECKED = "checked";
+
+        @NonNull
+        @Override
+        public Cherry exportItem(@NonNull Item item) {
+            final CheckboxItem checkboxItem = (CheckboxItem) item;
+            return super.exportItem(checkboxItem)
+                    .put(KEY_CHECKED, checkboxItem.checked);
+        }
+
+        private final CheckboxItem DEFAULT_VALUES = new CheckboxItem();
+        @NonNull
+        @Override
+        public Item importItem(@NonNull Cherry cherry, Item item) {
+            final CheckboxItem checkboxItem = fallback(item, CheckboxItem::new);
+            super.importItem(cherry, checkboxItem);
+
+            checkboxItem.checked = cherry.optBoolean(KEY_CHECKED, DEFAULT_VALUES.checked);
+            checkboxItem.getStat().setChecked(checkboxItem.checked);
+            return checkboxItem;
+        }
+    }
+
+    private static class CheckboxItemFactory implements ItemFactory<CheckboxItem> {
+        @Override
+        public CheckboxItem create() {
+            return new CheckboxItem("", false);
+        }
+
+        @Override
+        public CheckboxItem copy(Item item) {
+            return new CheckboxItem((CheckboxItem) item);
+        }
+
+        @Override
+        public Transform.Result transform(Item from) {
+            if (from instanceof CheckboxItem checkboxItem) {
+                return Transform.Result.allow(() -> new CheckboxItem(checkboxItem));
+
+            } else if (from instanceof TextItem textItem) {
+                return Transform.Result.allow(() -> new CheckboxItem(textItem, false));
+            }
+            return Transform.Result.NOT_ALLOW;
         }
     }
 }

@@ -5,9 +5,9 @@ import android.content.Context;
 
 import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
-import com.fazziclay.opentoday.app.items.item.ItemType;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
-import com.fazziclay.opentoday.gui.EnumsRegistry;
+import com.fazziclay.opentoday.gui.item.registry.ItemsGuiRegistry;
+import com.fazziclay.opentoday.util.Identifier;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
@@ -27,18 +27,18 @@ public class DialogSelectItemType {
     private int selectedItem = -1;
 
     public DialogSelectItemType(Context context, OnSelected onSelected) {
-        this(context, onSelected, (ItemType) null);
+        this(context, onSelected, (Identifier) null);
     }
 
-    public DialogSelectItemType(Context context, OnSelected onSelected, ItemType selectedItem) {
-        this(context, onSelected, type -> ItemsRegistry.REGISTRY.get(type).isCompatibility(App.get(context).getFeatureFlags()), selectedItem);
+    public DialogSelectItemType(Context context, OnSelected onSelected, Identifier selectedItem) {
+        this(context, onSelected, type -> type.isCompatibility(App.get(context).getFeatureFlags()), selectedItem);
     }
 
     public DialogSelectItemType(Context context, OnSelected onSelected, ItemTypeValidator itemTypeValidator) {
         this(context, onSelected, itemTypeValidator, null);
     }
 
-    public DialogSelectItemType(Context context, OnSelected onSelected, ItemTypeValidator itemTypeValidator, ItemType selectedItem) {
+    public DialogSelectItemType(Context context, OnSelected onSelected, ItemTypeValidator itemTypeValidator, Identifier selectedItem) {
         this.context = context;
         this.app = App.get(context);
         this.itemTypeValidator = itemTypeValidator;
@@ -49,11 +49,11 @@ public class DialogSelectItemType {
 
         int i = 0;
         for (final ItemsRegistry.ItemInfo item : ItemsRegistry.REGISTRY.getAllItems()) {
-            boolean validate = itemTypeValidator.validate(item.getItemType());
+            boolean validate = itemTypeValidator.validate(item);
             if (validate) {
                 tempInfos.add(item);
-                tempNames.add(EnumsRegistry.INSTANCE.name(item.getItemType(), context));
-                if (item.getItemType() == selectedItem) {
+                tempNames.add(ItemsGuiRegistry.REGISTRY.nameOf(context, item));
+                if (item.getIdentifier().equals(selectedItem)) {
                     this.selectedItem = i;
                 }
                 i++;
@@ -81,7 +81,7 @@ public class DialogSelectItemType {
                 .setMessage(this.message)
                 .setSingleChoiceItems(itemsNames, selectedItem, (dialogInterface, i) -> {
                     if (i < 0) return;
-                    onSelected.onSelected(itemsInfos[i].getItemType());
+                    onSelected.onSelected(itemsInfos[i]);
                     cancel();
                 })
                 .setPositiveButton(context.getString(R.string.dialog_selectItemAction_cancel), null)
@@ -95,11 +95,11 @@ public class DialogSelectItemType {
 
     @FunctionalInterface
     public interface OnSelected {
-        void onSelected(ItemType type);
+        void onSelected(ItemsRegistry.ItemInfo type);
     }
 
     @FunctionalInterface
     public interface ItemTypeValidator {
-        boolean validate(ItemType type);
+        boolean validate(ItemsRegistry.ItemInfo type);
     }
 }

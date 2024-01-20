@@ -10,12 +10,13 @@ import com.fazziclay.opentoday.app.items.callback.OnCurrentItemStorageUpdate;
 import com.fazziclay.opentoday.app.items.callback.OnItemsStorageUpdate;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.util.annotation.Getter;
-import com.fazziclay.opentoday.util.annotation.RequireSave;
-import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.annotation.Setter;
 import com.fazziclay.opentoday.util.callback.CallbackImportance;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
 import com.fazziclay.opentoday.util.callback.Status;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,70 +24,34 @@ import java.util.List;
 import java.util.UUID;
 
 public class CycleListItem extends TextItem implements ContainerItem, ItemsStorage, CurrentItemStorage {
-    // START - Save
-    public final static CycleListItemCodec CODEC = new CycleListItemCodec();
-    public static class CycleListItemCodec extends TextItemCodec {
-        @NonNull
-        @Override
-        public Cherry exportItem(@NonNull Item item) {
-            CycleListItem cycleListItem = (CycleListItem) item;
-            return super.exportItem(item)
-                    .put("currentItemPosition", cycleListItem.currentItemPosition)
-                    .put("itemsCycle", ItemCodecUtil.exportItemList(cycleListItem.getAllItems()))
-                    .put("tickBehavior", cycleListItem.tickBehavior);
-        }
+    public static final CycleListItemCodec CODEC = new CycleListItemCodec();
+    public static final ItemFactory<CycleListItem> FACTORY = new CycleListItemFactory();
 
-        private final CycleListItem defaultValues = new CycleListItem();
-        @NonNull
-        @Override
-        public Item importItem(@NonNull Cherry cherry, Item item) {
-            CycleListItem cycleListItem = item != null ? (CycleListItem) item : new CycleListItem();
-            super.importItem(cherry, cycleListItem);
-            cycleListItem.itemsCycleStorage.importData(ItemCodecUtil.importItemList(cherry.optOrchard("itemsCycle")));
-            cycleListItem.currentItemPosition = cherry.optInt("currentItemPosition", defaultValues.currentItemPosition);
-            cycleListItem.tickBehavior = cherry.optEnum("tickBehavior", defaultValues.tickBehavior);
-            return cycleListItem;
-        }
-    }
-    // END - Save
-    public static final ItemFactory<CycleListItem> FACTORY = new ItemFactory<>() {
-        @Override
-        public CycleListItem create() {
-            return createEmpty();
-        }
-
-        @Override
-        public CycleListItem copy(Item item) {
-            return new CycleListItem((CycleListItem) item);
-        }
-    };
-
-    @NonNull
-    public static CycleListItem createEmpty() {
-        return new CycleListItem("");
-    }
-
-    @SaveKey(key = "itemsCycle") @RequireSave private final CycleItemsStorage itemsCycleStorage = new CycleItemsStorage();
-    @SaveKey(key = "currentItemPosition") @RequireSave private int currentItemPosition = 0;
-    @SaveKey(key = "tickBehavior") @RequireSave private TickBehavior tickBehavior = TickBehavior.CURRENT;
+    private final CycleItemsStorage itemsCycleStorage = new CycleItemsStorage();
+    private int currentItemPosition = 0;
+    private TickBehavior tickBehavior = TickBehavior.CURRENT;
     private final CallbackStorage<OnCurrentItemStorageUpdate> onCurrentItemStorageUpdateCallback = new CallbackStorage<>();
 
-    protected CycleListItem() {}
+    public CycleListItem() {
+        super();
+    }
 
-    public CycleListItem(String text) {
+    public CycleListItem(@NotNull String text) {
         super(text);
     }
 
-    public CycleListItem(TextItem textItem) {
+    // append
+    public CycleListItem(@Nullable TextItem textItem) {
         super(textItem);
     }
 
-    public CycleListItem(TextItem textItem, ContainerItem containerItem) {
+    public CycleListItem(@Nullable TextItem textItem, @Nullable ContainerItem containerItem) {
         super(textItem);
         if (containerItem != null) this.itemsCycleStorage.copyData(containerItem.getAllItems());
     }
 
-    public CycleListItem(CycleListItem copy) {
+    // copy
+    public CycleListItem(@Nullable CycleListItem copy) {
         super(copy);
         if (copy != null) {
             this.itemsCycleStorage.copyData(copy.getAllItems());
@@ -97,15 +62,11 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
 
     @Override
     public Item getCurrentItem() {
-        if (size() == 0) {
+        if (isEmpty()) {
             return null;
         }
-
-        if (currentItemPosition > size()-1) {
-            currentItemPosition = 0;
-        }
-
         try {
+            processOverDownHead();
             return getAllItems()[currentItemPosition];
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -113,29 +74,28 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
     }
 
     public void next() {
-        if (size() == 0) {
+        if (isEmpty()) {
             return;
         }
         currentItemPosition++;
-        if (currentItemPosition >= getAllItems().length) {
-            currentItemPosition = 0;
-        }
+        processOverDownHead();
         onCurrentItemStorageUpdateCallback.run((callbackStorage, callback) -> callback.onCurrentChanged(getCurrentItem()));
-        visibleChanged();
         save();
     }
 
     public void previous() {
-        if (size() == 0) {
+        if (isEmpty()) {
             return;
         }
         currentItemPosition--;
-        if (currentItemPosition < 0) {
-            currentItemPosition = size() - 1;
-        }
+        processOverDownHead();
         onCurrentItemStorageUpdateCallback.run((callbackStorage, callback) -> callback.onCurrentChanged(getCurrentItem()));
-        visibleChanged();
         save();
+    }
+
+    private void processOverDownHead() {
+        if (currentItemPosition >= size()) currentItemPosition = 0;
+        if (currentItemPosition < 0) currentItemPosition = size() - 1;
     }
 
     @Override
@@ -337,5 +297,58 @@ public class CycleListItem extends TextItem implements ContainerItem, ItemsStora
         NOTHING,
         CURRENT,
         NOT_CURRENT
+    }
+
+
+
+
+    // Import - Export - Factory
+    public static class CycleListItemCodec extends TextItemCodec {
+        private static final String KEY_CURRENT = "cycle_current";
+        private static final String KEY_ITEMS = "cycle_items";
+        private static final String KEY_TICK_BEHAVIOR = "cycle_tick_behavior";
+
+        @NonNull
+        @Override
+        public Cherry exportItem(@NonNull Item item) {
+            var cycleListItem = (CycleListItem) item;
+            return super.exportItem(item)
+                    .put(KEY_CURRENT, cycleListItem.currentItemPosition)
+                    .put(KEY_ITEMS, ItemCodecUtil.exportItemList(cycleListItem.itemsCycleStorage.getAllItems()))
+                    .put(KEY_TICK_BEHAVIOR, cycleListItem.tickBehavior);
+        }
+
+        private final CycleListItem DEFAULT_VALUE = new CycleListItem();
+        @NonNull
+        @Override
+        public Item importItem(@NonNull Cherry cherry, Item item) {
+            var cycleListItem = fallback(item, CycleListItem::new);
+            super.importItem(cherry, cycleListItem);
+
+            cycleListItem.currentItemPosition = cherry.optInt(KEY_CURRENT, DEFAULT_VALUE.currentItemPosition);
+            cycleListItem.itemsCycleStorage.importData(ItemCodecUtil.importItemList(cherry.optOrchard(KEY_ITEMS)));
+            cycleListItem.tickBehavior = cherry.optEnum(KEY_TICK_BEHAVIOR, DEFAULT_VALUE.tickBehavior);
+            return cycleListItem;
+        }
+    }
+
+    private static class CycleListItemFactory implements ItemFactory<CycleListItem> {
+        @Override
+        public CycleListItem create() {
+            return new CycleListItem();
+        }
+
+        @Override
+        public CycleListItem copy(Item item) {
+            return new CycleListItem((CycleListItem) item);
+        }
+
+        @Override
+        public Transform.Result transform(Item from) {
+            if (from instanceof TextItem textItem) {
+                return Transform.Result.allow(() -> new CycleListItem(textItem, ItemUtil.getAsContainer(from)));
+            }
+            return Transform.Result.NOT_ALLOW;
+        }
     }
 }

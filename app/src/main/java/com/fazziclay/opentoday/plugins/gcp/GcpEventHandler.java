@@ -31,7 +31,7 @@ import com.fazziclay.opentoday.app.items.item.FilterGroupItem;
 import com.fazziclay.opentoday.app.items.item.GroupItem;
 import com.fazziclay.opentoday.app.items.item.Item;
 import com.fazziclay.opentoday.app.items.item.ItemCodecUtil;
-import com.fazziclay.opentoday.app.items.item.ItemType;
+import com.fazziclay.opentoday.app.items.item.ItemUtil;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.items.selection.SelectionManager;
@@ -39,10 +39,10 @@ import com.fazziclay.opentoday.app.items.tag.ItemTag;
 import com.fazziclay.opentoday.databinding.ToolbarMoreSelectionBinding;
 import com.fazziclay.opentoday.gui.ColorPicker;
 import com.fazziclay.opentoday.gui.GuiItemsHelper;
-import com.fazziclay.opentoday.util.Destroyer;
 import com.fazziclay.opentoday.gui.item.ItemViewGenerator;
 import com.fazziclay.opentoday.gui.item.ItemViewGeneratorBehavior;
 import com.fazziclay.opentoday.gui.item.ItemsStorageDrawerBehavior;
+import com.fazziclay.opentoday.util.Destroyer;
 import com.fazziclay.opentoday.util.MinBaseAdapter;
 import com.fazziclay.opentoday.util.RandomUtil;
 import com.fazziclay.opentoday.util.profiler.Profiler;
@@ -361,7 +361,8 @@ public class GcpEventHandler extends EventHandler {
 
                                     @Override
                                     public int compare(Item item, Item t1) {
-                                        if (item.getItemType().isInherit(ItemType.CHECKBOX) && !item.getItemType().isInherit(ItemType.CHECKBOX)) {
+                                        // oldest expression here always is false.
+                                        if (false) {
                                             return 1;
                                         }
                                         return isChecked(item) - isChecked(t1);
@@ -493,7 +494,7 @@ public class GcpEventHandler extends EventHandler {
                         GroupItem sorted = new GroupItem("Sorted!");
                         GuiItemsHelper.applyInitRandomColorIfNeeded(context, sorted, App.get(context).getSettingsManager());
                         for (Item item : array) {
-                            Item copy = ItemsRegistry.REGISTRY.copyItem(item);
+                            Item copy = ItemUtil.copyItem(item);
                             sorted.addItem(copy);
                         }
                         finalParent.addItem(sorted);

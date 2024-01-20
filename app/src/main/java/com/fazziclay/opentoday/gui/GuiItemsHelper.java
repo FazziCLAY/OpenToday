@@ -3,23 +3,13 @@ package com.fazziclay.opentoday.gui;
 import android.content.Context;
 
 import com.fazziclay.opentoday.app.BeautifyColorManager;
-import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.item.Item;
-import com.fazziclay.opentoday.app.items.item.ItemType;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
 import com.fazziclay.opentoday.app.items.item.TextItem;
+import com.fazziclay.opentoday.app.settings.SettingsManager;
 
 public class GuiItemsHelper {
-    /**
-     * Create item include settings {@link SettingsManager#isRandomItemBackground()} and set text
-     */
-    public static Item createItem(Context context, ItemType itemType, String text, SettingsManager settingsManager) {
-        final ItemsRegistry.ItemInfo registryItem = ItemsRegistry.REGISTRY.get(itemType);
-        return createItem(context, registryItem, text, settingsManager);
-    }
-
-
     /**
      * Create item include settings {@link SettingsManager#isRandomItemBackground()} and set text
      */

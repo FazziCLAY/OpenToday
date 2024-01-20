@@ -6,7 +6,6 @@ import com.fazziclay.opentoday.R
 import com.fazziclay.opentoday.app.ImportWrapper
 import com.fazziclay.opentoday.app.items.item.CycleListItem
 import com.fazziclay.opentoday.app.items.item.FilterGroupItem
-import com.fazziclay.opentoday.app.items.item.ItemType
 import com.fazziclay.opentoday.app.items.item.filter.FiltersRegistry
 import com.fazziclay.opentoday.app.items.item.filter.LogicContainerItemFilter
 import com.fazziclay.opentoday.app.settings.enums.FirstTab
@@ -37,20 +36,6 @@ object EnumsRegistry {
         EnumInfo(FiltersRegistry.FilterType.LOGIC_CONTAINER,        R.string.filterRegistry_filterType_LOGIC_CONTAINER),
         EnumInfo(FiltersRegistry.FilterType.ITEM_STAT,              R.string.filterRegistry_filterType_ITEM_STAT),
 
-        EnumInfo(ItemType.DEBUG_TICK_COUNTER,            R.string.item_debugTickCounter).setItemDescription(R.string.item_debugTickCounter_description),
-        EnumInfo(ItemType.TEXT,                          R.string.item_text).setItemDescription(R.string.item_text_description),
-        EnumInfo(ItemType.LONG_TEXT,                     R.string.item_longTextItem).setItemDescription(R.string.item_longTextItem_description),
-        EnumInfo(ItemType.CHECKBOX,                      R.string.item_checkbox).setItemDescription(R.string.item_checkbox_description),
-        EnumInfo(ItemType.CHECKBOX_DAY_REPEATABLE,       R.string.item_dayRepeatableCheckbox).setItemDescription(R.string.item_dayRepeatableCheckbox_description),
-        EnumInfo(ItemType.COUNTER,                       R.string.item_counter).setItemDescription(R.string.item_counter_description),
-        EnumInfo(ItemType.CYCLE_LIST,                    R.string.item_cycleList).setItemDescription(R.string.item_cycleList_description),
-        EnumInfo(ItemType.GROUP,                         R.string.item_group).setItemDescription(R.string.item_group_description),
-        EnumInfo(ItemType.FILTER_GROUP,                  R.string.item_filterGroup).setItemDescription(R.string.item_filterGroup_description),
-        EnumInfo(ItemType.MATH_GAME,                     R.string.item_mathGame).setItemDescription(R.string.item_mathGame_description),
-        EnumInfo(ItemType.SLEEP_TIME,                    R.string.item_sleepTime).setItemDescription(R.string.item_sleepTime_description),
-        EnumInfo(ItemType.MISSING_NO,                    R.string.item_missingNo).setItemDescription(R.string.item_missingNo_description),
-        EnumInfo(ItemType.COUNTDOWN_CHECKMARK,           R.string.item_countdownCheckmark).setItemDescription(R.string.item_countdownCheckmark_description),
-
         EnumInfo(FilterGroupItem.TickBehavior.ALL,           R.string.item_filterGroup_tickBehavior_ALL),
         EnumInfo(FilterGroupItem.TickBehavior.NOTHING,       R.string.item_filterGroup_tickBehavior_NOTHING),
         EnumInfo(FilterGroupItem.TickBehavior.ACTIVE,        R.string.item_filterGroup_tickBehavior_ACTIVE),
@@ -73,7 +58,6 @@ object EnumsRegistry {
         missingCheck(ItemAction.values().toList())
         missingCheck(ImportWrapper.ErrorCode.values().toList())
         missingCheck(FiltersRegistry.FilterType.values().toList())
-        missingCheck(ItemType.values().toList())
         missingCheck(FilterGroupItem.TickBehavior.values().toList())
         missingCheck(CycleListItem.TickBehavior.values().toList())
         missingCheck(ItemAddPosition.values().toList())

@@ -1,6 +1,7 @@
 package com.fazziclay.opentoday.app.items.item;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.fazziclay.opentoday.app.data.Cherry;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
@@ -9,73 +10,56 @@ import com.fazziclay.opentoday.util.time.TimeUtil;
 import java.util.Objects;
 
 public class CountDownCheckmarkItem extends CheckboxItem {
-    // START - Save
-    public final static CountDownCheckmarkItem.CountDownCheckmarkItemCodec CODEC = new CountDownCheckmarkItem.CountDownCheckmarkItemCodec();
-    public static class CountDownCheckmarkItemCodec extends CheckboxItem.CheckboxItemCodec {
-        @NonNull
-        @Override
-        public Cherry exportItem(@NonNull Item item) {
-            CountDownCheckmarkItem countDownCheckmarkItem = (CountDownCheckmarkItem) item;
-            return super.exportItem(countDownCheckmarkItem)
-                    .put("checkedTime", countDownCheckmarkItem.checkedTime)
-                    .put("step", countDownCheckmarkItem.step)
-                    .put("availableSteps", countDownCheckmarkItem.availableSteps)
-                    .put("roundToDays", countDownCheckmarkItem.roundToDays);
-        }
+    private static final String DISPLAY_CACHE_FALLBACK = "?";
+    private static final String TAG = "CountDownCheckmarkItem";
 
-        private final CountDownCheckmarkItem defaultValues = new CountDownCheckmarkItem();
-        @NonNull
-        @Override
-        public Item importItem(@NonNull Cherry cherry, Item item) {
-            CountDownCheckmarkItem countDownCheckmarkItem = item != null ? (CountDownCheckmarkItem) item : new CountDownCheckmarkItem();
-            super.importItem(cherry, countDownCheckmarkItem);
+    public static final CountDownCheckmarkItem.CountDownCheckmarkItemCodec CODEC = new CountDownCheckmarkItemCodec();
+    public static final ItemFactory<CountDownCheckmarkItem> FACTORY = new CountDownCheckmarkItemFactory();
 
-            countDownCheckmarkItem.checkedTime = cherry.optLong("checkedTime", defaultValues.checkedTime);
-            countDownCheckmarkItem.step = cherry.optLong("step", defaultValues.step);
-            countDownCheckmarkItem.availableSteps = cherry.optInt("availableSteps", defaultValues.availableSteps);
-            countDownCheckmarkItem.roundToDays = cherry.optBoolean("roundToDays", defaultValues.roundToDays);
 
-            return countDownCheckmarkItem;
-        }
-    }
-    // END - Save
-    public static final ItemFactory<CountDownCheckmarkItem> FACTORY = new ItemFactory<>() {
-        @Override
-        public CountDownCheckmarkItem create() {
-            return createEmpty();
-        }
-
-        @Override
-        public CountDownCheckmarkItem copy(Item item) {
-            return new CountDownCheckmarkItem((CountDownCheckmarkItem) item);
-        }
-    };
-
-    private long checkedTime;
-    private long step = TimeUtil.SECONDS_IN_DAY * 1000;
-    private int availableSteps = 2;
+    private long checkedAt;
+    private long stepSize = TimeUtil.MILLISECONDS_IN_DAY;
+    private int steps = 2;
     private boolean roundToDays = false;
 
     private String displayCache;
 
-    @NonNull
-    public static CountDownCheckmarkItem createEmpty() {
-        return new CountDownCheckmarkItem();
-    }
 
     public CountDownCheckmarkItem() {
-        this(null);
+        super();
+        this.displayCache = DISPLAY_CACHE_FALLBACK;
     }
 
 
-    public CountDownCheckmarkItem(CountDownCheckmarkItem copy) {
+    // copy
+    public CountDownCheckmarkItem(@Nullable CountDownCheckmarkItem copy) {
+        super(copy);
+        this.displayCache = DISPLAY_CACHE_FALLBACK;
         if (copy != null) {
-            this.checkedTime = copy.checkedTime;
-            this.step = copy.step;
-            this.availableSteps = copy.availableSteps;
+            this.checkedAt = copy.checkedAt;
+            this.stepSize = copy.stepSize;
+            this.steps = copy.steps;
             this.roundToDays = copy.roundToDays;
         }
-        this.displayCache = "?";
+    }
+
+    // append
+    public CountDownCheckmarkItem(@Nullable CheckboxItem copy) {
+        super(copy);
+        this.displayCache = DISPLAY_CACHE_FALLBACK;
+    }
+
+    // append
+    public CountDownCheckmarkItem(@Nullable TextItem copy) {
+        super(copy, false);
+        this.displayCache = DISPLAY_CACHE_FALLBACK;
+    }
+
+    public CountDownCheckmarkItem(TextItem textItem, boolean checked, long stepSize, int steps, boolean roundToDays) {
+        super(textItem, checked);
+        this.stepSize = stepSize;
+        this.steps = steps;
+        this.roundToDays = roundToDays;
     }
 
     @Override
@@ -84,16 +68,17 @@ public class CountDownCheckmarkItem extends CheckboxItem {
             long current = tickSession.getGregorianCalendar().getTimeInMillis();
             long diffWithCheck;
             if (roundToDays) {
-                diffWithCheck = TimeUtil.noTimeUnixTimestamp(current) - TimeUtil.noTimeUnixTimestamp(checkedTime);
+                diffWithCheck = TimeUtil.noTimeUnixTimestamp(current) - TimeUtil.noTimeUnixTimestamp(checkedAt);
             } else {
-                diffWithCheck = current - checkedTime;
+                diffWithCheck = current - checkedAt;
             }
-            long stepsPassed = diffWithCheck / step;
+            long stepsPassed = diffWithCheck / stepSize;
 
-            int countdown = availableSteps - Math.toIntExact(stepsPassed);
+            int countdown = steps - Math.toIntExact(stepsPassed);
             if (countdown <= 0) {
                 setChecked(false);
                 tickSession.saveNeeded();
+                getItemCallbacks().run((callbackStorage, callback) -> callback.countDownCheckmarkStopped(CountDownCheckmarkItem.this, false));
                 visibleChanged();
             } else {
                 String toDisplay = String.valueOf(countdown);
@@ -114,29 +99,30 @@ public class CountDownCheckmarkItem extends CheckboxItem {
     @Override
     public void setChecked(boolean s) {
         if (s) {
-            checkedTime = TickSession.getLatestGregorianCalendar().getTimeInMillis();
-            displayCache = String.valueOf(availableSteps);
+            checkedAt = TickSession.getLatestGregorianCalendar().getTimeInMillis();
+            displayCache = String.valueOf(steps);
         } else {
-            checkedTime = 0;
+            checkedAt = 0;
+            displayCache = DISPLAY_CACHE_FALLBACK;
         }
         // before sets checkedTime because this may call instant tick for this checkboxItem
         super.setChecked(s);
     }
 
-    public long getStep() {
-        return step;
+    public long getStepSize() {
+        return stepSize;
     }
 
-    public void setStep(long step) {
-        this.step = step;
+    public void setStepSize(long stepSize) {
+        this.stepSize = stepSize;
     }
 
-    public int getAvailableSteps() {
-        return availableSteps;
+    public int getSteps() {
+        return steps;
     }
 
-    public void setAvailableSteps(int availableSteps) {
-        this.availableSteps = availableSteps;
+    public void setSteps(int steps) {
+        this.steps = steps;
     }
 
     public boolean isRoundToDays() {
@@ -145,5 +131,68 @@ public class CountDownCheckmarkItem extends CheckboxItem {
 
     public void setRoundToDays(boolean roundToDays) {
         this.roundToDays = roundToDays;
+    }
+
+
+
+    // Import - Export - Factory
+    public static class CountDownCheckmarkItemCodec extends CheckboxItem.CheckboxItemCodec {
+        private static final String KEY_COUNTDOWN_CHECKED_AT = "countdown_checked_time";
+        private static final String KEY_COUNTDOWN_STEP_SIZE = "countdown_step_size";
+        private static final String KEY_COUNTDOWN_STEPS = "countdown_steps";
+        private static final String KEY_COUNTDOWN_ROUND_TO_DAYS = "countdown_round_to_days";
+
+        @NonNull
+        @Override
+        public Cherry exportItem(@NonNull Item item) {
+            CountDownCheckmarkItem countDownCheckmarkItem = (CountDownCheckmarkItem) item;
+            return super.exportItem(countDownCheckmarkItem)
+                    .put(KEY_COUNTDOWN_CHECKED_AT, countDownCheckmarkItem.checkedAt)
+                    .put(KEY_COUNTDOWN_STEP_SIZE, countDownCheckmarkItem.stepSize)
+                    .put(KEY_COUNTDOWN_STEPS, countDownCheckmarkItem.steps)
+                    .put(KEY_COUNTDOWN_ROUND_TO_DAYS, countDownCheckmarkItem.roundToDays);
+        }
+
+        private final CountDownCheckmarkItem DEFAULT_VALUES = new CountDownCheckmarkItem();
+        @NonNull
+        @Override
+        public Item importItem(@NonNull Cherry cherry, Item item) {
+            var cdcm = fallback(item, CountDownCheckmarkItem::new);
+            super.importItem(cherry, cdcm);
+
+            cdcm.checkedAt = cherry.optLong(KEY_COUNTDOWN_CHECKED_AT, DEFAULT_VALUES.checkedAt);
+            cdcm.stepSize = cherry.optLong(KEY_COUNTDOWN_STEP_SIZE, DEFAULT_VALUES.stepSize);
+            cdcm.steps = cherry.optInt(KEY_COUNTDOWN_STEPS, DEFAULT_VALUES.steps);
+            cdcm.roundToDays = cherry.optBoolean(KEY_COUNTDOWN_ROUND_TO_DAYS, DEFAULT_VALUES.roundToDays);
+
+            return cdcm;
+        }
+    }
+
+    private static class CountDownCheckmarkItemFactory implements ItemFactory<CountDownCheckmarkItem> {
+        @Override
+        public CountDownCheckmarkItem create() {
+            return new CountDownCheckmarkItem();
+        }
+
+        @Override
+        public CountDownCheckmarkItem copy(Item item) {
+            return new CountDownCheckmarkItem((CountDownCheckmarkItem) item);
+        }
+
+        @Override
+        public Transform.Result transform(Item from) {
+            if (from instanceof DayRepeatableCheckboxItem checkboxItem) {
+                return Transform.Result.allow(() -> new CountDownCheckmarkItem(checkboxItem, checkboxItem.isChecked(), TimeUtil.MILLISECONDS_IN_DAY, 1, true));
+
+            } else if (from instanceof CheckboxItem checkboxItem) {
+                return Transform.Result.allow(() -> new CountDownCheckmarkItem(checkboxItem));
+
+
+            } else if (from instanceof TextItem textItem) {
+                return Transform.Result.allow(() -> new CountDownCheckmarkItem(textItem));
+            }
+            return Transform.Result.NOT_ALLOW;
+        }
     }
 }

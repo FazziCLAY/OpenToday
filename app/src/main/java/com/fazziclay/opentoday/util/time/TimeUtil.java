@@ -25,6 +25,7 @@ public class TimeUtil {
     public static final int SECONDS_IN_MINUTE = 60;
     public static final int SECONDS_IN_HOUR = SECONDS_IN_MINUTE * 60;
     public static final int SECONDS_IN_DAY = SECONDS_IN_HOUR * 24;
+    public static final int MILLISECONDS_IN_DAY = SECONDS_IN_DAY * 1000;
     public static final int SECONDS_IN_WEEK = SECONDS_IN_DAY * 7;
 
     /**

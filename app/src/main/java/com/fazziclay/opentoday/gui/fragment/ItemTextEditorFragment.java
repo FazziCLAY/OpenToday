@@ -27,7 +27,7 @@ import com.fazziclay.opentoday.R;
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.ColorHistoryManager;
 import com.fazziclay.opentoday.app.items.ItemsRoot;
-import com.fazziclay.opentoday.app.items.item.LongTextItem;
+import com.fazziclay.opentoday.app.items.item.ExtendedTextItem;
 import com.fazziclay.opentoday.app.items.item.TextItem;
 import com.fazziclay.opentoday.app.settings.SettingsManager;
 import com.fazziclay.opentoday.databinding.FragmentItemTextEditorBinding;
@@ -44,7 +44,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -133,7 +132,7 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember,
         } else if (editableType == EDITABLE_TYPE_TEXT) {
             isLongText = false;
         }
-        if (!(item instanceof LongTextItem)) isLongText = false;
+        if (!(item instanceof ExtendedTextItem)) isLongText = false;
 
         themeForeColor = UI.getTheme().getRawForegroundColor();
         if (savedInstanceState == null) {
@@ -246,24 +245,24 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember,
 
     private String getEditableText() {
         if (item == null) return "";
-        if (isLongText && item instanceof LongTextItem l) {
-            return l.getLongText();
+        if (isLongText && item instanceof ExtendedTextItem l) {
+            return l.getAddictionText();
         }
         return item.getText();
     }
 
     private int getEditableTextColor() {
-        if (isLongText && item instanceof LongTextItem l) {
-            if (!l.isCustomLongTextColor()) return ResUtil.getAttrColor(requireContext(), R.attr.item_text_textColor);
-            return l.getLongTextColor();
+        if (isLongText && item instanceof ExtendedTextItem l) {
+            if (!l.isCustomAddictionTextColor()) return ResUtil.getAttrColor(requireContext(), R.attr.item_text_textColor);
+            return l.getAddictionTextColor();
         }
         if (!item.isCustomTextColor()) return ResUtil.getAttrColor(requireContext(), R.attr.item_text_textColor);
         return item.getTextColor();
     }
 
     private void setEditableText(String s) {
-        if (isLongText && item instanceof LongTextItem l) {
-            l.setLongText(s);
+        if (isLongText && item instanceof ExtendedTextItem l) {
+            l.setAddictionText(s);
         } else {
             item.setText(s);
         }
@@ -284,7 +283,7 @@ public class ItemTextEditorFragment extends Fragment implements BackStackMember,
             if (start == end) updateCurrentSystem(start);
             updatePreview();
         });
-        setShowPreview(item.isParagraphColorize() && getEditableText().contains("$"));
+        setShowPreview(item.isFormatting() && getEditableText().contains("$"));
         if (overridePreviewBackground != null) {
             binding.formattingPreview.setBackgroundColor(Color.parseColor(overridePreviewBackground));
         } else if (item.isViewCustomBackgroundColor()) {

@@ -92,8 +92,8 @@ public class ItemNotificationHandler {
 
     public void handle(Item item, ItemNotification notification) {
         if (notification instanceof DayItemNotification dayItemNotification) {
-            final String nTitle = dayItemNotification.isNotifyTitleFromItemText() ? (item.isParagraphColorize() ? ColorUtil.colorizeToPlain(item.getText()) : item.getText()) : dayItemNotification.getNotifyTitle();
-            final String nText = dayItemNotification.isNotifyTextFromItemText() ? (item.isParagraphColorize() ? ColorUtil.colorizeToPlain(item.getText()) : item.getText()) : dayItemNotification.getNotifyText();
+            final String nTitle = dayItemNotification.isNotifyTitleFromItemText() ? (item.isFormatting() ? ColorUtil.colorizeToPlain(item.getText()) : item.getText()) : dayItemNotification.getNotifyTitle();
+            final String nText = dayItemNotification.isNotifyTextFromItemText() ? (item.isFormatting() ? ColorUtil.colorizeToPlain(item.getText()) : item.getText()) : dayItemNotification.getNotifyText();
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, App.NOTIFICATION_ITEMS_CHANNEL)
                     .setSmallIcon(dayItemNotification.getIcon().getResId())

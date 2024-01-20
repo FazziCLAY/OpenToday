@@ -462,4 +462,5 @@
     <string name="fragment_itemEditor_module_countdownCheckbox_availableStep_hint">TODO: availableStep hint</string>
     <string name="dialog_itemNotification_resetSentFlag">Reset sent status</string>
     <string name="menu_notification_copyNotificationId">Copy Notify ID</string>
+    <string name="dialog_itemTag_delete">Delete</string>
 </resources>

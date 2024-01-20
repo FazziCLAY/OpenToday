@@ -33,92 +33,34 @@ import java.util.UUID;
 import java.util.function.Function;
 
 public class FilterGroupItem extends TextItem implements ContainerItem, ItemsStorage {
-    // START - Save
     private static final String TAG = "FilterGroupItem";
-    public final static FilterGroupItemCodec CODEC = new FilterGroupItemCodec();
-    public static class FilterGroupItemCodec extends TextItemCodec {
-        private static final String KEY_ITEMS = "items";
-        private static final String KEY_TICK_BEHAVIOR = "tickBehavior";
+    public static final FilterGroupItemCodec CODEC = new FilterGroupItemCodec();
+    public static final ItemFactory<FilterGroupItem> FACTORY = new FilterGroupItemFactory();
 
-        @NonNull
-        @Override
-        public Cherry exportItem(@NonNull Item item) {
-            final FilterGroupItem filterGroupItem = (FilterGroupItem) item;
 
-            final CherryOrchard orchard = new CherryOrchard();
-            for (ItemFilterWrapper wrapper : filterGroupItem.items) {
-                orchard.put(wrapper.exportWrapper());
-            }
-
-            return super.exportItem(filterGroupItem)
-                    .put(KEY_ITEMS, orchard)
-                    .put(KEY_TICK_BEHAVIOR, filterGroupItem.tickBehavior);
-        }
-
-        private final FilterGroupItem defaultValues = new FilterGroupItem();
-        @NonNull
-        @Override
-        public Item importItem(@NonNull Cherry cherry, Item item) {
-            final FilterGroupItem filterGroupItem = item != null ? (FilterGroupItem) item : new FilterGroupItem();
-            super.importItem(cherry, filterGroupItem);
-
-            filterGroupItem.tickBehavior = cherry.optEnum(KEY_TICK_BEHAVIOR, defaultValues.tickBehavior);
-
-            // Items
-            final CherryOrchard itemsArray = cherry.optOrchard(KEY_ITEMS);
-            int i = 0;
-            while (i < itemsArray.length()) {
-                Cherry cherryWrapper = itemsArray.getCherryAt(i);
-                ItemFilterWrapper wrapper = ItemFilterWrapper.importWrapper(cherryWrapper);
-                wrapper.item.setController(filterGroupItem.groupItemController);
-                filterGroupItem.items.add(wrapper);
-                i++;
-            }
-
-            return filterGroupItem;
-        }
-    }
-    // END - Save
-    public static final ItemFactory<FilterGroupItem> FACTORY = new ItemFactory<>() {
-        @Override
-        public FilterGroupItem create() {
-            return createEmpty();
-        }
-
-        @Override
-        public FilterGroupItem copy(Item item) {
-            return new FilterGroupItem((FilterGroupItem) item);
-        }
-    };
-
-    @NonNull
-    public static FilterGroupItem createEmpty() {
-        return new FilterGroupItem("");
-    }
-
-    @NonNull @SaveKey(key = "items") @RequireSave private final List<ItemFilterWrapper> items = new ArrayList<>();
-    @NonNull @SaveKey(key = "tickBehavior") @RequireSave private TickBehavior tickBehavior = TickBehavior.ALL;
+    @NonNull private final List<ItemFilterWrapper> items = new ArrayList<>();
+    @NonNull private TickBehavior tickBehavior = TickBehavior.ALL;
     @NonNull private final List<ItemFilterWrapper> activeItems = new ArrayList<>();
     @NonNull private final ItemController groupItemController = new FilterGroupItemController();
     @NonNull private final CallbackStorage<OnItemsStorageUpdate> itemStorageUpdateCallbacks = new CallbackStorage<>();
     @NonNull private final FitEquip fitEquip = new FitEquip();
 
-    protected FilterGroupItem() {
+    public FilterGroupItem() {
         super();
     }
 
     // append
-    public FilterGroupItem(String text) {
+    public FilterGroupItem(@NotNull String text) {
         super(text);
     }
 
     // append
-    public FilterGroupItem(TextItem textItem) {
+    public FilterGroupItem(@Nullable TextItem textItem) {
         super(textItem);
     }
 
     // append
-    public FilterGroupItem(TextItem textItem, ContainerItem containerItem) {
+    public FilterGroupItem(@Nullable TextItem textItem, @Nullable ContainerItem containerItem) {
         super(textItem);
         if (containerItem != null) {
             for (Item item : containerItem.getAllItems()) {
@@ -337,7 +279,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
 
         super.tick(tickSession);
         if (tickSession.isTickTargetAllowed(TickTarget.ITEM_FILTER_GROUP_TICK)) {
-            profPush(tickSession, "filter_group_tick");
+            profilerPush(tickSession, "filter_group_tick");
             recalculate(tickSession.getGregorianCalendar());
             updateStat();
 
@@ -355,7 +297,7 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
                 default -> throw new RuntimeException(TAG + ": Unexpected tickBehavior: " + tickBehavior);
             }
 
-            profPop(tickSession);
+            profilerPop(tickSession);
             if (tickBehavior != TickBehavior.ALL) {
                 tickSession.runWithPlannedNormalTick(tickList, (Function<ItemFilterWrapper, Item>) itemFilterWrapper -> itemFilterWrapper.item, () -> ItemUtil.tickOnlyImportantTargets(tickSession, getAllItems()));
             }
@@ -368,11 +310,11 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
                 }
                 i--;
             }
-            profPush(tickSession, "filter_group_tick");
+            profilerPush(tickSession, "filter_group_tick");
 
             recalculate(tickSession.getGregorianCalendar());
             updateStat();
-            profPop(tickSession);
+            profilerPop(tickSession);
         }
     }
 
@@ -479,5 +421,70 @@ public class FilterGroupItem extends TextItem implements ContainerItem, ItemsSto
         NOTHING,
         ACTIVE,
         NOT_ACTIVE
+    }
+
+
+    // Import - Export - Factory
+    public static class FilterGroupItemCodec extends TextItemCodec {
+        private static final String KEY_ITEMS = "filter_items";
+        private static final String KEY_TICK_BEHAVIOR = "filter_tickBehavior";
+
+        @NonNull
+        @Override
+        public Cherry exportItem(@NonNull Item item) {
+            final FilterGroupItem filterGroupItem = (FilterGroupItem) item;
+
+            final CherryOrchard orchard = new CherryOrchard();
+            for (ItemFilterWrapper wrapper : filterGroupItem.items) {
+                orchard.put(wrapper.exportWrapper());
+            }
+
+            return super.exportItem(filterGroupItem)
+                    .put(KEY_ITEMS, orchard)
+                    .put(KEY_TICK_BEHAVIOR, filterGroupItem.tickBehavior);
+        }
+
+        private final FilterGroupItem defaultValues = new FilterGroupItem();
+        @NonNull
+        @Override
+        public Item importItem(@NonNull Cherry cherry, Item item) {
+            final FilterGroupItem filterGroupItem = fallback(item, FilterGroupItem::new);
+            super.importItem(cherry, filterGroupItem);
+
+            filterGroupItem.tickBehavior = cherry.optEnum(KEY_TICK_BEHAVIOR, defaultValues.tickBehavior);
+
+            // Items
+            final CherryOrchard itemsArray = cherry.optOrchard(KEY_ITEMS);
+            int i = 0;
+            while (i < itemsArray.length()) {
+                Cherry cherryWrapper = itemsArray.getCherryAt(i);
+                ItemFilterWrapper wrapper = ItemFilterWrapper.importWrapper(cherryWrapper);
+                wrapper.item.setController(filterGroupItem.groupItemController);
+                filterGroupItem.items.add(wrapper);
+                i++;
+            }
+
+            return filterGroupItem;
+        }
+    }
+
+    private static class FilterGroupItemFactory implements ItemFactory<FilterGroupItem> {
+        @Override
+        public FilterGroupItem create() {
+            return new FilterGroupItem();
+        }
+
+        @Override
+        public FilterGroupItem copy(Item item) {
+            return new FilterGroupItem((FilterGroupItem) item);
+        }
+
+        @Override
+        public Transform.Result transform(Item from) {
+            if (from instanceof TextItem textItem) {
+                return Transform.Result.allow(() -> new FilterGroupItem(textItem, ItemUtil.getAsContainer(from)));
+            }
+            return Transform.Result.NOT_ALLOW;
+        }
     }
 }

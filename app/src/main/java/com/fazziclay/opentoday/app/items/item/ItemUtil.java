@@ -43,13 +43,10 @@ public class ItemUtil {
         }
     }
 
-    public static boolean isTypeContainsInParents(Item item, ItemType itemType) {
+    public static boolean isTypeContainsInParents(Item item, Class<? extends Item> itemType) {
         ItemsStorage[] pathToItem = getPathToItemNoReverse(item);
         for (ItemsStorage itemsStorage : pathToItem) {
-            if (itemsStorage instanceof Item _item) {
-                ItemType t = ItemType.byClass(_item.getClass());
-                if (t == itemType) return true;
-            }
+            if (itemsStorage.getClass() == itemType) return true;
         }
         return false;
     }
@@ -161,12 +158,11 @@ public class ItemUtil {
 
 
     public static Item copyItem(Item item) {
-        return ItemsRegistry.REGISTRY.copyItem(item);
-    }
-
-    public static ItemType getItemType(Item item) {
-        throwIsBreakType(item);
-        return ItemsRegistry.REGISTRY.get(item.getClass()).getItemType();
+        ItemFactory factory = ItemsRegistry.REGISTRY.getByKey(item.getClass()).getFactory();
+        if (factory == null) {
+            throw new RuntimeException("Copy unsupported");
+        }
+        return factory.copy(item);
     }
 
     public static UUID controllerGenerateItemId(ItemsRoot root, Item item) {
@@ -184,5 +180,17 @@ public class ItemUtil {
      */
     public static void regenerateIdForItem(Item item) {
         item.regenerateId();
+    }
+
+    @Nullable
+    public static ContainerItem getAsContainer(Item item) {
+        if (item instanceof ContainerItem) {
+            return (ContainerItem) item;
+        }
+        return null;
+    }
+
+    public static boolean isItemContainer(Item item) {
+        return item instanceof ContainerItem;
     }
 }

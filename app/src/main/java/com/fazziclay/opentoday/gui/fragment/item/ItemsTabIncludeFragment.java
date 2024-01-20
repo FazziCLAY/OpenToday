@@ -230,16 +230,15 @@ public class ItemsTabIncludeFragment extends Fragment implements CurrentItemsTab
 
         binding.quickNoteAdd.setOnLongClickListener(v -> {
             new DialogSelectItemType(requireContext(), (type) -> {
-                final ItemsRegistry.ItemInfo registryItem = ItemsRegistry.REGISTRY.get(type);
                 if (settingsManager.isChangeDefaultQuickNoteInLongSendClick()) {
-                    settingsManager.setDefaultQuickNoteType(registryItem);
+                    settingsManager.setDefaultQuickNoteType(type);
                     settingsManager.save();
                 }
 
                 String text = binding.quickNoteText.getText().toString();
                 binding.quickNoteText.setText("");
 
-                Item item = GuiItemsHelper.createItem(requireContext(), registryItem, text, settingsManager);
+                Item item = GuiItemsHelper.createItem(requireContext(), type, text, settingsManager);
                 if (settingsManager.isParseTimeFromQuickNote()) item.addNotifications(QUICK_NOTE_NOTIFICATIONS_PARSE.run(text));
 
                 GuiItemsHelper.addItem(item, currentItemsStorage, settingsManager);

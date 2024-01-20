@@ -30,8 +30,7 @@ import com.fazziclay.opentoday.app.PinCodeManager
 import com.fazziclay.opentoday.app.PinCodeManager.PinCodeNotValidateException
 import com.fazziclay.opentoday.app.PinCodeManager.ValidationException
 import com.fazziclay.opentoday.app.items.QuickNoteReceiver
-import com.fazziclay.opentoday.app.items.item.ItemType
-import com.fazziclay.opentoday.app.items.item.ItemsRegistry
+import com.fazziclay.opentoday.app.items.item.ItemsRegistry.ItemInfo
 import com.fazziclay.opentoday.app.settings.ActionBarPosition
 import com.fazziclay.opentoday.app.settings.BooleanOption
 import com.fazziclay.opentoday.app.settings.SettingsManager
@@ -41,10 +40,10 @@ import com.fazziclay.opentoday.app.settings.enums.ItemAddPosition
 import com.fazziclay.opentoday.databinding.ExportBinding
 import com.fazziclay.opentoday.databinding.FragmentSettingsBinding
 import com.fazziclay.opentoday.gui.ActivitySettings
-import com.fazziclay.opentoday.gui.EnumsRegistry
 import com.fazziclay.opentoday.gui.UI
 import com.fazziclay.opentoday.gui.dialog.DialogSelectItemType
 import com.fazziclay.opentoday.gui.fragment.MainRootFragment
+import com.fazziclay.opentoday.gui.item.registry.ItemsGuiRegistry
 import com.fazziclay.opentoday.util.EnumUtil
 import com.fazziclay.opentoday.util.InlineUtil.viewClick
 import com.fazziclay.opentoday.util.Logger
@@ -191,13 +190,13 @@ class SettingsFragment : Fragment() {
                 .setPositiveButton(R.string.abc_ok, null)
                 .show()
         })
-        binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(EnumsRegistry.nameResId(sm.defaultQuickNoteType.itemType)))
+        binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, ItemsGuiRegistry.REGISTRY.nameOf(context, sm.defaultQuickNoteType))
         viewClick(binding.defaultQuickNoteType, Runnable {
-            DialogSelectItemType(context, { type: ItemType ->
-                sm.defaultQuickNoteType = ItemsRegistry.REGISTRY.get(type)
-                binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, getString(EnumsRegistry.nameResId(sm.defaultQuickNoteType.itemType)))
+            DialogSelectItemType(context, { type: ItemInfo ->
+                sm.defaultQuickNoteType = type
+                binding.defaultQuickNoteType.text = getString(R.string.settings_defaultQuickNoteType, ItemsGuiRegistry.REGISTRY.nameOf(context, sm.defaultQuickNoteType))
                 sm.save()
-            }, sm.defaultQuickNoteType.itemType).setTitle(getString(R.string.dialog_selectItemType_generic_title)).show()
+            }, sm.defaultQuickNoteType.identifier).setTitle(getString(R.string.dialog_selectItemType_generic_title)).show()
         })
         pinCodeCallback = Runnable { binding.pincode.text = getString(R.string.settings_pincode, if (pinCodeManager.isPinCodeSet) getString(R.string.settings_pincode_on) else getString(R.string.settings_pincode_off)) }
         pinCodeCallback.run()

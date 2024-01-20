@@ -9,11 +9,12 @@ public class CrashReportContext {
     public static final Back BACK = new Back();
 
     static {
-        FRONT.push("front push in static CrashReportContext");
-        BACK.push("back push in static CrashReportContext");
+        FRONT.push("<static>");
+        BACK.push("<static>");
     }
     private static String mainActivityStatus = "NON-CREATED";
     private static String mainRootFragment = "NON-CREATED";
+    private static String backendInitializerState = "no-information";
 
     public static void mainActivityCreate() {
         mainActivityStatus = "Created";
@@ -31,13 +32,21 @@ public class CrashReportContext {
         CrashReportContext.mainRootFragment = mainRootFragment;
     }
 
+
+    public static void setBackendInitializerState(String s) {
+        CrashReportContext.backendInitializerState = s;
+    }
+
+
     public static String getAsString() {
         StringBuilder builder = new StringBuilder(String.format("""
                 == CrashReportContext ==
                 mainActivityStatus=%s
                 mainRootFragment=%s
+                backendInitializerState=%s
                 """, mainActivityStatus,
-                mainRootFragment));
+                mainRootFragment,
+                backendInitializerState));
 
         builder.append("\nFRONT: ");
         for (String s : FRONT.stack) {

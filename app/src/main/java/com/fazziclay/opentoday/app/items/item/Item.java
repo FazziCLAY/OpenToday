@@ -1,7 +1,5 @@
 package com.fazziclay.opentoday.app.items.item;
 
-import android.graphics.Color;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -11,7 +9,6 @@ import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.ItemsStorage;
 import com.fazziclay.opentoday.app.items.Unique;
 import com.fazziclay.opentoday.app.items.callback.ItemCallback;
-import com.fazziclay.opentoday.app.items.notification.DayItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotification;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationCodecUtil;
 import com.fazziclay.opentoday.app.items.notification.ItemNotificationUtil;
@@ -22,12 +19,13 @@ import com.fazziclay.opentoday.app.items.tag.TagsUtil;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.app.items.tick.TickTarget;
 import com.fazziclay.opentoday.app.items.tick.Tickable;
+import com.fazziclay.opentoday.util.Checks;
+import com.fazziclay.opentoday.util.ColorUtil;
+import com.fazziclay.opentoday.util.Identifier;
+import com.fazziclay.opentoday.util.Logger;
 import com.fazziclay.opentoday.util.annotation.Getter;
-import com.fazziclay.opentoday.util.annotation.RequireSave;
-import com.fazziclay.opentoday.util.annotation.SaveKey;
 import com.fazziclay.opentoday.util.annotation.Setter;
 import com.fazziclay.opentoday.util.callback.CallbackStorage;
-import com.fazziclay.opentoday.util.callback.Status;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -43,84 +41,23 @@ import java.util.UUID;
  * <br><br>
  * <h1>Codecs</h1>
  * <p>Also this object contains the base codec, the codecs of children are also required to inherit the base codec.</p>
- *
- * <br><br>
- * <h1>Non-english comments</h1>
- * <p>Do not delete them, they do not carry important information, but this is the only thing that has remained since when Item was called Entry...</p>
+
  */
 public abstract class Item implements Unique, Tickable {
-    // START - Save
-    public static class ItemCodec extends AbstractItemCodec {
-        private static final String KEY_ID = "id";
-        private static final String KEY_VIEW_MIN_HEIGHT = "viewMinHeight";
-        private static final String KEY_VIEW_BACKGROUND_COLOR = "viewBackgroundColor";
-        private static final String KEY_VIEW_CUSTOM_BACKGROUND_COLOR = "viewCustomBackgroundColor";
-        private static final String KEY_NOTIFICATIONS = "notifications";
-        private static final String KEY_MINIMIZE = "minimize";
-        private static final String KEY_TAGS = "tags";
-
-        @NonNull
-        @Override
-        public Cherry exportItem(@NonNull Item item) {
-            return new Cherry()
-                    .put(KEY_ID, item.id.toString())
-                    .put(KEY_VIEW_MIN_HEIGHT, item.viewMinHeight)
-                    .put(KEY_VIEW_BACKGROUND_COLOR, item.viewBackgroundColor)
-                    .put(KEY_VIEW_CUSTOM_BACKGROUND_COLOR, item.viewCustomBackgroundColor)
-                    .put(KEY_MINIMIZE, item.minimize)
-                    .put(KEY_NOTIFICATIONS, ItemNotificationCodecUtil.exportNotificationList(item.notifications))
-                    .put(KEY_TAGS, TagsCodecUtil.exportTagsList(item.tags));
-        }
-
-        private final Item defaultValues = new Item(){};
-        @NonNull
-        @Override
-        public Item importItem(@NonNull Cherry cherry, Item item) {
-            if (item == null) throw new NullPointerException("item is null");
-            applyId(item, cherry);
-            item.viewMinHeight = cherry.optInt(KEY_VIEW_MIN_HEIGHT, defaultValues.viewMinHeight);
-            item.viewBackgroundColor = cherry.optInt(KEY_VIEW_BACKGROUND_COLOR, defaultValues.viewBackgroundColor);
-            item.viewCustomBackgroundColor = cherry.optBoolean(KEY_VIEW_CUSTOM_BACKGROUND_COLOR, defaultValues.viewCustomBackgroundColor);
-            item.minimize = cherry.optBoolean(KEY_MINIMIZE, defaultValues.minimize);
-            item.notifications = ItemNotificationCodecUtil.importNotificationList(cherry.optOrchard(KEY_NOTIFICATIONS));
-            for (ItemNotification notification : item.notifications) {
-                if (notification.getId() == null) {
-                    notification.attach(item.notificationController);
-                } else {
-                    notification.setController(item.notificationController);
-                }
-            }
-            item.tags = TagsCodecUtil.importTagsList(cherry.optOrchard(KEY_TAGS));
-            return item;
-        }
-
-        private void applyId(Item item, Cherry cherry) {
-            String stringId = cherry.optString(KEY_ID, null);
-            if (stringId == null) {
-                item.id = UUID.randomUUID();
-            } else {
-                try {
-                    item.id = UUID.fromString(stringId);
-                } catch (Exception e) {
-                    item.id = UUID.randomUUID();
-                }
-            }
-        }
-    }
-    // END - Save
-
+    private static final String TAG = "Item";
     private static final String DEFAULT_BACKGROUND_COLOR = "#99999999";
+    private static final int DEFAULT_BACKGROUND_COLOR_CACHED = ColorUtil.hexToColor(DEFAULT_BACKGROUND_COLOR);
 
-    @Nullable @RequireSave @SaveKey(key = "id") private UUID id;
+    private UUID id;
     @Nullable private ItemController controller;
     private final CallbackStorage<ItemCallback> itemCallbacks = new CallbackStorage<>();
     private final ItemStat stat = new ItemStat();
-    @SaveKey(key = "viewMinHeight") @RequireSave private int viewMinHeight = 0; // минимальная высота
-    @SaveKey(key = "viewBackgroundColor") @RequireSave private int viewBackgroundColor = Color.parseColor(DEFAULT_BACKGROUND_COLOR); // фоновый цвет
-    @SaveKey(key = "viewCustomBackgroundColor") @RequireSave private boolean viewCustomBackgroundColor = false; // юзаем ли фоновый цвет
-    @SaveKey(key = "minimize") @RequireSave private boolean minimize = false;
-    @NonNull @SaveKey(key = "notifications") @RequireSave private List<ItemNotification> notifications = new ArrayList<>();
-    @NonNull @SaveKey(key = "tags") @RequireSave private List<ItemTag> tags = new ArrayList<>();
+    private int viewMinHeight = 0;
+    private int viewBackgroundColor = DEFAULT_BACKGROUND_COLOR_CACHED;
+    private boolean viewCustomBackgroundColor = false;
+    private boolean minimize = false;
+    private List<ItemNotification> notifications = new ArrayList<>();
+    private List<ItemTag> tags = new ArrayList<>();
     @NonNull private final NotificationController notificationController = new ItemNotificationController();
     private boolean cachedNotificationStatus;
 
@@ -145,25 +82,26 @@ public abstract class Item implements Unique, Tickable {
         }
     }
 
-    protected Item() {
+    public Item() {
         this(null);
     }
 
-    public ItemType getItemType() {
-        var reg = ItemsRegistry.REGISTRY.get(this.getClass());
+    public Identifier getItemType() {
+        var reg = ItemsRegistry.REGISTRY.getByKey(this.getClass());
         if (reg == null) {
             throw new RuntimeException("Item class=" + this.getClass() + " is not registered in ItemsRegistry!");
         }
-        return reg.getItemType();
+        return reg.getIdentifier();
     }
 
     // For fast get text (method overrides by TextItem)
     public String getText() {
+        Logger.w(TAG, "getText call...");
         return "[Item not have text. Ops...]";
     }
 
     // For fast (method overrides by TextItem)
-    @Getter public boolean isParagraphColorize() {return false;}
+    @Getter public boolean isFormatting() {return false;}
 
     public void delete() {
         if (isAttached()) controller.delete(this);
@@ -195,9 +133,13 @@ public abstract class Item implements Unique, Tickable {
      * set controller and regenerate ids
      * @param itemController controller
      */
-    protected void attach(ItemController itemController) {
+    protected void attach(@NotNull ItemController itemController) {
+        Checks.throwIsNull(itemController, "itemController");
         this.controller = itemController;
         regenerateId();
+        ItemsRoot root = controller.getRoot();
+        Checks.throwIsNull(root, "itemsRoot");
+        onAttached(root);
         itemCallbacks.run((callbackStorage, callback) -> callback.attached(Item.this));
     }
 
@@ -211,41 +153,47 @@ public abstract class Item implements Unique, Tickable {
         if (!tickSession.isAllowed(this)) return;
         Debug.tickedItems++;
         if (tickSession.isTickTargetAllowed(TickTarget.ITEM_NOTIFICATIONS)) {
-            profPush(tickSession, "item_notifications_tick");
+            profilerPush(tickSession, "item_notifications_tick");
             ItemNotificationUtil.tick(tickSession, notifications);
-            profPop(tickSession);
+            profilerPop(tickSession);
         }
         if (tickSession.isTickTargetAllowed(TickTarget.ITEM_CALLBACKS)) {
-            profPush(tickSession, "callbacks");
+            profilerPush(tickSession, "callbacks");
             itemCallbacks.run((callbackStorage, callback) -> callback.tick(Item.this));
-            profPop(tickSession);
+            profilerPop(tickSession);
         }
 
-        profPush(tickSession, "cachedNotificationStatus");
+        profilerPush(tickSession, "cachedNotificationStatus");
         boolean isUpdateNotifications = tickSession.isTickTargetAllowed(TickTarget.ITEM_NOTIFICATION_UPDATE);
         if (isUpdateNotifications != cachedNotificationStatus && !tickSession.isPlannedTick(this)) {
             cachedNotificationStatus = isUpdateNotifications;
             itemCallbacks.run((callbackStorage, callback) -> callback.cachedNotificationStatusChanged(Item.this, isUpdateNotifications));
         }
-        profPop(tickSession);
+        profilerPop(tickSession);
     }
 
-    protected void profPush(TickSession t, String s) {
+    protected void profilerPush(TickSession t, String s) {
         t.getProfiler().push(s);
     }
 
-    protected void profSwap(TickSession t, String s) {
+    protected void profilerSwap(TickSession t, String s) {
         t.getProfiler().swap(s);
     }
 
-    protected void profPop(TickSession t) {
+    protected void profilerPop(TickSession t) {
         t.getProfiler().pop();
     }
 
     protected void regenerateId() {
-        this.id = controller != null ? controller.generateId(this) : UUID.randomUUID();
+        if (!isAttached()) {
+            Logger.w(TAG, "regenerateId call on unattached item!");
+        }
+        this.id = (isAttached()) ? controller.generateId(this) : UUID.randomUUID();
     }
 
+    /**
+     * Calc total children count exclude this.
+     */
     public int getChildrenItemCount() {
         if (this instanceof ContainerItem containerItem) {
             int c = 0;
@@ -268,6 +216,10 @@ public abstract class Item implements Unique, Tickable {
 
     public void dispatchClick() {
         itemCallbacks.run((callbackStorage, callback) -> callback.click(Item.this));
+    }
+
+    protected void onAttached(@NotNull ItemsRoot itemsRoot) {
+        // for override
     }
 
     // Getters & Setters
@@ -381,6 +333,66 @@ public abstract class Item implements Unique, Tickable {
         @Override
         public Item getParentItem(ItemNotification itemNotification) {
             return Item.this;
+        }
+    }
+
+
+    public static class ItemCodec extends AbstractItemCodec {
+        private static final String KEY_ID = "id";
+        private static final String KEY_VIEW_MIN_HEIGHT = "view_minimal_height";
+        private static final String KEY_VIEW_BACKGROUND_COLOR = "view_background_color";
+        private static final String KEY_VIEW_CUSTOM_BACKGROUND_COLOR = "view_background_color_is_custom";
+        private static final String KEY_NOTIFICATIONS = "notifications";
+        private static final String KEY_MINIMIZE = "minimize";
+        private static final String KEY_TAGS = "tags";
+
+        @NonNull
+        @Override
+        public Cherry exportItem(@NonNull Item item) {
+            return new Cherry()
+                    .put(KEY_ID, item.id.toString())
+                    .put(KEY_VIEW_MIN_HEIGHT, item.viewMinHeight)
+                    .put(KEY_VIEW_BACKGROUND_COLOR, ColorUtil.colorToHex(item.viewBackgroundColor))
+                    .put(KEY_VIEW_CUSTOM_BACKGROUND_COLOR, item.viewCustomBackgroundColor)
+                    .put(KEY_MINIMIZE, item.minimize)
+                    .put(KEY_NOTIFICATIONS, ItemNotificationCodecUtil.exportNotificationList(item.notifications))
+                    .put(KEY_TAGS, TagsCodecUtil.exportTagsList(item.tags));
+        }
+
+        private final Item defaultValues = new Item(){};
+        @NonNull
+        @Override
+        public Item importItem(@NonNull Cherry cherry, Item item) {
+            Checks.throwIsNull(item, "item is null");
+            applyId(item, cherry);
+            item.viewMinHeight = cherry.optInt(KEY_VIEW_MIN_HEIGHT, defaultValues.viewMinHeight);
+            item.viewBackgroundColor = ColorUtil.hexToColor(cherry.optString(KEY_VIEW_BACKGROUND_COLOR, DEFAULT_BACKGROUND_COLOR));
+            item.viewCustomBackgroundColor = cherry.optBoolean(KEY_VIEW_CUSTOM_BACKGROUND_COLOR, defaultValues.viewCustomBackgroundColor);
+            item.minimize = cherry.optBoolean(KEY_MINIMIZE, defaultValues.minimize);
+            item.notifications = ItemNotificationCodecUtil.importNotificationList(cherry.optOrchard(KEY_NOTIFICATIONS));
+            for (ItemNotification notification : item.notifications) {
+                if (notification.getId() == null) {
+                    notification.attach(item.notificationController);
+                } else {
+                    notification.setController(item.notificationController);
+                }
+            }
+            item.tags = TagsCodecUtil.importTagsList(cherry.optOrchard(KEY_TAGS));
+            return item;
+        }
+
+        private void applyId(Item item, Cherry cherry) {
+            String stringId = cherry.optString(KEY_ID, null);
+            if (stringId == null) {
+                item.id = UUID.randomUUID();
+            } else {
+                try {
+                    item.id = UUID.fromString(stringId);
+                } catch (Exception e) {
+                    Logger.e(TAG, "Failed parse item id. Use UUID.randomUUID().", e);
+                    item.id = UUID.randomUUID();
+                }
+            }
         }
     }
 }

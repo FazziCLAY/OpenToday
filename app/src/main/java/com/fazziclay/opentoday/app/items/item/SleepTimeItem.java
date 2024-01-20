@@ -1,95 +1,56 @@
 package com.fazziclay.opentoday.app.items.item;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.Translation;
 import com.fazziclay.opentoday.app.data.Cherry;
+import com.fazziclay.opentoday.app.items.ItemsRoot;
 import com.fazziclay.opentoday.app.items.tick.TickSession;
 import com.fazziclay.opentoday.util.time.TimeUtil;
 
 public class SleepTimeItem extends TextItem {
-    public final static SleepTimeItemCodec CODEC = new SleepTimeItemCodec();
-    public static class SleepTimeItemCodec extends TextItem.TextItemCodec {
-        @NonNull
-        @Override
-        public Cherry exportItem(@NonNull Item item) {
-            SleepTimeItem sleepTimeItem = (SleepTimeItem) item;
-            return super.exportItem(sleepTimeItem)
-                    .put("wakeUpTime", sleepTimeItem.wakeUpTime)
-                    .put("requiredSleepTime", sleepTimeItem.requiredSleepTime)
-                    .put("sleepTextPattern", sleepTimeItem.sleepTextPattern);
-        }
+    public static final SleepTimeItemCodec CODEC = new SleepTimeItemCodec();
+    public static final ItemFactory<SleepTimeItem> FACTORY = new SleepTimeItemFactory();
 
-        private final SleepTimeItem defaultValues = new SleepTimeItem();
-        @NonNull
-        @Override
-        public Item importItem(@NonNull Cherry cherry, Item item) {
-            SleepTimeItem sleepTimeItem = item != null ? (SleepTimeItem) item : new SleepTimeItem();
-            super.importItem(cherry, sleepTimeItem);
-            sleepTimeItem.wakeUpTime = cherry.optInt("wakeUpTime", defaultValues.wakeUpTime);
-            sleepTimeItem.requiredSleepTime = cherry.optInt("requiredSleepTime", defaultValues.requiredSleepTime);
-            sleepTimeItem.sleepTextPattern = cherry.optString("sleepTextPattern", defaultValues.sleepTextPattern);
-            return sleepTimeItem;
-        }
-    }
-    public static final ItemFactory<SleepTimeItem> FACTORY = new ItemFactory<>() {
-        @Override
-        public SleepTimeItem create() {
-            return createEmpty();
-        }
+    private int wakeup;
+    private int duration;
+    private String sleepTextPattern = null; // uninitialized by default for initialize on first attach (translatable)
 
-        @Override
-        public SleepTimeItem copy(Item item) {
-            return new SleepTimeItem((SleepTimeItem) item);
-        }
-    };
-
-    private int wakeUpTime;
-    private int requiredSleepTime;
-    private String sleepTextPattern = null;
-
-    private int elapsedTime; // cached
-    private int wakeUpForRequiredAtCurr; // cached
-    private int elapsedToStartSleep; // cached
+    private int elapsedToWakeupTime; // cached
+    private int wakeupAtCurrent; // cached
+    private int beforeFallingAsleep; // cached
     private long tick; // cached
 
-    @NonNull
-    public static SleepTimeItem createEmpty() {
-        return new SleepTimeItem();
-    }
 
-
-    public SleepTimeItem(TextItem append) {
+    public SleepTimeItem(@Nullable TextItem append) {
         super(append);
+
         tick = 0;
-        elapsedTime = 0;
-        wakeUpForRequiredAtCurr = 0;
+        elapsedToWakeupTime = 0;
+        wakeupAtCurrent = 0;
+        beforeFallingAsleep = 0;
     }
 
-    public SleepTimeItem(SleepTimeItem copy) {
-        super(copy);
-        tick = 0;
-        elapsedTime = 0;
-        wakeUpForRequiredAtCurr = 0;
-        elapsedToStartSleep = 0;
+    public SleepTimeItem(@Nullable SleepTimeItem copy) {
+        this((TextItem) copy);
 
         if (copy != null) {
-            this.wakeUpTime = copy.wakeUpTime;
-            this.requiredSleepTime = copy.requiredSleepTime;
+            this.wakeup = copy.wakeup;
+            this.duration = copy.duration;
             this.sleepTextPattern = copy.sleepTextPattern;
         }
     }
 
-    private SleepTimeItem() {
-        this(null);
+    public SleepTimeItem() {
+        super();
     }
 
     @Override
-    protected void regenerateId() {
-        super.regenerateId();
+    protected void onAttached(@NonNull ItemsRoot itemsRoot) {
+        super.onAttached(itemsRoot);
         if (sleepTextPattern == null) {
-            sleepTextPattern = App.get().getTranslation().get(Translation.KEY_SLEEP_TIME_ITEM_PATTERN); // TODO: 08.10.2023 uses static App.get() is bad...
+            sleepTextPattern = itemsRoot.getTranslation().get(Translation.KEY_SLEEP_TIME_ITEM_PATTERN);
             save();
         }
     }
@@ -97,60 +58,60 @@ public class SleepTimeItem extends TextItem {
     @Override
     public void tick(TickSession tickSession) {
         super.tick(tickSession);
-        profPush(tickSession, "sleep_time_update");
-        elapsedTime = wakeUpTime - TimeUtil.getDaySeconds();
-        if (elapsedTime <= 0) {
-            elapsedTime = TimeUtil.SECONDS_IN_DAY + elapsedTime;
+        profilerPush(tickSession, "sleep_time_update");
+        elapsedToWakeupTime = wakeup - TimeUtil.getDaySeconds();
+        if (elapsedToWakeupTime <= 0) {
+            elapsedToWakeupTime = TimeUtil.SECONDS_IN_DAY + elapsedToWakeupTime;
         }
 
-        wakeUpForRequiredAtCurr = TimeUtil.getDaySeconds() + requiredSleepTime;
-        if (wakeUpForRequiredAtCurr > TimeUtil.SECONDS_IN_DAY) {
-            wakeUpForRequiredAtCurr-=TimeUtil.SECONDS_IN_DAY;
+        wakeupAtCurrent = TimeUtil.getDaySeconds() + duration;
+        if (wakeupAtCurrent > TimeUtil.SECONDS_IN_DAY) {
+            wakeupAtCurrent -=TimeUtil.SECONDS_IN_DAY;
         }
 
-        elapsedToStartSleep = wakeUpTime - requiredSleepTime - TimeUtil.getDaySeconds();
-        if (elapsedToStartSleep < 0) {
-            elapsedToStartSleep += TimeUtil.SECONDS_IN_DAY;
+        beforeFallingAsleep = wakeup - duration - TimeUtil.getDaySeconds();
+        if (beforeFallingAsleep < 0) {
+            beforeFallingAsleep += TimeUtil.SECONDS_IN_DAY;
         }
-        if (elapsedToStartSleep < 0) {
-            elapsedToStartSleep += TimeUtil.SECONDS_IN_DAY;
+        if (beforeFallingAsleep < 0) {
+            beforeFallingAsleep += TimeUtil.SECONDS_IN_DAY;
         }
 
         if (tick % 5 == 0) {
             visibleChanged();
         }
         tick++;
-        profPop(tickSession);
+        profilerPop(tickSession);
     }
 
-    public int getElapsedTime() {
-        return elapsedTime;
+    public int getElapsedToWakeupTime() {
+        return elapsedToWakeupTime;
     }
 
 
     public int getElapsedTimeToStartSleep() {
-        return elapsedToStartSleep;
+        return beforeFallingAsleep;
     }
 
 
-    public void setWakeUpTime(int wakeUpTime) {
-        this.wakeUpTime = wakeUpTime;
+    public void setWakeup(int wakeup) {
+        this.wakeup = wakeup;
     }
 
-    public int getWakeUpTime() {
-        return wakeUpTime;
+    public int getWakeup() {
+        return wakeup;
     }
 
-    public int getWakeUpForRequiredAtCurr() {
-        return wakeUpForRequiredAtCurr;
+    public int getWakeupAtCurrent() {
+        return wakeupAtCurrent;
     }
 
-    public int getRequiredSleepTime() {
-        return requiredSleepTime;
+    public int getDuration() {
+        return duration;
     }
 
-    public void setRequiredSleepTime(int requiredSleepTime) {
-        this.requiredSleepTime = requiredSleepTime;
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 
 
@@ -161,5 +122,57 @@ public class SleepTimeItem extends TextItem {
 
     public void setSleepTextPattern(String sleepTextPattern) {
         this.sleepTextPattern = sleepTextPattern;
+    }
+
+
+
+    // Import - Export - Factory
+    public static class SleepTimeItemCodec extends TextItem.TextItemCodec {
+        private final static String KEY_WAKEUP = "sleep_wakeup";
+        private final static String KEY_DURATION = "sleep_duration";
+        private final static String KEY_TEXT_PATTERN = "sleep_duration";
+
+        @NonNull
+        @Override
+        public Cherry exportItem(@NonNull Item item) {
+            SleepTimeItem sleepTimeItem = (SleepTimeItem) item;
+            return super.exportItem(sleepTimeItem)
+                    .put(KEY_WAKEUP, sleepTimeItem.wakeup)
+                    .put(KEY_DURATION, sleepTimeItem.duration)
+                    .put(KEY_TEXT_PATTERN, sleepTimeItem.sleepTextPattern);
+        }
+
+        private final SleepTimeItem defaultValues = new SleepTimeItem();
+        @NonNull
+        @Override
+        public Item importItem(@NonNull Cherry cherry, Item item) {
+            var sleepTimeItem = fallback(item, SleepTimeItem::new);
+            super.importItem(cherry, sleepTimeItem);
+
+            sleepTimeItem.wakeup = cherry.optInt(KEY_WAKEUP, defaultValues.wakeup);
+            sleepTimeItem.duration = cherry.optInt(KEY_DURATION, defaultValues.duration);
+            sleepTimeItem.sleepTextPattern = cherry.optString(KEY_TEXT_PATTERN, defaultValues.sleepTextPattern);
+            return sleepTimeItem;
+        }
+    }
+
+    private static class SleepTimeItemFactory implements ItemFactory<SleepTimeItem> {
+        @Override
+        public SleepTimeItem create() {
+            return new SleepTimeItem();
+        }
+
+        @Override
+        public SleepTimeItem copy(Item item) {
+            return new SleepTimeItem((SleepTimeItem) item);
+        }
+
+        @Override
+        public Transform.Result transform(Item from) {
+            if (from instanceof TextItem textItem) {
+                return Transform.Result.allow(() -> new SleepTimeItem(textItem));
+            }
+            return Transform.Result.NOT_ALLOW;
+        }
     }
 }

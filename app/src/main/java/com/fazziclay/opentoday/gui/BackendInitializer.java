@@ -7,8 +7,11 @@ import androidx.annotation.NonNull;
 
 import com.fazziclay.opentoday.app.App;
 import com.fazziclay.opentoday.app.CrashReport;
+import com.fazziclay.opentoday.app.CrashReportContext;
 import com.fazziclay.opentoday.app.items.item.ItemsRegistry;
+import com.fazziclay.opentoday.gui.item.registry.ItemsGuiRegistry;
 import com.fazziclay.opentoday.util.StreamUtil;
+import com.fazziclay.opentoday.util.ThrowableRunnable;
 import com.fazziclay.opentoday.util.profiler.Profiler;
 
 import java.util.Set;
@@ -44,7 +47,8 @@ public class BackendInitializer {
             });
         }
 
-        public void init(@NonNull Module m, @NonNull Runnable r) {
+        public void init(@NonNull Module m, @NonNull ThrowableRunnable r) {
+            CrashReportContext.setBackendInitializerState("Module="+m.name());
             try {
                 PROFILER.push(m.name());
                 r.run();
@@ -64,11 +68,17 @@ public class BackendInitializer {
             PROFILER.pop();
 
             init(Module.REGISTRIES, () -> {
-                try {
-                    ItemsRegistry.REGISTRY.loadRegistryFromJson(StreamUtil.read(App.get().getAssets().open("base/items.json")));
-                } catch (Exception e) {
-                    Log.e("ItemsReg", "err <init>", e);
-                }
+                // Backend items
+                ItemsRegistry.REGISTRY.initializeDefault(() -> {
+                    final String jsonBackendItems = StreamUtil.read(App.get().getAssets().open("base/items.json"));
+                    ItemsRegistry.REGISTRY.appendRegistryFromJson(jsonBackendItems);
+                });
+
+                // GUI Items
+                ItemsGuiRegistry.REGISTRY.initializeDefault(() -> {
+                    final String jsonGuiItems = StreamUtil.read(App.get().getAssets().open("base/gui/items_guis.json"));
+                    ItemsGuiRegistry.REGISTRY.appendFromJson(jsonGuiItems);
+                });
             });
             init(Module.SETTINGS_MANAGER, app::getSettingsManager);
             init(Module.PLUGINS, app::initPlugins);
@@ -79,6 +89,7 @@ public class BackendInitializer {
             init(Module.BEATIFY_COLOR_MANAGER, app::getBeautifyColorManager);
             init(Module.COLOR_HISTORY_MANAGER, app::getColorHistoryManager);
 
+            CrashReportContext.setBackendInitializerState("Done");
             backInitialized = true;
             backInitializeInProcess = false;
             PROFILER.pop();
