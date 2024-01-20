@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
 
     <application
-        android:name="com.fazziclay.opentoday.app.App"
+        android:name=".app.App"
         android:allowBackup="true"
         android:icon="@drawable/opentoday_icon"
         android:roundIcon="@drawable/opentoday_icon"
@@ -22,7 +22,7 @@
 
         <!-- Activities -->
         <activity
-            android:name="com.fazziclay.opentoday.gui.activity.LauncherActivity"
+            android:name=".gui.activity.LauncherActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,14 +30,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.fazziclay.opentoday.gui.activity.OpenSourceLicensesActivity"
+            android:name=".gui.activity.OpenSourceLicensesActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.fazziclay.opentoday.gui.activity.AlarmActivity"
+            android:name=".gui.activity.AlarmActivity"
             android:showWhenLocked="true"
             android:showOnLockScreen="true"
             android:excludeFromRecents="true"
@@ -46,29 +46,29 @@
             tools:targetApi="o_mr1">
         </activity>
         <activity
-            android:name="com.fazziclay.opentoday.gui.activity.OpenSourceLicenseActivity"
+            android:name=".gui.activity.OpenSourceLicenseActivity"
             android:exported="false" />
         <activity
-            android:name="com.fazziclay.opentoday.gui.activity.MainActivity"
+            android:name="com.betterbrainmemory.opentoday.gui.activity.MainActivity"
             android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
-            android:name="com.fazziclay.opentoday.debug.TestItemViewGenerator"
+            android:name=".debug.TestItemViewGenerator"
             android:exported="false" />
         <activity
-            android:name="com.fazziclay.opentoday.gui.activity.SetupActivity"
+            android:name=".gui.activity.SetupActivity"
             android:exported="false" />
         <activity
-            android:name="com.fazziclay.opentoday.debug.TestItemsStorageDrawer"
+            android:name=".debug.TestItemsStorageDrawer"
             android:exported="false" />
         <activity
-            android:name="com.fazziclay.opentoday.debug.TestActivityFragment"
+            android:name=".debug.TestActivityFragment"
             android:exported="false" />
         <activity
-            android:name="com.fazziclay.opentoday.debug.TestItemManager"
+            android:name=".debug.TestItemManager"
             android:exported="false" />
         <activity
-            android:name="com.fazziclay.opentoday.gui.activity.CrashReportActivity"
+            android:name=".gui.activity.CrashReportActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -76,7 +76,7 @@
         </activity> <!-- Services -->
         <!-- Receivers -->
         <receiver
-            android:name="com.fazziclay.opentoday.app.items.tick.ItemsTickReceiver"
+            android:name=".app.items.tick.ItemsTickReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
@@ -84,7 +84,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name="com.fazziclay.opentoday.app.items.QuickNoteReceiver"
+            android:name=".app.items.QuickNoteReceiver"
             android:enabled="true"
             android:exported="false" />
     </application>

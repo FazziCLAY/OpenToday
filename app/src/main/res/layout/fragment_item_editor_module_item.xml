@@ -40,7 +40,7 @@
         android:src="@drawable/add_24px"
         android:layout_height="wrap_content" />
 
-    <com.fazziclay.opentoday.util.opentodaybutton.MaterialButtonWithColorIndicator
+    <com.betterbrainmemory.opentoday.util.opentodaybutton.MaterialButtonWithColorIndicator
         android:id="@+id/itemBackgroundColor"
         android:layout_below="@id/notifications"
         android:text="@string/fragment_itemEditor_module_item_backgroundColor_text"

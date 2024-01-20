@@ -1,13 +1,13 @@
 # OpenToday
-Language: **[[English](https://github.com/FazziCLAY/OpenToday/blob/main/README.md) | Русский]**
+Language: **[[English](https://github.com/betterbrainmemory/OpenToday/blob/main/README.md) | Русский]**
 
 Android приложение для организации жизни, многофункциональные заметки и напоминалка!
 
-[![license](https://img.shields.io/github/license/fazziclay/opentoday?color=%2300bb00&style=plastic)](https://github.com/FazziCLAY/OpenToday/blob/main/LICENSE)
+[![license](https://img.shields.io/github/license/betterbrainmemory/opentoday?color=%2300bb00&style=plastic)](https://github.com/betterbrainmemory/OpenToday/blob/main/LICENSE)
 
 
-[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/fazziclay/opentoday?style=plastic)](https://github.com/FazziCLAY/OpenToday/releases)
-[![IzzyOnDroid](https://img.shields.io/endpoint?style=plastic&color=%2300bb00&url=https://apt.izzysoft.de/fdroid/api/v1/shield/com.fazziclay.opentoday)](https://apt.izzysoft.de/fdroid/index/apk/com.fazziclay.opentoday)
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/betterbrainmemory/opentoday?style=plastic)](https://github.com/betterbrainmemory/OpenToday/releases)
+[![IzzyOnDroid](https://img.shields.io/endpoint?style=plastic&color=%2300bb00&url=https://apt.izzysoft.de/fdroid/api/v1/shield/com.betterbrainmemory.opentoday)](https://apt.izzysoft.de/fdroid/index/apk/com.betterbrainmemory.opentoday)
 
 # Использование
 Каждая плитка в приложении называется Айтемом (Item, Айтем).
@@ -22,9 +22,9 @@ Android приложение для организации жизни, мног�
 # Скриншоты
 **Еще больше идей как это использововать может прийти вам в голову после просмотра скриншотов**
 
-| ![1](https://raw.githubusercontent.com/FazziCLAY/OpenToday/main/fastlane/metadata/android/en-US/images/phoneScreenshots/01.jpg) | ![1](https://raw.githubusercontent.com/FazziCLAY/OpenToday/main/fastlane/metadata/android/en-US/images/phoneScreenshots/02.jpg) | ![About app](https://raw.githubusercontent.com/FazziCLAY/OpenToday/main/fastlane/metadata/android/en-US/images/phoneScreenshots/03.jpg) | ![Calendar](https://raw.githubusercontent.com/FazziCLAY/OpenToday/main/fastlane/metadata/android/en-US/images/phoneScreenshots/04.jpg) |
+| ![1](https://raw.githubusercontent.com/betterbrainmemory/OpenToday/main/fastlane/metadata/android/en-US/images/phoneScreenshots/01.jpg) | ![1](https://raw.githubusercontent.com/betterbrainmemory/OpenToday/main/fastlane/metadata/android/en-US/images/phoneScreenshots/02.jpg) | ![About app](https://raw.githubusercontent.com/betterbrainmemory/OpenToday/main/fastlane/metadata/android/en-US/images/phoneScreenshots/03.jpg) | ![Calendar](https://raw.githubusercontent.com/betterbrainmemory/OpenToday/main/fastlane/metadata/android/en-US/images/phoneScreenshots/04.jpg) |
 |:-----------------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------:|
-| ![1](https://raw.githubusercontent.com/FazziCLAY/OpenToday/main/fastlane/metadata/android/en-US/images/phoneScreenshots/05.jpg) | ![1](https://raw.githubusercontent.com/FazziCLAY/OpenToday/main/fastlane/metadata/android/en-US/images/phoneScreenshots/06.jpg) |                                                                                                                     |                                                                                                                    |
+| ![1](https://raw.githubusercontent.com/betterbrainmemory/OpenToday/main/fastlane/metadata/android/en-US/images/phoneScreenshots/05.jpg) | ![1](https://raw.githubusercontent.com/betterbrainmemory/OpenToday/main/fastlane/metadata/android/en-US/images/phoneScreenshots/06.jpg) |                                                                                                                     |                                                                                                                    |
 ## Toolbar (Тулбар)
 Панель инструментов является важным элементом интерфейса. Он расположен в нижней части экрана
 
@@ -118,7 +118,7 @@ Make a pull request -> you will be added to contributors.json and also I will cr
 
 ## Tree of code (not full) (maybe outdated) (Английский)
 ```css
-com.fazziclay.opentoday
+com.betterbrainmemory.opentoday
 |
 | app - app logic
   | App - main application class (used by AndroidManifest.xml)
@@ -165,7 +165,7 @@ com.fazziclay.opentoday
   | SettingsManager - manager of application settings (use in ui...SettingsFragment)
   |             used 'settings.json' file
   | UpdateChecker - checking for app updates
-                use api in 'https://fazziclay.github.io/api/project_3/...'
+                use api in 'https://betterbrainmemory.github.io/api/project_3/...'
                 cached result if update not-available for '...cache/latest_update_check' (file contain unix MILLISeconds)
 | gui - ui logic
   | activity

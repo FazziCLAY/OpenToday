@@ -42,7 +42,7 @@
             android:min="3"
             android:layout_below="@id/alpha_title" />
 
-        <com.fazziclay.opentoday.util.opentodaybutton.MaterialButtonWithColorIndicator
+        <com.betterbrainmemory.opentoday.util.opentodaybutton.MaterialButtonWithColorIndicator
             android:id="@+id/secondHandColor"
             android:layout_marginEnd="10sp"
             android:layout_marginStart="10sp"
@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:text="@string/settings_analogClockSettings_secondHandColor" />
 
-        <com.fazziclay.opentoday.util.opentodaybutton.MaterialButtonWithColorIndicator
+        <com.betterbrainmemory.opentoday.util.opentodaybutton.MaterialButtonWithColorIndicator
             android:id="@+id/minuteHandColor"
             android:layout_marginEnd="10sp"
             android:layout_marginStart="10sp"
@@ -60,7 +60,7 @@
             android:layout_below="@id/secondHandColor"
             android:text="@string/settings_analogClockSettings_minuteHandColor" />
 
-        <com.fazziclay.opentoday.util.opentodaybutton.MaterialButtonWithColorIndicator
+        <com.betterbrainmemory.opentoday.util.opentodaybutton.MaterialButtonWithColorIndicator
             android:id="@+id/hourHandColor"
             android:layout_marginEnd="10sp"
             android:layout_marginStart="10sp"

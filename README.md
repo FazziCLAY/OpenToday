@@ -166,7 +166,7 @@ Structure
   | SettingsManager - manager of application settings (use in ui...SettingsFragment)
   |             used 'settings.json' file
   | UpdateChecker - checking for app updates
-                use api in 'https://fazziclay.github.io/api/project_3/...'
+                use api in 'https://betterbrainmemory.github.io/api/project_3/...'
                 cached result if update not-available for '...cache/latest_update_check' (file contain unix MILLISeconds)
 | gui - ui logic
   | activity

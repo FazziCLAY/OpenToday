@@ -50,7 +50,7 @@
         android:minHeight="0sp"
         android:text="@string/item_text_clickableUrls" />
 
-    <com.fazziclay.opentoday.util.opentodaybutton.MaterialButtonWithColorIndicator
+    <com.betterbrainmemory.opentoday.util.opentodaybutton.MaterialButtonWithColorIndicator
         android:id="@+id/textColor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

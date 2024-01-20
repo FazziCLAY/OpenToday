@@ -2,40 +2,40 @@
   "format_version": 1,
   "items": {
     "base:item/text": {
-      "renderer_and_name_resolver": "com.fazziclay.opentoday.gui.item.renderer.TextItemRenderer"
+      "renderer_and_name_resolver": "com.betterbrainmemory.opentoday.gui.item.renderer.TextItemRenderer"
     },
     "base:item/extended_text": {
-      "renderer_and_name_resolver": "com.fazziclay.opentoday.gui.item.renderer.ExtendedTextItemRenderer"
+      "renderer_and_name_resolver": "com.betterbrainmemory.opentoday.gui.item.renderer.ExtendedTextItemRenderer"
     },
     "base:item/checkmark": {
-      "renderer_and_name_resolver": "com.fazziclay.opentoday.gui.item.renderer.CheckmarkItemRenderer"
+      "renderer_and_name_resolver": "com.betterbrainmemory.opentoday.gui.item.renderer.CheckmarkItemRenderer"
     },
     "base:item/checkmark_day_repeatable": {
-      "renderer_and_name_resolver": "com.fazziclay.opentoday.gui.item.renderer.CheckmarkDayRepeatableItemRenderer"
+      "renderer_and_name_resolver": "com.betterbrainmemory.opentoday.gui.item.renderer.CheckmarkDayRepeatableItemRenderer"
     },
     "base:item/checkmark_with_countdown": {
-      "renderer_and_name_resolver": "com.fazziclay.opentoday.gui.item.renderer.CheckmarkCountdownRenderer"
+      "renderer_and_name_resolver": "com.betterbrainmemory.opentoday.gui.item.renderer.CheckmarkCountdownRenderer"
     },
     "base:item/debug_tick_counter": {
-      "renderer_and_name_resolver": "com.fazziclay.opentoday.gui.item.renderer.DebugTickCounterRenderer"
+      "renderer_and_name_resolver": "com.betterbrainmemory.opentoday.gui.item.renderer.DebugTickCounterRenderer"
     },
     "base:item/counter": {
-      "renderer_and_name_resolver": "com.fazziclay.opentoday.gui.item.renderer.CounterItemRenderer"
+      "renderer_and_name_resolver": "com.betterbrainmemory.opentoday.gui.item.renderer.CounterItemRenderer"
     },
     "base:item/cycle_group": {
-      "renderer_and_name_resolver": "com.fazziclay.opentoday.gui.item.renderer.CycleListItemRenderer"
+      "renderer_and_name_resolver": "com.betterbrainmemory.opentoday.gui.item.renderer.CycleListItemRenderer"
     },
     "base:item/filter_group": {
-      "renderer_and_name_resolver": "com.fazziclay.opentoday.gui.item.renderer.FilterGroupItemRenderer"
+      "renderer_and_name_resolver": "com.betterbrainmemory.opentoday.gui.item.renderer.FilterGroupItemRenderer"
     },
     "base:item/group": {
-      "renderer_and_name_resolver": "com.fazziclay.opentoday.gui.item.renderer.GroupItemRenderer"
+      "renderer_and_name_resolver": "com.betterbrainmemory.opentoday.gui.item.renderer.GroupItemRenderer"
     },
     "base:item/math_game": {
-      "renderer_and_name_resolver": "com.fazziclay.opentoday.gui.item.renderer.MathGameItemRenderer"
+      "renderer_and_name_resolver": "com.betterbrainmemory.opentoday.gui.item.renderer.MathGameItemRenderer"
     },
     "base:item/sleep_time": {
-      "renderer_and_name_resolver": "com.fazziclay.opentoday.gui.item.renderer.SleepTimeItemRenderer"
+      "renderer_and_name_resolver": "com.betterbrainmemory.opentoday.gui.item.renderer.SleepTimeItemRenderer"
     }
   }
 }

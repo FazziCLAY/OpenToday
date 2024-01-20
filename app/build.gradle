@@ -54,15 +54,15 @@ android {
     packagingOptions {
         resources.excludes.add("META-INF/*") // fix build errors
     }
-    namespace 'com.fazziclay.opentoday'
+    namespace 'com.betterbrainmemory.opentoday'
 }
 
 dependencies {
     // Application
-    //implementation files("./libs/OpenTodayTelemetry-v2-v11.jar")                     // telemetry library for OpenToday      SourceCode: https://github.com/FazziCLAY/OpenTodayTelemetry
-    //implementation files("./libs/NeoSocket-1.0.jar")                                 // for network (bad library...) uses by OpenTodayTelemetry   SourceCode: https://github.com/FazziCLAY/NeoSocket
-    implementation files("./libs/JavaNeoUtil-1.1.jar")                               // java utils by FazziCLAY (uses FileUtil)    SourceCode: https://github.com/FazziCLAY/JavaNeoUtil
-    implementation files("./libs/WarningRose-v0.4.1.jar")                            // for DebugTickCounter debug rose (only for developer)    SourceCode: https://github.com/FazziCLAY/WarningRose
+    //implementation files("./libs/OpenTodayTelemetry-v2-v11.jar")                     // telemetry library for OpenToday      SourceCode: https://github.com/betterbrainmemory/OpenTodayTelemetry
+    //implementation files("./libs/NeoSocket-1.0.jar")                                 // for network (bad library...) uses by OpenTodayTelemetry   SourceCode: https://github.com/betterbrainmemory/NeoSocket
+    implementation files("./libs/JavaNeoUtil-1.1.jar")                               // java utils by betterbrainmemory (uses FileUtil)    SourceCode: https://github.com/betterbrainmemory/JavaNeoUtil
+    implementation files("./libs/WarningRose-v0.4.1.jar")                            // for DebugTickCounter debug rose (only for developer)    SourceCode: https://github.com/betterbrainmemory/WarningRose
     implementation 'com.github.leondzn:simple-analog-clock:1.0.1'                    // analog clock
     implementation 'com.github.martin-stone:hsv-alpha-color-picker-android:3.0.1'    // color picker
     implementation 'androidx.appcompat:appcompat:1.6.1'
