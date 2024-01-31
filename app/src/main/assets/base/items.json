@@ -95,8 +95,7 @@
       "factory": "com.betterbrainmemory.opentoday.fun.mathgame.MathGameItem.FACTORY",
       "inherits": [
         "base:item/text"
-      ],
-      "hidden": true
+      ]
     },
     "base:item/sleep_time": {
       "fallback_name": "Sleep auto-calc",

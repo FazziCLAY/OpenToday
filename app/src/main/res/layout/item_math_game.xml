@@ -17,6 +17,17 @@
         android:paddingLeft="5sp" />
 
     <TextView
+        android:id="@+id/ministat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Simple long text"
+        android:layout_toStartOf="@id/keyboard"
+        android:textSize="13sp"
+        android:layout_below="@id/title"
+        android:textColor="?attr/item_text_textColor"
+        android:paddingLeft="5sp" />
+
+    <TextView
         android:id="@+id/questText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,7 +35,7 @@
         tools:text="Simple long text"
         android:layout_toStartOf="@id/keyboard"
         android:textSize="15sp"
-        android:layout_below="@id/title"
+        android:layout_below="@id/ministat"
         android:textColor="?attr/item_text_textColor"
         android:paddingLeft="5sp" />
 

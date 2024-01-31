@@ -2,6 +2,9 @@ package com.betterbrainmemory.opentoday.util;
 
 import com.betterbrainmemory.opentoday.app.OptionalField;
 
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -43,5 +46,11 @@ public final class RandomUtil {
             max = tempMin;
         }
         return getRandom().nextInt(max + 1 - min) + min;
+    }
+
+    @Nullable
+    public static <T> T randomOfList(List<T> list) {
+        if (list.isEmpty()) return null;
+        return list.get(bounds(0, list.size()));
     }
 }

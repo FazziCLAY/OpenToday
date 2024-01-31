@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,13 +19,17 @@ import android.view.animation.DecelerateInterpolator;
 import com.betterbrainmemory.opentoday.R;
 import com.betterbrainmemory.opentoday.databinding.ItemMathGameBinding;
 import com.betterbrainmemory.opentoday.fun.mathgame.MathGameItem;
+import com.betterbrainmemory.opentoday.fun.mathgame.MathGameItemCallback;
 import com.betterbrainmemory.opentoday.gui.interfaces.ItemInterface;
 import com.betterbrainmemory.opentoday.gui.item.ItemViewGenerator;
 import com.betterbrainmemory.opentoday.gui.item.ItemViewGeneratorBehavior;
 import com.betterbrainmemory.opentoday.gui.item.registry.ItemRenderer;
 import com.betterbrainmemory.opentoday.gui.item.registry.NameResolver;
+import com.betterbrainmemory.opentoday.util.ColorUtil;
 import com.betterbrainmemory.opentoday.util.Destroyer;
 import com.betterbrainmemory.opentoday.util.RandomUtil;
+import com.betterbrainmemory.opentoday.util.callback.CallbackImportance;
+import com.betterbrainmemory.opentoday.util.callback.Status;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -43,7 +48,18 @@ public class MathGameItemRenderer implements NameResolver, ItemRenderer<MathGame
     public View render(MathGameItem item, Activity context, LayoutInflater layoutInflater, ViewGroup parent, @NotNull ItemViewGeneratorBehavior behavior, @NotNull ItemInterface onItemClick, ItemViewGenerator itemViewGenerator, boolean previewMode, @NotNull Destroyer destroyer) {
         final ItemMathGameBinding binding = ItemMathGameBinding.inflate(layoutInflater, parent, false);
 
+        var callback = new MathGameItemCallback() {
+            @Override
+            public Status mathGameStatUpdated(MathGameItem item, String text) {
+                context.runOnUiThread(() -> binding.ministat.setText(ColorUtil.colorize(text, Color.GREEN, Color.TRANSPARENT, Typeface.NORMAL)));
+                return Status.NONE;
+            }
+        };
+        item.mathGameCallbacks().addCallback(CallbackImportance.DEFAULT, callback);
+        destroyer.add(() -> item.mathGameCallbacks().removeCallback(callback));
+
         final MathGameInterface gameInterface = new MathGameInterface() {
+            private boolean invert;
             private String currentNumberStr = "0";
             private int currentNumber = 0;
 
@@ -62,6 +78,10 @@ public class MathGameItemRenderer implements NameResolver, ItemRenderer<MathGame
             }
 
             public void donePress() {
+                if (invert) {
+                    currentNumber = -currentNumber;
+                }
+
                 final int color;
                 final boolean right = item.isResultRight(currentNumber);
                 if (right) {
@@ -69,7 +89,7 @@ public class MathGameItemRenderer implements NameResolver, ItemRenderer<MathGame
                     item.postResult(currentNumber);
                     binding.questText.setText(item.getQuestText());
                     binding.questText.setTextSize(item.getQuestTextSize());
-                    binding.questText.setGravity(item.getQuestTextGravity());
+                    binding.questText.setGravity(Gravity.CENTER);
                 } else {
                     color = Color.RED;
                 }
@@ -86,6 +106,7 @@ public class MathGameItemRenderer implements NameResolver, ItemRenderer<MathGame
             }
 
             public void clearCurrentInput() {
+                invert = false;
                 setCurrentInput(0);
             }
 
@@ -96,18 +117,19 @@ public class MathGameItemRenderer implements NameResolver, ItemRenderer<MathGame
             }
 
             private void updateDisplay() {
-                binding.userEnterNumber.setText(currentNumberStr);
+                binding.userEnterNumber.setText((invert ? "-" : "") + currentNumberStr);
             }
 
             public void invert() {
-                setCurrentInput(-currentNumber);
+                invert = !invert;
+                updateDisplay();
             }
 
             @Override
             public void init() {
                 binding.questText.setText(item.getQuestText());
                 binding.questText.setTextSize(item.getQuestTextSize());
-                binding.questText.setGravity(item.getQuestTextGravity());
+                binding.questText.setGravity(Gravity.CENTER);
 
                 binding.userEnterNumber.setText(currentNumberStr);
                 viewClick(binding.userEnterNumber, this::invert);

@@ -1,7 +1,5 @@
 package com.betterbrainmemory.opentoday.fun.mathgame;
 
-import android.view.Gravity;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -12,22 +10,64 @@ import com.betterbrainmemory.opentoday.app.items.item.TextItem;
 import com.betterbrainmemory.opentoday.app.items.item.Transform;
 import com.betterbrainmemory.opentoday.app.items.tick.TickSession;
 import com.betterbrainmemory.opentoday.app.items.tick.TickTarget;
+import com.betterbrainmemory.opentoday.util.RandomUtil;
+import com.betterbrainmemory.opentoday.util.callback.CallbackStorage;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MathGameItem extends TextItem {
     public static final MathGameItemCodec CODEC = new MathGameItemCodec();
     public static final ItemFactory<MathGameItem> FACTORY = new MathGameItemFactory();
 
 
+    private List<PrimitiveQuest> quests = new ArrayList<>();
+    private PrimitiveQuest current;
+    private long currentSetAt;
+    private int initalSize;
+    private long time;
+    private final CallbackStorage<MathGameItemCallback> callbackStorage = new CallbackStorage<>();
 
     public MathGameItem() {
         super();
+        initQuests();
     }
 
     public MathGameItem(@Nullable MathGameItem copy) {
         super(copy);
         if (copy != null) {
-
+            this.quests = new ArrayList<>(quests);
         }
+        initQuests();
+    }
+
+    private void initQuests() {
+        quests.clear();
+        initalSize = 0;
+
+
+        for (int i = 0; i < 100; i++) {
+            for (int j = 0; j < 100; j++) {
+                quests.add(new PrimitiveQuest(this, i, j, Operation.ADD));
+                quests.add(new PrimitiveQuest(this, i, j, Operation.SUBTRACT));
+                initalSize += 2;
+            }
+        }
+
+        currentSetAt = System.currentTimeMillis();
+        randomizeCurrent();
+    }
+
+    private void randomizeCurrent() {
+        if (quests.isEmpty()) {
+            initQuests();
+            return;
+        }
+        current = RandomUtil.randomOfList(quests);
+
+        time += (System.currentTimeMillis() - currentSetAt);
+
+        currentSetAt = System.currentTimeMillis();
     }
 
     public MathGameItem(@Nullable TextItem append) {
@@ -42,10 +82,26 @@ public class MathGameItem extends TextItem {
 
         if (tickSession.isTickTargetAllowed(TickTarget.ITEM_MATH_GAME_UPDATE)) {
             profilerPush(tickSession, "math_game_update");
+
+            updateStat();
+
             profilerPop(tickSession);
         }
     }
 
+    @Override
+    protected void updateStat() {
+        super.updateStat();
+        callbackStorage.run((callbackStorage, callback) -> {
+            int tm = 0;
+            try {
+                tm = (int) (time / (initalSize - quests.size()));
+            } catch (Exception e) {
+                tm = -1;
+            }
+            return callback.mathGameStatUpdated(MathGameItem.this, String.format("%s/%s ~%sms", quests.size(), initalSize, tm));
+        });
+    }
 
     public boolean isOperationEnabled(Operation o) {
         return true;
@@ -59,27 +115,25 @@ public class MathGameItem extends TextItem {
         return 20;
     }
 
-    public int getQuestTextGravity() {
-        return Gravity.CENTER;
-    }
-
     public void generateQuest() {
+        randomizeCurrent();
     }
 
 
     public String getQuestText() {
-        return "No impl :(";
+        return current.getText();
     }
 
     public boolean isResultRight(int currentNumber) {
-        return true;
-    }
-
-    public int getResult() {
-        return 0;
+        return current.getResult() == currentNumber;
     }
 
     public void postResult(int currentNumber) {
+        if (isResultRight(currentNumber)) {
+            quests.remove(current);
+            randomizeCurrent();
+        }
+        updateStat();
     }
 
     public int getPrimitiveNumber1Min() {
@@ -110,6 +164,10 @@ public class MathGameItem extends TextItem {
     public void setPrimitiveNumber2Max(int primitiveNumber2Max) {
     }
 
+    public CallbackStorage<MathGameItemCallback> mathGameCallbacks() {
+        return callbackStorage;
+    }
+
 
     private static class MathGameItemCodec extends TextItemCodec {
         @NonNull
@@ -119,7 +177,7 @@ public class MathGameItem extends TextItem {
             return super.exportItem(item);
         }
 
-        private static final MathGameItem defaultValues = new MathGameItem();
+        private static final MathGameItem DEFAULT_VALUES = new MathGameItem();
         @NonNull
         @Override
         public Item importItem(@NonNull Cherry cherry, Item item) {
