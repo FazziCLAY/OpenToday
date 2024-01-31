@@ -46,11 +46,17 @@ public class MathGameItem extends TextItem {
         initalSize = 0;
 
 
-        for (int i = 0; i < 100; i++) {
-            for (int j = 0; j < 100; j++) {
-                quests.add(new PrimitiveQuest(this, i, j, Operation.ADD));
-                quests.add(new PrimitiveQuest(this, i, j, Operation.SUBTRACT));
-                initalSize += 2;
+        for (int i = 11; i < 100; i++) {
+            for (int j = 11; j < 100; j++) {
+                if (i % 10 == 0) {
+
+                } else if (j % 10 == 0) {
+
+                } else {
+                    quests.add(new PrimitiveQuest(this, i, j, Operation.ADD));
+                    quests.add(new PrimitiveQuest(this, i, j, Operation.SUBTRACT));
+                    initalSize += 2;
+                }
             }
         }
 

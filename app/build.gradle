@@ -4,10 +4,10 @@ plugins {
 }
 
 // =====
-var isDev = true        // add .dev to applicationId
+var isDev = false        // add .dev to applicationId
 var beta = false          // add .beta to applicationId
 var appIdSuffix = ""      // add this to applicationId (E M P T Y   F O R   R E L E A S E S)
-var verBuild = 401       // versionCode
+var verBuild = 405       // versionCode
 var verName = "_2.0"  // versionName...
 var verBranch = "devely"   // branch
 var verReleaseTime = 1705774000 // releaseTime
