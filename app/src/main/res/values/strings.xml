@@ -96,7 +96,7 @@
     <string name="fragment_about_secretSettingsWarning">Don\'t spam…</string>
     <string name="fragment_deleteItems_delete_apply">DELETE</string>
     <string name="fragment_deleteItems_delete_cancel">Cancel</string>
-    <string name="fragment_deleteItems_delete_title">Delete %s item(s)?tabView.view.caps\n(%s include child-items)</string>
+    <string name="fragment_deleteItems_delete_title">Delete %s item(s)?\n(%s include child-items)</string>
     <string name="fragment_developer_crash">Crash!</string>
     <string name="fragment_developer_featureFlags">Feature flags</string>
     <string name="fragment_developer_icons">Icons…</string>
@@ -453,4 +453,14 @@
     <string name="transform_selectTypeDialog_title">Select result type</string>
     <string name="fragment_developer_resetUpdateCheckerTimeout">Reset UpdateChecker timeout</string>
     <string name="settings_colorHistoryEnabled">Is save colors in color-pickers to history</string>
+    <string name="item_countdownCheckmark">Checkmark with countdown</string>
+    <string name="item_countdownCheckmark_description" translatable="false">-</string>
+    <string name="fragment_itemEditor_module_countdownCheckbox_roundToDays">Round to days</string>
+    <string name="fragment_itemEditor_module_countdownCheckbox_step_title">Step size</string>
+    <string name="fragment_itemEditor_module_countdownCheckbox_step_hint">Enter step size...</string>
+    <string name="fragment_itemEditor_module_countdownCheckbox_availableStep_title">Steps</string>
+    <string name="fragment_itemEditor_module_countdownCheckbox_availableStep_hint">Enter steps...</string>
+    <string name="dialog_itemNotification_resetSentFlag">Reset sent status</string>
+    <string name="menu_notification_copyNotificationId">Copy Notify ID</string>
+    <string name="dialog_itemTag_delete">Delete</string>
 </resources>

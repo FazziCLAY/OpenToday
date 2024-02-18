@@ -56,5 +56,6 @@
     <attr name="itemTextEditor_style_true" format="color" />
     <attr name="itemTextEditor_style_false" format="color" />
     <attr name="itemTextEditor_style_reset" format="color" />
+    <attr name="item_countdown_checkmark_countdownColor" format="color" />
 
 </resources>

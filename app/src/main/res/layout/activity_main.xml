@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.fazziclay.opentoday.gui.activity.MainActivity">
+    tools:context="com.betterbrainmemory.opentoday.gui.activity.MainActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:background="?attr/androidToolbar_background"

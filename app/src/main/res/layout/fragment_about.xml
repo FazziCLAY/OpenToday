@@ -11,6 +11,12 @@
         android:orientation="vertical"
         style="@style/Theme.OpenToday.About.Root">
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="150sp"
+            android:src="@drawable/opentoday_icon"
+            android:scaleType="fitCenter" />
+
         <TextView
             android:id="@+id/about_text"
             android:layout_marginTop="5sp"
@@ -19,7 +25,7 @@
             android:text="OpenToday"
             android:gravity="center"
             android:textSize="30sp"
-            app:drawableTopCompat="@mipmap/ic_launcher"
+            android:typeface="monospace"
             tools:ignore="HardcodedText" />
 
         <RelativeLayout
@@ -66,7 +72,7 @@
 
             <TextView
                 android:id="@+id/text_package"
-                tools:text="ru.fazziclay.opentoday.dev"
+                tools:text="com.example.opentoday.dev"
                 style="@style/Theme.OpenToday.About.RowValue" />
         </LinearLayout>
 
@@ -128,7 +134,7 @@
 
             <TextView
                 android:id="@+id/text_developer"
-                android:text="FazziCLAY\nhttps://fazziclay.github.io"
+                android:text="BetterBrainMemory Team"
                 android:paddingBottom="10sp"
                 android:autoLink="all"
                 style="@style/Theme.OpenToday.About.RowValue"

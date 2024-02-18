@@ -1,0 +1,111 @@
+{
+  "format_version": 1,
+  "items": {
+    "base:item/text": {
+      "fallback_name": "Text",
+      "class": "com.betterbrainmemory.opentoday.app.items.item.TextItem",
+      "codec": "com.betterbrainmemory.opentoday.app.items.item.TextItem.CODEC",
+      "factory": "com.betterbrainmemory.opentoday.app.items.item.TextItem.FACTORY"
+    },
+    "base:item/extended_text": {
+      "fallback_name": "Extended text",
+      "class": "com.betterbrainmemory.opentoday.app.items.item.ExtendedTextItem",
+      "codec": "com.betterbrainmemory.opentoday.app.items.item.ExtendedTextItem.CODEC",
+      "factory": "com.betterbrainmemory.opentoday.app.items.item.ExtendedTextItem.FACTORY"
+    },
+    "base:item/checkmark": {
+      "fallback_name": "Checkmark",
+      "class": "com.betterbrainmemory.opentoday.app.items.item.CheckboxItem",
+      "codec": "com.betterbrainmemory.opentoday.app.items.item.CheckboxItem.CODEC",
+      "factory": "com.betterbrainmemory.opentoday.app.items.item.CheckboxItem.FACTORY",
+      "inherits": [
+        "base:item/text"
+      ]
+    },
+    "base:item/checkmark_day_repeatable": {
+      "fallback_name": "Checkmark (everyday)",
+      "class": "com.betterbrainmemory.opentoday.app.items.item.DayRepeatableCheckboxItem",
+      "codec": "com.betterbrainmemory.opentoday.app.items.item.DayRepeatableCheckboxItem.CODEC",
+      "factory": "com.betterbrainmemory.opentoday.app.items.item.DayRepeatableCheckboxItem.FACTORY",
+      "inherits": [
+        "base:item/text",
+        "base:item/checkmark"
+      ]
+    },
+    "base:item/checkmark_with_countdown": {
+      "fallback_name": "Checkmark with countdown",
+      "class": "com.betterbrainmemory.opentoday.app.items.item.CountDownCheckmarkItem",
+      "codec": "com.betterbrainmemory.opentoday.app.items.item.CountDownCheckmarkItem.CODEC",
+      "factory": "com.betterbrainmemory.opentoday.app.items.item.CountDownCheckmarkItem.FACTORY",
+      "inherits": [
+        "base:item/text",
+        "base:item/checkmark"
+      ]
+    },
+    "base:item/debug_tick_counter": {
+      "fallback_name": "Debug tick conter",
+      "class": "com.betterbrainmemory.opentoday.debug.DebugTickCounterItem",
+      "codec": "com.betterbrainmemory.opentoday.debug.DebugTickCounterItem.CODEC",
+      "factory": "com.betterbrainmemory.opentoday.debug.DebugTickCounterItem.FACTORY",
+      "inherits": [
+        "base:item/text"
+      ],
+      "required_feature_flag": "ITEM_DEBUG_TICK_COUNTER"
+    },
+    "base:item/counter": {
+      "fallback_name": "Counter",
+      "class": "com.betterbrainmemory.opentoday.app.items.item.CounterItem",
+      "codec": "com.betterbrainmemory.opentoday.app.items.item.CounterItem.CODEC",
+      "factory": "com.betterbrainmemory.opentoday.app.items.item.CounterItem.FACTORY",
+      "inherits": [
+        "base:item/text"
+      ]
+    },
+    "base:item/cycle_group": {
+      "fallback_name": "Cycle group",
+      "class": "com.betterbrainmemory.opentoday.app.items.item.CycleListItem",
+      "codec": "com.betterbrainmemory.opentoday.app.items.item.CycleListItem.CODEC",
+      "factory": "com.betterbrainmemory.opentoday.app.items.item.CycleListItem.FACTORY",
+      "inherits": [
+        "base:item/text"
+      ]
+    },
+    "base:item/filter_group": {
+      "fallback_name": "Filter group",
+      "class": "com.betterbrainmemory.opentoday.app.items.item.FilterGroupItem",
+      "codec": "com.betterbrainmemory.opentoday.app.items.item.FilterGroupItem.CODEC",
+      "factory": "com.betterbrainmemory.opentoday.app.items.item.FilterGroupItem.FACTORY",
+      "inherits": [
+        "base:item/text"
+      ]
+    },
+    "base:item/group": {
+      "fallback_name": "Group",
+      "class": "com.betterbrainmemory.opentoday.app.items.item.GroupItem",
+      "codec": "com.betterbrainmemory.opentoday.app.items.item.GroupItem.CODEC",
+      "factory": "com.betterbrainmemory.opentoday.app.items.item.GroupItem.FACTORY",
+      "inherits": [
+        "base:item/text"
+      ]
+    },
+    "base:item/math_game": {
+      "fallback_name": "Math game",
+      "class": "com.betterbrainmemory.opentoday.fun.mathgame.MathGameItem",
+      "codec": "com.betterbrainmemory.opentoday.fun.mathgame.MathGameItem.CODEC",
+      "factory": "com.betterbrainmemory.opentoday.fun.mathgame.MathGameItem.FACTORY",
+      "inherits": [
+        "base:item/text"
+      ]
+    },
+    "base:item/sleep_time": {
+      "fallback_name": "Sleep auto-calc",
+      "class": "com.betterbrainmemory.opentoday.app.items.item.SleepTimeItem",
+      "codec": "com.betterbrainmemory.opentoday.app.items.item.SleepTimeItem.CODEC",
+      "factory": "com.betterbrainmemory.opentoday.app.items.item.SleepTimeItem.FACTORY",
+      "inherits": [
+        "base:item/text"
+      ],
+      "required_feature_flag": "ITEM_SLEEP_TIME"
+    }
+  }
+}

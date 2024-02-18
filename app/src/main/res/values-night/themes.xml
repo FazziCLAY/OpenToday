@@ -31,6 +31,8 @@
         <!-- Items -->
         <item name="item_backgroundColor">#80252525</item>
         <item name="item_textColor">#FFFDFF</item>
+        <item name="item_countdown_checkmark_countdownColor">#09E756</item>
+
 
         <item name="item_text_background_color">#80252525</item>
         <item name="item_text_textColor">#FFFDFF</item>

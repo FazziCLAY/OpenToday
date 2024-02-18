@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:text="@string/dialog_itemNotification_titleFromItemText" />
 
-    <com.fazziclay.opentoday.util.opentodaybutton.MaterialButtonWithColorIndicator
+    <com.betterbrainmemory.opentoday.util.opentodaybutton.MaterialButtonWithColorIndicator
         android:id="@+id/notificationColor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -91,6 +91,14 @@
     <Button
         android:id="@+id/test"
         android:text="@string/dialog_itemNotification_testNotify"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+
+    <Button
+        android:id="@+id/resetSentFlag"
+        android:text="@string/dialog_itemNotification_resetSentFlag"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
