@@ -7,8 +7,19 @@
 
 .
 
+Use Obsidian
+
+No, seriously, it's handy and I use it myself.
 .
 
+.
+
+.                        
+## Stargazers over time
+[![Stargazers over time](https://starchart.cc/FazziCLAY/OpenToday.svg?variant=light)](https://starchart.cc/FazziCLAY/OpenToday)
+
+. 
+                   
 .
 
 .
